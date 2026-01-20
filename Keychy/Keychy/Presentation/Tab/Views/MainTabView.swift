@@ -129,6 +129,9 @@ extension MainTabView {
             showcaseVM: viewModel.festivalViewModel,
             onSwitchToKeyringMaker: { route in
                 viewModel.handleSwitchToKeyringMaker(route)
+            },
+            onSwitchToWorkshop: { route in
+                viewModel.handleSwitchToWorkshop(route)
             }
         )
         .modifier(TabItemModifier(

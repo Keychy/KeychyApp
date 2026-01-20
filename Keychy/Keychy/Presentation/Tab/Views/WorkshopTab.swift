@@ -99,7 +99,7 @@ struct WorkshopTab: View {
         switch route {
         // MARK: - 재화 구매 (공통)
         case .coinCharge:
-            CoinChargeView(keyringMakerRouter: keyringMakerRouter)
+            CoinChargeView(router: keyringMakerRouter)
 
         // MARK: - AcrylicPhoto
         case .acrylicPhotoPreview:

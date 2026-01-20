@@ -12,6 +12,7 @@ struct FestivalTab: View {
     @Bindable var keyringMakerRouter: NavigationRouter<KeyringMakerRoute>
     @Bindable var showcaseVM: Showcase25BoardViewModel
     var onSwitchToKeyringMaker: ((KeyringMakerRoute) -> Void)? = nil
+    var onSwitchToWorkshop: ((WorkshopRoute) -> Void)? = nil
 
     var body: some View {
         NavigationStack(path: $router.path) {
@@ -25,6 +26,9 @@ struct FestivalTab: View {
                             viewModel: showcaseVM,
                             onNavigateToKeyringMaker: { route in
                                 onSwitchToKeyringMaker?(route)
+                            },
+                            onNavigateToWorkshop: { route in
+                                onSwitchToWorkshop?(route)
                             }
                         )
 

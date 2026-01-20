@@ -20,6 +20,7 @@ struct Showcase25BoardView: View {
     @State var locationManager = LocationManager()
     
     var onNavigateToKeyringMaker: ((KeyringMakerRoute) -> Void)? = nil
+    var onNavigateToWorkshop: ((WorkshopRoute) -> Void)? = nil
     var isFromFestivalTab: Bool = false
     
     // 회수 확인 Alert
