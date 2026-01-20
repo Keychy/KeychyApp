@@ -9,9 +9,8 @@ import SwiftUI
 
 struct FestivalTab: View {
     @Bindable var router: NavigationRouter<FestivalRoute>
-    @Bindable var keyringMakerRouter: NavigationRouter<KeyringMakerRoute>
     @Bindable var showcaseVM: Showcase25BoardViewModel
-    var onSwitchToKeyringMaker: ((KeyringMakerRoute) -> Void)? = nil
+    var onSwitchToKeyringMaker: ((WorkshopRoute) -> Void)? = nil
     var onSwitchToWorkshop: ((WorkshopRoute) -> Void)? = nil
 
     var body: some View {
@@ -22,7 +21,6 @@ struct FestivalTab: View {
                     case .showcase25BoardView:
                         Showcase25BoardView(
                             festivalRouter: router,
-                            keyringMakerRouter: keyringMakerRouter,
                             viewModel: showcaseVM,
                             onNavigateToKeyringMaker: { route in
                                 onSwitchToKeyringMaker?(route)
@@ -37,7 +35,6 @@ struct FestivalTab: View {
                     case .festivalKeyringDetailView(let keyring):
                         FestivalKeyringDetailView(
                             festivalRouter: router,
-                            keyringMakerRouter: keyringMakerRouter,
                             viewModel: showcaseVM,
                             keyring: keyring
                         )

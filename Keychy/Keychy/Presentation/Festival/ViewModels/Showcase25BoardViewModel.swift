@@ -22,7 +22,7 @@ class Showcase25BoardViewModel {
     
     // MARK: - Festival에서 KeyringMaker로 갔을 때 사용
     var isFromFestivalTab: Bool = false
-    var onKeyringCompleteFromFestival: ((NavigationRouter<KeyringMakerRoute>) -> Void)?
+    var onKeyringCompleteFromFestival: ((NavigationRouter<WorkshopRoute>) -> Void)?
     
     // MARK: - 선택된 키링 디테일
     var selectedShowcaseKeyring: ShowcaseFestivalKeyring?

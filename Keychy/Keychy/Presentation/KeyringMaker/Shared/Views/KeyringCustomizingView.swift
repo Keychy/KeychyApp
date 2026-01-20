@@ -12,9 +12,9 @@ import SpriteKit
 import Lottie
 
 struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
-    @Bindable var router: NavigationRouter<KeyringMakerRoute>
+    @Bindable var router: NavigationRouter<WorkshopRoute>
     @State var viewModel: VM
-    let nextRoute: KeyringMakerRoute
+    let nextRoute: WorkshopRoute
     
     // 뒤로가기 시 팝만 하는 템플릿들 (초기화 경고 없음)
     let popOnlyTemplates = ["ClearSketch", "PixelKeyring"]

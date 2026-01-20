@@ -120,7 +120,6 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
     let item: Item
     var isOwned: Bool = false
     var router: NavigationRouter<WorkshopRoute>? = nil
-    var keyringMakerRouter: NavigationRouter<KeyringMakerRoute>? = nil
     var viewModel: WorkshopViewModel? = nil
 
     @State private var isParticleReady = false
@@ -206,18 +205,17 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
             return
         }
 
-        // 키링일 경우 KeyringMakerRouter를 사용하여 해당 키링 Preview로 이동
+        guard let router = router else { return }
+
+        // 키링 템플릿일 경우 해당 Preview로 이동
         if let template = item as? KeyringTemplate,
            let templateId = template.id,
-           let route = KeyringMakerRoute.from(string: templateId),
-           let keyringMakerRouter = keyringMakerRouter {
-            keyringMakerRouter.push(route)
+           let route = WorkshopRoute.from(string: templateId) {
+            router.push(route)
             return
         }
 
         // 나머지 아이템들은 WorkshopPreview로 이동
-        guard let router = router else { return }
-
         if let background = item as? Background {
             router.push(.workshopPreview(item: AnyHashable(background)))
         } else if let carabiner = item as? Carabiner {

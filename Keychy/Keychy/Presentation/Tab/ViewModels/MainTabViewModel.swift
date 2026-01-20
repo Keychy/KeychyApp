@@ -36,7 +36,6 @@ class MainTabViewModel {
     var homeRouter = NavigationRouter<HomeRoute>()
     var collectionRouter = NavigationRouter<CollectionRoute>()
     var workshopRouter = NavigationRouter<WorkshopRoute>()
-    var keyringMakerRouter = NavigationRouter<KeyringMakerRoute>()
     var festivalRouter = NavigationRouter<FestivalRoute>()
 
     // Sheets
@@ -92,14 +91,14 @@ class MainTabViewModel {
     }
 
     /// Festival 탭에서 KeyringMaker로 전환하고 특정 라우트로 이동
-    /// - Parameter route: 이동할 KeyringMakerRoute
-    func handleSwitchToKeyringMaker(_ route: KeyringMakerRoute) {
+    /// - Parameter route: 이동할 WorkshopRoute (키링 제작 라우트)
+    func handleSwitchToKeyringMaker(_ route: WorkshopRoute) {
         setupFestivalReturnCallback()
 
         selectedTab = TabIndex.workshop.rawValue
         Task { @MainActor in
             try? await Task.sleep(for: .seconds(Delay.tabSwitchAnimation))
-            keyringMakerRouter.push(route)
+            workshopRouter.push(route)
         }
     }
 
@@ -107,7 +106,7 @@ class MainTabViewModel {
     /// Festival → KeyringMaker 이동 시 완료 후 복귀 콜백 설정
     private func setupFestivalReturnCallback() {
         festivalViewModel.isFromFestivalTab = true
-        festivalViewModel.onKeyringCompleteFromFestival = { [weak self] router in
+        festivalViewModel.onKeyringCompleteFromFestival = { [weak self] (router: NavigationRouter<WorkshopRoute>) in
             guard let self = self else { return }
             router.reset()
             self.selectedTab = TabIndex.festival.rawValue

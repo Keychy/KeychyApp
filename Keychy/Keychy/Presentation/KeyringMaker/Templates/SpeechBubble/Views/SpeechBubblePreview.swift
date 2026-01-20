@@ -10,7 +10,7 @@
 import SwiftUI
 
 struct SpeechBubblePreview: View {
-    @Bindable var router: NavigationRouter<KeyringMakerRoute>
+    @Bindable var router: NavigationRouter<WorkshopRoute>
     @State var viewModel: SpeechBubbleVM
 
     var body: some View {

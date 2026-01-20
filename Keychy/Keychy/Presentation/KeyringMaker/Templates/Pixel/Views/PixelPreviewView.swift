@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PixelPreviewView: View {
-    @Bindable var router: NavigationRouter<KeyringMakerRoute>
+    @Bindable var router: NavigationRouter<WorkshopRoute>
     @State var viewModel: PixelVM
     @Environment(UserManager.self) private var userManager
 

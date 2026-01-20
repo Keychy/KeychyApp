@@ -68,7 +68,6 @@ extension WorkshopView {
             isSoundOwned: viewModel.isSoundOwned,
             isParticleOwned: viewModel.isParticleOwned,
             router: router,
-            keyringMakerRouter: keyringMakerRouter,
             viewModel: viewModel,
             emptyView: emptyContentView
         )
@@ -83,7 +82,6 @@ extension WorkshopView {
             items: items,
             isOwnedCheck: isOwnedCheck,
             router: router,
-            keyringMakerRouter: keyringMakerRouter,
             viewModel: viewModel,
             emptyView: emptyContentView
         )

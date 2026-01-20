@@ -197,7 +197,6 @@
 		4C4733D72F1FA388005D2376 /* AcrylicPhotoVM+Crop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733522F1FA388005D2376 /* AcrylicPhotoVM+Crop.swift */; };
 		4C4733D82F1FA388005D2376 /* AcrylicPhotoPreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C47335A2F1FA388005D2376 /* AcrylicPhotoPreView.swift */; };
 		4C4733D92F1FA388005D2376 /* TemplatePreviewComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733392F1FA388005D2376 /* TemplatePreviewComponents.swift */; };
-		4C4733DF2F1FA44C005D2376 /* KeyringMakerRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733DE2F1FA44C005D2376 /* KeyringMakerRoute.swift */; };
 		4C65303B2EBA5FA0000F8154 /* CheckmarkAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */; };
 		4C65303E2EBA6042000F8154 /* ImageSaveAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */; };
 		4C6530442EBA8077000F8154 /* PurchaseSuccessAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6530432EBA8077000F8154 /* PurchaseSuccessAlert.swift */; };
@@ -627,7 +626,6 @@
 		4C47338B2F1FA388005D2376 /* SpeechBubbleFramePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechBubbleFramePreviewView.swift; sourceTree = "<group>"; };
 		4C47338C2F1FA388005D2376 /* SpeechBubbleFrameSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechBubbleFrameSelectorView.swift; sourceTree = "<group>"; };
 		4C47338D2F1FA388005D2376 /* SpeechBubblePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechBubblePreview.swift; sourceTree = "<group>"; };
-		4C4733DE2F1FA44C005D2376 /* KeyringMakerRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringMakerRoute.swift; sourceTree = "<group>"; };
 		4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckmarkAlert.swift; sourceTree = "<group>"; };
 		4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSaveAlert.swift; sourceTree = "<group>"; };
 		4C6530432EBA8077000F8154 /* PurchaseSuccessAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseSuccessAlert.swift; sourceTree = "<group>"; };
@@ -1784,7 +1782,6 @@
 		4CEC620B2EAE08DA0099ECEE /* Routes */ = {
 			isa = PBXGroup;
 			children = (
-				4C4733DE2F1FA44C005D2376 /* KeyringMakerRoute.swift */,
 				4CEC62072EAE08DA0099ECEE /* HomeRoute.swift */,
 				4CEC62082EAE08DA0099ECEE /* CollectionRoute.swift */,
 				4CEC62092EAE08DA0099ECEE /* WorkshopRoute.swift */,
@@ -2586,7 +2583,6 @@
 				4CEC62752EAE08DF0099ECEE /* HomeView.swift in Sources */,
 				4C6622482EAF9B3A001760B5 /* Haptic.swift in Sources */,
 				3822DDBE2EBAAC80003125BE /* PurchasePopup.swift in Sources */,
-				4C4733DF2F1FA44C005D2376 /* KeyringMakerRoute.swift in Sources */,
 				4CC3D3CD2EC8AE030009D376 /* KeychyAlert.swift in Sources */,
 				4CF2A9702F0FB2E100BA9FDA /* AppUpdateManager.swift in Sources */,
 				AA9B2E912EB081750004D31C /* ItemDetailView.swift in Sources */,

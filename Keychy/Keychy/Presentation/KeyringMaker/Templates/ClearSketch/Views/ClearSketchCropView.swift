@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ClearSketchCropView: View {
-    @Bindable var router: NavigationRouter<KeyringMakerRoute>
+    @Bindable var router: NavigationRouter<WorkshopRoute>
     @Bindable var viewModel: ClearSketchVM
     
     @State private var cropPaths: [CropPath] = []

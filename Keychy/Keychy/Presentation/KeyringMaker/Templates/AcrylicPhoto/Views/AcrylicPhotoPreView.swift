@@ -9,7 +9,7 @@ import SwiftUI
 import PhotosUI
 
 struct AcrylicPhotoPreView: View {
-    @Bindable var router: NavigationRouter<KeyringMakerRoute>
+    @Bindable var router: NavigationRouter<WorkshopRoute>
     @State var viewModel: AcrylicPhotoVM
     @Environment(UserManager.self) private var userManager
     @State private var selectedItem: PhotosPickerItem?

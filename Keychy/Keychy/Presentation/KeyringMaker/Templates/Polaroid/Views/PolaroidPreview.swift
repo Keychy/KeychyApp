@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PolaroidPreview: View {
-    @Bindable var router: NavigationRouter<KeyringMakerRoute>
+    @Bindable var router: NavigationRouter<WorkshopRoute>
     @State var viewModel: PolaroidVM
 
     var body: some View {
@@ -29,7 +29,7 @@ struct PolaroidPreview: View {
 
 #Preview {
     PolaroidPreview(
-        router: NavigationRouter<KeyringMakerRoute>(),
+        router: NavigationRouter<WorkshopRoute>(),
         viewModel: PolaroidVM()
     )
     .environment(UserManager.shared)

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PixelDrawView: View {
-    @Bindable var router: NavigationRouter<KeyringMakerRoute>
+    @Bindable var router: NavigationRouter<WorkshopRoute>
     @Bindable var viewModel: PixelVM
     
     /// 팔레트 표시 여부 (그리기 모드일 때만 표시)

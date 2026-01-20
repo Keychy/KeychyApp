@@ -10,17 +10,12 @@ import SwiftUI
 struct WorkshopTemplatesView: View {
 
     @Bindable var router: NavigationRouter<WorkshopRoute>
-    @Bindable var keyringMakerRouter: NavigationRouter<KeyringMakerRoute>
     @Environment(UserManager.self) private var userManager
     @State private var viewModel: WorkshopViewModel
     @State private var hasInitialized = false
 
-    init(
-        router: NavigationRouter<WorkshopRoute>,
-        keyringMakerRouter: NavigationRouter<KeyringMakerRoute>
-    ) {
+    init(router: NavigationRouter<WorkshopRoute>) {
         self.router = router
-        self.keyringMakerRouter = keyringMakerRouter
         _viewModel = State(initialValue: WorkshopViewModel(userManager: UserManager.shared))
     }
 
@@ -149,7 +144,6 @@ struct WorkshopTemplatesView: View {
                     items: filteredTemplates,
                     isOwnedCheck: { _ in false },
                     router: router,
-                    keyringMakerRouter: keyringMakerRouter,
                     viewModel: viewModel,
                     emptyView: emptyContentView
                 )

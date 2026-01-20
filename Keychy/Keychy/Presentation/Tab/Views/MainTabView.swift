@@ -99,7 +99,6 @@ extension MainTabView {
     private var workshopTab: some View {
         WorkshopTab(
             router: viewModel.workshopRouter,
-            keyringMakerRouter: viewModel.keyringMakerRouter,
             festivalRouter: viewModel.festivalRouter,
             festivalVM: viewModel.festivalViewModel
         )
@@ -125,7 +124,6 @@ extension MainTabView {
     private var festivalTab: some View {
         FestivalTab(
             router: viewModel.festivalRouter,
-            keyringMakerRouter: viewModel.keyringMakerRouter,
             showcaseVM: viewModel.festivalViewModel,
             onSwitchToKeyringMaker: { route in
                 viewModel.handleSwitchToKeyringMaker(route)

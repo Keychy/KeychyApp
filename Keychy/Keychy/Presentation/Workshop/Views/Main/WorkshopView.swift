@@ -13,7 +13,6 @@ import NukeUI
 struct WorkshopView: View {
 
     @Bindable var router: NavigationRouter<WorkshopRoute>
-    @Bindable var keyringMakerRouter: NavigationRouter<KeyringMakerRoute>
     @Environment(UserManager.self) var userManager
     @State var viewModel: WorkshopViewModel
     @State private var hasInitialized = false
@@ -24,11 +23,9 @@ struct WorkshopView: View {
     /// WorkshopTab에서 생성된 viewModel을 받아서 사용
     init(
         router: NavigationRouter<WorkshopRoute>,
-        keyringMakerRouter: NavigationRouter<KeyringMakerRoute>,
         viewModel: WorkshopViewModel
     ) {
         self.router = router
-        self.keyringMakerRouter = keyringMakerRouter
         _viewModel = State(initialValue: viewModel)
     }
     
