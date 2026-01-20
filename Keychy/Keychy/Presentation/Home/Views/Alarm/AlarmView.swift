@@ -76,10 +76,13 @@ extension AlarmView {
             // 푸시 알림 off 배너
             if viewModel.isNotiOff && viewModel.isNotiOffShown {
                 pushNotiOffView
+                    .listRowInsets(.init())
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
                     .padding(.top, 10)
                     .padding(.bottom, 20)
             }
-
+            
             ForEach(viewModel.notifications) { notification in
                 NotificationItemView(
                     notification: notification,
