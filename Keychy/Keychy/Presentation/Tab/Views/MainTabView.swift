@@ -99,6 +99,7 @@ extension MainTabView {
     private var workshopTab: some View {
         WorkshopTab(
             router: viewModel.workshopRouter,
+            keyringMakerRouter: viewModel.keyringMakerRouter,
             festivalRouter: viewModel.festivalRouter,
             festivalVM: viewModel.festivalViewModel
         )

@@ -12,9 +12,9 @@ import Combine
 import FirebaseFirestore
 
 struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
-    @Bindable var router: NavigationRouter<WorkshopRoute>
+    @Bindable var router: NavigationRouter<KeyringMakerRoute>
     @Bindable var viewModel: VM
-    let nextRoute: WorkshopRoute
+    let nextRoute: KeyringMakerRoute
 
     // UserManager 주입
     var userManager: UserManager = UserManager.shared

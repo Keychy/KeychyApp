@@ -11,15 +11,15 @@ import SpriteKit
 import FirebaseFirestore
 
 struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
-    @Bindable var router: NavigationRouter<WorkshopRoute>
+    @Bindable var router: NavigationRouter<KeyringMakerRoute>
     @Bindable var viewModel: VM
     let navigationTitle: String
 
     var userManager: UserManager = UserManager.shared
     var reviewManager: ReviewManager = ReviewManager.shared
-    
+
     // Festival에서 왔을 때 처리용 옵셔널 콜백
-    var onCloseFromFestival: ((NavigationRouter<WorkshopRoute>) -> Void)?
+    var onCloseFromFestival: ((NavigationRouter<KeyringMakerRoute>) -> Void)?
     
     // 이미지 저장
     @State var showImageSaved = false

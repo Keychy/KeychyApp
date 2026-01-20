@@ -15,6 +15,7 @@ struct WorkshopGridHelpers {
         items: [T],
         isOwnedCheck: @escaping (T) -> Bool,
         router: NavigationRouter<WorkshopRoute>?,
+        keyringMakerRouter: NavigationRouter<KeyringMakerRoute>?,
         viewModel: WorkshopViewModel?,
         emptyView: EmptyView
     ) -> some View {
@@ -31,6 +32,7 @@ struct WorkshopGridHelpers {
                             item: item,
                             isOwned: isOwnedCheck(item),
                             router: router,
+                            keyringMakerRouter: keyringMakerRouter,
                             viewModel: viewModel
                         )
                         .id(item.id)
@@ -48,6 +50,7 @@ struct WorkshopGridHelpers {
         isSoundOwned: @escaping (Sound) -> Bool,
         isParticleOwned: @escaping (Particle) -> Bool,
         router: NavigationRouter<WorkshopRoute>?,
+        keyringMakerRouter: NavigationRouter<KeyringMakerRoute>?,
         viewModel: WorkshopViewModel?,
         emptyView: EmptyView
     ) -> some View {
@@ -65,6 +68,7 @@ struct WorkshopGridHelpers {
                                 item: sound,
                                 isOwned: isSoundOwned(sound),
                                 router: router,
+                                keyringMakerRouter: keyringMakerRouter,
                                 viewModel: viewModel
                             )
                             .id(sound.id)
@@ -73,6 +77,7 @@ struct WorkshopGridHelpers {
                                 item: particle,
                                 isOwned: isParticleOwned(particle),
                                 router: router,
+                                keyringMakerRouter: keyringMakerRouter,
                                 viewModel: viewModel
                             )
                             .id(particle.id)

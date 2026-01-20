@@ -147,6 +147,7 @@ struct MyItemsView: View {
                     items: filteredOwnedTemplates,
                     isOwnedCheck: { _ in false },
                     router: router,
+                    keyringMakerRouter: nil,
                     viewModel: viewModel,
                     emptyView: emptyContentView
                 )
@@ -155,6 +156,7 @@ struct MyItemsView: View {
                     items: filteredOwnedBackgrounds,
                     isOwnedCheck: { _ in false },
                     router: router,
+                    keyringMakerRouter: nil,
                     viewModel: viewModel,
                     emptyView: emptyContentView
                 )
@@ -163,6 +165,7 @@ struct MyItemsView: View {
                     items: filteredOwnedCarabiners,
                     isOwnedCheck: { _ in false },
                     router: router,
+                    keyringMakerRouter: nil,
                     viewModel: viewModel,
                     emptyView: emptyContentView
                 )
@@ -172,6 +175,7 @@ struct MyItemsView: View {
                     isSoundOwned: { _ in false },
                     isParticleOwned: { _ in false },
                     router: router,
+                    keyringMakerRouter: nil,
                     viewModel: viewModel,
                     emptyView: emptyContentView
                 )

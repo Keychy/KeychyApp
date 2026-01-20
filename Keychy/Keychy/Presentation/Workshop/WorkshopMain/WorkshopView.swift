@@ -11,18 +11,24 @@ import NukeUI
 // MARK: - Main View
 
 struct WorkshopView: View {
-    
+
     @Bindable var router: NavigationRouter<WorkshopRoute>
+    @Bindable var keyringMakerRouter: NavigationRouter<KeyringMakerRoute>
     @Environment(UserManager.self) var userManager
     @State var viewModel: WorkshopViewModel
     @State private var hasInitialized = false
     @State private var isTabBarVisible = true
-    
+
     let categories = ["템플릿", "카라비너", "이펙트", "배경"]
-    
+
     /// WorkshopTab에서 생성된 viewModel을 받아서 사용
-    init(router: NavigationRouter<WorkshopRoute>, viewModel: WorkshopViewModel) {
+    init(
+        router: NavigationRouter<WorkshopRoute>,
+        keyringMakerRouter: NavigationRouter<KeyringMakerRoute>,
+        viewModel: WorkshopViewModel
+    ) {
         self.router = router
+        self.keyringMakerRouter = keyringMakerRouter
         _viewModel = State(initialValue: viewModel)
     }
     
