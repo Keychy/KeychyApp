@@ -197,9 +197,7 @@
 		4C4733D72F1FA388005D2376 /* AcrylicPhotoVM+Crop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733522F1FA388005D2376 /* AcrylicPhotoVM+Crop.swift */; };
 		4C4733D82F1FA388005D2376 /* AcrylicPhotoPreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C47335A2F1FA388005D2376 /* AcrylicPhotoPreView.swift */; };
 		4C4733D92F1FA388005D2376 /* TemplatePreviewComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733392F1FA388005D2376 /* TemplatePreviewComponents.swift */; };
-		4C4733DB2F1FA388005D2376 /* .gitkeep in Resources */ = {isa = PBXBuildFile; fileRef = 4C47334C2F1FA388005D2376 /* .gitkeep */; };
-		4C4733DC2F1FA388005D2376 /* .gitkeep in Resources */ = {isa = PBXBuildFile; fileRef = 4C4733902F1FA388005D2376 /* .gitkeep */; };
-		4C4733DD2F1FA388005D2376 /* .gitkeep in Resources */ = {isa = PBXBuildFile; fileRef = 4C4733312F1FA388005D2376 /* .gitkeep */; };
+		4C4733DF2F1FA44C005D2376 /* KeyringMakerRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733DE2F1FA44C005D2376 /* KeyringMakerRoute.swift */; };
 		4C65303B2EBA5FA0000F8154 /* CheckmarkAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */; };
 		4C65303E2EBA6042000F8154 /* ImageSaveAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */; };
 		4C6530442EBA8077000F8154 /* PurchaseSuccessAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6530432EBA8077000F8154 /* PurchaseSuccessAlert.swift */; };
@@ -561,7 +559,6 @@
 		4C4733212F1FA2AB005D2376 /* WorkshopPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopPreview.swift; sourceTree = "<group>"; };
 		4C47332E2F1FA388005D2376 /* KeyringViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringViewModelProtocol.swift; sourceTree = "<group>"; };
 		4C47332F2F1FA388005D2376 /* KeyringViewModelProtocol+Reset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringViewModelProtocol+Reset.swift"; sourceTree = "<group>"; };
-		4C4733312F1FA388005D2376 /* .gitkeep */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
 		4C4733332F1FA388005D2376 /* AudioRecorderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorderManager.swift; sourceTree = "<group>"; };
 		4C4733342F1FA388005D2376 /* RecordingSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingSheet.swift; sourceTree = "<group>"; };
 		4C4733362F1FA388005D2376 /* CameraPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPicker.swift; sourceTree = "<group>"; };
@@ -583,7 +580,6 @@
 		4C4733482F1FA388005D2376 /* KeyringInfoInputView+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringInfoInputView+Helpers.swift"; sourceTree = "<group>"; };
 		4C4733492F1FA388005D2376 /* KeyringInfoInputView+Sheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringInfoInputView+Sheet.swift"; sourceTree = "<group>"; };
 		4C47334A2F1FA388005D2376 /* KeyringInfoInputView+TagManagement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringInfoInputView+TagManagement.swift"; sourceTree = "<group>"; };
-		4C47334C2F1FA388005D2376 /* .gitkeep */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
 		4C47334E2F1FA388005D2376 /* CropModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropModels.swift; sourceTree = "<group>"; };
 		4C4733502F1FA388005D2376 /* AcrylicPhotoVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcrylicPhotoVM.swift; sourceTree = "<group>"; };
 		4C4733512F1FA388005D2376 /* AcrylicPhotoVM+BGRemover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AcrylicPhotoVM+BGRemover.swift"; sourceTree = "<group>"; };
@@ -631,7 +627,7 @@
 		4C47338B2F1FA388005D2376 /* SpeechBubbleFramePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechBubbleFramePreviewView.swift; sourceTree = "<group>"; };
 		4C47338C2F1FA388005D2376 /* SpeechBubbleFrameSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechBubbleFrameSelectorView.swift; sourceTree = "<group>"; };
 		4C47338D2F1FA388005D2376 /* SpeechBubblePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechBubblePreview.swift; sourceTree = "<group>"; };
-		4C4733902F1FA388005D2376 /* .gitkeep */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
+		4C4733DE2F1FA44C005D2376 /* KeyringMakerRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringMakerRoute.swift; sourceTree = "<group>"; };
 		4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckmarkAlert.swift; sourceTree = "<group>"; };
 		4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSaveAlert.swift; sourceTree = "<group>"; };
 		4C6530432EBA8077000F8154 /* PurchaseSuccessAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseSuccessAlert.swift; sourceTree = "<group>"; };
@@ -1129,15 +1125,6 @@
 			path = Protocols;
 			sourceTree = "<group>";
 		};
-		4C4733322F1FA388005D2376 /* Core */ = {
-			isa = PBXGroup;
-			children = (
-				4C4733302F1FA388005D2376 /* Protocols */,
-				4C4733312F1FA388005D2376 /* .gitkeep */,
-			);
-			path = Core;
-			sourceTree = "<group>";
-		};
 		4C4733352F1FA388005D2376 /* Recording */ = {
 			isa = PBXGroup;
 			children = (
@@ -1191,10 +1178,10 @@
 		4C47334D2F1FA388005D2376 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				4C4733302F1FA388005D2376 /* Protocols */,
 				4C47333A2F1FA388005D2376 /* Components */,
 				4C47333C2F1FA388005D2376 /* Models */,
 				4C47334B2F1FA388005D2376 /* Views */,
-				4C47334C2F1FA388005D2376 /* .gitkeep */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -1401,7 +1388,6 @@
 				4C47337A2F1FA388005D2376 /* Pixel */,
 				4C4733842F1FA388005D2376 /* Polaroid */,
 				4C47338F2F1FA388005D2376 /* SpeechBubble */,
-				4C4733902F1FA388005D2376 /* .gitkeep */,
 			);
 			path = Templates;
 			sourceTree = "<group>";
@@ -1409,7 +1395,6 @@
 		4C4733932F1FA388005D2376 /* KeyringMaker */ = {
 			isa = PBXGroup;
 			children = (
-				4C4733322F1FA388005D2376 /* Core */,
 				4C47334D2F1FA388005D2376 /* Shared */,
 				4C4733912F1FA388005D2376 /* Templates */,
 			);
@@ -1799,6 +1784,7 @@
 		4CEC620B2EAE08DA0099ECEE /* Routes */ = {
 			isa = PBXGroup;
 			children = (
+				4C4733DE2F1FA44C005D2376 /* KeyringMakerRoute.swift */,
 				4CEC62072EAE08DA0099ECEE /* HomeRoute.swift */,
 				4CEC62082EAE08DA0099ECEE /* CollectionRoute.swift */,
 				4CEC62092EAE08DA0099ECEE /* WorkshopRoute.swift */,
@@ -2298,9 +2284,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C3688132EC08A3100C64E75 /* HancomMalangMalang-Bold.otf in Resources */,
-				4C4733DB2F1FA388005D2376 /* .gitkeep in Resources */,
-				4C4733DC2F1FA388005D2376 /* .gitkeep in Resources */,
-				4C4733DD2F1FA388005D2376 /* .gitkeep in Resources */,
 				4C3688142EC08A3100C64E75 /* HancomMalangMalang-Regular.otf in Resources */,
 				4CEC62962EAE08F70099ECEE /* Assets.xcassets in Resources */,
 				4C6622052EAE5FC3001760B5 /* SUIT-Bold.otf in Resources */,
@@ -2603,6 +2586,7 @@
 				4CEC62752EAE08DF0099ECEE /* HomeView.swift in Sources */,
 				4C6622482EAF9B3A001760B5 /* Haptic.swift in Sources */,
 				3822DDBE2EBAAC80003125BE /* PurchasePopup.swift in Sources */,
+				4C4733DF2F1FA44C005D2376 /* KeyringMakerRoute.swift in Sources */,
 				4CC3D3CD2EC8AE030009D376 /* KeychyAlert.swift in Sources */,
 				4CF2A9702F0FB2E100BA9FDA /* AppUpdateManager.swift in Sources */,
 				AA9B2E912EB081750004D31C /* ItemDetailView.swift in Sources */,
