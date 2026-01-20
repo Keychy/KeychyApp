@@ -304,7 +304,7 @@ extension MyPageView {
     private var alerts: some View {
         Group {
             if viewModel.showLoadingAlert {
-                LoadingAlert(type: .short, message: nil)
+                LoadingAlert(type: .short40, message: nil)
             }
         }
     }

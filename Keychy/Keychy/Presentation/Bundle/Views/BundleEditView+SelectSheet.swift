@@ -80,7 +80,7 @@ extension BundleEditView {
                     
                     if isKeyringSheetLoading {
                         VStack {
-                            LoadingAlert(type: .short, message: nil)
+                            LoadingAlert(type: .short40, message: nil)
                                 .padding(.vertical, 24)
                             Text("키링을 불러오고 있어요")
                                 .typography(.suit15R)

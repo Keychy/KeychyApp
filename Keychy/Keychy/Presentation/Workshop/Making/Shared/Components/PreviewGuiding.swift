@@ -106,7 +106,7 @@ extension PreviewGuiding {
             // 로딩 중앙 배치
             LazyImage(url: URL(string: guidingImageURL)) { state in
                 if state.isLoading {
-                    LoadingAlert(type: .short, message: nil)
+                    LoadingAlert(type: .short40, message: nil)
                 }
             }
         }

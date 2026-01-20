@@ -31,7 +31,7 @@ extension KeyringCollectView {
     }
     
     private func loadingOverlay(geometry: GeometryProxy) -> some View {
-        LoadingAlert(type: .short, message: nil)
+        LoadingAlert(type: .short40, message: nil)
             .position(
                 x: geometry.size.width / 2,
                 y: geometry.size.height / 2

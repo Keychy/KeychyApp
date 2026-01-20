@@ -98,7 +98,7 @@ struct CoinChargeView<Route: Hashable>: View {
 
             // 코인 구매 로딩
             if isCoinPurchasing {
-                LoadingAlert(type: .short, message: nil)
+                LoadingAlert(type: .short40, message: nil)
             }
         }
         .task {

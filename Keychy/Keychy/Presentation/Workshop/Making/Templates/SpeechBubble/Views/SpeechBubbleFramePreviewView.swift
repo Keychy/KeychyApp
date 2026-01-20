@@ -48,7 +48,7 @@ struct SpeechBubbleFramePreviewView: View {
 
                 // 로딩 중일 때
                 if !isFrameLoaded {
-                    LoadingAlert(type: .short, message: nil)
+                    LoadingAlert(type: .short40, message: nil)
                 }
             }
         }

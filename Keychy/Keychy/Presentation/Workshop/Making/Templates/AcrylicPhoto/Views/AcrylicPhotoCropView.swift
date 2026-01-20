@@ -61,7 +61,7 @@ struct AcrylicPhotoCropView: View {
 
             // 로딩 인디케이터
             if isImageLoading {
-                LoadingAlert(type: .short, message: nil)
+                LoadingAlert(type: .short40, message: nil)
             }
             
             customNavigationBar

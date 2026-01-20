@@ -153,8 +153,7 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
                             .frame(width: twoGridCellWidth, height: itemHeight)
                             .clipped()
                     } else {
-                        LoadingAlert(type: .short, message: nil)
-                            .scaleEffect(0.5)
+                        LoadingAlert(type: .short40, message: nil)
                             .task {
                                 await ensureParticleReady(particle)
                             }

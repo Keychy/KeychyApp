@@ -204,9 +204,8 @@ extension PackagedKeyringView {
                      )
              } else {
                  // 이미지 로딩 중
-                 LoadingAlert(type: .short, message: nil)
+                 LoadingAlert(type: .short40, message: nil)
                      .frame(width: 195, height: 300)
-                     .scaleEffect(0.6)
              }
         }
     }
@@ -299,9 +298,8 @@ extension PackagedKeyringView {
                     .scaledToFit()
                     .frame(width: 205, height: 205)
             } else {
-                LoadingAlert(type: .short, message: nil)
+                LoadingAlert(type: .short40, message: nil)
                     .frame(width: 205, height: 205)
-                    .scaleEffect(0.6)
             }
         }
         .offset(x: -3, y: -24)

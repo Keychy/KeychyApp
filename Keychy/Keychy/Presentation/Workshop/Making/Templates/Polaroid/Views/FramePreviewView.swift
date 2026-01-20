@@ -63,7 +63,7 @@ struct FramePreviewView: View {
 
                 // 로딩 중일 때
                 if !isFrameLoaded {
-                    LoadingAlert(type: .short, message: nil)
+                    LoadingAlert(type: .short40, message: nil)
                 }
             }
         }
@@ -227,7 +227,7 @@ struct FramePreviewView: View {
                 // 프레임 크기 계산
                 LazyImage(url: URL(string: frame.frameURL)) { state in
                     if state.isLoading {
-                        LoadingAlert(type: .short, message: nil)
+                        LoadingAlert(type: .short40, message: nil)
                             .frame(height: targetFrameHeight)
                     } else if let image = state.image {
                         let frameAspect = (state.imageContainer?.image.size.width ?? 1) / (state.imageContainer?.image.size.height ?? 1)

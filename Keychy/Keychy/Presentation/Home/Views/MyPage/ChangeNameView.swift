@@ -147,7 +147,7 @@ extension ChangeNameView {
         Group {
             // 업데이트 중 로딩
             if viewModel.isUpdating {
-                LoadingAlert(type: .short, message: nil)
+                LoadingAlert(type: .short40, message: nil)
             }
 
             // 성공 Alert

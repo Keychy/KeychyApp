@@ -94,8 +94,7 @@ extension BundleEditView {
         } label: {
             HStack(spacing: 5) {
                 if isPurchasing {
-                    LoadingAlert(type: .short, message: nil)
-                        .scaleEffect(0.8)
+                    LoadingAlert(type: .short40, message: nil)
                 } else {
                     Image(.purchaseSheet)
                 }

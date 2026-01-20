@@ -88,13 +88,13 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                 
                 // MARK: - 구매 중 로딩
                 if showPurchaseProgress {
-                    LoadingAlert(type: .short, message: nil)
+                    LoadingAlert(type: .short40, message: nil)
                         .zIndex(101)
                 }
 
                 // MARK: - 합성 중 로딩
                 if viewModel.isComposing {
-                    LoadingAlert(type: .short, message: nil)
+                    LoadingAlert(type: .short40, message: nil)
                         .zIndex(101)
                 }
 

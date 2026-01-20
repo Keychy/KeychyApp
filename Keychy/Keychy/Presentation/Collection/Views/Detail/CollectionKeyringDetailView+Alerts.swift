@@ -126,7 +126,7 @@ extension CollectionKeyringDetailView {
             }
             
             if showCopyingAlert {
-                LoadingAlert(type: .short, message: nil)
+                LoadingAlert(type: .short40, message: nil)
                     .zIndex(101)
             }
             
