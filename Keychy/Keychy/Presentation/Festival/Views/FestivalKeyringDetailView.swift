@@ -12,7 +12,7 @@ import Photos
 
 struct FestivalKeyringDetailView: View {
     @Bindable var festivalRouter: NavigationRouter<FestivalRoute>
-    @Bindable var workshopRouter: NavigationRouter<WorkshopRoute>
+    @Bindable var keyringMakerRouter: NavigationRouter<KeyringMakerRoute>
     @Bindable var viewModel: Showcase25BoardViewModel
     
     @State var userManager = UserManager.shared

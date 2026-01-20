@@ -10,7 +10,7 @@ import SwiftUI
 
 struct AcrylicPhotoEditedView: View {
     // MARK: - Dependencies
-    @Bindable var router: NavigationRouter<WorkshopRoute>
+    @Bindable var router: NavigationRouter<KeyringMakerRoute>
     @Bindable var viewModel: AcrylicPhotoVM
     
     // MARK: - Animation States

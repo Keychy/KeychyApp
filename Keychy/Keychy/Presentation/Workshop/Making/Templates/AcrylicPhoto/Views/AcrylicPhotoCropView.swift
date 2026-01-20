@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct AcrylicPhotoCropView: View {
-    @Bindable var router: NavigationRouter<WorkshopRoute>
+    @Bindable var router: NavigationRouter<KeyringMakerRoute>
     @Bindable var viewModel: AcrylicPhotoVM
 
     @State private var isImageLoading = true

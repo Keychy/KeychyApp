@@ -12,14 +12,14 @@ import FirebaseFirestore
 struct Showcase25BoardView: View {
     
     @Bindable var festivalRouter: NavigationRouter<FestivalRoute>
-    @Bindable var workshopRouter: NavigationRouter<WorkshopRoute>
+    @Bindable var keyringMakerRouter: NavigationRouter<KeyringMakerRoute>
     @Bindable var viewModel: Showcase25BoardViewModel
     @Environment(\.scenePhase) private var scenePhase
     
     // 위치 기반 체크용
     @State var locationManager = LocationManager()
     
-    var onNavigateToWorkshop: ((WorkshopRoute) -> Void)? = nil
+    var onNavigateToKeyringMaker: ((KeyringMakerRoute) -> Void)? = nil
     var isFromFestivalTab: Bool = false
     
     // 회수 확인 Alert

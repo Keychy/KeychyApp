@@ -15,7 +15,7 @@ struct TemplatePreviewBody: View {
     let fetchTemplate: () async -> Void
     let onMake: () -> Void
     var onPurchase: (() -> Void)? = nil
-    var router: NavigationRouter<WorkshopRoute>? = nil
+    var router: NavigationRouter<KeyringMakerRoute>? = nil
 
     @Environment(UserManager.self) private var userManager
 

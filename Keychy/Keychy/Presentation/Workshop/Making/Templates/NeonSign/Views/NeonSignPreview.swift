@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct NeonSignPreView: View {
-    @Bindable var router: NavigationRouter<WorkshopRoute>
+    @Bindable var router: NavigationRouter<KeyringMakerRoute>
     @State var viewModel: NeonSignVM
 
     var body: some View {
@@ -26,7 +26,7 @@ struct NeonSignPreView: View {
 
 #Preview {
     NeonSignPreView(
-        router: NavigationRouter<WorkshopRoute>(),
+        router: NavigationRouter<KeyringMakerRoute>(),
         viewModel: NeonSignVM()
     )
     .environment(UserManager.shared)
