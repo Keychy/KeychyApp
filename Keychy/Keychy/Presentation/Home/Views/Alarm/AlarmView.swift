@@ -41,7 +41,7 @@ struct AlarmView: View {
                 viewModel.hasNetworkError = true
                 return
             }
-
+            
             viewModel.checkNotificationPermission()
             viewModel.fetchNotifications()
         }
@@ -69,7 +69,7 @@ extension AlarmView {
         })
         .ignoresSafeArea()
     }
-
+    
     /// 알림 리스트 뷰
     private var notificationListView: some View {
         List {
@@ -90,7 +90,7 @@ extension AlarmView {
                         handleNotificationTap(notification)
                     }
                 )
-                .listRowInsets(EdgeInsets())
+                .listRowInsets(.init())
                 .listRowSeparator(.hidden)
                 .listRowBackground(Color.clear)
                 .swipeActions(edge: .trailing, allowsFullSwipe: false) {
@@ -114,7 +114,7 @@ extension AlarmView {
                 .typography(.suit15R)
                 .padding(15)
         }
-
+        
     }
     
     /// 기기 푸쉬 알림이 off일 때 나오는 상단뷰
