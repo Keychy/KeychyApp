@@ -27,8 +27,7 @@ extension Showcase25BoardView {
                 // 다른 사람이 수정 중인 경우
                 let maskedName = viewModel.maskedNickname(editingKeyring.editingUserNickname)
                 ZStack {
-                    LoadingAlert(type: .short, message: nil)
-                        .scaleEffect(0.5)
+                    LoadingAlert(type: .short30, message: nil)
                     VStack {
                         Spacer()
                         Text("\(maskedName)님\n수정중")
@@ -103,8 +102,7 @@ extension Showcase25BoardView {
                 Image(systemName: "photo")
                     .foregroundStyle(.gray300)
             } else {
-                LoadingAlert(type: .short, message: nil)
-                    .scaleEffect(0.5)
+                LoadingAlert(type: .short30, message: nil)
             }
         }
 

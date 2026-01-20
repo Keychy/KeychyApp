@@ -23,8 +23,7 @@ struct BackgroundSelectableCell: View {
                             .scaledToFill()
                             .clipped()
                     } else if state.isLoading {
-                        LoadingAlert(type: .short, message: nil)
-                            .scaleEffect(0.5)
+                        LoadingAlert(type: .short30, message: nil)
                     }
                 }
                 .frame(width: threeSquareGridCellSize, height: threeSquareGridCellSize)
