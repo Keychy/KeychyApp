@@ -126,7 +126,7 @@ struct WorkshopTab: View {
                 viewModel: getAcrylicPhotoVM(),
                 navigationTitle: "키링이 완성되었어요!",
                 onCloseFromFestival: festivalVM.isFromFestivalTab ? { router in
-                    festivalVM.onKeyringCompleteFromFestivalKeyringMaker?(router)
+                    festivalVM.onKeyringCompleteFromFestival?(router)
                 } : nil
             )
 
@@ -151,7 +151,7 @@ struct WorkshopTab: View {
                 viewModel: getNeonSignVM(),
                 navigationTitle: "키링이 완성되었어요!",
                 onCloseFromFestival: festivalVM.isFromFestivalTab ? { router in
-                    festivalVM.onKeyringCompleteFromFestivalKeyringMaker?(router)
+                    festivalVM.onKeyringCompleteFromFestival?(router)
                 } : nil
             )
 
@@ -176,7 +176,7 @@ struct WorkshopTab: View {
                 viewModel: getPolaroidVM(),
                 navigationTitle: "키링이 완성되었어요!",
                 onCloseFromFestival: festivalVM.isFromFestivalTab ? { router in
-                    festivalVM.onKeyringCompleteFromFestivalKeyringMaker?(router)
+                    festivalVM.onKeyringCompleteFromFestival?(router)
                 } : nil
             )
 
@@ -205,7 +205,7 @@ struct WorkshopTab: View {
                 viewModel: getClearSketchVM(),
                 navigationTitle: "키링이 완성되었어요!",
                 onCloseFromFestival: festivalVM.isFromFestivalTab ? { router in
-                    festivalVM.onKeyringCompleteFromFestivalKeyringMaker?(router)
+                    festivalVM.onKeyringCompleteFromFestival?(router)
                 } : nil
             )
 
@@ -232,7 +232,7 @@ struct WorkshopTab: View {
                 viewModel: getPixelKeyringVM(),
                 navigationTitle: "키링이 완성되었어요!",
                 onCloseFromFestival: festivalVM.isFromFestivalTab ? { router in
-                    festivalVM.onKeyringCompleteFromFestivalKeyringMaker?(router)
+                    festivalVM.onKeyringCompleteFromFestival?(router)
                 } : nil
             )
 
@@ -257,7 +257,7 @@ struct WorkshopTab: View {
                 viewModel: getSpeechBubbleVM(),
                 navigationTitle: "키링이 완성되었어요!",
                 onCloseFromFestival: festivalVM.isFromFestivalTab ? { router in
-                    festivalVM.onKeyringCompleteFromFestivalKeyringMaker?(router)
+                    festivalVM.onKeyringCompleteFromFestival?(router)
                 } : nil
             )
         }

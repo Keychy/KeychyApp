@@ -82,7 +82,7 @@ class MainTabViewModel {
     /// Festival 탭에서 Workshop 탭으로 전환하고 특정 라우트로 이동
     /// - Parameter route: 이동할 WorkshopRoute
     func handleSwitchToWorkshop(_ route: WorkshopRoute) {
-        setupFestivalReturnCallback()
+        festivalViewModel.isFromFestivalTab = true
 
         selectedTab = TabIndex.workshop.rawValue
         Task { @MainActor in
@@ -94,7 +94,7 @@ class MainTabViewModel {
     /// Festival 탭에서 KeyringMaker로 전환하고 특정 라우트로 이동
     /// - Parameter route: 이동할 KeyringMakerRoute
     func handleSwitchToKeyringMaker(_ route: KeyringMakerRoute) {
-        setupFestivalReturnCallbackForKeyringMaker()
+        setupFestivalReturnCallback()
 
         selectedTab = TabIndex.workshop.rawValue
         Task { @MainActor in
@@ -104,21 +104,10 @@ class MainTabViewModel {
     }
 
     // MARK: - Private Methods
-    /// Festival → Workshop 이동 시 완료 후 복귀 콜백 설정
+    /// Festival → KeyringMaker 이동 시 완료 후 복귀 콜백 설정
     private func setupFestivalReturnCallback() {
         festivalViewModel.isFromFestivalTab = true
         festivalViewModel.onKeyringCompleteFromFestival = { [weak self] router in
-            guard let self = self else { return }
-            router.reset()
-            self.selectedTab = TabIndex.festival.rawValue
-            self.festivalViewModel.isFromFestivalTab = false
-        }
-    }
-
-    /// Festival → KeyringMaker 이동 시 완료 후 복귀 콜백 설정
-    private func setupFestivalReturnCallbackForKeyringMaker() {
-        festivalViewModel.isFromFestivalTab = true
-        festivalViewModel.onKeyringCompleteFromFestivalKeyringMaker = { [weak self] router in
             guard let self = self else { return }
             router.reset()
             self.selectedTab = TabIndex.festival.rawValue

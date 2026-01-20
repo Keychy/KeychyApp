@@ -20,10 +20,9 @@ class Showcase25BoardViewModel {
     var userKeyrings: [Keyring] = []
     var selectedKeyringIndex: Int = 0
     
-    // MARK: - Festival에서 Workshop으로 갔을 때 사용
+    // MARK: - Festival에서 KeyringMaker로 갔을 때 사용
     var isFromFestivalTab: Bool = false
-    var onKeyringCompleteFromFestival: ((NavigationRouter<WorkshopRoute>) -> Void)?
-    var onKeyringCompleteFromFestivalKeyringMaker: ((NavigationRouter<KeyringMakerRoute>) -> Void)?
+    var onKeyringCompleteFromFestival: ((NavigationRouter<KeyringMakerRoute>) -> Void)?
     
     // MARK: - 선택된 키링 디테일
     var selectedShowcaseKeyring: ShowcaseFestivalKeyring?
