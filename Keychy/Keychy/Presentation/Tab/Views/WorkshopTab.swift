@@ -81,12 +81,11 @@ struct WorkshopTab: View {
 
         // MARK: - 쇼케이스용 페스티벌 임시 라우트
         case .showcase25BoardView:
-            Showcase25BoardView(festivalRouter: festivalRouter, workshopRouter: router, viewModel: festivalVM)
+            Showcase25BoardView(festivalRouter: festivalRouter, keyringMakerRouter: keyringMakerRouter, viewModel: festivalVM)
 
         case .festivalKeyringDetailView(let keyring):
             FestivalKeyringDetailView(
                 festivalRouter: festivalRouter,
-                workshopRouter: router,
                 keyringMakerRouter: keyringMakerRouter,
                 viewModel: festivalVM,
                 keyring: keyring
