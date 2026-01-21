@@ -187,7 +187,7 @@ struct MyItemsView: View {
             router.push(.coinCharge)
         } label: {
             HStack(spacing: 0) {
-                Image(.buyKey)
+                Image(.myCoinMini)
                     .resizable()
                     .scaledToFill()
                     .frame(width: 36)

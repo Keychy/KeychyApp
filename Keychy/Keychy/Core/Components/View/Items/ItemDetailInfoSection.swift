@@ -17,7 +17,7 @@ struct ItemDetailInfoSection: View {
             HStack(spacing: 8) {
                 /// 유료 태그 표시
                 if !item.isFree {
-                    Image(.paidIcon)
+                    Image(.myCoinMini)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 21)
