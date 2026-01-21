@@ -17,6 +17,7 @@ struct WorkshopView: View {
     @State var viewModel: WorkshopViewModel
     @State private var hasInitialized = false
     @State private var isTabBarVisible = true
+    @State var workshopToggle: Bool = true
 
     let categories = ["템플릿", "카라비너", "이펙트", "배경"]
 

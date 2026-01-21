@@ -20,7 +20,7 @@ extension WorkshopView {
         .padding(.horizontal, 20)
         .frame(maxWidth: .infinity)
     }
-
+    
     /// 스크롤 시 나타나는 상단 타이틀 바
     var topTitleBar: some View {
         HStack {
@@ -34,14 +34,30 @@ extension WorkshopView {
         .background(Color.white100)
         .opacity(viewModel.mainContentOffset - 80 < 70 ? 1 : 0)
     }
-
+    
     /// 타이틀 뷰
     var titleView: some View {
-        Text("공방")
-            .typography(.nanum32EB)
-            .frame(maxWidth: .infinity, alignment: .leading)
+        HStack(spacing: 10) {
+            Button {
+                // TODO: - 공방 탭 액션
+                workshopToggle = true
+            } label: {
+                Text("키링")
+                    .typography(.nanum24EB)
+                    .foregroundStyle(workshopToggle ? .black100 : .gray100)
+            }
+            
+            Button {
+                // TODO: - 뭉치 탭 액션
+                workshopToggle = false
+            } label: {
+                Text("뭉치")
+                    .typography(.nanum24EB)
+                    .foregroundStyle(workshopToggle ? .gray100 : .black100)
+            }
+        }
     }
-
+    
     /// 내 아이템 버튼
     var myItemBtn: some View {
         Button {
@@ -51,9 +67,9 @@ extension WorkshopView {
                 Image(.myItem)
                     .resizable()
                     .scaledToFit()
-
+                
                 Spacer()
-
+                
                 Text("내 아이템")
                     .typography(.suit17B)
                     .foregroundColor(.black)
