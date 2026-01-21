@@ -104,7 +104,7 @@ struct CollectionKeyringDetailView: View {
                     Color.black20
                         .ignoresSafeArea()
                         
-                    LoadingAlert(type: .short, message: nil)
+                    LoadingAlert(type: .short40, message: nil)
                         .zIndex(200)
                 }
                 

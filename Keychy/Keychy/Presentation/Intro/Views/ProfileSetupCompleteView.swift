@@ -37,7 +37,7 @@ struct ProfileSetupCompleteView: View {
             .blur(radius: isSaving ? 15 : 0)
 
             if isSaving {
-                LoadingAlert(type: .short, message: nil)
+                LoadingAlert(type: .short40, message: nil)
             }
         }
         .background(.white100)

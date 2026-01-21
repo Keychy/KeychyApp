@@ -24,7 +24,7 @@ struct ItemDetailImage: View {
 
             // 로딩 중앙 배치
             if isLoading {
-                LoadingAlert(type: .short, message: nil)
+                LoadingAlert(type: .short40, message: nil)
                     .onAppear {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                             isLoading = false
@@ -173,8 +173,7 @@ struct SimpleAnimatedImage: View {
                 if isLoading {
                     Color.gray50
                         .overlay {
-                            LoadingAlert(type: .short, message: nil)
-                                .scaleEffect(0.5)
+                            LoadingAlert(type: .short40, message: nil)
                         }
                 }
             }

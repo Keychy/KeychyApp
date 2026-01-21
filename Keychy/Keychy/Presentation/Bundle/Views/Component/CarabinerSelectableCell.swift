@@ -23,8 +23,7 @@ struct CarabinerSelectableCell: View {
                             .scaledToFit()
                             .clipped()
                     } else if state.isLoading {
-                        LoadingAlert(type: .short, message: nil)
-                            .scaleEffect(0.5)
+                        LoadingAlert(type: .short30, message: nil)
                     } else {
                         Color.clear
                             .aspectRatio(1, contentMode: .fit)

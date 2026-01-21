@@ -15,13 +15,14 @@ import SwiftUI
 import Lottie
 
 enum LoadingType {
-    case short
+    case short30
+    case short40
     case longWithKeychy
     case longWithPresent
 
     var lottieFileName: String {
         switch self {
-        case .short: return "shotLoading"
+        case .short30, .short40: return "shotLoading"
         case .longWithKeychy: return "longLoadingKeychy"
         case .longWithPresent: return "longLoadingPresent"
         }
@@ -29,7 +30,8 @@ enum LoadingType {
 
     var frameSize: CGFloat {
         switch self {
-        case .short: return 48
+        case .short30: return 30
+        case .short40: return 40
         case .longWithKeychy: return 122
         case .longWithPresent: return 122
         }
@@ -51,7 +53,7 @@ struct LoadingAlert: View {
             )
             .frame(width: type.frameSize, height: type.frameSize)
 
-            if type != .short, let message = message {
+            if type != .short30 && type != .short40, let message = message {
                 Text(message)
                     .typography(.suit17SB)
                     .textOutline(color: .white100, width: 3)

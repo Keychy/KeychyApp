@@ -202,8 +202,7 @@ extension KeyringEditView {
                     Color.black20
                         .overlay {
                             VStack(spacing: 8) {
-                                LoadingAlert(type: .short, message: nil)
-                                    .scaleEffect(0.4)
+                                LoadingAlert(type: .short40, message: nil)
                             }
                         }
                 }

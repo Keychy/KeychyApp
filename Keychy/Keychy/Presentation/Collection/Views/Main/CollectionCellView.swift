@@ -23,8 +23,7 @@ struct CollectionCellView: View {
             if isLoading && cachedImage == nil {
                 Color.gray50
                     .overlay {
-                        LoadingAlert(type: .short, message: nil)
-                            .scaleEffect(0.7)
+                        LoadingAlert(type: .short40, message: nil)
                     }
             }
 

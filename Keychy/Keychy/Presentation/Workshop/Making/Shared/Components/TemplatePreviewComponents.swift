@@ -120,7 +120,7 @@ struct TemplatePreviewBody: View {
 
                 // 구매 중 로딩
                 if showPurchasingLoading {
-                    LoadingAlert(type: .short, message: nil)
+                    LoadingAlert(type: .short40, message: nil)
                 }
 
                 // 구매 성공 알림
@@ -187,7 +187,7 @@ extension TemplatePreviewBody {
                     .scaledToFit()
                     .frame(width: 386, height: 386)
             } else {
-                LoadingAlert(type: .short, message: nil)
+                LoadingAlert(type: .short40, message: nil)
             }
         }
         .frame(maxHeight: 500)
@@ -226,7 +226,7 @@ extension TemplatePreviewBody {
                     }
                 )
             } else {
-                LoadingAlert(type: .short, message: nil)
+                LoadingAlert(type: .short40, message: nil)
             }
         }
     }

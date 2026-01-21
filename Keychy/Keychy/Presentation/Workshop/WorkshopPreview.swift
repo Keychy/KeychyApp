@@ -130,7 +130,7 @@ struct WorkshopPreview: View {
 
                 // 구매 중 로딩
                 if showPurchasingLoading {
-                    LoadingAlert(type: .short, message: nil)
+                    LoadingAlert(type: .short40, message: nil)
                 }
 
                 // 구매 성공 알림
@@ -208,8 +208,7 @@ extension WorkshopPreview {
                         .aspectRatio(1, contentMode: .fit)
                         .cornerRadius(20)
                 } else {
-                    LoadingAlert(type: .short, message: nil)
-                        .scaleEffect(0.5)
+                    LoadingAlert(type: .short40, message: nil)
                     .task {
                         await ensureParticleReady(particle)
                     }

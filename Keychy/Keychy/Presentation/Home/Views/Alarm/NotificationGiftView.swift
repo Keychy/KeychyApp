@@ -24,7 +24,7 @@ struct NotificationGiftView: View {
             if viewModel.hasNetworkError {
                 networkErrorView
             } else if viewModel.isLoading || viewModel.isCapturing {
-                LoadingAlert(type: .short, message: nil)
+                LoadingAlert(type: .short40, message: nil)
             } else if let error = viewModel.loadError {
                 VStack {
                     Text("선물 정보를 불러올 수 없습니다")

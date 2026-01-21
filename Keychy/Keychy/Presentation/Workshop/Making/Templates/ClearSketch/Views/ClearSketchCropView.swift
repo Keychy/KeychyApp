@@ -27,7 +27,7 @@ struct ClearSketchCropView: View {
                     if let bodyImage = viewModel.bodyImage {
                         cropCanvasView(image: bodyImage, geometry: geometry)
                     } else {
-                        LoadingAlert(type: .short, message: nil)
+                        LoadingAlert(type: .short40, message: nil)
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)

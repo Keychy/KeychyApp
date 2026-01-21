@@ -58,7 +58,7 @@ struct KeyringCollectView: View {
     private func contentView(heightRatio: CGFloat, isSmallScreen: Bool) -> some View {
         VStack(spacing: 0) {
             if viewModel.isLoading {
-                LoadingAlert(type: .short, message: nil)
+                LoadingAlert(type: .short40, message: nil)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 
             } else if let keyring = viewModel.keyring {
