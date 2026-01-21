@@ -63,7 +63,7 @@ struct WorkshopView: View {
                     .allowsHitTesting(false)
                 }
                 .background(
-                    Image(.back)
+                    Image(.workshopKeyringBGB)
                         .resizable()
                         .scaledToFill()
                 )
@@ -141,7 +141,7 @@ struct WorkshopView: View {
             }
             .padding(.top, 60)
             .background(alignment: .top) {
-                Image(.workshopBG)
+                Image(.workshopKeyringBGF)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
             }
