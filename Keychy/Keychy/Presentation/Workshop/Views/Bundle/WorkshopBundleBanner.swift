@@ -11,7 +11,7 @@ import NukeUI
 // MARK: - MakingKeyring Section
 
 extension WorkshopView {
-    var makingKeyringSection: some View {
+    var WorkshopBundleBanner: some View {
         VStack(spacing: 0) {
             // 제목
             Text("내 마음대로 고르는\n다양한 템플릿(๑' ᵕ '๑)⸝*")
@@ -72,8 +72,6 @@ extension WorkshopView {
                     .resizable()
                     .scaledToFit()
             }
-
-            // TODO: 네트워크 연결 끊김 처리
         }
         .frame(height: 120)
         .padding(.bottom, 10)
