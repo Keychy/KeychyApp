@@ -4,12 +4,19 @@
 //
 //  Created by 길지훈 on 10/16/25.
 //
-import UIKit
+import Foundation
 
-/// 공방 탭 라우팅
+/// 공방 탭 라우팅 (마켓플레이스 + 키링 제작)
 enum WorkshopRoute: Hashable {
-    // MARK: - 공통 프리뷰
+    // MARK: - 공방 마켓플레이스
     case workshopPreview(item: AnyHashable)
+    case coinCharge
+    case myItems
+    case workshopTemplates
+
+    // MARK: - Festival 임시 라우트 (추후 정리 예정)
+    case showcase25BoardView
+    case festivalKeyringDetailView(Keyring)
 
     // MARK: - 아크릴 포토 템플릿
     case acrylicPhotoPreview
@@ -18,12 +25,9 @@ enum WorkshopRoute: Hashable {
     case acrylicPhotoCustomizing
     case acrylicPhotoInfoInput
     case acrylicPhotoComplete
-    case coinCharge
-    case myItems
-    case workshopTemplates
 
     // MARK: - 네온 사인 템플릿
-    case NeonSignPreView
+    case neonSignPreview
     case neonSignCustomizing
     case neonSignInfoInput
     case neonSignComplete
@@ -33,7 +37,7 @@ enum WorkshopRoute: Hashable {
     case polaroidCustomizing
     case polaroidInfoInput
     case polaroidComplete
-    
+
     // MARK: - 클리어 스케치 템플릿
     case clearSketchPreview
     case clearSketchDrawing
@@ -48,10 +52,6 @@ enum WorkshopRoute: Hashable {
     case pixelCustomizing
     case pixelInfoInput
     case pixelComplete
-    
-    // MARK: - 임시 페스티벌 라우트
-    case showcase25BoardView
-    case festivalKeyringDetailView(Keyring)
 
     // MARK: - 말풍선 키링 템플릿
     case speechBubblePreview
@@ -59,19 +59,13 @@ enum WorkshopRoute: Hashable {
     case speechBubbleInfoInput
     case speechBubbleComplete
 
-    // MARK: - 새로운 템플릿의 루트는 이렇게 추가해주면 됩니다. (예정)
-    // case hkPreview
-    // case hkCustomizing
-    // case hkInfoInput
-    // case hkComplete
-
     /// template.id 문자열을 WorkshopRoute로 변환
     static func from(string: String) -> WorkshopRoute? {
         switch string {
         case "AcrylicPhoto":
             return .acrylicPhotoPreview
         case "NeonSign":
-            return .NeonSignPreView
+            return .neonSignPreview
         case "Polaroid":
             return .polaroidPreview
         case "ClearSketch":
@@ -80,11 +74,8 @@ enum WorkshopRoute: Hashable {
             return .pixelPreview
         case "SpeechBubble":
             return .speechBubblePreview
-
-            // 필요한 프리뷰 케이스들 추가
         default:
             return nil
         }
     }
 }
-

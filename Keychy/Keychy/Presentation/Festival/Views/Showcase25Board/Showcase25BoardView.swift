@@ -10,15 +10,15 @@ import NukeUI
 import FirebaseFirestore
 
 struct Showcase25BoardView: View {
-    
+
     @Bindable var festivalRouter: NavigationRouter<FestivalRoute>
-    @Bindable var workshopRouter: NavigationRouter<WorkshopRoute>
     @Bindable var viewModel: Showcase25BoardViewModel
     @Environment(\.scenePhase) private var scenePhase
-    
+
     // 위치 기반 체크용
     @State var locationManager = LocationManager()
-    
+
+    var onNavigateToKeyringMaker: ((WorkshopRoute) -> Void)? = nil
     var onNavigateToWorkshop: ((WorkshopRoute) -> Void)? = nil
     var isFromFestivalTab: Bool = false
     

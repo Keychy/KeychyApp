@@ -23,12 +23,6 @@ extension Showcase25BoardView {
                     Button {
                         dismissSheet()
                         viewModel.isFromFestivalTab = true
-
-                        viewModel.onKeyringCompleteFromFestival = { workshopRouter in
-                            workshopRouter.reset()
-                            workshopRouter.push(.showcase25BoardView)
-                        }
-
                         onNavigateToWorkshop?(.workshopTemplates)
                     } label: {
                         Text("+ 만들기")

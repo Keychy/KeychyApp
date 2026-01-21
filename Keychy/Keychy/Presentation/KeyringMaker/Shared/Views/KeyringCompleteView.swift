@@ -17,7 +17,7 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
 
     var userManager: UserManager = UserManager.shared
     var reviewManager: ReviewManager = ReviewManager.shared
-    
+
     // Festival에서 왔을 때 처리용 옵셔널 콜백
     var onCloseFromFestival: ((NavigationRouter<WorkshopRoute>) -> Void)?
     

@@ -207,14 +207,16 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
 
         guard let router = router else { return }
 
-        // 키링일 경우 바로 해당 키링 Preview로 이동
+        // 키링 템플릿일 경우 해당 Preview로 이동
         if let template = item as? KeyringTemplate,
            let templateId = template.id,
            let route = WorkshopRoute.from(string: templateId) {
             router.push(route)
+            return
         }
+
         // 나머지 아이템들은 WorkshopPreview로 이동
-        else if let background = item as? Background {
+        if let background = item as? Background {
             router.push(.workshopPreview(item: AnyHashable(background)))
         } else if let carabiner = item as? Carabiner {
             router.push(.workshopPreview(item: AnyHashable(carabiner)))

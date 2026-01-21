@@ -1,5 +1,5 @@
 //
-//  HomeTab.swift
+//  WorkshopTab.swift
 //  KeytschPrototype
 //
 //  Created by 길지훈 on 10/16/25.
@@ -11,7 +11,7 @@ struct WorkshopTab: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @Bindable var festivalRouter: NavigationRouter<FestivalRoute>
     @Bindable var festivalVM: Showcase25BoardViewModel
-    
+
     @State private var acrylicPhotoVM: AcrylicPhotoVM?
     @State private var neonSignVM: NeonSignVM?
     @State private var polaroidVM: PolaroidVM?
@@ -22,211 +22,218 @@ struct WorkshopTab: View {
 
     var body: some View {
         NavigationStack(path: $router.path) {
-            WorkshopView(router: router, viewModel: workshopViewModel)
-                .navigationDestination(for: WorkshopRoute.self) { route in
-                    switch route {
-
-                    // MARK: - 공통 프리뷰
-                    case .workshopPreview(let item):
-                        if let template = item.base as? KeyringTemplate {
-                            WorkshopPreview(router: router, viewModel: workshopViewModel, item: template)
-                        } else if let background = item.base as? Background {
-                            WorkshopPreview(router: router, viewModel: workshopViewModel, item: background)
-                        } else if let carabiner = item.base as? Carabiner {
-                            WorkshopPreview(router: router, viewModel: workshopViewModel, item: carabiner)
-                        } else if let particle = item.base as? Particle {
-                            WorkshopPreview(router: router, viewModel: workshopViewModel, item: particle)
-                        } else if let sound = item.base as? Sound {
-                            WorkshopPreview(router: router, viewModel: workshopViewModel, item: sound)
-                        }
-                    
-                    // MARK: - 내 창고뷰
-                    case .myItems:
-                        MyItemsView(router: router)
-
-                    // MARK: - 템플릿 목록뷰
-                    case .workshopTemplates:
-                        WorkshopTemplatesView(router: router)
-
-                    // MARK: - 재화 구매뷰
-                    case .coinCharge:
-                        CoinChargeView(
-                            router: router
-                        )
-
-                    // MARK: - AcrylicPhoto
-                    case .acrylicPhotoPreview:
-                        AcrylicPhotoPreView(router: router, viewModel: getAcrylicPhotoVM())
-                    case .acrylicPhotoCrop:
-                        AcrylicPhotoCropView(router: router, viewModel: getAcrylicPhotoVM())
-                    case .acrylicPhotoEdited:
-                        AcrylicPhotoEditedView(router: router, viewModel: getAcrylicPhotoVM())
-                    case .acrylicPhotoCustomizing:
-                        KeyringCustomizingView(
-                            router: router,
-                            viewModel: getAcrylicPhotoVM(),
-                            nextRoute: .acrylicPhotoInfoInput
-                        )
-                    case .acrylicPhotoInfoInput:
-                        KeyringInfoInputView(
-                            router: router,
-                            viewModel: getAcrylicPhotoVM(),
-                            nextRoute: .acrylicPhotoComplete
-                        )
-                    case .acrylicPhotoComplete:
-                        KeyringCompleteView(
-                            router: router,
-                            viewModel: getAcrylicPhotoVM(),
-                            navigationTitle: "키링이 완성되었어요!",
-                            onCloseFromFestival: festivalVM.isFromFestivalTab ? { workshopRouter in
-                                festivalVM.onKeyringCompleteFromFestival?(workshopRouter)
-                            } : nil
-                        )
-
-                    // MARK: - NeonSign
-                    case .NeonSignPreView:
-                        NeonSignPreView(router: router, viewModel: getNeonSignVM())
-                    case .neonSignCustomizing:
-                        KeyringCustomizingView(
-                            router: router,
-                            viewModel: getNeonSignVM(),
-                            nextRoute: .neonSignInfoInput
-                        )
-                    case .neonSignInfoInput:
-                        KeyringInfoInputView(
-                            router: router,
-                            viewModel: getNeonSignVM(),
-                            nextRoute: .neonSignComplete
-                        )
-                    case .neonSignComplete:
-                        KeyringCompleteView(
-                            router: router,
-                            viewModel: getNeonSignVM(),
-                            navigationTitle: "키링이 완성되었어요!",
-                            onCloseFromFestival: festivalVM.isFromFestivalTab ? { workshopRouter in
-                                festivalVM.onKeyringCompleteFromFestival?(workshopRouter)
-                            } : nil
-                        )
-
-                    // MARK: - Polaroid
-                    case .polaroidPreview:
-                        PolaroidPreview(router: router, viewModel: getPolaroidVM())
-                    case .polaroidCustomizing:
-                        KeyringCustomizingView(
-                            router: router,
-                            viewModel: getPolaroidVM(),
-                            nextRoute: .polaroidInfoInput
-                        )
-                    case .polaroidInfoInput:
-                        KeyringInfoInputView(
-                            router: router,
-                            viewModel: getPolaroidVM(),
-                            nextRoute: .polaroidComplete
-                        )
-                    case .polaroidComplete:
-                        KeyringCompleteView(
-                            router: router,
-                            viewModel: getPolaroidVM(),
-                            navigationTitle: "키링이 완성되었어요!",
-                            onCloseFromFestival: festivalVM.isFromFestivalTab ? { workshopRouter in
-                                festivalVM.onKeyringCompleteFromFestival?(workshopRouter)
-                            } : nil
-                        )
-                        
-                    // MARK: - Clear Sketch
-                    case .clearSketchPreview:
-                        ClearSketchPreview(router: router, viewModel: getClearSketchVM())
-                    case .clearSketchDrawing:
-                        ClearSketchDrawingView(router: router, viewModel: getClearSketchVM())
-                    case .clearSketchCrop:
-                        ClearSketchCropView(router: router, viewModel: getClearSketchVM())
-                    case .clearSketchCustomizing:
-                        KeyringCustomizingView(
-                            router: router,
-                            viewModel: getClearSketchVM(),
-                            nextRoute: .clearSketchInfoInput
-                        )
-                    case .clearSketchInfoInput:
-                        KeyringInfoInputView(
-                            router: router,
-                            viewModel: getClearSketchVM(),
-                            nextRoute: .clearSketchComplete
-                        )
-                    case .clearSketchComplete:
-                        KeyringCompleteView(
-                            router: router,
-                            viewModel: getClearSketchVM(),
-                            navigationTitle: "키링이 완성되었어요!",
-                            onCloseFromFestival: festivalVM.isFromFestivalTab ? { workshopRouter in
-                                festivalVM.onKeyringCompleteFromFestival?(workshopRouter)
-                            } : nil
-                        )
-
-                    // MARK: - PixelKeyring
-                    case .pixelPreview:
-                        PixelPreviewView(router: router, viewModel: getPixelKeyringVM())
-                    case .pixelDraw:
-                        PixelDrawView(router: router, viewModel: getPixelKeyringVM())
-                    case .pixelCustomizing:
-                        KeyringCustomizingView(
-                            router: router,
-                            viewModel: getPixelKeyringVM(),
-                            nextRoute: .pixelInfoInput
-                        )
-                    case .pixelInfoInput:
-                        KeyringInfoInputView(
-                            router: router,
-                            viewModel: getPixelKeyringVM(),
-                            nextRoute: .pixelComplete
-                        )
-                    case .pixelComplete:
-                        KeyringCompleteView(
-                            router: router,
-                            viewModel: getPixelKeyringVM(),
-                            navigationTitle: "키링이 완성되었어요!",
-                            onCloseFromFestival: festivalVM.isFromFestivalTab ? { workshopRouter in
-                                festivalVM.onKeyringCompleteFromFestival?(workshopRouter)
-                            } : nil
-                        )
-                        
-                    //MARK: - 쇼케이스용 페스티벌 임시 라우트 지정
-                    case .festivalKeyringDetailView(let keyring):
-                        FestivalKeyringDetailView(
-                            festivalRouter: festivalRouter,
-                            workshopRouter: router,
-                            viewModel: festivalVM,
-                            keyring: keyring
-                        )
-
-                    // MARK: - SpeechBubble
-                    case .speechBubblePreview:
-                        SpeechBubblePreview(router: router, viewModel: getSpeechBubbleVM())
-                    case .speechBubbleCustomizing:
-                        KeyringCustomizingView(
-                            router: router,
-                            viewModel: getSpeechBubbleVM(),
-                            nextRoute: .speechBubbleInfoInput
-                        )
-                    case .speechBubbleInfoInput:
-                        KeyringInfoInputView(
-                            router: router,
-                            viewModel: getSpeechBubbleVM(),
-                            nextRoute: .speechBubbleComplete
-                        )
-                    case .speechBubbleComplete:
-                        KeyringCompleteView(
-                            router: router,
-                            viewModel: getSpeechBubbleVM(),
-                            navigationTitle: "키링이 완성되었어요!"
-                        )
-
-                    // MARK: - 새로운 템플릿이 추가되면 여기에 루트를 지정해주면 됩니다.
-                    case .showcase25BoardView:
-                        Showcase25BoardView(festivalRouter: festivalRouter, workshopRouter: router, viewModel: festivalVM)
-                    }
-                }
+            WorkshopView(
+                router: router,
+                viewModel: workshopViewModel
+            )
+            .navigationDestination(for: WorkshopRoute.self) { route in
+                destination(for: route)
+            }
         }
         .tint(.black)
+    }
+
+    // MARK: - Destinations
+    @ViewBuilder
+    private func destination(for route: WorkshopRoute) -> some View {
+        switch route {
+        // MARK: - 공통 프리뷰
+        case .workshopPreview(let item):
+            if let template = item.base as? KeyringTemplate {
+                WorkshopPreview(router: router, viewModel: workshopViewModel, item: template)
+            } else if let background = item.base as? Background {
+                WorkshopPreview(router: router, viewModel: workshopViewModel, item: background)
+            } else if let carabiner = item.base as? Carabiner {
+                WorkshopPreview(router: router, viewModel: workshopViewModel, item: carabiner)
+            } else if let particle = item.base as? Particle {
+                WorkshopPreview(router: router, viewModel: workshopViewModel, item: particle)
+            } else if let sound = item.base as? Sound {
+                WorkshopPreview(router: router, viewModel: workshopViewModel, item: sound)
+            }
+
+        // MARK: - 내 창고뷰
+        case .myItems:
+            MyItemsView(router: router)
+
+        // MARK: - 템플릿 목록뷰
+        case .workshopTemplates:
+            WorkshopTemplatesView(router: router)
+
+        // MARK: - 재화 구매뷰
+        case .coinCharge:
+            CoinChargeView(router: router)
+
+        // MARK: - 쇼케이스용 페스티벌 임시 라우트
+        case .showcase25BoardView:
+            Showcase25BoardView(festivalRouter: festivalRouter, viewModel: festivalVM)
+
+        case .festivalKeyringDetailView(let keyring):
+            FestivalKeyringDetailView(
+                festivalRouter: festivalRouter,
+                viewModel: festivalVM,
+                keyring: keyring
+            )
+
+        // MARK: - AcrylicPhoto
+        case .acrylicPhotoPreview:
+            AcrylicPhotoPreView(router: router, viewModel: getAcrylicPhotoVM())
+        case .acrylicPhotoCrop:
+            AcrylicPhotoCropView(router: router, viewModel: getAcrylicPhotoVM())
+        case .acrylicPhotoEdited:
+            AcrylicPhotoEditedView(router: router, viewModel: getAcrylicPhotoVM())
+        case .acrylicPhotoCustomizing:
+            KeyringCustomizingView(
+                router: router,
+                viewModel: getAcrylicPhotoVM(),
+                nextRoute: .acrylicPhotoInfoInput
+            )
+        case .acrylicPhotoInfoInput:
+            KeyringInfoInputView(
+                router: router,
+                viewModel: getAcrylicPhotoVM(),
+                nextRoute: .acrylicPhotoComplete
+            )
+        case .acrylicPhotoComplete:
+            KeyringCompleteView(
+                router: router,
+                viewModel: getAcrylicPhotoVM(),
+                navigationTitle: "키링이 완성되었어요!",
+                onCloseFromFestival: festivalVM.isFromFestivalTab ? { router in
+                    festivalVM.onKeyringCompleteFromFestival?(router)
+                } : nil
+            )
+
+        // MARK: - NeonSign
+        case .neonSignPreview:
+            NeonSignPreView(router: router, viewModel: getNeonSignVM())
+        case .neonSignCustomizing:
+            KeyringCustomizingView(
+                router: router,
+                viewModel: getNeonSignVM(),
+                nextRoute: .neonSignInfoInput
+            )
+        case .neonSignInfoInput:
+            KeyringInfoInputView(
+                router: router,
+                viewModel: getNeonSignVM(),
+                nextRoute: .neonSignComplete
+            )
+        case .neonSignComplete:
+            KeyringCompleteView(
+                router: router,
+                viewModel: getNeonSignVM(),
+                navigationTitle: "키링이 완성되었어요!",
+                onCloseFromFestival: festivalVM.isFromFestivalTab ? { router in
+                    festivalVM.onKeyringCompleteFromFestival?(router)
+                } : nil
+            )
+
+        // MARK: - Polaroid
+        case .polaroidPreview:
+            PolaroidPreview(router: router, viewModel: getPolaroidVM())
+        case .polaroidCustomizing:
+            KeyringCustomizingView(
+                router: router,
+                viewModel: getPolaroidVM(),
+                nextRoute: .polaroidInfoInput
+            )
+        case .polaroidInfoInput:
+            KeyringInfoInputView(
+                router: router,
+                viewModel: getPolaroidVM(),
+                nextRoute: .polaroidComplete
+            )
+        case .polaroidComplete:
+            KeyringCompleteView(
+                router: router,
+                viewModel: getPolaroidVM(),
+                navigationTitle: "키링이 완성되었어요!",
+                onCloseFromFestival: festivalVM.isFromFestivalTab ? { router in
+                    festivalVM.onKeyringCompleteFromFestival?(router)
+                } : nil
+            )
+
+        // MARK: - ClearSketch
+        case .clearSketchPreview:
+            ClearSketchPreview(router: router, viewModel: getClearSketchVM())
+        case .clearSketchDrawing:
+            ClearSketchDrawingView(router: router, viewModel: getClearSketchVM())
+        case .clearSketchCrop:
+            ClearSketchCropView(router: router, viewModel: getClearSketchVM())
+        case .clearSketchCustomizing:
+            KeyringCustomizingView(
+                router: router,
+                viewModel: getClearSketchVM(),
+                nextRoute: .clearSketchInfoInput
+            )
+        case .clearSketchInfoInput:
+            KeyringInfoInputView(
+                router: router,
+                viewModel: getClearSketchVM(),
+                nextRoute: .clearSketchComplete
+            )
+        case .clearSketchComplete:
+            KeyringCompleteView(
+                router: router,
+                viewModel: getClearSketchVM(),
+                navigationTitle: "키링이 완성되었어요!",
+                onCloseFromFestival: festivalVM.isFromFestivalTab ? { router in
+                    festivalVM.onKeyringCompleteFromFestival?(router)
+                } : nil
+            )
+
+        // MARK: - Pixel
+        case .pixelPreview:
+            PixelPreviewView(router: router, viewModel: getPixelKeyringVM())
+        case .pixelDraw:
+            PixelDrawView(router: router, viewModel: getPixelKeyringVM())
+        case .pixelCustomizing:
+            KeyringCustomizingView(
+                router: router,
+                viewModel: getPixelKeyringVM(),
+                nextRoute: .pixelInfoInput
+            )
+        case .pixelInfoInput:
+            KeyringInfoInputView(
+                router: router,
+                viewModel: getPixelKeyringVM(),
+                nextRoute: .pixelComplete
+            )
+        case .pixelComplete:
+            KeyringCompleteView(
+                router: router,
+                viewModel: getPixelKeyringVM(),
+                navigationTitle: "키링이 완성되었어요!",
+                onCloseFromFestival: festivalVM.isFromFestivalTab ? { router in
+                    festivalVM.onKeyringCompleteFromFestival?(router)
+                } : nil
+            )
+
+        // MARK: - SpeechBubble
+        case .speechBubblePreview:
+            SpeechBubblePreview(router: router, viewModel: getSpeechBubbleVM())
+        case .speechBubbleCustomizing:
+            KeyringCustomizingView(
+                router: router,
+                viewModel: getSpeechBubbleVM(),
+                nextRoute: .speechBubbleInfoInput
+            )
+        case .speechBubbleInfoInput:
+            KeyringInfoInputView(
+                router: router,
+                viewModel: getSpeechBubbleVM(),
+                nextRoute: .speechBubbleComplete
+            )
+        case .speechBubbleComplete:
+            KeyringCompleteView(
+                router: router,
+                viewModel: getSpeechBubbleVM(),
+                navigationTitle: "키링이 완성되었어요!",
+                onCloseFromFestival: festivalVM.isFromFestivalTab ? { router in
+                    festivalVM.onKeyringCompleteFromFestival?(router)
+                } : nil
+            )
+        }
     }
 
     // MARK: - ViewModel Lazy Getters
@@ -256,7 +263,7 @@ struct WorkshopTab: View {
         }
         return viewModel
     }
-    
+
     private func getClearSketchVM() -> ClearSketchVM {
         guard let viewModel = clearSketchVM else {
             let newViewModel = ClearSketchVM()

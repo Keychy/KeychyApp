@@ -9,10 +9,10 @@ import SwiftUI
 
 struct FestivalTab: View {
     @Bindable var router: NavigationRouter<FestivalRoute>
-    @Bindable var workshopRouter: NavigationRouter<WorkshopRoute>
     @Bindable var showcaseVM: Showcase25BoardViewModel
+    var onSwitchToKeyringMaker: ((WorkshopRoute) -> Void)? = nil
     var onSwitchToWorkshop: ((WorkshopRoute) -> Void)? = nil
-    
+
     var body: some View {
         NavigationStack(path: $router.path) {
             FestivalView(router: router)
@@ -21,19 +21,20 @@ struct FestivalTab: View {
                     case .showcase25BoardView:
                         Showcase25BoardView(
                             festivalRouter: router,
-                            workshopRouter: workshopRouter,
                             viewModel: showcaseVM,
+                            onNavigateToKeyringMaker: { route in
+                                onSwitchToKeyringMaker?(route)
+                            },
                             onNavigateToWorkshop: { route in
                                 onSwitchToWorkshop?(route)
                             }
                         )
-                        
+
                     case .festivalView:
                         FestivalView(router: router)
                     case .festivalKeyringDetailView(let keyring):
                         FestivalKeyringDetailView(
                             festivalRouter: router,
-                            workshopRouter: workshopRouter,
                             viewModel: showcaseVM,
                             keyring: keyring
                         )
