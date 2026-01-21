@@ -87,6 +87,7 @@ struct ClearSketchDrawingView: View {
             Button("취소", role: .cancel) { }
             Button("확인", role: .destructive) {
                 viewModel.resetAll()
+                TabBarManager.show()
                 router.reset()
             }
         } message: {
