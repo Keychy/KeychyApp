@@ -116,7 +116,7 @@ extension KeyringCustomizingView {
             }
         } label: {
             HStack(spacing: 5) {
-                Image(.purchaseSheet)
+                Image(.myCoinMini)
 
                 Text("\(totalCartPrice)")
                     .typography(.nanum18EB12)
@@ -126,7 +126,7 @@ extension KeyringCustomizingView {
             }
             .foregroundStyle(.white100)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 6)
+            .padding(.vertical, 13.5)
             .background(.black80)
             .clipShape(RoundedRectangle(cornerRadius: 100))
         }
