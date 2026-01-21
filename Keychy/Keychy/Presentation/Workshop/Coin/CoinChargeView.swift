@@ -38,12 +38,14 @@ struct CoinChargeView<Route: Hashable>: View {
             if hasNetworkError {
                 networkErrorView
             } else {
-                VStack(spacing: 37) {
+                VStack {
                     // 내 아이템들 현황판
                     CurrentItemsCard()
+                        .padding(.bottom, 25)
 
                     // 코인 구매 섹션
                     coinSection
+                        .padding(.bottom, 45)
 
                     // 기타 아이템 섹션
                     otherItemsSection
@@ -115,10 +117,11 @@ struct CoinChargeView<Route: Hashable>: View {
 // MARK: - Coin Section 코인 구매 섹션
 extension CoinChargeView {
     private var coinSection: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: 0) {
             sectionTitle("코인")
+                .padding(.bottom, 15)
             
-            VStack(spacing: 30) {
+            VStack(spacing: 35) {
                 ForEach(manager.products, id: \.id) { product in
                     coinRow(for: product)
                 }
@@ -127,11 +130,8 @@ extension CoinChargeView {
     }
     
     private func coinRow(for product: Product) -> some View {
-        HStack(spacing: 8) {
-            Image(.buyKey)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 24, height: 24)
+        HStack(spacing: 5) {
+            Image(.myCoinMini)
 
             if let storeProduct = StoreProduct(rawValue: product.id) {
                 Text("\(storeProduct.coinAmount)개")
@@ -157,7 +157,7 @@ extension CoinChargeView {
                     .typography(.suit14M)
                     .foregroundStyle(.white100)
                     .frame(width: 74, height: 30)
-                    .background(.black100)
+                    .background(.black80)
                     .cornerRadius(4)
             }
             .disabled(isCoinPurchasing)
@@ -168,10 +168,11 @@ extension CoinChargeView {
 // MARK: - Other Items Section 하단 기타 아이템 섹션
 extension CoinChargeView {
     private var otherItemsSection: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: 0) {
             sectionTitle("기타 아이템")
+                .padding(.bottom, 15)
             
-            VStack(spacing: 30) {
+            VStack(spacing: 28) {
                 otherItemRow(item: .inventoryExpansion)
                 otherItemRow(item: .copyVoucher10)
             }
@@ -179,19 +180,16 @@ extension CoinChargeView {
     }
     
     private func otherItemRow(item: OtherItem) -> some View {
-        HStack(spacing: 10) {
+        HStack(alignment: .top ,spacing: 11) {
             Image(item.icon)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 24, height: 24)
             
             VStack(alignment: .leading, spacing: 4) {
                 Text(item.title)
                     .typography(.suit16M)
-                    .foregroundStyle(.black100)
+                    .foregroundStyle(.black80)
                 
                 Text(item.itemDescription)
-                    .typography(.suit13M)
+                    .typography(.suit12M)
                     .foregroundStyle(.gray500)
             }
             
@@ -201,18 +199,15 @@ extension CoinChargeView {
                 selectedItem = item
                 showPurchaseSheet = true
             } label: {
-                HStack(spacing: 2) {
-                    Image(.buyKey)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 24, height: 24)
+                HStack(spacing: 5) {
+                    Image(.myCoinMini)
                     
                     Text("\(item.price)")
                         .typography(.suit14SB18)
                         .foregroundStyle(.white)
                 }
-                .frame(width: 80, height: 30)
-                .background(.black100)
+                .frame(width: 74, height: 30)
+                .background(.black80)
                 .cornerRadius(4)
             }
         }
@@ -262,7 +257,6 @@ extension CoinChargeView {
             // 구매 버튼
             purchaseButton
                 .padding(.horizontal, 20)
-                .padding(.bottom, 30)
         }
         .background(
             GeometryReader { geometry in
@@ -295,13 +289,10 @@ extension CoinChargeView {
     private func purchaseItemRow(item: OtherItem) -> some View {
         HStack(spacing: 0) {
             Image(item.icon)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 24, height: 24)
                 .padding(.trailing, 12)
             
             Text(item.title)
-                .typography(.suit17B)
+                .typography(.suit16M)
                 .foregroundStyle(.black100)
             
             Spacer()
@@ -337,14 +328,14 @@ extension CoinChargeView {
             }
         } label: {
             HStack(spacing: 5) {
-                Image(.purchaseSheet)
+                Image(.myCoinMini)
 
                 Text("\(selectedItem?.price ?? 0)")
                     .typography(.nanum18EB12)
             }
             .foregroundStyle(.white100)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 6)
+            .padding(.vertical, 13.5)
             .background(.black80)
             .clipShape(RoundedRectangle(cornerRadius: 100))
         }
@@ -359,8 +350,8 @@ extension CoinChargeView {
         
         var icon: String {
             switch self {
-            case .inventoryExpansion: return "invenIcon"
-            case .copyVoucher10: return "copyBlack"
+            case .inventoryExpansion: return "myKeyringCountMini"
+            case .copyVoucher10: return "myCopyPassMini"
             }
         }
         
@@ -376,7 +367,7 @@ extension CoinChargeView {
             case .inventoryExpansion:
                 return "키링을 더 많이 만들 수 있어요!"
             case .copyVoucher10:
-                return "키링을 더 자유롭게 추가할 수 있어요!"
+                return "내 키링을 하나 더 만들 수 있어요!\n페스티벌에서 키링을 가져올 수 있어요!"
             }
         }
         

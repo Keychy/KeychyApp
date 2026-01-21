@@ -63,7 +63,7 @@ struct InvenExpandPopup: View {
                 
                 Button(action: onConfirm) {
                     HStack(spacing: 4) {
-                        Image(.buyKey)
+                        Image(.myCoinMini)
                             .resizable()
                             .frame(width: 34, height: 34)
                             .padding(.bottom, 4)

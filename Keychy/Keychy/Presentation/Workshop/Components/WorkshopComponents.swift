@@ -421,7 +421,7 @@ struct KeyringTemplateActionButton: View {
             onPurchase()
         } label: {
             HStack(spacing: 5) {
-                Image(.buyKey)
+                Image(.myCoinMini)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 32)
@@ -481,7 +481,7 @@ struct WorkshopItemActionButton: View {
             onPurchase()
         } label: {
             HStack(spacing: 5) {
-                Image(.buyKey)
+                Image(.myCoinMini)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 32)

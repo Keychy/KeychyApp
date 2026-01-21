@@ -447,7 +447,7 @@ extension BundleCreateView {
                 if isPurchasing {
                     LoadingAlert(type: .short40, message: nil)
                 } else {
-                    Image(.purchaseSheet)
+                    Image(.myCoinMini)
                 }
                 
                 Text("\(totalCartPrice)")

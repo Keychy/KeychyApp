@@ -41,7 +41,7 @@ struct PurchasePopup: View {
             // 버튼
             Button(action: onConfirm) {
                 HStack(spacing: 4) {
-                    Image(.buyKey)
+                    Image(.myCoinMini)
                         .resizable()
                         .frame(width: 34, height: 34)
                         .padding(.bottom, 4)
