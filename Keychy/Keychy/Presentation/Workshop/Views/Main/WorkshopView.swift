@@ -17,6 +17,7 @@ struct WorkshopView: View {
     @State var viewModel: WorkshopViewModel
     @State private var hasInitialized = false
     @State private var isTabBarVisible = true
+    @State var workshopToggle: Bool = true
 
     let categories = ["템플릿", "카라비너", "이펙트", "배경"]
 
@@ -63,7 +64,7 @@ struct WorkshopView: View {
                     .allowsHitTesting(false)
                 }
                 .background(
-                    Image(.back)
+                    Image(.workshopKeyringBGB)
                         .resizable()
                         .scaledToFill()
                 )
@@ -115,14 +116,15 @@ struct WorkshopView: View {
             VStack(spacing: 0) {
                 // 상단 배너 (코인 버튼 + 타이틀)
                 topBannerSection
-                
+
                 Spacer()
-                    .frame(height: 64)
-                
-                makingKeyringSection
-                
+                    .frame(height: 106)
+
+                // 최근 사용 템플릿
+                recentTemplateSection
+
                 Spacer()
-                    .frame(height: 14)
+                    .frame(height: 43)
 
                 // 메인 콘텐츠 (그리드)
                 mainContentSection
@@ -141,7 +143,7 @@ struct WorkshopView: View {
             }
             .padding(.top, 60)
             .background(alignment: .top) {
-                Image(.workshopBG)
+                Image(.workshopKeyringBGF)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
             }
@@ -160,6 +162,21 @@ extension WorkshopView {
         )
         .onChange(of: viewModel.sortOrder) { oldValue, newValue in
             viewModel.applySorting()
+        }
+    }
+}
+
+// MARK: - Recent Template Section
+
+extension WorkshopView {
+    /// 최근 사용 템플릿 섹션
+    var recentTemplateSection: some View {
+        WorkshopRecentTemplate(
+            templates: viewModel.recentTemplates,
+            isLoading: viewModel.isLoading
+        ) { template in
+            // 템플릿 상세 프리뷰로 이동
+            router.push(.workshopPreview(item: template))
         }
     }
 }

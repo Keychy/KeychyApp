@@ -173,6 +173,15 @@ class WorkshopViewModel {
         }
     }
 
+    /// 최근 사용 템플릿 (최신순, 최대 5개)
+    var recentTemplates: [KeyringTemplate] {
+        guard let user = userManager.currentUser else { return [] }
+        // recentTemplates ID 순서대로 템플릿 객체 반환
+        return user.recentTemplates.compactMap { templateId in
+            templates.first { $0.id == templateId }
+        }
+    }
+
     private var userManager: UserManager
 
     init(userManager: UserManager) {

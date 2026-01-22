@@ -27,6 +27,7 @@ struct KeychyUser: Identifiable {
     var carabiners: [String]
     var tags: [String]
     var keyrings: [String]
+    var recentTemplates: [String] // 최근 사용 템플릿 ID (최대 5개, 최신순)
     var termsAgreed: Bool         // 필수 약관 동의 여부
     var marketingAgreed: Bool     // 마케팅 수신 동의 여부
 
@@ -48,6 +49,7 @@ struct KeychyUser: Identifiable {
             "carabiners": carabiners,
             "tags": tags,
             "keyrings": keyrings,
+            "recentTemplates": recentTemplates,
             "termsAgreed": termsAgreed,
             "marketingAgreed": marketingAgreed
         ]
@@ -77,6 +79,7 @@ struct KeychyUser: Identifiable {
         self.carabiners = data["carabiners"] as? [String] ?? []
         self.tags = data["tags"] as? [String] ?? []
         self.keyrings = data["keyrings"] as? [String] ?? []
+        self.recentTemplates = data["recentTemplates"] as? [String] ?? []
         self.termsAgreed = data["termsAgreed"] as? Bool ?? false
         self.marketingAgreed = data["marketingAgreed"] as? Bool ?? false
     }
@@ -99,6 +102,7 @@ struct KeychyUser: Identifiable {
         self.carabiners = []
         self.tags = []
         self.keyrings = []
+        self.recentTemplates = []
         self.termsAgreed = false
         self.marketingAgreed = false
     }

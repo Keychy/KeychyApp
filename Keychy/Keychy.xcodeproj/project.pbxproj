@@ -120,7 +120,7 @@
 		4C4733242F1FA2AB005D2376 /* WorkshopPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733212F1FA2AB005D2376 /* WorkshopPreview.swift */; };
 		4C4733252F1FA2AB005D2376 /* MyItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733202F1FA2AB005D2376 /* MyItemsView.swift */; };
 		4C4733262F1FA2AB005D2376 /* WorkshopGridHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733182F1FA2AB005D2376 /* WorkshopGridHelpers.swift */; };
-		4C4733272F1FA2AB005D2376 /* WorkshopMakingKeyringSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C47331A2F1FA2AB005D2376 /* WorkshopMakingKeyringSection.swift */; };
+		4C4733272F1FA2AB005D2376 /* WorkshopBundleBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C47331A2F1FA2AB005D2376 /* WorkshopBundleBanner.swift */; };
 		4C4733282F1FA2AB005D2376 /* WorkshopTemplatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C47331C2F1FA2AB005D2376 /* WorkshopTemplatesView.swift */; };
 		4C4733292F1FA2AB005D2376 /* WorkshopMainContentSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733192F1FA2AB005D2376 /* WorkshopMainContentSection.swift */; };
 		4C47332A2F1FA2AB005D2376 /* WorkshopStickyHeaderSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C47331B2F1FA2AB005D2376 /* WorkshopStickyHeaderSection.swift */; };
@@ -197,6 +197,7 @@
 		4C4733D72F1FA388005D2376 /* AcrylicPhotoVM+Crop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733522F1FA388005D2376 /* AcrylicPhotoVM+Crop.swift */; };
 		4C4733D82F1FA388005D2376 /* AcrylicPhotoPreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C47335A2F1FA388005D2376 /* AcrylicPhotoPreView.swift */; };
 		4C4733D92F1FA388005D2376 /* TemplatePreviewComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733392F1FA388005D2376 /* TemplatePreviewComponents.swift */; };
+		4C4733E52F20FE34005D2376 /* WorkshopRecentTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733E42F20FE34005D2376 /* WorkshopRecentTemplate.swift */; };
 		4C65303B2EBA5FA0000F8154 /* CheckmarkAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */; };
 		4C65303E2EBA6042000F8154 /* ImageSaveAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */; };
 		4C6530442EBA8077000F8154 /* PurchaseSuccessAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6530432EBA8077000F8154 /* PurchaseSuccessAlert.swift */; };
@@ -549,7 +550,7 @@
 		4C4733162F1FA2AB005D2376 /* WorkshopViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopViewModel.swift; sourceTree = "<group>"; };
 		4C4733182F1FA2AB005D2376 /* WorkshopGridHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopGridHelpers.swift; sourceTree = "<group>"; };
 		4C4733192F1FA2AB005D2376 /* WorkshopMainContentSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopMainContentSection.swift; sourceTree = "<group>"; };
-		4C47331A2F1FA2AB005D2376 /* WorkshopMakingKeyringSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopMakingKeyringSection.swift; sourceTree = "<group>"; };
+		4C47331A2F1FA2AB005D2376 /* WorkshopBundleBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopBundleBanner.swift; sourceTree = "<group>"; };
 		4C47331B2F1FA2AB005D2376 /* WorkshopStickyHeaderSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopStickyHeaderSection.swift; sourceTree = "<group>"; };
 		4C47331C2F1FA2AB005D2376 /* WorkshopTemplatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopTemplatesView.swift; sourceTree = "<group>"; };
 		4C47331D2F1FA2AB005D2376 /* WorkshopTopBannerSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopTopBannerSection.swift; sourceTree = "<group>"; };
@@ -626,6 +627,7 @@
 		4C47338B2F1FA388005D2376 /* SpeechBubbleFramePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechBubbleFramePreviewView.swift; sourceTree = "<group>"; };
 		4C47338C2F1FA388005D2376 /* SpeechBubbleFrameSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechBubbleFrameSelectorView.swift; sourceTree = "<group>"; };
 		4C47338D2F1FA388005D2376 /* SpeechBubblePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechBubblePreview.swift; sourceTree = "<group>"; };
+		4C4733E42F20FE34005D2376 /* WorkshopRecentTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopRecentTemplate.swift; sourceTree = "<group>"; };
 		4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckmarkAlert.swift; sourceTree = "<group>"; };
 		4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSaveAlert.swift; sourceTree = "<group>"; };
 		4C6530432EBA8077000F8154 /* PurchaseSuccessAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseSuccessAlert.swift; sourceTree = "<group>"; };
@@ -1093,13 +1095,14 @@
 		4C47331F2F1FA2AB005D2376 /* Main */ = {
 			isa = PBXGroup;
 			children = (
-				4C4733182F1FA2AB005D2376 /* WorkshopGridHelpers.swift */,
+				4C47331E2F1FA2AB005D2376 /* WorkshopView.swift */,
+				4C47331D2F1FA2AB005D2376 /* WorkshopTopBannerSection.swift */,
 				4C4733192F1FA2AB005D2376 /* WorkshopMainContentSection.swift */,
-				4C47331A2F1FA2AB005D2376 /* WorkshopMakingKeyringSection.swift */,
 				4C47331B2F1FA2AB005D2376 /* WorkshopStickyHeaderSection.swift */,
 				4C47331C2F1FA2AB005D2376 /* WorkshopTemplatesView.swift */,
-				4C47331D2F1FA2AB005D2376 /* WorkshopTopBannerSection.swift */,
-				4C47331E2F1FA2AB005D2376 /* WorkshopView.swift */,
+				4C4733182F1FA2AB005D2376 /* WorkshopGridHelpers.swift */,
+				4C4733202F1FA2AB005D2376 /* MyItemsView.swift */,
+				4C4733212F1FA2AB005D2376 /* WorkshopPreview.swift */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -1107,9 +1110,10 @@
 		4C4733222F1FA2AB005D2376 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				4C4733152F1FA2AB005D2376 /* Components */,
+				4C4733E02F20FD18005D2376 /* Keyring */,
+				4C4733E22F20FD50005D2376 /* Bundle */,
 				4C47331F2F1FA2AB005D2376 /* Main */,
-				4C4733202F1FA2AB005D2376 /* MyItemsView.swift */,
-				4C4733212F1FA2AB005D2376 /* WorkshopPreview.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1397,6 +1401,22 @@
 				4C4733912F1FA388005D2376 /* Templates */,
 			);
 			path = KeyringMaker;
+			sourceTree = "<group>";
+		};
+		4C4733E02F20FD18005D2376 /* Keyring */ = {
+			isa = PBXGroup;
+			children = (
+				4C4733E42F20FE34005D2376 /* WorkshopRecentTemplate.swift */,
+			);
+			path = Keyring;
+			sourceTree = "<group>";
+		};
+		4C4733E22F20FD50005D2376 /* Bundle */ = {
+			isa = PBXGroup;
+			children = (
+				4C47331A2F1FA2AB005D2376 /* WorkshopBundleBanner.swift */,
+			);
+			path = Bundle;
 			sourceTree = "<group>";
 		};
 		4C65303C2EBA5FF3000F8154 /* Alerts */ = {
@@ -1963,7 +1983,6 @@
 		4CEC62682EAE08DF0099ECEE /* Workshop */ = {
 			isa = PBXGroup;
 			children = (
-				4C4733152F1FA2AB005D2376 /* Components */,
 				4C4733172F1FA2AB005D2376 /* ViewModels */,
 				4C4733222F1FA2AB005D2376 /* Views */,
 				C665DDE92EAEFAA800CE4495 /* Coin */,
@@ -2394,6 +2413,7 @@
 				4CEC621E2EAE08DA0099ECEE /* KeyringChainComponent.swift in Sources */,
 				4CEC621F2EAE08DA0099ECEE /* KeyringBodyComponent.swift in Sources */,
 				4CEC62202EAE08DA0099ECEE /* View+Extension.swift in Sources */,
+				4C4733E52F20FE34005D2376 /* WorkshopRecentTemplate.swift in Sources */,
 				38173D0C2EB8AD8800E36F7E /* CategoryContextMenu.swift in Sources */,
 				C6830F172EBB08380059379A /* MultiKeyringScene.swift in Sources */,
 				C6830F182EBB08380059379A /* MultiKeyringSceneView.swift in Sources */,
@@ -2560,7 +2580,7 @@
 				4C4733242F1FA2AB005D2376 /* WorkshopPreview.swift in Sources */,
 				4C4733252F1FA2AB005D2376 /* MyItemsView.swift in Sources */,
 				4C4733262F1FA2AB005D2376 /* WorkshopGridHelpers.swift in Sources */,
-				4C4733272F1FA2AB005D2376 /* WorkshopMakingKeyringSection.swift in Sources */,
+				4C4733272F1FA2AB005D2376 /* WorkshopBundleBanner.swift in Sources */,
 				4C4733282F1FA2AB005D2376 /* WorkshopTemplatesView.swift in Sources */,
 				4C4733292F1FA2AB005D2376 /* WorkshopMainContentSection.swift in Sources */,
 				4C47332A2F1FA2AB005D2376 /* WorkshopStickyHeaderSection.swift in Sources */,

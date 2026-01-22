@@ -194,6 +194,12 @@ extension KeyringInfoInputView {
                         soundId: soundId,
                         particleId: particleId
                     )
+
+                    // 최근 사용 템플릿 업데이트
+                    if !selectedTemplate.isEmpty {
+                        self.updateRecentTemplates(uid: uid, templateId: selectedTemplate)
+                    }
+
                     completion(true, keyringId)
                 } else {
                     completion(false, nil)
@@ -272,6 +278,44 @@ extension KeyringInfoInputView {
                     completion(true)
                 }
             }
+    }
+
+    // MARK: - 최근 사용 템플릿 업데이트
+    /// 새 템플릿을 맨 앞에 추가하고, 중복 제거 후 최대 10개 유지
+    private func updateRecentTemplates(uid: String, templateId: String) {
+        let userRef = db.collection("User").document(uid)
+
+        userRef.getDocument { snapshot, error in
+            guard let data = snapshot?.data(),
+                  error == nil else {
+                print("[RecentTemplates] 문서 읽기 실패: \(error?.localizedDescription ?? "")")
+                return
+            }
+
+            var recentTemplates = data["recentTemplates"] as? [String] ?? []
+
+            // 1. 이미 있으면 제거 (중복 방지)
+            recentTemplates.removeAll { $0 == templateId }
+
+            // 2. 맨 앞에 추가
+            recentTemplates.insert(templateId, at: 0)
+
+            // 3. 최대 5개 유지
+            if recentTemplates.count > 5 {
+                recentTemplates = Array(recentTemplates.prefix(5))
+            }
+
+            // 4. Firebase 업데이트
+            userRef.updateData([
+                "recentTemplates": recentTemplates
+            ]) { error in
+                if let error = error {
+                    print("[RecentTemplates] 업데이트 실패: \(error.localizedDescription)")
+                } else {
+                    print("[RecentTemplates] 업데이트 성공: \(templateId)")
+                }
+            }
+        }
     }
     
     // MARK: - 위젯용 이미지 캡처 및 캐싱
