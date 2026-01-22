@@ -1,5 +1,5 @@
 //
-//  WorkshopPreview.swift
+//  WorkshopItemDetailView.swift
 //  Keychy
 //
 //  Created by rundo on 11/3/25.
@@ -9,7 +9,7 @@ import SwiftUI
 import Lottie
 import FirebaseFirestore
 
-struct WorkshopPreview: View {
+struct WorkshopItemDetailView: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @Environment(UserManager.self) private var userManager
     @State private var effectManager = EffectManager.shared
@@ -174,7 +174,7 @@ struct WorkshopPreview: View {
 }
 
 // MARK: - Item Preview Section
-extension WorkshopPreview {
+extension WorkshopItemDetailView {
     private var itemPreview: some View {
         VStack {
             Spacer()
@@ -301,7 +301,7 @@ extension WorkshopPreview {
 }
 
 // MARK: - Action Button Section
-extension WorkshopPreview {
+extension WorkshopItemDetailView {
     private var actionButton: some View {
         WorkshopItemActionButton(
             item: item,

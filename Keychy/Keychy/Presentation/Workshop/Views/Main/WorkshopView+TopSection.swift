@@ -1,5 +1,5 @@
 //
-//  WorkshopTopBannerSection.swift
+//  WorkshopView+TopSection.swift
 //  Keychy
 //
 //  Created by rundo on 11/3/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - Top Banner Section
+// MARK: - Top Section
 
 extension WorkshopView {
     /// 상단 배너 (코인 버튼 + 타이틀)
@@ -79,5 +79,36 @@ extension WorkshopView {
         .frame(height: 44)
         .fixedSize(horizontal: true, vertical: true)
         .buttonStyle(.glass)
+    }
+    
+    /// 상단 그라데이션 오버레이
+    var topGradientOverlay: some View {
+        VStack {
+            LinearGradient(
+                colors: [
+                    Color.white.opacity(0.8),
+                    Color.white.opacity(0.6),
+                    Color.white.opacity(0.3),
+                    Color.clear
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: WorkshopLayout.gradientHeight)
+            .ignoresSafeArea(edges: .top)
+            Spacer()
+        }
+        .allowsHitTesting(false)
+    }
+    
+    /// 최근 사용 템플릿 섹션
+    var recentTemplateSection: some View {
+        WorkshopRecentTemplate(
+            templates: viewModel.recentTemplates,
+            isLoading: viewModel.isLoading
+        ) { template in
+            // 템플릿 상세 프리뷰로 이동
+            router.push(.workshopPreview(item: template))
+        }
     }
 }

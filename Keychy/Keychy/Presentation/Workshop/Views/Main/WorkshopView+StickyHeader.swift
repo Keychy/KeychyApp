@@ -1,5 +1,5 @@
 //
-//  WorkshopStickyHeaderSection.swift
+//  WorkshopView+StickyHeader.swift
 //  Keychy
 //
 //  Created by rundo on 11/3/25.

@@ -1,5 +1,5 @@
 //
-//  WorkshopMainContentSection.swift
+//  WorkshopView+MainContent.swift
 //  Keychy
 //
 //  Created by rundo on 11/3/25.
@@ -63,7 +63,7 @@ extension WorkshopView {
 
     /// 이펙트 전용 콘텐츠 (사운드 + 파티클)
     var effectContentView: some View {
-        WorkshopGridHelpers.effectGridView(
+        WorkshopGridBuilder.effectGridView(
             items: viewModel.filteredEffects,
             isSoundOwned: viewModel.isSoundOwned,
             isParticleOwned: viewModel.isParticleOwned,
@@ -78,7 +78,7 @@ extension WorkshopView {
         items: [T],
         isOwnedCheck: @escaping (T) -> Bool
     ) -> some View {
-        WorkshopGridHelpers.itemGridView(
+        WorkshopGridBuilder.itemGridView(
             items: items,
             isOwnedCheck: isOwnedCheck,
             router: router,

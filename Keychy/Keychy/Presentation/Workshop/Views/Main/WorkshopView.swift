@@ -93,30 +93,7 @@ struct WorkshopView: View {
         .withToast(position: .tabbar)
     }
 
-    // MARK: - Overlay
-
-    /// 상단 그라데이션 오버레이
-    var topGradientOverlay: some View {
-        VStack {
-            LinearGradient(
-                colors: [
-                    Color.white.opacity(0.8),
-                    Color.white.opacity(0.6),
-                    Color.white.opacity(0.3),
-                    Color.clear
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .frame(height: WorkshopLayout.gradientHeight)
-            .ignoresSafeArea(edges: .top)
-            Spacer()
-        }
-        .allowsHitTesting(false)
-    }
-
     // MARK: - Main Content
-
     /// 메인 스크롤 콘텐츠
     var mainScrollContent: some View {
         ScrollView(showsIndicators: false) {
@@ -158,59 +135,3 @@ struct WorkshopView: View {
     }
 }
 
-// MARK: - Sort Sheet
-
-extension WorkshopView {
-    /// 정렬 선택 시트
-    var sortSheet: some View {
-        WorkshopSortSheet(
-            showSheet: $viewModel.showFilterSheet,
-            sortOrder: $viewModel.sortOrder
-        )
-        .onChange(of: viewModel.sortOrder) { oldValue, newValue in
-            viewModel.applySorting()
-        }
-    }
-}
-
-// MARK: - Recent Template Section
-
-extension WorkshopView {
-    /// 최근 사용 템플릿 섹션
-    var recentTemplateSection: some View {
-        WorkshopRecentTemplate(
-            templates: viewModel.recentTemplates,
-            isLoading: viewModel.isLoading
-        ) { template in
-            // 템플릿 상세 프리뷰로 이동
-            router.push(.workshopPreview(item: template))
-        }
-    }
-}
-
-// MARK: - Network Error
-
-extension WorkshopView {
-    /// 네트워크 에러 화면
-    private var networkErrorView: some View {
-        ZStack(alignment: .top) {
-            NoInternetView(topPadding: getSafeAreaTop() + 40, onRetry: {
-                Task {
-                    await viewModel.retryFetchAllData()
-                }
-            })
-            .ignoresSafeArea()
-
-            // 고정 타이틀 바 (항상 표시)
-            HStack {
-                titleView
-                Spacer()
-                myItemBtn
-            }
-            .padding(.top, 60)
-            .padding(.horizontal, 20)
-            .padding(.bottom, 24)
-            .background(Color.white100)
-        }
-    }
-}

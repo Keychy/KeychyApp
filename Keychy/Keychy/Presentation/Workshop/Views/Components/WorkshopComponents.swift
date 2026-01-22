@@ -197,7 +197,7 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
         }
     }
 
-    /// 탭 핸들러 (키링은 바로 만들기, 나머지는 WorkshopPreview로 이동)
+    /// 탭 핸들러 (키링은 바로 만들기, 나머지는 WorkshopItemDetailView로 이동)
     private func handleTap() {
         // 네트워크 체크
         guard NetworkManager.shared.isConnected else {
@@ -215,7 +215,7 @@ struct WorkshopItemView<Item: WorkshopItem>: View {
             return
         }
 
-        // 나머지 아이템들은 WorkshopPreview로 이동
+        // 나머지 아이템들은 WorkshopItemDetailView로 이동
         if let background = item as? Background {
             router.push(.workshopPreview(item: AnyHashable(background)))
         } else if let carabiner = item as? Carabiner {

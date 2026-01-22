@@ -140,7 +140,7 @@ struct WorkshopTemplatesView: View {
             if filteredTemplates.isEmpty {
                 emptyContentView
             } else {
-                WorkshopGridHelpers.itemGridView(
+                WorkshopGridBuilder.itemGridView(
                     items: filteredTemplates,
                     isOwnedCheck: { _ in false },
                     router: router,

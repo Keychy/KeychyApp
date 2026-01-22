@@ -1,5 +1,5 @@
 //
-//  WorkshopGridHelpers.swift
+//  WorkshopGridBuilder.swift
 //  Keychy
 //
 //  Created by Rundo on 11/4/25.
@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-/// 워크샵 그리드 레이아웃 헬퍼 함수들
-struct WorkshopGridHelpers {
+/// 워크샵 그리드 레이아웃 빌더
+struct WorkshopGridBuilder {
 
     /// 통합 아이템 그리드 뷰 (제네릭 타입)
     static func itemGridView<T: WorkshopItem, EmptyView: View>(

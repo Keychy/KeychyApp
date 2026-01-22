@@ -40,20 +40,20 @@ struct WorkshopTab: View {
         // MARK: - 공통 프리뷰
         case .workshopPreview(let item):
             if let template = item.base as? KeyringTemplate {
-                WorkshopPreview(router: router, viewModel: workshopViewModel, item: template)
+                WorkshopItemDetailView(router: router, viewModel: workshopViewModel, item: template)
             } else if let background = item.base as? Background {
-                WorkshopPreview(router: router, viewModel: workshopViewModel, item: background)
+                WorkshopItemDetailView(router: router, viewModel: workshopViewModel, item: background)
             } else if let carabiner = item.base as? Carabiner {
-                WorkshopPreview(router: router, viewModel: workshopViewModel, item: carabiner)
+                WorkshopItemDetailView(router: router, viewModel: workshopViewModel, item: carabiner)
             } else if let particle = item.base as? Particle {
-                WorkshopPreview(router: router, viewModel: workshopViewModel, item: particle)
+                WorkshopItemDetailView(router: router, viewModel: workshopViewModel, item: particle)
             } else if let sound = item.base as? Sound {
-                WorkshopPreview(router: router, viewModel: workshopViewModel, item: sound)
+                WorkshopItemDetailView(router: router, viewModel: workshopViewModel, item: sound)
             }
 
         // MARK: - 내 창고뷰
         case .myItems:
-            MyItemsView(router: router)
+            WorkshopMyItemsView(router: router)
 
         // MARK: - 템플릿 목록뷰
         case .workshopTemplates:
