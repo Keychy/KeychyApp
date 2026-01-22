@@ -270,7 +270,7 @@ extension WorkshopItemDetailView {
                     .frame(width: 38, height: 38)
 
                 if isDownloading {
-                    CircularProgressView(progress: progress)
+                    DownloadProgressRing(progress: progress)
                         .frame(width: 20, height: 20)
                 } else {
                     Image(.whitePolygon)

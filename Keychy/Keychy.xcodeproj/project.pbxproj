@@ -119,7 +119,6 @@
 		4C4733232F1FA2AB005D2376 /* WorkshopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C47331E2F1FA2AB005D2376 /* WorkshopView.swift */; };
 		4C4733272F1FA2AB005D2376 /* WorkshopBundleBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C47331A2F1FA2AB005D2376 /* WorkshopBundleBanner.swift */; };
 		4C4733282F1FA2AB005D2376 /* WorkshopTemplatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C47331C2F1FA2AB005D2376 /* WorkshopTemplatesView.swift */; };
-		4C47332C2F1FA2AB005D2376 /* WorkshopComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733142F1FA2AB005D2376 /* WorkshopComponents.swift */; };
 		4C47332D2F1FA2AB005D2376 /* WorkshopViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733162F1FA2AB005D2376 /* WorkshopViewModel.swift */; };
 		4C4733942F1FA388005D2376 /* PixelDrawView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733772F1FA388005D2376 /* PixelDrawView.swift */; };
 		4C4733952F1FA388005D2376 /* ClearSketchDrawingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733652F1FA388005D2376 /* ClearSketchDrawingView.swift */; };
@@ -200,6 +199,13 @@
 		4C4733F32F225781005D2376 /* WorkshopMyItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733F22F225781005D2376 /* WorkshopMyItemsView.swift */; };
 		4C4733F52F225785005D2376 /* WorkshopGridBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733F42F225785005D2376 /* WorkshopGridBuilder.swift */; };
 		4C4733F72F225A2C005D2376 /* WorkshopItemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733F62F225A2C005D2376 /* WorkshopItemDetailView.swift */; };
+		4C4733F92F226143005D2376 /* TemplateActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733F82F226143005D2376 /* TemplateActionButton.swift */; };
+		4C4734002F22615D005D2376 /* WorkshopItemCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733FD2F22615D005D2376 /* WorkshopItemCard.swift */; };
+		4C4734012F22615D005D2376 /* WorkshopFilterBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733FA2F22615D005D2376 /* WorkshopFilterBar.swift */; };
+		4C4734022F22615D005D2376 /* WorkshopFilterChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733FB2F22615D005D2376 /* WorkshopFilterChip.swift */; };
+		4C4734032F22615D005D2376 /* WorkshopItemActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733FC2F22615D005D2376 /* WorkshopItemActionButton.swift */; };
+		4C4734042F22615D005D2376 /* WorkshopSkeletonBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733FE2F22615D005D2376 /* WorkshopSkeletonBox.swift */; };
+		4C4734052F22615D005D2376 /* WorkshopSortSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733FF2F22615D005D2376 /* WorkshopSortSheet.swift */; };
 		4C65303B2EBA5FA0000F8154 /* CheckmarkAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */; };
 		4C65303E2EBA6042000F8154 /* ImageSaveAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */; };
 		4C6530442EBA8077000F8154 /* PurchaseSuccessAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6530432EBA8077000F8154 /* PurchaseSuccessAlert.swift */; };
@@ -548,7 +554,6 @@
 		4C3688062EC07C4E00C64E75 /* NotoSansKR-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansKR-Thin.ttf"; sourceTree = "<group>"; };
 		4C3688112EC08A3100C64E75 /* HancomMalangMalang-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "HancomMalangMalang-Bold.otf"; sourceTree = "<group>"; };
 		4C3688122EC08A3100C64E75 /* HancomMalangMalang-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "HancomMalangMalang-Regular.otf"; sourceTree = "<group>"; };
-		4C4733142F1FA2AB005D2376 /* WorkshopComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopComponents.swift; sourceTree = "<group>"; };
 		4C4733162F1FA2AB005D2376 /* WorkshopViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopViewModel.swift; sourceTree = "<group>"; };
 		4C47331A2F1FA2AB005D2376 /* WorkshopBundleBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopBundleBanner.swift; sourceTree = "<group>"; };
 		4C47331C2F1FA2AB005D2376 /* WorkshopTemplatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopTemplatesView.swift; sourceTree = "<group>"; };
@@ -632,6 +637,13 @@
 		4C4733F22F225781005D2376 /* WorkshopMyItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopMyItemsView.swift; sourceTree = "<group>"; };
 		4C4733F42F225785005D2376 /* WorkshopGridBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopGridBuilder.swift; sourceTree = "<group>"; };
 		4C4733F62F225A2C005D2376 /* WorkshopItemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopItemDetailView.swift; sourceTree = "<group>"; };
+		4C4733F82F226143005D2376 /* TemplateActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateActionButton.swift; sourceTree = "<group>"; };
+		4C4733FA2F22615D005D2376 /* WorkshopFilterBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopFilterBar.swift; sourceTree = "<group>"; };
+		4C4733FB2F22615D005D2376 /* WorkshopFilterChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopFilterChip.swift; sourceTree = "<group>"; };
+		4C4733FC2F22615D005D2376 /* WorkshopItemActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopItemActionButton.swift; sourceTree = "<group>"; };
+		4C4733FD2F22615D005D2376 /* WorkshopItemCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopItemCard.swift; sourceTree = "<group>"; };
+		4C4733FE2F22615D005D2376 /* WorkshopSkeletonBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopSkeletonBox.swift; sourceTree = "<group>"; };
+		4C4733FF2F22615D005D2376 /* WorkshopSortSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopSortSheet.swift; sourceTree = "<group>"; };
 		4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckmarkAlert.swift; sourceTree = "<group>"; };
 		4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSaveAlert.swift; sourceTree = "<group>"; };
 		4C6530432EBA8077000F8154 /* PurchaseSuccessAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseSuccessAlert.swift; sourceTree = "<group>"; };
@@ -1083,8 +1095,13 @@
 		4C4733152F1FA2AB005D2376 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				4C4733FB2F22615D005D2376 /* WorkshopFilterChip.swift */,
+				4C4733FE2F22615D005D2376 /* WorkshopSkeletonBox.swift */,
+				4C4733FF2F22615D005D2376 /* WorkshopSortSheet.swift */,
+				4C4733FA2F22615D005D2376 /* WorkshopFilterBar.swift */,
+				4C4733FD2F22615D005D2376 /* WorkshopItemCard.swift */,
+				4C4733FC2F22615D005D2376 /* WorkshopItemActionButton.swift */,
 				4C4733F42F225785005D2376 /* WorkshopGridBuilder.swift */,
-				4C4733142F1FA2AB005D2376 /* WorkshopComponents.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -1146,6 +1163,7 @@
 			isa = PBXGroup;
 			children = (
 				4C4733352F1FA388005D2376 /* Recording */,
+				4C4733F82F226143005D2376 /* TemplateActionButton.swift */,
 				4C4733362F1FA388005D2376 /* CameraPicker.swift */,
 				4C4733372F1FA388005D2376 /* CinematicAppearanceModifier.swift */,
 				4C4733382F1FA388005D2376 /* PreviewGuiding.swift */,
@@ -2578,6 +2596,12 @@
 				C6B571062EC2337C0049F969 /* MultiKeyringCaptureScene+Capture.swift in Sources */,
 				3822DDC22EBBC712003125BE /* KeyringEditView.swift in Sources */,
 				4CF2A9662F0B8C5800BA9FDA /* PullToRefreshIndicator.swift in Sources */,
+				4C4734002F22615D005D2376 /* WorkshopItemCard.swift in Sources */,
+				4C4734012F22615D005D2376 /* WorkshopFilterBar.swift in Sources */,
+				4C4734022F22615D005D2376 /* WorkshopFilterChip.swift in Sources */,
+				4C4734032F22615D005D2376 /* WorkshopItemActionButton.swift in Sources */,
+				4C4734042F22615D005D2376 /* WorkshopSkeletonBox.swift in Sources */,
+				4C4734052F22615D005D2376 /* WorkshopSortSheet.swift in Sources */,
 				4CC3D36E2EC2801F0009D376 /* WelcomeKeyringViewModel.swift in Sources */,
 				4CC3D36F2EC2801F0009D376 /* IntroViewModel+WelcomeKeyring.swift in Sources */,
 				4C4733F52F225785005D2376 /* WorkshopGridBuilder.swift in Sources */,
@@ -2585,10 +2609,10 @@
 				4CEBB1722EFE66CF00CF53E2 /* ToastManager.swift in Sources */,
 				C6B56F232EC0341B0049F969 /* KeyringImageCache.swift in Sources */,
 				AA6298522EC233D2001576C0 /* BundleEditView.swift in Sources */,
+				4C4733F92F226143005D2376 /* TemplateActionButton.swift in Sources */,
 				4C4733232F1FA2AB005D2376 /* WorkshopView.swift in Sources */,
 				4C4733272F1FA2AB005D2376 /* WorkshopBundleBanner.swift in Sources */,
 				4C4733282F1FA2AB005D2376 /* WorkshopTemplatesView.swift in Sources */,
-				4C47332C2F1FA2AB005D2376 /* WorkshopComponents.swift in Sources */,
 				4C47332D2F1FA2AB005D2376 /* WorkshopViewModel.swift in Sources */,
 				386B17642ECD142600CCCC23 /* String+Extension.swift in Sources */,
 				4CEBB1652EFBA54200CF53E2 /* RootViewModel.swift in Sources */,
