@@ -189,7 +189,26 @@ class WorkshopViewModel {
         // isWorkshopBannerLoading은 항상 true로 시작
         // NukeAnimatedImageView가 GIF 로드 완료 시 자동으로 false로 변경
     }
-    
+
+    // MARK: - Initialization
+
+    /// 초기 데이터 로드 (네트워크 체크 → 카테고리 로드 → 백그라운드 프리페칭)
+    func initialize() async {
+        // 네트워크 체크
+        guard NetworkManager.shared.isConnected else {
+            hasNetworkError = true
+            return
+        }
+
+        // 1. 현재 선택된 카테고리만 먼저 로드 (빠른 초기 화면)
+        await fetchDataForCategory(selectedCategory)
+
+        // 2. 백그라운드에서 나머지 카테고리 프리페칭
+        Task.detached(priority: .background) { [weak self] in
+            await self?.prefetchRemainingData()
+        }
+    }
+
     // MARK: - Firebase Methods (통합)
     /// 특정 카테고리의 데이터만 가져오기
     func fetchDataForCategory(_ category: String) async {

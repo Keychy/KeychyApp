@@ -28,11 +28,11 @@ extension WorkshopView {
             Spacer()
             myItemBtn
         }
-        .padding(.top, 60)
+        .padding(.top, WorkshopLayout.topPadding)
         .padding(.horizontal, 20)
         .padding(.bottom, 24)
         .background(Color.white100)
-        .opacity(viewModel.mainContentOffset - 80 < 70 ? 1 : 0)
+        .opacity(viewModel.mainContentOffset - WorkshopLayout.titleBarOpacityThreshold < WorkshopLayout.titleBarOpacityRange ? 1 : 0)
     }
     
     /// 타이틀 뷰

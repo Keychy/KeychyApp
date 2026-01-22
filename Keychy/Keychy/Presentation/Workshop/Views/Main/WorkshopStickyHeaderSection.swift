@@ -27,7 +27,9 @@ extension WorkshopView {
         .padding(.bottom, 20)
         .background(.white)
         .clipShape(.rect(cornerRadii: .init(topLeading: 20, topTrailing: 20)))
-        .offset(y: max(120, min(730, viewModel.mainContentOffset - 20)))
+        .offset(y: max(WorkshopLayout.stickyHeaderMinOffset,
+                       min(WorkshopLayout.stickyHeaderMaxOffset,
+                           viewModel.mainContentOffset - WorkshopLayout.stickyHeaderOffsetAdjust)))
     }
 
     /// 필터바
