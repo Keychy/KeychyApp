@@ -27,7 +27,7 @@ struct WorkshopGridBuilder {
                     GridItem(.flexible())
                 ], spacing: 11) {
                     ForEach(items) { item in
-                        WorkshopItemView(
+                        WorkshopItemCard(
                             item: item,
                             isOwned: isOwnedCheck(item),
                             router: router,
@@ -61,7 +61,7 @@ struct WorkshopGridBuilder {
                 ], spacing: 11) {
                     ForEach(Array(items.enumerated()), id: \.offset) { index, item in
                         if let sound = item as? Sound {
-                            WorkshopItemView(
+                            WorkshopItemCard(
                                 item: sound,
                                 isOwned: isSoundOwned(sound),
                                 router: router,
@@ -69,7 +69,7 @@ struct WorkshopGridBuilder {
                             )
                             .id(sound.id)
                         } else if let particle = item as? Particle {
-                            WorkshopItemView(
+                            WorkshopItemCard(
                                 item: particle,
                                 isOwned: isParticleOwned(particle),
                                 router: router,

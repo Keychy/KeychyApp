@@ -208,7 +208,7 @@ extension TemplatePreviewBody {
     private var actionButton: some View {
         Group {
             if let template {
-                KeyringTemplateActionButton(
+                TemplateActionButton(
                     template: template,
                     isOwned: isOwned,
                     onMake: checkInventoryAndMake,
