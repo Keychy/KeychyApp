@@ -33,6 +33,10 @@ struct WorkshopView: View {
     @State private var isTabBarVisible = true
     @State var workshopToggle: Bool = true
 
+    // 만들기 메뉴 상태
+    @State var showMakeMenu: Bool = false
+    @State var makeMenuPosition: CGRect = .zero
+
     let categories = ["템플릿", "카라비너", "이펙트", "배경"]
 
     /// WorkshopTab에서 생성된 viewModel을 받아서 사용
@@ -73,6 +77,35 @@ struct WorkshopView: View {
         .toolbar(isTabBarVisible ? .visible : .hidden, for: .tabBar)
         .sheet(isPresented: $viewModel.showFilterSheet) {
             sortSheet
+        }
+        .overlay {
+            if showMakeMenu {
+                // 배경 탭으로 메뉴 닫기
+                Color.clear
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showMakeMenu = false
+                        }
+                    }
+
+                // 만들기 메뉴
+                WorkshopMakeMenu(
+                    position: makeMenuPosition,
+                    onKeyring: {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showMakeMenu = false
+                        }
+                        // TODO: - 키링 만들기 액션
+                    },
+                    onBundle: {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showMakeMenu = false
+                        }
+                        // TODO: - 뭉치 만들기 액션
+                    }
+                )
+            }
         }
         .task {
             guard !hasInitialized else { return }

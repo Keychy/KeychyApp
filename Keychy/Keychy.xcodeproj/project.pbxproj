@@ -206,6 +206,7 @@
 		4C4734032F22615D005D2376 /* WorkshopItemActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733FC2F22615D005D2376 /* WorkshopItemActionButton.swift */; };
 		4C4734042F22615D005D2376 /* WorkshopSkeletonBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733FE2F22615D005D2376 /* WorkshopSkeletonBox.swift */; };
 		4C4734052F22615D005D2376 /* WorkshopSortSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733FF2F22615D005D2376 /* WorkshopSortSheet.swift */; };
+		4C4734072F226B81005D2376 /* WorkshopMakeMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4734062F226B81005D2376 /* WorkshopMakeMenu.swift */; };
 		4C65303B2EBA5FA0000F8154 /* CheckmarkAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */; };
 		4C65303E2EBA6042000F8154 /* ImageSaveAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */; };
 		4C6530442EBA8077000F8154 /* PurchaseSuccessAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6530432EBA8077000F8154 /* PurchaseSuccessAlert.swift */; };
@@ -644,6 +645,7 @@
 		4C4733FD2F22615D005D2376 /* WorkshopItemCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopItemCard.swift; sourceTree = "<group>"; };
 		4C4733FE2F22615D005D2376 /* WorkshopSkeletonBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopSkeletonBox.swift; sourceTree = "<group>"; };
 		4C4733FF2F22615D005D2376 /* WorkshopSortSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopSortSheet.swift; sourceTree = "<group>"; };
+		4C4734062F226B81005D2376 /* WorkshopMakeMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopMakeMenu.swift; sourceTree = "<group>"; };
 		4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckmarkAlert.swift; sourceTree = "<group>"; };
 		4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSaveAlert.swift; sourceTree = "<group>"; };
 		4C6530432EBA8077000F8154 /* PurchaseSuccessAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseSuccessAlert.swift; sourceTree = "<group>"; };
@@ -1095,6 +1097,7 @@
 		4C4733152F1FA2AB005D2376 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				4C4734062F226B81005D2376 /* WorkshopMakeMenu.swift */,
 				4C4733FB2F22615D005D2376 /* WorkshopFilterChip.swift */,
 				4C4733FE2F22615D005D2376 /* WorkshopSkeletonBox.swift */,
 				4C4733FF2F22615D005D2376 /* WorkshopSortSheet.swift */,
@@ -2679,6 +2682,7 @@
 				4CF2A9682F0B91F300BA9FDA /* AnimatedGIFView.swift in Sources */,
 				4CC8D01F2EF0447100317467 /* ChangeNameViewModel.swift in Sources */,
 				4CC8D0202EF0447100317467 /* MyPageViewModel.swift in Sources */,
+				4C4734072F226B81005D2376 /* WorkshopMakeMenu.swift in Sources */,
 				38C147C52EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift in Sources */,
 				C6C35F3A2ED2A3C2009642F4 /* FestivalViewModel.swift in Sources */,
 				AAEB46AF2EC1D648002B13E5 /* BundleNameEditView.swift in Sources */,

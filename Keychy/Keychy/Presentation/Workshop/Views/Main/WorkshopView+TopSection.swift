@@ -15,7 +15,7 @@ extension WorkshopView {
         HStack {
             titleView
             Spacer()
-            myItemBtn
+            makeBtn
         }
         .padding(.horizontal, 20)
         .frame(maxWidth: .infinity)
@@ -67,9 +67,9 @@ extension WorkshopView {
                 Image(.myItem)
                     .resizable()
                     .scaledToFit()
-                
+
                 Spacer()
-                
+
                 Text("내 아이템")
                     .typography(.suit17B)
                     .foregroundColor(.black)
@@ -80,7 +80,37 @@ extension WorkshopView {
         .fixedSize(horizontal: true, vertical: true)
         .buttonStyle(.glass)
     }
-    
+
+    /// 만들기 메뉴 버튼
+    var makeBtn: some View {
+        Button {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                showMakeMenu.toggle()
+            }
+        } label: {
+            HStack(spacing: 8) {
+                Image(.makingIcon)
+                Text("만들기")
+                    .typography(.suit17B)
+                    .foregroundStyle(.black100)
+            }
+            .padding(.vertical, 4)
+            .padding(.horizontal, 4)
+        }
+        .buttonStyle(.glass)
+        .background(
+            GeometryReader { geo in
+                Color.clear
+                    .onAppear {
+                        makeMenuPosition = geo.frame(in: .global)
+                    }
+                    .onChange(of: geo.frame(in: .global)) { _, newValue in
+                        makeMenuPosition = newValue
+                    }
+            }
+        )
+    }
+
     /// 상단 그라데이션 오버레이
     var topGradientOverlay: some View {
         VStack {
