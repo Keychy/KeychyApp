@@ -8,6 +8,20 @@
 import SwiftUI
 import NukeUI
 
+// MARK: - Layout Constants
+
+enum WorkshopLayout {
+    static let topPadding: CGFloat = 60
+    static let recentTemplateTopSpacing: CGFloat = 106
+    static let mainContentTopSpacing: CGFloat = 43
+    static let gradientHeight: CGFloat = 100
+    static let stickyHeaderMinOffset: CGFloat = 120
+    static let stickyHeaderMaxOffset: CGFloat = 730
+    static let stickyHeaderOffsetAdjust: CGFloat = 20
+    static let titleBarOpacityThreshold: CGFloat = 80
+    static let titleBarOpacityRange: CGFloat = 70
+}
+
 // MARK: - Main View
 
 struct WorkshopView: View {
@@ -18,6 +32,10 @@ struct WorkshopView: View {
     @State private var hasInitialized = false
     @State private var isTabBarVisible = true
     @State var workshopToggle: Bool = true
+
+    // 만들기 메뉴 상태
+    @State var showMakeMenu: Bool = false
+    @State var makeMenuPosition: CGRect = .zero
 
     let categories = ["템플릿", "카라비너", "이펙트", "배경"]
 
@@ -46,22 +64,7 @@ struct WorkshopView: View {
                     stickyHeaderSection
 
                     // 상단 그라데이션 블러 오버레이
-                    VStack {
-                        LinearGradient(
-                            colors: [
-                                Color.white.opacity(0.8),
-                                Color.white.opacity(0.6),
-                                Color.white.opacity(0.3),
-                                Color.clear
-                            ],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                        .frame(height: 100)
-                        .ignoresSafeArea(edges: .top)
-                        Spacer()
-                    }
-                    .allowsHitTesting(false)
+                    topGradientOverlay
                 }
                 .background(
                     Image(.workshopKeyringBGB)
@@ -75,27 +78,42 @@ struct WorkshopView: View {
         .sheet(isPresented: $viewModel.showFilterSheet) {
             sortSheet
         }
+        .overlay {
+            if showMakeMenu {
+                // 배경 탭으로 메뉴 닫기
+                Color.clear
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showMakeMenu = false
+                        }
+                    }
+
+                // 만들기 메뉴
+                WorkshopMakeMenu(
+                    position: makeMenuPosition,
+                    onKeyring: {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showMakeMenu = false
+                        }
+                        // TODO: - 키링 만들기 액션
+                    },
+                    onBundle: {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showMakeMenu = false
+                        }
+                        // TODO: - 뭉치 만들기 액션
+                    }
+                )
+            }
+        }
         .task {
-            // 네트워크 체크
-            guard NetworkManager.shared.isConnected else {
-                viewModel.hasNetworkError = true
-                return
-            }
+            guard !hasInitialized else { return }
 
-            // 최초 한 번만 초기화
-            if !hasInitialized {
-                viewModel = WorkshopViewModel(userManager: userManager)
-                hasInitialized = true
+            viewModel = WorkshopViewModel(userManager: userManager)
+            hasInitialized = true
 
-                // 1. 현재 선택된 카테고리만 먼저 로드 (빠른 초기 화면)
-                await viewModel.fetchDataForCategory(viewModel.selectedCategory)
-                // Workshop 배너는 Home에서 이미 prefetch됨
-
-                // 2. 백그라운드에서 나머지 카테고리 프리페칭
-                Task.detached(priority: .background) {
-                    await viewModel.prefetchRemainingData()
-                }
-            }
+            await viewModel.initialize()
         }
         .onChange(of: viewModel.selectedCategory) { oldValue, newValue in
             viewModel.resetFilters()
@@ -108,8 +126,7 @@ struct WorkshopView: View {
         .withToast(position: .tabbar)
     }
 
-    // MARK: Main Content
-    
+    // MARK: - Main Content
     /// 메인 스크롤 콘텐츠
     var mainScrollContent: some View {
         ScrollView(showsIndicators: false) {
@@ -118,13 +135,13 @@ struct WorkshopView: View {
                 topBannerSection
 
                 Spacer()
-                    .frame(height: 106)
+                    .frame(height: WorkshopLayout.recentTemplateTopSpacing)
 
                 // 최근 사용 템플릿
                 recentTemplateSection
 
                 Spacer()
-                    .frame(height: 43)
+                    .frame(height: WorkshopLayout.mainContentTopSpacing)
 
                 // 메인 콘텐츠 (그리드)
                 mainContentSection
@@ -141,7 +158,7 @@ struct WorkshopView: View {
                         }
                     )
             }
-            .padding(.top, 60)
+            .padding(.top, WorkshopLayout.topPadding)
             .background(alignment: .top) {
                 Image(.workshopKeyringBGF)
                     .resizable()
@@ -151,59 +168,3 @@ struct WorkshopView: View {
     }
 }
 
-// MARK: - Sort Sheet
-
-extension WorkshopView {
-    /// 정렬 선택 시트
-    var sortSheet: some View {
-        WorkshopSortSheet(
-            showSheet: $viewModel.showFilterSheet,
-            sortOrder: $viewModel.sortOrder
-        )
-        .onChange(of: viewModel.sortOrder) { oldValue, newValue in
-            viewModel.applySorting()
-        }
-    }
-}
-
-// MARK: - Recent Template Section
-
-extension WorkshopView {
-    /// 최근 사용 템플릿 섹션
-    var recentTemplateSection: some View {
-        WorkshopRecentTemplate(
-            templates: viewModel.recentTemplates,
-            isLoading: viewModel.isLoading
-        ) { template in
-            // 템플릿 상세 프리뷰로 이동
-            router.push(.workshopPreview(item: template))
-        }
-    }
-}
-
-// MARK: - Network Error
-
-extension WorkshopView {
-    /// 네트워크 에러 화면
-    private var networkErrorView: some View {
-        ZStack(alignment: .top) {
-            NoInternetView(topPadding: getSafeAreaTop() + 40, onRetry: {
-                Task {
-                    await viewModel.retryFetchAllData()
-                }
-            })
-            .ignoresSafeArea()
-
-            // 고정 타이틀 바 (항상 표시)
-            HStack {
-                titleView
-                Spacer()
-                myItemBtn
-            }
-            .padding(.top, 60)
-            .padding(.horizontal, 20)
-            .padding(.bottom, 24)
-            .background(Color.white100)
-        }
-    }
-}

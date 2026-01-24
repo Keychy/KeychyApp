@@ -39,7 +39,7 @@ struct WorkshopRecentTemplate: View {
     private var loadingView: some View {
         HStack(spacing: 12) {
             ForEach(0..<3, id: \.self) { _ in
-                SkeletonBox(width: 112, height: 112)
+                WorkshopSkeletonBox(width: 112, height: 112)
             }
         }
         .padding(.horizontal, 20)

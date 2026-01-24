@@ -1,5 +1,5 @@
 //
-//  MyItemsView.swift
+//  WorkshopMyItemsView.swift
 //  Keychy
 //
 //  Created by rundo on 10/30/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct MyItemsView: View {
+struct WorkshopMyItemsView: View {
     
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @Environment(UserManager.self) private var userManager
@@ -143,7 +143,7 @@ struct MyItemsView: View {
         Group {
             switch viewModel.selectedCategory {
             case "템플릿":
-                WorkshopGridHelpers.itemGridView(
+                WorkshopGridBuilder.itemGridView(
                     items: filteredOwnedTemplates,
                     isOwnedCheck: { _ in false },
                     router: router,
@@ -151,7 +151,7 @@ struct MyItemsView: View {
                     emptyView: emptyContentView
                 )
             case "배경":
-                WorkshopGridHelpers.itemGridView(
+                WorkshopGridBuilder.itemGridView(
                     items: filteredOwnedBackgrounds,
                     isOwnedCheck: { _ in false },
                     router: router,
@@ -159,7 +159,7 @@ struct MyItemsView: View {
                     emptyView: emptyContentView
                 )
             case "카라비너":
-                WorkshopGridHelpers.itemGridView(
+                WorkshopGridBuilder.itemGridView(
                     items: filteredOwnedCarabiners,
                     isOwnedCheck: { _ in false },
                     router: router,
@@ -167,7 +167,7 @@ struct MyItemsView: View {
                     emptyView: emptyContentView
                 )
             case "이펙트":
-                WorkshopGridHelpers.effectGridView(
+                WorkshopGridBuilder.effectGridView(
                     items: filteredOwnedEffects,
                     isSoundOwned: { _ in false },
                     isParticleOwned: { _ in false },

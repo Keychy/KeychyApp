@@ -97,7 +97,7 @@ struct WorkshopTemplatesView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     ForEach(TemplateFilterType.allCases, id: \.self) { filter in
-                        FilterChip(
+                        WorkshopFilterChip(
                             title: filter.rawValue,
                             isSelected: viewModel.selectedTemplateFilter == filter
                         ) {
@@ -140,7 +140,7 @@ struct WorkshopTemplatesView: View {
             if filteredTemplates.isEmpty {
                 emptyContentView
             } else {
-                WorkshopGridHelpers.itemGridView(
+                WorkshopGridBuilder.itemGridView(
                     items: filteredTemplates,
                     isOwnedCheck: { _ in false },
                     router: router,

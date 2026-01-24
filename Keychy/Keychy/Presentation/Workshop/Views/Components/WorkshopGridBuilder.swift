@@ -1,5 +1,5 @@
 //
-//  WorkshopGridHelpers.swift
+//  WorkshopGridBuilder.swift
 //  Keychy
 //
 //  Created by Rundo on 11/4/25.
@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-/// 워크샵 그리드 레이아웃 헬퍼 함수들
-struct WorkshopGridHelpers {
+/// 워크샵 그리드 레이아웃 빌더
+struct WorkshopGridBuilder {
 
     /// 통합 아이템 그리드 뷰 (제네릭 타입)
     static func itemGridView<T: WorkshopItem, EmptyView: View>(
@@ -27,7 +27,7 @@ struct WorkshopGridHelpers {
                     GridItem(.flexible())
                 ], spacing: 11) {
                     ForEach(items) { item in
-                        WorkshopItemView(
+                        WorkshopItemCard(
                             item: item,
                             isOwned: isOwnedCheck(item),
                             router: router,
@@ -61,7 +61,7 @@ struct WorkshopGridHelpers {
                 ], spacing: 11) {
                     ForEach(Array(items.enumerated()), id: \.offset) { index, item in
                         if let sound = item as? Sound {
-                            WorkshopItemView(
+                            WorkshopItemCard(
                                 item: sound,
                                 isOwned: isSoundOwned(sound),
                                 router: router,
@@ -69,7 +69,7 @@ struct WorkshopGridHelpers {
                             )
                             .id(sound.id)
                         } else if let particle = item as? Particle {
-                            WorkshopItemView(
+                            WorkshopItemCard(
                                 item: particle,
                                 isOwned: isParticleOwned(particle),
                                 router: router,
