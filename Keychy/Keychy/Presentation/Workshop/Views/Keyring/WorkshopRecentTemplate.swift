@@ -130,19 +130,3 @@ private struct RecentTemplateCard: View {
         .buttonStyle(.plain)
     }
 }
-
-// MARK: - Preview
-
-#Preview("로딩 상태") {
-    WorkshopRecentTemplate(
-        templates: [],
-        isLoading: true
-    )
-}
-
-#Preview("빈 상태") {
-    WorkshopRecentTemplate(
-        templates: [],
-        isLoading: false
-    )
-}

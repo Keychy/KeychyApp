@@ -77,20 +77,3 @@ private struct CategoryTabButton: View {
         }
     }
 }
-
-// MARK: - Preview
-
-#Preview("예시 프리뷰") {
-    @Previewable @State var selectedCategory = "키링"
-    let categories = ["키링", "카라비너", "이펫트", "배경"]
-
-    VStack() {
-        CategoryTabBar(
-            categories: categories,
-            selectedCategory: $selectedCategory
-        )
-
-        Spacer()
-    }
-    .padding()
-}
