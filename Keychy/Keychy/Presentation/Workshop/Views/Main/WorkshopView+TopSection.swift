@@ -43,7 +43,7 @@ extension WorkshopView {
             } label: {
                 Text("키링")
                     .typography(.nanum24EB)
-                    .foregroundStyle(viewModel.workshopToggle ? .black100 : .gray100)
+                    .foregroundStyle(viewModel.workshopToggle ? .black100 : .gray200)
             }
 
             Button {
@@ -51,7 +51,7 @@ extension WorkshopView {
             } label: {
                 Text("뭉치")
                     .typography(.nanum24EB)
-                    .foregroundStyle(viewModel.workshopToggle ? .gray100 : .black100)
+                    .foregroundStyle(viewModel.workshopToggle ? .gray200 : .black100)
             }
         }
     }
