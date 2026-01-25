@@ -30,7 +30,6 @@ struct WorkshopView: View {
     @Environment(UserManager.self) var userManager
     @State var viewModel: WorkshopViewModel
     @State private var hasInitialized = false
-    @State private var isTabBarVisible = true
 
     // 만들기 메뉴 상태
     @State var showMakeMenu: Bool = false
@@ -71,7 +70,6 @@ struct WorkshopView: View {
             }
         }
         .ignoresSafeArea()
-        .toolbar(isTabBarVisible ? .visible : .hidden, for: .tabBar)
         .sheet(isPresented: $viewModel.showFilterSheet) {
             sortSheet
         }
@@ -134,8 +132,10 @@ struct WorkshopView: View {
                 Spacer()
                     .frame(height: WorkshopLayout.recentTemplateTopSpacing)
 
-                // 최근 사용 템플릿
-                recentTemplateSection
+                // 키링 탭일 때만 최근 사용 템플릿 표시
+                if viewModel.workshopToggle {
+                    recentTemplateSection
+                }
 
                 Spacer()
                     .frame(height: WorkshopLayout.mainContentTopSpacing)
