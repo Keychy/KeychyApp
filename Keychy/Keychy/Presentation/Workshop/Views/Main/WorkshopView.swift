@@ -31,13 +31,10 @@ struct WorkshopView: View {
     @State var viewModel: WorkshopViewModel
     @State private var hasInitialized = false
     @State private var isTabBarVisible = true
-    @State var workshopToggle: Bool = true
 
     // 만들기 메뉴 상태
     @State var showMakeMenu: Bool = false
     @State var makeMenuPosition: CGRect = .zero
-
-    let categories = ["템플릿", "카라비너", "이펙트", "배경"]
 
     /// WorkshopTab에서 생성된 viewModel을 받아서 사용
     init(

@@ -243,6 +243,8 @@
 		4C8426602ED3585A0050B6FE /* gulimche-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */; };
 		4C8426642ED375840050B6FE /* ColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8426632ED375840050B6FE /* ColorPalette.swift */; };
 		4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A596832EAFEAA20003D712 /* ProfileSetupView.swift */; };
+		4C86A6122F25C0B10023AA2D /* WorkshopBundleGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C86A6112F25C0B10023AA2D /* WorkshopBundleGridView.swift */; };
+		4C86A6142F25C0BA0023AA2D /* WorkshopKeyringGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C86A6132F25C0BA0023AA2D /* WorkshopKeyringGridView.swift */; };
 		4CA9C6A62EC9D11600CA546B /* CustomNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9C6A42EC9D11600CA546B /* CustomNavigationBar.swift */; };
 		4CA9C6A82EC9DB5300CA546B /* View+SafeAreaBottom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9C6A72EC9DB5300CA546B /* View+SafeAreaBottom.swift */; };
 		4CA9C6D62ECB7AEA00CA546B /* BadWords.json in Resources */ = {isa = PBXBuildFile; fileRef = 4CA9C6D52ECB7AEA00CA546B /* BadWords.json */; };
@@ -681,6 +683,8 @@
 		4C77753C2EB1343600981C3E /* IntroViewModel+Signup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntroViewModel+Signup.swift"; sourceTree = "<group>"; };
 		4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; path = "gulimche-Regular.ttf"; sourceTree = "<group>"; };
 		4C8426632ED375840050B6FE /* ColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPalette.swift; sourceTree = "<group>"; };
+		4C86A6112F25C0B10023AA2D /* WorkshopBundleGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopBundleGridView.swift; sourceTree = "<group>"; };
+		4C86A6132F25C0BA0023AA2D /* WorkshopKeyringGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopKeyringGridView.swift; sourceTree = "<group>"; };
 		4CA9C6A42EC9D11600CA546B /* CustomNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationBar.swift; sourceTree = "<group>"; };
 		4CA9C6A72EC9DB5300CA546B /* View+SafeAreaBottom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+SafeAreaBottom.swift"; sourceTree = "<group>"; };
 		4CA9C6D52ECB7AEA00CA546B /* BadWords.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = BadWords.json; sourceTree = "<group>"; };
@@ -1434,6 +1438,7 @@
 			isa = PBXGroup;
 			children = (
 				4C4733E42F20FE34005D2376 /* WorkshopRecentTemplate.swift */,
+				4C86A6132F25C0BA0023AA2D /* WorkshopKeyringGridView.swift */,
 			);
 			path = Keyring;
 			sourceTree = "<group>";
@@ -1442,6 +1447,7 @@
 			isa = PBXGroup;
 			children = (
 				4C47331A2F1FA2AB005D2376 /* WorkshopBundleBanner.swift */,
+				4C86A6112F25C0B10023AA2D /* WorkshopBundleGridView.swift */,
 			);
 			path = Bundle;
 			sourceTree = "<group>";
@@ -2617,6 +2623,7 @@
 				4C4733272F1FA2AB005D2376 /* WorkshopBundleBanner.swift in Sources */,
 				4C4733282F1FA2AB005D2376 /* WorkshopTemplatesView.swift in Sources */,
 				4C47332D2F1FA2AB005D2376 /* WorkshopViewModel.swift in Sources */,
+				4C86A6142F25C0BA0023AA2D /* WorkshopKeyringGridView.swift in Sources */,
 				386B17642ECD142600CCCC23 /* String+Extension.swift in Sources */,
 				4CEBB1652EFBA54200CF53E2 /* RootViewModel.swift in Sources */,
 				4CC3D37F2EC464D70009D376 /* IntroAppGuidingView.swift in Sources */,
@@ -2650,6 +2657,7 @@
 				38C147C72EB1F57F00A8E511 /* StorageManager.swift in Sources */,
 				4CEC629F2EAE09990099ECEE /* BundleDetailView.swift in Sources */,
 				4CEBB1692EFBDCE900CF53E2 /* NetworkManager.swift in Sources */,
+				4C86A6122F25C0B10023AA2D /* WorkshopBundleGridView.swift in Sources */,
 				4CEC62A02EAE09990099ECEE /* BundleInventoryView.swift in Sources */,
 				38283A812EBF511C00BE45A5 /* PackagePopup.swift in Sources */,
 				4CC8D00B2EEFC36900317467 /* AlarmViewModel.swift in Sources */,

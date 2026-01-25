@@ -13,9 +13,9 @@ extension WorkshopView {
     /// 스티키 헤더 (카테고리 + 필터)
     var stickyHeaderSection: some View {
         VStack(spacing: 0) {
-            // 카테고리 탭바
+            // 카테고리 탭바 (키링/뭉치 탭에 따라 동적 변경)
             CategoryTabBar(
-                categories: categories,
+                categories: viewModel.currentCategories,
                 selectedCategory: $viewModel.selectedCategory
             )
             .padding(.top, 12)

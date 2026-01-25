@@ -53,56 +53,39 @@ struct WorkshopFilterBar: View {
     }
 
     /// 카테고리별 필터 옵션
+    @ViewBuilder
     private var categorySpecificFilters: some View {
-        Group {
-            switch viewModel.selectedCategory {
-            case "템플릿":
-                ForEach(TemplateFilterType.allCases, id: \.self) { filter in
-                    WorkshopFilterChip(
-                        title: filter.rawValue,
-                        isSelected: viewModel.selectedTemplateFilter == filter
-                    ) {
-                        viewModel.selectedTemplateFilter =
-                            viewModel.selectedTemplateFilter == filter ? nil : filter
-                    }
-                }
+        switch viewModel.selectedCategory {
+        // 키링 탭: 전체/이미지/텍스트/드로잉은 카테고리 자체가 필터 → 추가 필터 없음
+        case "전체", "이미지", "텍스트", "드로잉":
+            EmptyView()
 
-            case "이펙트":
-                ForEach(EffectFilterType.allCases, id: \.self) { filter in
-                    WorkshopFilterChip(
-                        title: filter.rawValue,
-                        isSelected: viewModel.selectedEffectFilter == filter
-                    ) {
-                        viewModel.selectedEffectFilter =
-                            viewModel.selectedEffectFilter == filter ? nil : filter
-                    }
+        // 뭉치 탭: 카라비너 태그 필터
+        case "카라비너":
+            ForEach(viewModel.availableCarabinerTags, id: \.self) { tag in
+                WorkshopFilterChip(
+                    title: tag,
+                    isSelected: viewModel.selectedCommonFilter == tag
+                ) {
+                    viewModel.selectedCommonFilter =
+                        viewModel.selectedCommonFilter == tag ? nil : tag
                 }
-
-            case "카라비너":
-                ForEach(viewModel.availableCarabinerTags, id: \.self) { tag in
-                    WorkshopFilterChip(
-                        title: tag,
-                        isSelected: viewModel.selectedCommonFilter == tag
-                    ) {
-                        viewModel.selectedCommonFilter =
-                            viewModel.selectedCommonFilter == tag ? nil : tag
-                    }
-                }
-
-            case "배경":
-                ForEach(viewModel.availableBackgroundTags, id: \.self) { tag in
-                    WorkshopFilterChip(
-                        title: tag,
-                        isSelected: viewModel.selectedCommonFilter == tag
-                    ) {
-                        viewModel.selectedCommonFilter =
-                            viewModel.selectedCommonFilter == tag ? nil : tag
-                    }
-                }
-
-            default:
-                EmptyView()
             }
+
+        // 뭉치 탭: 배경 태그 필터
+        case "배경":
+            ForEach(viewModel.availableBackgroundTags, id: \.self) { tag in
+                WorkshopFilterChip(
+                    title: tag,
+                    isSelected: viewModel.selectedCommonFilter == tag
+                ) {
+                    viewModel.selectedCommonFilter =
+                        viewModel.selectedCommonFilter == tag ? nil : tag
+                }
+            }
+
+        default:
+            EmptyView()
         }
     }
 }
