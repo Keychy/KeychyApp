@@ -28,13 +28,41 @@ struct WorkshopBundleGridView: View {
         .background(.white100)
     }
 
+    /// 필터링된 카라비너 목록
+    private var filteredCarabiners: [Carabiner] {
+        var result = viewModel.filteredCarabiners
+
+        if viewModel.showFreeOnly {
+            result = result.filter { $0.isFree }
+        }
+        if viewModel.showOwnedOnly {
+            result = result.filter { viewModel.isCarabinerOwned($0) }
+        }
+
+        return result
+    }
+
+    /// 필터링된 배경 목록
+    private var filteredBackgrounds: [Background] {
+        var result = viewModel.filteredBackgrounds
+
+        if viewModel.showFreeOnly {
+            result = result.filter { $0.isFree }
+        }
+        if viewModel.showOwnedOnly {
+            result = result.filter { viewModel.isBackgroundOwned($0) }
+        }
+
+        return result
+    }
+
     /// 뭉치 그리드 콘텐츠 (카테고리별)
     @ViewBuilder
     private var bundleGridContent: some View {
         switch viewModel.selectedCategory {
         case "카라비너":
             WorkshopGridBuilder.itemGridView(
-                items: viewModel.filteredCarabiners,
+                items: filteredCarabiners,
                 isOwnedCheck: viewModel.isCarabinerOwned,
                 router: router,
                 viewModel: viewModel,
@@ -42,7 +70,7 @@ struct WorkshopBundleGridView: View {
             )
         case "배경":
             WorkshopGridBuilder.itemGridView(
-                items: viewModel.filteredBackgrounds,
+                items: filteredBackgrounds,
                 isOwnedCheck: viewModel.isBackgroundOwned,
                 router: router,
                 viewModel: viewModel,

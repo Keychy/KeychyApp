@@ -30,18 +30,31 @@ struct WorkshopKeyringGridView: View {
 
     /// 필터링된 템플릿 목록
     private var filteredTemplates: [KeyringTemplate] {
+        var result: [KeyringTemplate]
+
+        // 1. 카테고리 필터
         switch viewModel.selectedCategory {
         case "전체":
-            return viewModel.filteredTemplates
+            result = viewModel.filteredTemplates
         case "이미지":
-            return viewModel.templates.filter { $0.tags.contains("이미지") }
+            result = viewModel.templates.filter { $0.tags.contains("이미지") }
         case "텍스트":
-            return viewModel.templates.filter { $0.tags.contains("텍스트") }
+            result = viewModel.templates.filter { $0.tags.contains("텍스트") }
         case "드로잉":
-            return viewModel.templates.filter { $0.tags.contains("드로잉") }
+            result = viewModel.templates.filter { $0.tags.contains("드로잉") }
         default:
-            return viewModel.filteredTemplates
+            result = viewModel.filteredTemplates
         }
+
+        // 2. 퀵 필터 적용
+        if viewModel.showFreeOnly {
+            result = result.filter { $0.isFree }
+        }
+        if viewModel.showOwnedOnly {
+            result = result.filter { viewModel.isTemplateOwned($0) }
+        }
+
+        return result
     }
 
     /// 템플릿 그리드 콘텐츠

@@ -20,6 +20,27 @@ enum EffectFilterType: String, CaseIterable {
     case sound = "사운드"
     case particle = "파티클"
 }
+
+/// 퀵 필터 타입 (무료, 마이)
+enum QuickFilter: CaseIterable {
+    case free
+    case owned
+
+    var title: String {
+        switch self {
+        case .free: return "무료"
+        case .owned: return "마이"
+        }
+    }
+    
+    var icon: ImageResource? {
+        switch self {
+        case .free: return nil
+        case .owned: return .quickFilterOwned
+        }
+    }
+    
+}
 // MARK: - WorkshopItem Protocol
 
 /// 공방에서 판매되는 모든 아이템이 준수해야 하는 프로토콜
@@ -111,6 +132,10 @@ class WorkshopViewModel {
     var selectedEffectFilter: EffectFilterType? = .sound
     var sortOrder: String = "최신순"
     var showFilterSheet: Bool = false
+
+    // MARK: - Quick Filter Properties
+    var showFreeOnly: Bool = false
+    var showOwnedOnly: Bool = false
     var mainContentOffset: CGFloat = 439
     private var refreshTrigger: Bool = false
 
