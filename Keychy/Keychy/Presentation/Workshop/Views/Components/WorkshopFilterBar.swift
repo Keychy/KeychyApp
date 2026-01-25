@@ -25,7 +25,6 @@ struct WorkshopFilterBar: View {
                 }
             }
         }
-        .padding(.top, 12)
     }
 
     /// 정렬 버튼

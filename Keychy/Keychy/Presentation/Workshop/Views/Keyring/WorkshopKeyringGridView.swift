@@ -62,7 +62,8 @@ struct WorkshopKeyringGridView: View {
             WorkshopSkeletonBox(width: twoGridCellWidth, height: twoGridCellHeight)
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 92)
+        .padding(.top, 80)
+        .padding(.bottom, 92)
     }
 
     /// 빈 콘텐츠 뷰

@@ -18,22 +18,17 @@ extension WorkshopView {
                 categories: viewModel.currentCategories,
                 selectedCategory: $viewModel.selectedCategory
             )
-            .padding(.top, 12)
-
+            .padding(.bottom, 12)
+            
             // 필터바
-            filterBar
+            WorkshopFilterBar(viewModel: $viewModel)
         }
         .padding(.horizontal, 20)
-        .padding(.bottom, 20)
+        .padding(.vertical, 12)
         .background(.white)
         .clipShape(.rect(cornerRadii: .init(topLeading: 20, topTrailing: 20)))
         .offset(y: max(WorkshopLayout.stickyHeaderMinOffset,
                        min(WorkshopLayout.stickyHeaderMaxOffset,
                            viewModel.mainContentOffset - WorkshopLayout.stickyHeaderOffsetAdjust)))
-    }
-
-    /// 필터바
-    var filterBar: some View {
-        WorkshopFilterBar(viewModel: $viewModel)
     }
 }
