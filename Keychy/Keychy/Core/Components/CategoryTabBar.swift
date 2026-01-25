@@ -62,13 +62,13 @@ private struct CategoryTabButton: View {
                 Text(title)
                     .typography(isSelected ? .suit15B25 : .suit15SB25)
                     .foregroundStyle(isSelected ? Color.main500 : Color.black100)
-                
+
                 Rectangle()
                     .fill(isSelected ? Color.main500 : Color.clear)
                     .frame(height: 2)
-                    .padding(.horizontal, -4) // 좌우로 2pt씩 확장
+                    .padding(.horizontal, 10)
             }
-            .fixedSize(horizontal: true, vertical: false)
+            .contentShape(Rectangle())
         }
         .frame(maxWidth: .infinity)
         .buttonStyle(.plain)
