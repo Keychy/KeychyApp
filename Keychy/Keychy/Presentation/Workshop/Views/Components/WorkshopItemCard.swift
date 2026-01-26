@@ -155,11 +155,11 @@ struct WorkshopPriceOverlay<Item: WorkshopItem>: View {
             // 유료 아이콘
             VStack {
                 HStack {
-                    Image(.paidIcon)
+                    Image(.myCoin)
                     Spacer()
                 }
-                .padding(.top, 7)
-                .padding(.leading, 10)
+                .padding(.top, 9.84)
+                .padding(.leading, 9.35)
                 Spacer()
             }
             .opacity(isFree ? 0 : 1)

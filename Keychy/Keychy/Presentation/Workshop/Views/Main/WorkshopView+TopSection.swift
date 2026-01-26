@@ -26,7 +26,7 @@ extension WorkshopView {
         HStack {
             titleView
             Spacer()
-            myItemBtn
+            makeBtn
         }
         .padding(.top, WorkshopLayout.topPadding)
         .padding(.horizontal, 20)
@@ -35,52 +35,27 @@ extension WorkshopView {
         .opacity(viewModel.mainContentOffset - WorkshopLayout.titleBarOpacityThreshold < WorkshopLayout.titleBarOpacityRange ? 1 : 0)
     }
     
-    /// 타이틀 뷰
+    /// 타이틀 뷰 (키링/뭉치 탭 전환)
     var titleView: some View {
         HStack(spacing: 10) {
             Button {
-                // TODO: - 공방 탭 액션
-                workshopToggle = true
+                viewModel.workshopToggle = true
             } label: {
                 Text("키링")
                     .typography(.nanum24EB)
-                    .foregroundStyle(workshopToggle ? .black100 : .gray100)
+                    .foregroundStyle(viewModel.workshopToggle ? .black100 : .gray200)
             }
-            
+
             Button {
-                // TODO: - 뭉치 탭 액션
-                workshopToggle = false
+                viewModel.workshopToggle = false
             } label: {
                 Text("뭉치")
                     .typography(.nanum24EB)
-                    .foregroundStyle(workshopToggle ? .gray100 : .black100)
+                    .foregroundStyle(viewModel.workshopToggle ? .gray200 : .black100)
             }
         }
     }
     
-    /// 내 아이템 버튼
-    var myItemBtn: some View {
-        Button {
-            router.push(.myItems)
-        } label: {
-            HStack(spacing: 0) {
-                Image(.myItem)
-                    .resizable()
-                    .scaledToFit()
-
-                Spacer()
-
-                Text("내 아이템")
-                    .typography(.suit17B)
-                    .foregroundColor(.black)
-            }
-        }
-        .frame(minWidth: 80)
-        .frame(height: 44)
-        .fixedSize(horizontal: true, vertical: true)
-        .buttonStyle(.glass)
-    }
-
     /// 만들기 메뉴 버튼
     var makeBtn: some View {
         Button {

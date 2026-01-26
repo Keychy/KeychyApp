@@ -37,7 +37,8 @@ struct WorkshopGridBuilder {
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.vertical, 92)
+                .padding(.top, 80)
+                .padding(.bottom, 92)
             }
         }
     }

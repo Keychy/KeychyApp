@@ -61,7 +61,7 @@ struct WorkshopMakeMenu: View {
                 .opacity(isAppearing ? 1.0 : 0.0)
                 .position(
                     x: geometry.size.width - menuWidth / 2 - 16,
-                    y: position.maxY - geometry.safeAreaInsets.top + 5 + menuHeight / 2
+                    y: geometry.safeAreaInsets.top + menuHeight / 2 - 5 // (맨 뒤에 상수값을 조정해서 위치 조정 가능)
                 )
             }
         }

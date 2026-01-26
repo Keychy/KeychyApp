@@ -20,6 +20,27 @@ enum EffectFilterType: String, CaseIterable {
     case sound = "사운드"
     case particle = "파티클"
 }
+
+/// 퀵 필터 타입 (무료, 마이)
+enum QuickFilter: CaseIterable {
+    case free
+    case owned
+
+    var title: String {
+        switch self {
+        case .free: return "무료"
+        case .owned: return "마이"
+        }
+    }
+    
+    var icon: ImageResource? {
+        switch self {
+        case .free: return nil
+        case .owned: return .quickFilterOwned
+        }
+    }
+    
+}
 // MARK: - WorkshopItem Protocol
 
 /// 공방에서 판매되는 모든 아이템이 준수해야 하는 프로토콜
@@ -82,13 +103,39 @@ extension Sound: WorkshopItem {
 @MainActor
 @Observable
 class WorkshopViewModel {
+    // MARK: - Tab & Category Properties
+
+    /// 키링/뭉치 탭 토글 (true = 키링, false = 뭉치)
+    var workshopToggle: Bool = true {
+        didSet {
+            // 탭 전환 시 카테고리 초기화
+            selectedCategory = currentCategories.first ?? ""
+            resetFilters()
+        }
+    }
+
+    /// 키링 탭 카테고리
+    let keyringCategories = ["전체", "이미지", "텍스트", "드로잉"]
+
+    /// 뭉치 탭 카테고리
+    let bundleCategories = ["카라비너", "배경"]
+
+    /// 현재 탭에 따른 카테고리 목록
+    var currentCategories: [String] {
+        workshopToggle ? keyringCategories : bundleCategories
+    }
+
     // MARK: - Published Properties
-    var selectedCategory: String = "템플릿"
+    var selectedCategory: String = "전체"
     var selectedTemplateFilter: TemplateFilterType? = nil
     var selectedCommonFilter: String? = nil
     var selectedEffectFilter: EffectFilterType? = .sound
     var sortOrder: String = "최신순"
     var showFilterSheet: Bool = false
+
+    // MARK: - Quick Filter Properties
+    var showFreeOnly: Bool = false
+    var showOwnedOnly: Bool = false
     var mainContentOffset: CGFloat = 439
     private var refreshTrigger: Bool = false
 
@@ -212,15 +259,16 @@ class WorkshopViewModel {
     // MARK: - Firebase Methods (통합)
     /// 특정 카테고리의 데이터만 가져오기
     func fetchDataForCategory(_ category: String) async {
-        // 이미 로드된 카테고리는 스킵
-        guard !loadedCategories.contains(category) else { return }
+        // 데이터 타입별로 로드 여부 확인
+        let dataType = categoryToDataType(category)
+        guard !loadedCategories.contains(dataType) else { return }
 
         isLoading = true
         errorMessage = nil
 
         defer { isLoading = false }
 
-        switch category {
+        switch dataType {
         case "템플릿":
             await dataManager.fetchTemplatesIfNeeded()
             loadedCategories.insert("템플릿")
@@ -232,24 +280,32 @@ class WorkshopViewModel {
             await dataManager.fetchCarabinersIfNeeded()
             extractAvailableTags()
             loadedCategories.insert("카라비너")
-        case "이펙트":
-            await dataManager.fetchParticlesIfNeeded()
-            await dataManager.fetchSoundsIfNeeded()
-            loadedCategories.insert("이펙트")
         default:
             break
         }
     }
 
-    /// 나머지 카테고리들을 백그라운드에서 프리페칭
+    /// 카테고리 → 데이터 타입 매핑
+    private func categoryToDataType(_ category: String) -> String {
+        switch category {
+        // 키링 탭 카테고리 → 템플릿
+        case "전체", "이미지", "텍스트", "드로잉":
+            return "템플릿"
+        // 뭉치 탭 카테고리 → 그대로
+        case "카라비너", "배경":
+            return category
+        default:
+            return category
+        }
+    }
+
+    /// 나머지 데이터를 백그라운드에서 프리페칭
     func prefetchRemainingData() async {
-        let allCategories = ["템플릿", "배경", "카라비너", "이펙트"]
+        let allDataTypes = ["템플릿", "배경", "카라비너"]
 
-        for category in allCategories {
-            // 이미 로드된 카테고리는 스킵
-            guard !loadedCategories.contains(category) else { continue }
-
-            await fetchDataForCategory(category)
+        for dataType in allDataTypes {
+            guard !loadedCategories.contains(dataType) else { continue }
+            await fetchDataForCategory(dataType)
         }
     }
 
@@ -263,8 +319,8 @@ class WorkshopViewModel {
         // WorkshopDataManager를 통해 캐싱된 데이터 가져오기
         await dataManager.fetchAllDataIfNeeded()
 
-        // 모든 카테고리를 로드된 것으로 표시
-        loadedCategories = ["템플릿", "배경", "카라비너", "이펙트"]
+        // 모든 데이터 타입을 로드된 것으로 표시
+        loadedCategories = ["템플릿", "배경", "카라비너"]
 
         // 데이터를 가져온 후 사용 가능한 태그 추출
         extractAvailableTags()

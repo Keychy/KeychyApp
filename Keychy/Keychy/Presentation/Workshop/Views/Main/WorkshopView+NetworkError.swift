@@ -24,7 +24,7 @@ extension WorkshopView {
             HStack {
                 titleView
                 Spacer()
-                myItemBtn
+                makeBtn
             }
             .padding(.top, 60)
             .padding(.horizontal, 20)
