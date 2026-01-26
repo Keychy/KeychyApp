@@ -152,36 +152,39 @@ struct WorkshopPriceOverlay<Item: WorkshopItem>: View {
 
     var body: some View {
         ZStack {
-            // 유료 아이콘
-            VStack {
-                HStack {
-                    Image(.myCoin)
-                    Spacer()
-                }
-                .padding(.top, 9.84)
-                .padding(.leading, 9.35)
-                Spacer()
-            }
-            .opacity(isFree ? 0 : 1)
-
-            // 보유 표시
+            // 유료: 오른쪽 상단에 가격 또는 보유 표시
             VStack {
                 HStack {
                     Spacer()
-                    Text("보유")
-                        .typography(.suit13M)
-                        .foregroundStyle(.white100)
-                        .padding(.vertical, 4)
-                        .padding(.horizontal, 10)
-                        .background(
-                            RoundedRectangle(cornerRadius: 20)
-                                .fill(.black60)
-                        )
+                    if isOwned {
+                        // 보유
+                        Text("보유")
+                            .typography(.suit13M)
+                            .foregroundStyle(.white100)
+                            .padding(.vertical, 4)
+                            .padding(.horizontal, 10)
+                            .background(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .fill(.black60)
+                            )
+                    } else {
+                        // 미보유: 가격 표시
+                        Text("\(price)")
+                            .typography(.nanum16EB)
+                            .foregroundStyle(.white100)
+                            .padding(.vertical, 4)
+                            .padding(.horizontal, 8)
+                            .padding(.top, 3)
+                            .background(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .fill(.mainOpacity80)
+                            )
+                    }
                 }
                 .padding(10)
                 Spacer()
             }
-            .opacity(isOwned ? 1 : 0)
+            .opacity(isFree ? 0 : 1)
         }
 
         // 사운드인 경우에만 재생 버튼 표시
