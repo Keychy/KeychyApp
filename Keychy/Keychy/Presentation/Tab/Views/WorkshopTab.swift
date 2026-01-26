@@ -46,9 +46,9 @@ struct WorkshopTab: View {
             if let template = item.base as? KeyringTemplate {
                 WorkshopItemDetailView(router: router, viewModel: workshopViewModel, item: template)
             } else if let background = item.base as? Background {
-                WorkshopItemDetailView(router: router, viewModel: workshopViewModel, item: background)
+                WorkshopItemDetailView(router: router, viewModel: workshopViewModel, item: background, bundleViewModel: bundleViewModel)
             } else if let carabiner = item.base as? Carabiner {
-                WorkshopItemDetailView(router: router, viewModel: workshopViewModel, item: carabiner)
+                WorkshopItemDetailView(router: router, viewModel: workshopViewModel, item: carabiner, bundleViewModel: bundleViewModel)
             } else if let particle = item.base as? Particle {
                 WorkshopItemDetailView(router: router, viewModel: workshopViewModel, item: particle)
             } else if let sound = item.base as? Sound {

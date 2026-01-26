@@ -24,6 +24,7 @@ struct WorkshopItemDetailView: View {
 
     let viewModel: WorkshopViewModel
     let item: any WorkshopItem
+    var bundleViewModel: BundleViewModel?
     
     /// 아이템 보유 여부 확인
     private var isOwned: Bool {
@@ -317,6 +318,15 @@ extension WorkshopItemDetailView {
                 withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
                     purchasePopupScale = 1.0
                 }
+            },
+            onUseInBundle: {
+                // 배경/카라비너를 뭉치 만들기에서 사용
+                if let background = item as? Background {
+                    bundleViewModel?.preSelectedBackgroundId = background.id
+                } else if let carabiner = item as? Carabiner {
+                    bundleViewModel?.preSelectedCarabinerId = carabiner.id
+                }
+                router.push(.bundleCreateView)
             }
         )
     }
