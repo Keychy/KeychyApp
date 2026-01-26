@@ -281,10 +281,10 @@ extension BundleCreateView {
         // 배경 데이터 로드
         await withCheckedContinuation { continuation in
             bundleVM.fetchAllBackgrounds { _ in
-                // "키치 배경"을 기본으로 선택, 없으면 첫 번째 선택
+                // "퍼플키치"를 기본으로 선택, 없으면 첫 번째 선택
                 if self.selectedBackground == nil {
                     self.selectedBackground = bundleVM.backgroundViewData.first { bg in
-                        bg.background.backgroundName == "키치 배경"
+                        bg.background.backgroundName == "퍼플키치"
                     } ?? bundleVM.backgroundViewData.first
                 }
                 
@@ -295,10 +295,10 @@ extension BundleCreateView {
         // 카라비너 데이터 로드
         await withCheckedContinuation { continuation in
             bundleVM.fetchAllCarabiners { _ in
-                // "키치 카라비너"를 기본으로 선택, 없으면 첫 번째 선택
+                // "웰컴 키치"를 기본으로 선택, 없으면 첫 번째 선택
                 if self.selectedCarabiner == nil {
                     self.selectedCarabiner = bundleVM.carabinerViewData.first { cb in
-                        cb.carabiner.carabinerName == "키치 카라비너"
+                        cb.carabiner.carabinerName == "웰컴 키치"
                     } ?? bundleVM.carabinerViewData.first
                 }
                 
