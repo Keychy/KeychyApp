@@ -281,27 +281,45 @@ extension BundleCreateView {
         // 배경 데이터 로드
         await withCheckedContinuation { continuation in
             bundleVM.fetchAllBackgrounds { _ in
-                // "퍼플키치"를 기본으로 선택, 없으면 첫 번째 선택
                 if self.selectedBackground == nil {
-                    self.selectedBackground = bundleVM.backgroundViewData.first { bg in
-                        bg.background.backgroundName == "퍼플키치"
-                    } ?? bundleVM.backgroundViewData.first
+                    // 공방에서 미리 선택된 배경이 있으면 해당 배경 선택
+                    if let preSelectedId = bundleVM.preSelectedBackgroundId {
+                        self.selectedBackground = bundleVM.backgroundViewData.first { bg in
+                            bg.background.id == preSelectedId
+                        }
+                        bundleVM.preSelectedBackgroundId = nil // 사용 후 초기화
+                    }
+                    // 미리 선택된 배경이 없으면 "퍼플키치"를 기본으로 선택, 없으면 첫 번째 선택
+                    if self.selectedBackground == nil {
+                        self.selectedBackground = bundleVM.backgroundViewData.first { bg in
+                            bg.background.backgroundName == "퍼플키치"
+                        } ?? bundleVM.backgroundViewData.first
+                    }
                 }
-                
+
                 continuation.resume()
             }
         }
-        
+
         // 카라비너 데이터 로드
         await withCheckedContinuation { continuation in
             bundleVM.fetchAllCarabiners { _ in
-                // "웰컴 키치"를 기본으로 선택, 없으면 첫 번째 선택
                 if self.selectedCarabiner == nil {
-                    self.selectedCarabiner = bundleVM.carabinerViewData.first { cb in
-                        cb.carabiner.carabinerName == "웰컴 키치"
-                    } ?? bundleVM.carabinerViewData.first
+                    // 공방에서 미리 선택된 카라비너가 있으면 해당 카라비너 선택
+                    if let preSelectedId = bundleVM.preSelectedCarabinerId {
+                        self.selectedCarabiner = bundleVM.carabinerViewData.first { cb in
+                            cb.carabiner.id == preSelectedId
+                        }
+                        bundleVM.preSelectedCarabinerId = nil // 사용 후 초기화
+                    }
+                    // 미리 선택된 카라비너가 없으면 "웰컴 키치"를 기본으로 선택, 없으면 첫 번째 선택
+                    if self.selectedCarabiner == nil {
+                        self.selectedCarabiner = bundleVM.carabinerViewData.first { cb in
+                            cb.carabiner.carabinerName == "웰컴 키치"
+                        } ?? bundleVM.carabinerViewData.first
+                    }
                 }
-                
+
                 continuation.resume()
             }
         }
