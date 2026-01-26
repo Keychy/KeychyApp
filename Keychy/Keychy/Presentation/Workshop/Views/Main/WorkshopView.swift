@@ -62,11 +62,11 @@ struct WorkshopView: View {
                     // 상단 그라데이션 블러 오버레이
                     topGradientOverlay
                 }
-                .background(
-                    Image(.workshopKeyringBGB)
+                .background {
+                    Image(viewModel.workshopToggle ? .workshopKeyringBGB : .workshopBundleBGB)
                         .resizable()
                         .scaledToFill()
-                )
+                  }
             }
         }
         .ignoresSafeArea()
@@ -157,7 +157,7 @@ struct WorkshopView: View {
             }
             .padding(.top, WorkshopLayout.topPadding)
             .background(alignment: .top) {
-                Image(.workshopKeyringBGF)
+                Image(viewModel.workshopToggle ? .workshopKeyringBGF : .workshopBundleBGF)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
             }

@@ -175,6 +175,7 @@ struct WorkshopPriceOverlay<Item: WorkshopItem>: View {
                             .padding(.vertical, 4)
                             .padding(.horizontal, 8)
                             .padding(.top, 3)
+                            .padding(.leading, -1)
                             .background(
                                 RoundedRectangle(cornerRadius: 20)
                                     .fill(.mainOpacity80)
