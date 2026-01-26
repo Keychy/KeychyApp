@@ -12,7 +12,8 @@ import NukeUI
 
 enum WorkshopLayout {
     static let topPadding: CGFloat = 60
-    static let recentTemplateTopSpacing: CGFloat = 106
+    static let recentTemplateTopSpacing: CGFloat = 116
+    static let bundleBannerTopSpacing: CGFloat = 20
     static let mainContentTopSpacing: CGFloat = 43
     static let gradientHeight: CGFloat = 100
     static let stickyHeaderMinOffset: CGFloat = 120
@@ -130,11 +131,14 @@ struct WorkshopView: View {
                 topBannerSection
 
                 Spacer()
-                    .frame(height: WorkshopLayout.recentTemplateTopSpacing)
+                    .frame(height: viewModel.workshopToggle ?
+                           WorkshopLayout.recentTemplateTopSpacing : WorkshopLayout.bundleBannerTopSpacing)
 
-                // 키링 탭일 때만 최근 사용 템플릿 표시
+                // 키링 탭: 최근 사용 템플릿 / 번들 탭: 배너
                 if viewModel.workshopToggle {
                     recentTemplateSection
+                } else {
+                    WorkshopBundleBanner()
                 }
 
                 Spacer()
