@@ -20,6 +20,10 @@ struct WorkshopTab: View {
     @State private var speechBubbleVM: SpeechBubbleVM?
     @State private var workshopViewModel = WorkshopViewModel(userManager: UserManager.shared)
 
+    // Bundle 관련 ViewModel
+    @State private var collectionViewModel = CollectionViewModel()
+    @State private var bundleViewModel = BundleViewModel()
+
     var body: some View {
         NavigationStack(path: $router.path) {
             WorkshopView(
@@ -233,6 +237,22 @@ struct WorkshopTab: View {
                     festivalVM.onKeyringCompleteFromFestival?(router)
                 } : nil
             )
+
+        // MARK: - Bundle
+        case .bundleInventoryView:
+            BundleInventoryView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
+        case .bundleDetailView:
+            BundleDetailView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
+        case .bundleCreateView:
+            BundleCreateView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
+        case .bundleAddKeyringView:
+            BundleAddKeyringView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
+        case .bundleNameInputView:
+            BundleNameInputView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
+        case .bundleNameEditView:
+            BundleNameEditView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
+        case .bundleEditView:
+            BundleEditView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
         }
     }
 

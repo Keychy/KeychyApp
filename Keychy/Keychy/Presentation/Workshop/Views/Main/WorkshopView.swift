@@ -98,7 +98,7 @@ struct WorkshopView: View {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                             showMakeMenu = false
                         }
-                        // TODO: - 뭉치 만들기 액션
+                        router.push(.bundleCreateView)
                     }
                 )
             }
@@ -120,6 +120,9 @@ struct WorkshopView: View {
             }
         }
         .withToast(position: .tabbar)
+        .onAppear {
+            TabBarManager.show()
+        }
     }
 
     // MARK: - Main Content
