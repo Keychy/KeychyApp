@@ -10,9 +10,9 @@ import SwiftUI
 // MARK: - Template Action Button
 
 /// 키링 템플릿 전용 액션 버튼
-/// - 보유중이면 "만들기" 버튼 표시 (활성화)
+/// - 보유중이면 "키링 만들기" 버튼 표시 (활성화)
 /// - 유료이고 미보유면 구매 버튼 표시
-/// - 무료이고 미보유면 "만들기" 버튼 표시 (활성화)
+/// - 무료이고 미보유면 "키링 만들기" 버튼 표시 (활성화)
 struct TemplateActionButton: View {
     let template: KeyringTemplate
     let isOwned: Bool
@@ -36,7 +36,7 @@ struct TemplateActionButton: View {
         Button {
             onMake()
         } label: {
-            Text("만들기")
+            Text("키링 만들기")
                 .typography(.suit17B)
                 .foregroundStyle(.white100)
                 .frame(maxWidth: .infinity)
@@ -53,9 +53,6 @@ struct TemplateActionButton: View {
         } label: {
             HStack(spacing: 5) {
                 Image(.myCoinMini)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 32)
 
                 Text("\(template.workshopPrice)")
                     .typography(.nanum18EB)
