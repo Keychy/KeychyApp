@@ -36,6 +36,9 @@ struct WorkshopView: View {
     @State var showMakeMenu: Bool = false
     @State var makeMenuPosition: CGRect = .zero
 
+    // 템플릿 선택 시트 상태
+    @State private var showTemplateSelectSheet = false
+
     /// WorkshopTab에서 생성된 viewModel을 받아서 사용
     init(
         router: NavigationRouter<WorkshopRoute>,
@@ -67,7 +70,7 @@ struct WorkshopView: View {
                     Image(viewModel.workshopToggle ? .workshopKeyringBGB : .workshopBundleBGB)
                         .resizable()
                         .scaledToFill()
-                  }
+                }
             }
         }
         .ignoresSafeArea()
@@ -92,7 +95,7 @@ struct WorkshopView: View {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                             showMakeMenu = false
                         }
-                        // TODO: - 키링 만들기 액션
+                        showTemplateSelectSheet = true
                     },
                     onBundle: {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
@@ -122,6 +125,13 @@ struct WorkshopView: View {
         .withToast(position: .tabbar)
         .onAppear {
             TabBarManager.show()
+        }
+        .sheet(isPresented: $showTemplateSelectSheet) {
+            WorkshopTemplateSelectSheet(
+                isPresented: $showTemplateSelectSheet,
+                router: router,
+                templates: viewModel.templates
+            )
         }
     }
 
