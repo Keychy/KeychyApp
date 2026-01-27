@@ -13,11 +13,13 @@ struct KeyringMenu: View {
     let onEdit: () -> Void
     let onCopy: () -> Void
     let onDelete: () -> Void
+    let onWidget: () -> Void
     
     private let menuWidth: CGFloat = 165
-    private var menuHeight: CGFloat {
-        isMyKeyring ? 170 : 115  // 복사 버튼 있으면 170, 없으면 115
-    }
+//    private var menuHeight: CGFloat {
+//        isMyKeyring ? 170 : 115  // 복사 버튼 있으면 170, 없으면 115
+//    }
+    private let menuHeight: CGFloat = 218
     
     @State private var isAppearing = false
     
@@ -76,6 +78,31 @@ struct KeyringMenu: View {
                             Text("삭제")
                                 .typography(.suit16M)
                                 .foregroundColor(.pink)
+                            
+                            Spacer()
+                        }
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 10)
+                        .contentShape(Rectangle())
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    Rectangle()
+                        .fill(Color.gray100)
+                        .padding(.horizontal, 10)
+                        .frame(height: 1)
+                    
+                    // 위젯 버튼
+                    Button(action: onWidget) {
+                        HStack(spacing: 8) {
+                            Image(.widget)
+                                .resizable()
+                                .frame(width: 25, height: 25)
+                                .foregroundStyle(.gray600)
+                            
+                            Text("위젯 설정")
+                                .typography(.suit16M)
+                                .foregroundColor(.gray600)
                             
                             Spacer()
                         }

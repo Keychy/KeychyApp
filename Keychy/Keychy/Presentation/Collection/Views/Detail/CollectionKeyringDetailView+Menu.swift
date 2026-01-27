@@ -39,6 +39,9 @@ extension CollectionKeyringDetailView {
                 },
                 onDelete: {
                     handleMenuDelete()
+                },
+                onWidget: {
+                    goToWidgetOnboarding()
                 }
             )
             .zIndex(50)
@@ -81,6 +84,16 @@ extension CollectionKeyringDetailView {
         
         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
             showDeleteAlert = true
+        }
+    }
+    
+    // MARK: - 위젯 설정 화면으로 이동
+    private func goToWidgetOnboarding() {
+        isSheetPresented = false
+        showMenu = false
+        
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+            router.push(.widgetSettingView)
         }
     }
 
