@@ -49,6 +49,10 @@ class BundleViewModel {
 
     var carabiners: [Carabiner] { dataManager.carabiners }
     var selectedCarabiner: Carabiner?
+
+    // 공방에서 "뭉치에 사용하기"로 진입 시 미리 선택할 아이템 ID
+    var preSelectedBackgroundId: String?
+    var preSelectedCarabinerId: String?
     
     // 뭉치 이름 최대 글자 수
     var maxBundleNameCount: Int = 9

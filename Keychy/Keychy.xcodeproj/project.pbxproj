@@ -245,6 +245,7 @@
 		4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A596832EAFEAA20003D712 /* ProfileSetupView.swift */; };
 		4C86A6122F25C0B10023AA2D /* WorkshopBundleGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C86A6112F25C0B10023AA2D /* WorkshopBundleGridView.swift */; };
 		4C86A6142F25C0BA0023AA2D /* WorkshopKeyringGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C86A6132F25C0BA0023AA2D /* WorkshopKeyringGridView.swift */; };
+		4C86A6182F276CFD0023AA2D /* WorkshopTemplateSelectSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C86A6172F276CFD0023AA2D /* WorkshopTemplateSelectSheet.swift */; };
 		4CA9C6A62EC9D11600CA546B /* CustomNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9C6A42EC9D11600CA546B /* CustomNavigationBar.swift */; };
 		4CA9C6A82EC9DB5300CA546B /* View+SafeAreaBottom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9C6A72EC9DB5300CA546B /* View+SafeAreaBottom.swift */; };
 		4CA9C6D62ECB7AEA00CA546B /* BadWords.json in Resources */ = {isa = PBXBuildFile; fileRef = 4CA9C6D52ECB7AEA00CA546B /* BadWords.json */; };
@@ -685,6 +686,7 @@
 		4C8426632ED375840050B6FE /* ColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPalette.swift; sourceTree = "<group>"; };
 		4C86A6112F25C0B10023AA2D /* WorkshopBundleGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopBundleGridView.swift; sourceTree = "<group>"; };
 		4C86A6132F25C0BA0023AA2D /* WorkshopKeyringGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopKeyringGridView.swift; sourceTree = "<group>"; };
+		4C86A6172F276CFD0023AA2D /* WorkshopTemplateSelectSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopTemplateSelectSheet.swift; sourceTree = "<group>"; };
 		4CA9C6A42EC9D11600CA546B /* CustomNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationBar.swift; sourceTree = "<group>"; };
 		4CA9C6A72EC9DB5300CA546B /* View+SafeAreaBottom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+SafeAreaBottom.swift"; sourceTree = "<group>"; };
 		4CA9C6D52ECB7AEA00CA546B /* BadWords.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = BadWords.json; sourceTree = "<group>"; };
@@ -1439,6 +1441,7 @@
 			children = (
 				4C4733E42F20FE34005D2376 /* WorkshopRecentTemplate.swift */,
 				4C86A6132F25C0BA0023AA2D /* WorkshopKeyringGridView.swift */,
+				4C86A6172F276CFD0023AA2D /* WorkshopTemplateSelectSheet.swift */,
 			);
 			path = Keyring;
 			sourceTree = "<group>";
@@ -2589,6 +2592,7 @@
 				4C4733D52F1FA388005D2376 /* AcrylicPhotoVM+CropBoxDrag.swift in Sources */,
 				4C4733D62F1FA388005D2376 /* SpeechBubbleVM+Customizing.swift in Sources */,
 				4C4733D72F1FA388005D2376 /* AcrylicPhotoVM+Crop.swift in Sources */,
+				4C86A6182F276CFD0023AA2D /* WorkshopTemplateSelectSheet.swift in Sources */,
 				4C4733D82F1FA388005D2376 /* AcrylicPhotoPreView.swift in Sources */,
 				4C4733D92F1FA388005D2376 /* TemplatePreviewComponents.swift in Sources */,
 				4C004FA42F177C4600D9063E /* BundleVideoGenerator+Setup.swift in Sources */,

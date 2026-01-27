@@ -24,6 +24,7 @@ struct WorkshopItemDetailView: View {
 
     let viewModel: WorkshopViewModel
     let item: any WorkshopItem
+    var bundleViewModel: BundleViewModel?
     
     /// 아이템 보유 여부 확인
     private var isOwned: Bool {
@@ -86,7 +87,7 @@ struct WorkshopItemDetailView: View {
             } center: {
                 Spacer()
             } trailing: {
-                Spacer()
+                coinButton
             }
         }
         .ignoresSafeArea()
@@ -317,6 +318,15 @@ extension WorkshopItemDetailView {
                 withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
                     purchasePopupScale = 1.0
                 }
+            },
+            onUseInBundle: {
+                // 배경/카라비너를 뭉치 만들기에서 사용
+                if let background = item as? Background {
+                    bundleViewModel?.preSelectedBackgroundId = background.id
+                } else if let carabiner = item as? Carabiner {
+                    bundleViewModel?.preSelectedCarabinerId = carabiner.id
+                }
+                router.push(.bundleCreateView)
             }
         )
     }
@@ -392,5 +402,24 @@ extension WorkshopItemDetailView {
             // 기타 실패 시 에러 출력
             print("구매 실패: \(message)")
         }
+    }
+
+    /// 코인 충전 버튼
+    private var coinButton: some View {
+        Button {
+            router.push(.coinCharge)
+        } label: {
+            HStack(spacing: 8) {
+                Image(.myCoinMini)
+
+                Text("\((userManager.currentUser?.coin ?? 0).formatted())")
+                    .typography(.nanum17EB)
+                    .foregroundColor(.black)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12.5)
+        }
+        .buttonStyle(.plain)
+        .glassEffect(.regular.interactive(), in: .capsule)
     }
 }

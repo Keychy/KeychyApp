@@ -12,7 +12,8 @@ import NukeUI
 
 enum WorkshopLayout {
     static let topPadding: CGFloat = 60
-    static let recentTemplateTopSpacing: CGFloat = 106
+    static let recentTemplateTopSpacing: CGFloat = 116
+    static let bundleBannerTopSpacing: CGFloat = 20
     static let mainContentTopSpacing: CGFloat = 43
     static let gradientHeight: CGFloat = 100
     static let stickyHeaderMinOffset: CGFloat = 120
@@ -34,6 +35,9 @@ struct WorkshopView: View {
     // 만들기 메뉴 상태
     @State var showMakeMenu: Bool = false
     @State var makeMenuPosition: CGRect = .zero
+
+    // 템플릿 선택 시트 상태
+    @State private var showTemplateSelectSheet = false
 
     /// WorkshopTab에서 생성된 viewModel을 받아서 사용
     init(
@@ -62,11 +66,11 @@ struct WorkshopView: View {
                     // 상단 그라데이션 블러 오버레이
                     topGradientOverlay
                 }
-                .background(
-                    Image(.workshopKeyringBGB)
+                .background {
+                    Image(viewModel.workshopToggle ? .workshopKeyringBGB : .workshopBundleBGB)
                         .resizable()
                         .scaledToFill()
-                )
+                }
             }
         }
         .ignoresSafeArea()
@@ -91,13 +95,13 @@ struct WorkshopView: View {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                             showMakeMenu = false
                         }
-                        // TODO: - 키링 만들기 액션
+                        showTemplateSelectSheet = true
                     },
                     onBundle: {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                             showMakeMenu = false
                         }
-                        // TODO: - 뭉치 만들기 액션
+                        router.push(.bundleCreateView)
                     }
                 )
             }
@@ -119,6 +123,16 @@ struct WorkshopView: View {
             }
         }
         .withToast(position: .tabbar)
+        .onAppear {
+            TabBarManager.show()
+        }
+        .sheet(isPresented: $showTemplateSelectSheet) {
+            WorkshopTemplateSelectSheet(
+                isPresented: $showTemplateSelectSheet,
+                router: router,
+                templates: viewModel.templates
+            )
+        }
     }
 
     // MARK: - Main Content
@@ -130,11 +144,14 @@ struct WorkshopView: View {
                 topBannerSection
 
                 Spacer()
-                    .frame(height: WorkshopLayout.recentTemplateTopSpacing)
+                    .frame(height: viewModel.workshopToggle ?
+                           WorkshopLayout.recentTemplateTopSpacing : WorkshopLayout.bundleBannerTopSpacing)
 
-                // 키링 탭일 때만 최근 사용 템플릿 표시
+                // 키링 탭: 최근 사용 템플릿 / 번들 탭: 배너
                 if viewModel.workshopToggle {
                     recentTemplateSection
+                } else {
+                    WorkshopBundleBanner()
                 }
 
                 Spacer()
@@ -157,7 +174,7 @@ struct WorkshopView: View {
             }
             .padding(.top, WorkshopLayout.topPadding)
             .background(alignment: .top) {
-                Image(.workshopKeyringBGF)
+                Image(viewModel.workshopToggle ? .workshopKeyringBGF : .workshopBundleBGF)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
             }

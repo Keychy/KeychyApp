@@ -20,6 +20,10 @@ struct WorkshopTab: View {
     @State private var speechBubbleVM: SpeechBubbleVM?
     @State private var workshopViewModel = WorkshopViewModel(userManager: UserManager.shared)
 
+    // Bundle 관련 ViewModel
+    @State private var collectionViewModel = CollectionViewModel()
+    @State private var bundleViewModel = BundleViewModel()
+
     var body: some View {
         NavigationStack(path: $router.path) {
             WorkshopView(
@@ -42,9 +46,9 @@ struct WorkshopTab: View {
             if let template = item.base as? KeyringTemplate {
                 WorkshopItemDetailView(router: router, viewModel: workshopViewModel, item: template)
             } else if let background = item.base as? Background {
-                WorkshopItemDetailView(router: router, viewModel: workshopViewModel, item: background)
+                WorkshopItemDetailView(router: router, viewModel: workshopViewModel, item: background, bundleViewModel: bundleViewModel)
             } else if let carabiner = item.base as? Carabiner {
-                WorkshopItemDetailView(router: router, viewModel: workshopViewModel, item: carabiner)
+                WorkshopItemDetailView(router: router, viewModel: workshopViewModel, item: carabiner, bundleViewModel: bundleViewModel)
             } else if let particle = item.base as? Particle {
                 WorkshopItemDetailView(router: router, viewModel: workshopViewModel, item: particle)
             } else if let sound = item.base as? Sound {
@@ -233,6 +237,22 @@ struct WorkshopTab: View {
                     festivalVM.onKeyringCompleteFromFestival?(router)
                 } : nil
             )
+
+        // MARK: - Bundle
+        case .bundleInventoryView:
+            BundleInventoryView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
+        case .bundleDetailView:
+            BundleDetailView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
+        case .bundleCreateView:
+            BundleCreateView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
+        case .bundleAddKeyringView:
+            BundleAddKeyringView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
+        case .bundleNameInputView:
+            BundleNameInputView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
+        case .bundleNameEditView:
+            BundleNameEditView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
+        case .bundleEditView:
+            BundleEditView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
         }
     }
 
