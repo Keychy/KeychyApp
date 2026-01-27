@@ -36,7 +36,7 @@ enum QuickFilter: CaseIterable {
     var icon: ImageResource? {
         switch self {
         case .free: return nil
-        case .owned: return .quickFilterOwned
+        case .owned: return .workshopOwnedIcon
         }
     }
     

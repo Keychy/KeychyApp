@@ -75,7 +75,7 @@ struct WorkshopTemplateSelectSheet: View {
                     ForEach(WorkshopTemplateSelectFilter.allCases, id: \.self) { filter in
                         let isSelected = selectedFilter == filter
                         let icon: Image? = filter == .owned
-                            ? (isSelected ? Image(.quickFilterOwned) : Image(.quickFilterCheckedOn))
+                        ? (isSelected ? Image(.quickFilterCheckedOff) : Image(.quickFilterCheckedOn))
                             : nil
 
                         filterChip(
