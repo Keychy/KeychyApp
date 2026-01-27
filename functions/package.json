@@ -1,5 +1,8 @@
 {
   "name": "functions",
+  "overrides": {
+    "lodash": "^4.17.21"
+  },
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
@@ -19,7 +22,7 @@
   },
   "devDependencies": {
     "typescript": "^5.7.3",
-    "firebase-functions-test": "^3.1.0"
+    "firebase-functions-test": "^3.4.0"
   },
   "private": true
 }
