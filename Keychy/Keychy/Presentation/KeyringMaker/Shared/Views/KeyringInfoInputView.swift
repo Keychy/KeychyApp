@@ -36,6 +36,7 @@ struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
     @State var sheetDetent: PresentationDetent = .height(76)
     @State var showSheet: Bool = true
     @FocusState var isFocused: Bool
+    @FocusState var isTagTextFieldFocused: Bool
 
     // MARK: - Profanity Filtering
     @State var validationMessage: String = ""
@@ -111,6 +112,18 @@ struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
                 Color.black60
                     .ignoresSafeArea()
                     .zIndex(99)
+                    .onTapGesture {
+                        // 키보드가 올라와 있으면 키보드만 내림
+                        if isTagTextFieldFocused {
+                            isTagTextFieldFocused = false
+                        } else {
+                            // 키보드가 이미 내려가 있으면 Alert 닫기
+                            newTagName = ""
+                            showAddTagAlert = false
+                            showTagNameAlreadyExistsToast = false
+                            sheetDetent = .height(measuredSheetHeight)
+                        }
+                    }
 
                 addNewTagAlertView
                     .zIndex(100)

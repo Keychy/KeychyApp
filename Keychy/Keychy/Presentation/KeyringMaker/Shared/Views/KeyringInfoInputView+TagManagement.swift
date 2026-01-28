@@ -50,7 +50,7 @@ extension KeyringInfoInputView {
     }
 }
 
-// MARK: - Add Tag Alert (Glass Style)
+// MARK: - Add Tag Alert
 extension KeyringInfoInputView {
     var addNewTagAlertView: some View {
         VStack(spacing: 0) {
@@ -65,6 +65,7 @@ extension KeyringInfoInputView {
                 // TextField
                 TextField("태그 이름을 입력해주세요", text: $newTagName)
                     .typography(.notosans16R)
+                    .focused($isTagTextFieldFocused)
                     .onChange(of: newTagName) { oldValue, newValue in
                         if newValue.count > 10 {
                             newTagName = String(newValue.prefix(10))
