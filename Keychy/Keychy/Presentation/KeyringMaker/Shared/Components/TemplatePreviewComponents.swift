@@ -323,7 +323,7 @@ extension TemplatePreviewBody {
                     .foregroundColor(.black)
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 12.5)
+            .padding(.vertical, 10.5)
         }
         .buttonStyle(.plain)
         .glassEffect(.regular.interactive(), in: .capsule)
