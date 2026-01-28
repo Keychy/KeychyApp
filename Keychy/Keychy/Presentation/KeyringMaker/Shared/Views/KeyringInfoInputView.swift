@@ -113,7 +113,6 @@ struct KeyringInfoInputView<VM: KeyringViewModelProtocol>: View {
                     .zIndex(99)
 
                 addNewTagAlertView
-                    .padding(.horizontal, 51)
                     .zIndex(100)
             }
 

@@ -59,32 +59,41 @@ extension KeyringInfoInputView {
                 .typography(.suit17B)
                 .foregroundStyle(.black100)
                 .padding(.top, 14)
+                .padding(.bottom, 30)
             
-            // TextField
-            TextField("태그 이름을 입력해주세요", text: $newTagName)
-                .typography(.notosans15R)
-                .padding(.vertical, 14)
-                .padding(.horizontal, 16)
-                .frame(height: 52)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(.white100)
-                )
-                .padding(.top, 21)
-                .padding(.bottom, 5)
-                .onChange(of: newTagName) { oldValue, newValue in
-                    if newValue.count > 10 {
-                        newTagName = String(newValue.prefix(10))
+            HStack {
+                // TextField
+                TextField("태그 이름을 입력해주세요", text: $newTagName)
+                    .typography(.notosans16R)
+                    .onChange(of: newTagName) { oldValue, newValue in
+                        if newValue.count > 10 {
+                            newTagName = String(newValue.prefix(10))
+                        }
+                        showTagNameAlreadyExistsToast = availableTags.contains(newValue)
                     }
-                    showTagNameAlreadyExistsToast = availableTags.contains(newValue)
+                    .tint(.main500)
+                
+                if newTagName.count > 0 {
+                    Button {
+                        newTagName = ""
+                    } label: {
+                        Image(.emptyIcon)
+                    }
                 }
-                .tint(.main500)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(.white100)
+            )
             
             HStack {
                 Text(showTagNameAlreadyExistsToast ? "이미 사용 중인 태그 이름입니다." : "")
                     .typography(.suit14M)
                     .foregroundStyle(.error)
                     .opacity(showTagNameAlreadyExistsToast ? 1 : 0)
+                    .padding(.top, showTagNameAlreadyExistsToast ? 5 : 0)
                 
                 Spacer()
             }
@@ -139,8 +148,8 @@ extension KeyringInfoInputView {
             }
         }
         .padding(14)
+        .frame(width: UIScreen.main.bounds.width - 102)  // 좌우 51씩 여백
         .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
-        .frame(width: 300, height: 230)
     }
 }
 
