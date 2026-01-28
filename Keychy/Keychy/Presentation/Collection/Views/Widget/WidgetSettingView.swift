@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct WidgetSettingView: View {
-    @Bindable var router: NavigationRouter<CollectionRoute>
+struct WidgetSettingView<Route: Hashable>: View {
+    @Bindable var router: NavigationRouter<Route>
     
     private let steps = WidgetOnboardingStep.steps
     

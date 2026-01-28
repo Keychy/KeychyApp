@@ -59,7 +59,9 @@ struct HomeTab: View {
                         IntroView(viewModel: introViewModel)
                     case .termsAndPolicy:
                         TermsView(router: router)
-                }
+                    case .widgetSettingView:
+                        WidgetSettingView(router: router)
+                    }
             }
         }
     }

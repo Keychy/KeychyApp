@@ -161,6 +161,9 @@ extension KeyringEditView {
                     if success {
                         router.reset()
                         TabBarManager.show()
+                        
+                        //TODO: 수정완료 후 pop (데이터 새로고침 로직 필요)
+                        //router.pop()
                     }
                 }
             } label:  {

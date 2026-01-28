@@ -12,11 +12,12 @@ struct BundleMenu: View {
     let onNameEdit: () -> Void
     let onEdit: () -> Void
     let onDelete: () -> Void
+    let onWidget: () -> Void
     let isMain: Bool
     
     private let menuWidth: CGFloat = 185
     private var menuHeight: CGFloat {
-        isMain ? 120 : 175  // 메인 뭉치면 삭제 버튼 없음
+        isMain ? 163 : 218  // 메인 뭉치면 삭제 버튼 없음
     }
     
     @State private var isAppearing = false
@@ -79,6 +80,33 @@ struct BundleMenu: View {
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
+                    
+                    // 구분선
+                    Rectangle()
+                        .fill(Color.gray100)
+                        .padding(.horizontal, 10)
+                        .frame(height: 1)
+                    
+                    // 위젯 버튼
+                    Button(action: onWidget) {
+                        HStack(spacing: 8) {
+                            Image(.widget)
+                                .renderingMode(.template)
+                                .resizable()
+                                .frame(width: 24, height: 24)
+                                .foregroundColor(.gray600)
+                            
+                            Text("위젯 설정")
+                                .typography(.suit16M)
+                                .foregroundColor(.gray600)
+                            
+                            Spacer()
+                        }
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 10)
+                        .contentShape(Rectangle())
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .padding(.horizontal, 10)
                 .padding(.vertical, 20)

@@ -8,6 +8,7 @@ import Foundation
 
 /// 공방 탭 라우팅 (마켓플레이스 + 키링 제작)
 enum WorkshopRoute: Hashable, BundleRoute {
+    
     // MARK: - 공방 마켓플레이스
     case workshopPreview(item: AnyHashable)
     case coinCharge
@@ -22,6 +23,7 @@ enum WorkshopRoute: Hashable, BundleRoute {
     case bundleNameInputView
     case bundleNameEditView
     case bundleEditView
+    case widgetSettingView
 
     // MARK: - Festival 임시 라우트 (추후 정리 예정)
     case showcase25BoardView
