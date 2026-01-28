@@ -11,14 +11,11 @@ import FirebaseFirestore
 @Observable
 class PurchaseHistoryViewModel {
     var receipts: [Receipt] = []
-    var isLoading: Bool = false
     
     private let db = Firestore.firestore()
     
     /// 구매내역 가져오기
     func fetchReceipts(userId: String) async {
-        isLoading = true
-        
         do {
             let snapshot = try await db
                 .collection("User")
@@ -35,6 +32,5 @@ class PurchaseHistoryViewModel {
         } catch {
             print("구매내역 로드 실패: \(error.localizedDescription)")
         }
-        isLoading = false
     }
 }
