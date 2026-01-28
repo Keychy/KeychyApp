@@ -18,6 +18,7 @@ enum HomeRoute: Hashable, BundleRoute {
     case coinCharge
     case myPageView
     case changeName
+    case purchaseHistory
     case alarmView
     case notificationGiftView(postOfficeId: String)
     case introView
