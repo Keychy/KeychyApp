@@ -35,6 +35,7 @@ struct PurchasePopup: View {
                 Text("\(myCoin)")
                     .typography(.nanum16EB)
                     .foregroundColor(.main500)
+                    .padding(.top, 3)
             }
             .padding(.bottom, 4)
 
@@ -42,21 +43,15 @@ struct PurchasePopup: View {
             Button(action: onConfirm) {
                 HStack(spacing: 4) {
                     Image(.myCoinMini)
-                        .resizable()
-                        .frame(width: 34, height: 34)
-                        .padding(.bottom, 4)
                     
                     Text("\(price)")
                         .typography(.nanum18EB)
                         .foregroundColor(.white100)
-                        .frame(height: 32)
-                        .padding(.top, 4)
- 
-                }
-
+                        .padding(.top, 2)
+                 }
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 48)
+            .padding(.vertical, 12.5)
             .background(
                 RoundedRectangle(cornerRadius: 100)
                     .fill(.black80)
