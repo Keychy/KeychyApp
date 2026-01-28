@@ -355,45 +355,64 @@ extension BundleEditView {
                     showPurchaseSheet = true
                 }
             } else {
-                TextToolbarButton(title: "완료") {
-                    // 네트워크 체크
-                    guard NetworkManager.shared.isConnected else {
-                        ToastManager.shared.show()
-                        return
-                    }
-                    
-                    Task {
-                        await MainActor.run {
-                            // pop 전에 현재 구성 id를 ViewModel에 저장
-                            let bgId = bundleVM.makeBackgroundId(bundleVM.newSelectedBackground?.background ?? bundleVM.resolveBackground(from: bundleVM.selectedBundle?.selectedBackground ?? ""))
-                            let cbId = bundleVM.makeCarabinerId(bundleVM.newSelectedCarabiner?.carabiner ?? bundleVM.resolveCarabiner(from: bundleVM.selectedBundle?.selectedCarabiner ?? ""))
-                            
-                            // 편집 중 키링 데이터 기준으로 keyringsId 생성
-                            let currentKeyringDataList = keyringDataList
-                            let krId = bundleVM.makeKeyringsId(currentKeyringDataList)
-                            
-                            bundleVM.returnBackgroundId = bgId
-                            bundleVM.returnCarabinerId = cbId
-                            bundleVM.returnKeyringsId = krId
-                            
-                            // 화면 전환 시작 플래그
-                            isNavigatingAway = true
-                        }
-                        
-                        // 상태 변경이 UI에 반영되도록 짧은 대기
-                        try? await Task.sleep(nanoseconds: 50_000_000) // 0.05초
-                        await bundleVM.saveBundleChanges()
-                        
-                        // 저장 후 썸네일 재캡쳐, 캐시 저장
-                        if let bundle = bundleVM.selectedBundle, let documentId = bundleVM.selectedBundle?.documentId {
-                            await recaptureAndCacheBundleThumbnail(bundleId: documentId, bundleName: bundle.name)
-                        }
-                        
-                        await MainActor.run {
-                            router.pop()
-                        }
-                    }
-                }
+                completeButton
+            }
+        }
+    }
+    
+    private var completeButton: some View {
+        // TODO: 키링 하나 이상 있어야
+        let isCompleteEnabled = !bundleVM.selectedKeyrings.isEmpty
+        
+        return Button {
+            guard isCompleteEnabled else { return }
+            handleCompleteButtonTap()
+        } label: {
+            Text("완료")
+                .typography(.suit17B)
+                .foregroundStyle(isCompleteEnabled ? .main500 : .gray200)
+        }
+        .frame(width: 62, height: 44)
+        .glassEffect(.regular.interactive(), in: .capsule)
+        .disabled(!isCompleteEnabled)
+    }
+    
+    private func handleCompleteButtonTap() {
+        // 네트워크 체크
+        guard NetworkManager.shared.isConnected else {
+            ToastManager.shared.show()
+            return
+        }
+        
+        Task {
+            await MainActor.run {
+                // pop 전에 현재 구성 id를 ViewModel에 저장
+                let bgId = bundleVM.makeBackgroundId(bundleVM.newSelectedBackground?.background ?? bundleVM.resolveBackground(from: bundleVM.selectedBundle?.selectedBackground ?? ""))
+                let cbId = bundleVM.makeCarabinerId(bundleVM.newSelectedCarabiner?.carabiner ?? bundleVM.resolveCarabiner(from: bundleVM.selectedBundle?.selectedCarabiner ?? ""))
+                
+                // 편집 중 키링 데이터 기준으로 keyringsId 생성
+                let currentKeyringDataList = keyringDataList
+                let krId = bundleVM.makeKeyringsId(currentKeyringDataList)
+                
+                bundleVM.returnBackgroundId = bgId
+                bundleVM.returnCarabinerId = cbId
+                bundleVM.returnKeyringsId = krId
+                
+                // 화면 전환 시작 플래그
+                isNavigatingAway = true
+            }
+            
+            // 상태 변경이 UI에 반영되도록 짧은 대기
+            try? await Task.sleep(nanoseconds: 50_000_000) // 0.05초
+            await bundleVM.saveBundleChanges()
+            
+            // 저장 후 썸네일 재캡쳐, 캐시 저장
+            if let bundle = bundleVM.selectedBundle, let documentId = bundleVM.selectedBundle?.documentId {
+                await recaptureAndCacheBundleThumbnail(bundleId: documentId, bundleName: bundle.name)
+            }
+            
+            await MainActor.run {
+                router.pop()
             }
         }
     }

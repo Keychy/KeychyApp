@@ -160,15 +160,26 @@ extension BundleNameInputView {
         } center: {
             EmptyView()
         } trailing: {
-            TextToolbarButton(title: "완료") {
-                handleNextButtonTap()
-            }
-            .disabled(
-                isUploading ||
-                bundleName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
-                hasProfanity
-            )
+            completeButton
         }
+    }
+    
+    private var completeButton: some View {
+        let isCompleteEnabled = !isUploading &&
+                               !bundleName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+                               !hasProfanity
+        
+        return Button {
+            guard isCompleteEnabled else { return }
+            handleNextButtonTap()
+        } label: {
+            Text("완료")
+                .typography(.suit17B)
+                .foregroundStyle(isCompleteEnabled ? .main500 : .gray200)
+        }
+        .frame(width: 62, height: 44)
+        .glassEffect(.regular.interactive(), in: .capsule)
+        .disabled(!isCompleteEnabled)
     }
     
     private func handleNextButtonTap() {

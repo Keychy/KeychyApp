@@ -148,11 +148,27 @@ extension BundleNameEditView {
         } center: {
             EmptyView()
         } trailing: {
-            NextToolbarButton {
-                handleCheckButtonTap()
-            }
-            .disabled(isUpdating || bundleName.isEmpty || bundleName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || hasProfanity)
+            completeButton
         }
+    }
+    
+    private var completeButton: some View {
+        let isCompleteEnabled = !isUpdating &&
+                               !bundleName.isEmpty &&
+                               !bundleName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+                               !hasProfanity
+        
+        return Button {
+            guard isCompleteEnabled else { return }
+            handleCheckButtonTap()
+        } label: {
+            Text("완료")
+                .typography(.suit17B)
+                .foregroundStyle(isCompleteEnabled ? .main500 : .gray200)
+        }
+        .frame(width: 62, height: 44)
+        .glassEffect(.regular.interactive(), in: .capsule)
+        .disabled(!isCompleteEnabled)
     }
     
     private func handleCheckButtonTap() {
