@@ -82,16 +82,14 @@ struct WorkshopItemActionButton: View {
         } label: {
             HStack(spacing: 5) {
                 Image(.myCoinMini)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 32)
 
                 Text("\(item.workshopPrice)")
                     .typography(.nanum18EB)
                     .foregroundStyle(.white100)
+                    .padding(.top, 2)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 36)
+            .padding(.vertical, 8)
         }
         .buttonStyle(.glassProminent)
         .tint(.black80)

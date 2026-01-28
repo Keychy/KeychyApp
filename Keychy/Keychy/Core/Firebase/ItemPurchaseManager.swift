@@ -41,76 +41,132 @@ class ItemPurchaseManager {
 
     private init() {}
 
+    // MARK: - Public Methods
     /// 워크샵 아이템 구매 처리
-    /// - Parameters:
-    ///   - item: 구매할 아이템 (WorkshopItem 프로토콜 준수)
-    ///   - userManager: UserManager 인스턴스
-    /// - Returns: PurchaseResult (성공, 코인부족, 실패)
     func purchaseWorkshopItem(_ item: any WorkshopItem, userManager: UserManager) async -> PurchaseResult {
-        // 1. 현재 유저 정보 확인
-        guard let userId = userManager.currentUser?.id,
-              let userCoins = userManager.currentUser?.coin,
-              let itemId = item.id else {
+        // 1. 유저/아이템 정보 검증
+        guard let purchaseInfo = validatePurchaseInfo(item: item, userManager: userManager) else {
             return .failed("사용자 정보를 찾을 수 없습니다")
         }
 
-        // 2. 재화 충분한지 확인
-        guard userCoins >= item.workshopPrice else {
+        // 2. 로컬 코인 확인
+        guard purchaseInfo.userCoins >= item.workshopPrice else {
             return .insufficientCoins
         }
 
-        // 3. Firebase 업데이트
-        let db = Firestore.firestore()
-        let userRef = db.collection("User").document(userId)
+        // 3. Firebase 구매 처리
+        let userRef = Firestore.firestore().collection("User").document(purchaseInfo.userId)
 
         do {
-            // 현재 문서 읽기
-            let snapshot = try await userRef.getDocument()
-
-            guard let data = snapshot.data() else {
-                return .failed("사용자 정보를 찾을 수 없습니다")
-            }
-
-            let currentCoin = data["coin"] as? Int ?? 0
-
-            // 재화 재확인
+            // 서버 코인 확인 & 업데이트
+            let currentCoin = try await fetchCurrentCoin(userRef: userRef)
             guard currentCoin >= item.workshopPrice else {
                 return .insufficientCoins
             }
 
-            // 업데이트할 데이터 준비
-            var updateData: [String: Any] = [
-                "coin": currentCoin - item.workshopPrice
-            ]
-
-            // 아이템 타입에 따라 해당 필드에 추가
-            if item is KeyringTemplate {
-                updateData["templates"] = FieldValue.arrayUnion([itemId])
-            } else if item is Background {
-                updateData["backgrounds"] = FieldValue.arrayUnion([itemId])
-            } else if item is Carabiner {
-                updateData["carabiners"] = FieldValue.arrayUnion([itemId])
-            } else if item is Particle {
-                updateData["particleEffects"] = FieldValue.arrayUnion([itemId])
-            } else if item is Sound {
-                updateData["soundEffects"] = FieldValue.arrayUnion([itemId])
-            }
-
-            // Firebase 업데이트
+            // 코인 차감 & 아이템 추가
+            let updateData = buildUpdateData(item: item, itemId: purchaseInfo.itemId, currentCoin: currentCoin)
             try await userRef.updateData(updateData)
 
-            // 4. UserManager 데이터 갱신
-            await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
-                userManager.loadUserInfo(uid: userId) { _ in
-                    continuation.resume()
-                }
-            }
+            // 구매내역 저장
+            try await saveReceipt(item: item, itemId: purchaseInfo.itemId, userRef: userRef)
+
+            // UserManager 갱신
+            await refreshUserData(userId: purchaseInfo.userId, userManager: userManager)
 
             return .success
 
         } catch {
-            print("구매 실패 에러: \(error.localizedDescription)")
+            print("구매 실패: \(error.localizedDescription)")
             return .failed("구매 처리 중 오류가 발생했습니다")
+        }
+    }
+
+    // MARK: - Private Methods
+    /// 구매에 필요한 정보 검증
+    private func validatePurchaseInfo(
+        item: any WorkshopItem,
+        userManager: UserManager
+    ) -> (userId: String, userCoins: Int, itemId: String)? {
+        guard let userId = userManager.currentUser?.id,
+              let userCoins = userManager.currentUser?.coin,
+              let itemId = item.id else {
+            return nil
+        }
+        return (userId, userCoins, itemId)
+    }
+
+    /// 서버에서 현재 코인 조회
+    private func fetchCurrentCoin(userRef: DocumentReference) async throws -> Int {
+        let snapshot = try await userRef.getDocument()
+        guard let data = snapshot.data() else {
+            throw ItemPurchaseError.userNotFound
+        }
+        return data["coin"] as? Int ?? 0
+    }
+
+    /// 업데이트 데이터 생성 (코인 차감 + 아이템 추가)
+    private func buildUpdateData(
+        item: any WorkshopItem,
+        itemId: String,
+        currentCoin: Int
+    ) -> [String: Any] {
+        var updateData: [String: Any] = [
+            "coin": currentCoin - item.workshopPrice
+        ]
+
+        let fieldName = itemFieldName(for: item)
+        updateData[fieldName] = FieldValue.arrayUnion([itemId])
+
+        return updateData
+    }
+
+    /// 아이템 타입에 해당하는 Firestore 필드명
+    private func itemFieldName(for item: any WorkshopItem) -> String {
+        switch item {
+        case is KeyringTemplate: return "templates"
+        case is Background: return "backgrounds"
+        case is Carabiner: return "carabiners"
+        case is Particle: return "particleEffects"
+        case is Sound: return "soundEffects"
+        default: return "unknown"
+        }
+    }
+
+    /// 아이템 타입 문자열 (Receipt용)
+    private func itemTypeName(for item: any WorkshopItem) -> String {
+        switch item {
+        case is KeyringTemplate: return "template"
+        case is Background: return "background"
+        case is Carabiner: return "carabiner"
+        case is Particle: return "particle"
+        case is Sound: return "sound"
+        default: return "unknown"
+        }
+    }
+
+    /// 구매내역(Receipt) 저장
+    private func saveReceipt(
+        item: any WorkshopItem,
+        itemId: String,
+        userRef: DocumentReference
+    ) async throws {
+        let receiptData: [String: Any] = [
+            "itemID": itemId,
+            "itemName": item.name,
+            "itemType": itemTypeName(for: item),
+            "price": item.workshopPrice,
+            "purchasedAt": Timestamp(date: Date())
+        ]
+        try await userRef.collection("Receipts").addDocument(data: receiptData)
+    }
+
+    /// UserManager 데이터 갱신
+    private func refreshUserData(userId: String, userManager: UserManager) async {
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            userManager.loadUserInfo(uid: userId) { _ in
+                continuation.resume()
+            }
         }
     }
 }

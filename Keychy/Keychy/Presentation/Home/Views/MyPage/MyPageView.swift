@@ -181,6 +181,16 @@ extension MyPageView {
                     .foregroundStyle(.black100)
             }
             .buttonStyle(.plain)
+            .padding(.bottom, 30)
+
+            Button {
+                router.push(.purchaseHistory)
+            } label: {
+                Text("구매내역")
+                    .typography(.suit16M)
+                    .foregroundStyle(.black100)
+            }
+            .buttonStyle(.plain)
 
             Divider()
                 .padding(.top, 30)
