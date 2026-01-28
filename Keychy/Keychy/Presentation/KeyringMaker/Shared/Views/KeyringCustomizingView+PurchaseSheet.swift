@@ -31,7 +31,7 @@ extension KeyringCustomizingView {
 
             /// 장바구니 리스트 (스크롤 가능)
             ScrollView {
-                VStack(spacing: 12) {
+                VStack(spacing: 20) {
                     ForEach(cartItems) { item in
                         purchaseItemRow(item: item)
                     }
@@ -43,7 +43,7 @@ extension KeyringCustomizingView {
             Spacer()
 
             // 내 보유 포인트
-            HStack(spacing: 4) {
+            HStack(spacing: 6) {
                 Text("내 보유 :")
                     .typography(.suit15M25)
                     .foregroundStyle(.black100)
@@ -51,8 +51,9 @@ extension KeyringCustomizingView {
                 Text("\(UserManager.shared.currentUser?.coin ?? 0)")
                     .typography(.nanum16EB)
                     .foregroundStyle(.main500)
+                    .padding(.top, 2)
             }
-            .padding(.bottom, 16)
+            .padding(.bottom, 7)
 
             // 구매 버튼
             purchaseButton
@@ -80,23 +81,23 @@ extension KeyringCustomizingView {
     /// 구매 아이템 Row
     private func purchaseItemRow(item: EffectItem) -> some View {
         HStack(spacing: 0) {
-            // 아이콘 (유료 표시)
-            Image(.mainEffectSelect)
-                .padding(.trailing, 6)
-
             // 아이템 이름
             Text(item.name)
-                .typography(.suit17B)
+                .typography(.suit16B)
                 .foregroundStyle(.black100)
                 .padding(.trailing, 6)
 
             // 타입 표시
             Text(item.type.rawValue)
-                .typography(.suit12M)
+                .typography(.suit13M)
                 .foregroundStyle(.gray400)
 
             Spacer()
 
+            // 아이콘 (유료 표시)
+            Image(.myCoinMini)
+                .padding(.trailing, 5)
+            
             // 가격
             Text("\(item.price)")
                 .typography(.nanum16EB)
