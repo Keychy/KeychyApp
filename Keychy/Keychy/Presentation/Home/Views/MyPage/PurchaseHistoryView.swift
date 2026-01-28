@@ -13,14 +13,20 @@ struct PurchaseHistoryView: View {
     @Environment(UserManager.self) private var userManager
     
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 16) {
-                ForEach(viewModel.receipts) { receipt in
-                    historyCard(receipt: receipt)
+        Group {
+            if viewModel.receipts.isEmpty {
+                emptyStateView
+            } else {
+                ScrollView {
+                    LazyVStack(spacing: 16) {
+                        ForEach(viewModel.receipts) { receipt in
+                            historyCard(receipt: receipt)
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 16)
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
         }
         .navigationTitle("구매 내역")
         .navigationBarTitleDisplayMode(.inline)
@@ -40,6 +46,21 @@ struct PurchaseHistoryView: View {
 
 // MARK: - 컴포넌트
 extension PurchaseHistoryView {
+    /// 빈 상태 뷰
+    private var emptyStateView: some View {
+        ZStack {
+            VStack(spacing: 15) {
+                Image(.emptyViewIcon)
+                    .padding(.trailing, 26)
+                Text("구매한 아이템이 없어요")
+                    .typography(.suit15R)
+                    .foregroundStyle(.black100)
+            }
+        }
+        .ignoresSafeArea()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
     private func historyCard(receipt: Receipt) -> some View {
         VStack(spacing: 0) {
             
