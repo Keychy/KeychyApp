@@ -249,6 +249,7 @@
 		4C86A6182F276CFD0023AA2D /* WorkshopTemplateSelectSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C86A6172F276CFD0023AA2D /* WorkshopTemplateSelectSheet.swift */; };
 		4C86A61B2F29D7C60023AA2D /* Receipt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C86A61A2F29D7C60023AA2D /* Receipt.swift */; };
 		4C86A61D2F29E1FE0023AA2D /* PurchaseHistoryVIewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C86A61C2F29E1FE0023AA2D /* PurchaseHistoryVIewModel.swift */; };
+		4C86A61F2F29E52D0023AA2D /* PurchaseHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C86A61E2F29E52D0023AA2D /* PurchaseHistoryView.swift */; };
 		4CA9C6A62EC9D11600CA546B /* CustomNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9C6A42EC9D11600CA546B /* CustomNavigationBar.swift */; };
 		4CA9C6A82EC9DB5300CA546B /* View+SafeAreaBottom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA9C6A72EC9DB5300CA546B /* View+SafeAreaBottom.swift */; };
 		4CA9C6D62ECB7AEA00CA546B /* BadWords.json in Resources */ = {isa = PBXBuildFile; fileRef = 4CA9C6D52ECB7AEA00CA546B /* BadWords.json */; };
@@ -693,6 +694,7 @@
 		4C86A6172F276CFD0023AA2D /* WorkshopTemplateSelectSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopTemplateSelectSheet.swift; sourceTree = "<group>"; };
 		4C86A61A2F29D7C60023AA2D /* Receipt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Receipt.swift; sourceTree = "<group>"; };
 		4C86A61C2F29E1FE0023AA2D /* PurchaseHistoryVIewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseHistoryVIewModel.swift; sourceTree = "<group>"; };
+		4C86A61E2F29E52D0023AA2D /* PurchaseHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseHistoryView.swift; sourceTree = "<group>"; };
 		4CA9C6A42EC9D11600CA546B /* CustomNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationBar.swift; sourceTree = "<group>"; };
 		4CA9C6A72EC9DB5300CA546B /* View+SafeAreaBottom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+SafeAreaBottom.swift"; sourceTree = "<group>"; };
 		4CA9C6D52ECB7AEA00CA546B /* BadWords.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = BadWords.json; sourceTree = "<group>"; };
@@ -1484,6 +1486,7 @@
 			children = (
 				C6EE7AD62EB445F6002B5669 /* MyPageView.swift */,
 				4C65306B2EBC889B000F8154 /* ChangeNameView.swift */,
+				4C86A61E2F29E52D0023AA2D /* PurchaseHistoryView.swift */,
 				4C65306D2EBCF157000F8154 /* TermsView.swift */,
 			);
 			path = MyPage;
@@ -2667,6 +2670,7 @@
 				4C07024C2ECF10760026D6DC /* EffectSyncManager.swift in Sources */,
 				3828F54B2EC4D0C500F1B040 /* CollectionView+Handlers.swift in Sources */,
 				4CF2A96A2F0B94EA00BA9FDA /* View+PullToRefresh.swift in Sources */,
+				4C86A61F2F29E52D0023AA2D /* PurchaseHistoryView.swift in Sources */,
 				38C147BB2EB13B2F00A8E511 /* CircleGlassButton.swift in Sources */,
 				AA6298542EC39065001576C0 /* BundleCreateView.swift in Sources */,
 				38C147C72EB1F57F00A8E511 /* StorageManager.swift in Sources */,

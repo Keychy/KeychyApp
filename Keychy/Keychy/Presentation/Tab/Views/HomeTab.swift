@@ -49,6 +49,8 @@ struct HomeTab: View {
                         MyPageView(router: router)
                     case .changeName:
                         ChangeNameView(router: router)
+                    case .purchaseHistory:
+                        PurchaseHistoryView(router: router)
                     case .alarmView:
                         AlarmView(router: router)
                     case .notificationGiftView(let postOfficeId):
