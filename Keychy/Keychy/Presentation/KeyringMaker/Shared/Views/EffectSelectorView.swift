@@ -267,33 +267,7 @@ struct EffectSelectorView<VM: KeyringViewModelProtocol>: View {
                 HStack(spacing: 4) {
                     // 유료 아이콘
                     if !sound.isFree {
-                        if isOwned {
-                            // 유료 + 보유
-                            if isSelected {
-                                Image(.whiteEffectSelect)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 18, height: 18)
-                            } else {
-                                Image(.grayEffectSelect)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 18, height: 18)
-                            }
-                        } else {
-                            // 유료 + 미보유
-                            if isSelected {
-                                Image(.whiteEffectSelect)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 18, height: 18)
-                            } else {
-                                Image(.gradientEffectSelect)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 18, height: 18)
-                            }
-                        }
+                        Image(.myCoinMini)
                     }
 
                     Text(sound.soundName)
@@ -441,33 +415,7 @@ struct EffectSelectorView<VM: KeyringViewModelProtocol>: View {
                 HStack(spacing: 4) {
                     // 유료 아이콘
                     if !particle.isFree {
-                        if isOwned {
-                            // 유료 + 보유
-                            if isSelected {
-                                Image(.whiteEffectSelect)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 18, height: 18)
-                            } else {
-                                Image(.grayEffectSelect)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 18, height: 18)
-                            }
-                        } else {
-                            // 유료 + 미보유
-                            if isSelected {
-                                Image(.whiteEffectSelect)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 18, height: 18)
-                            } else {
-                                Image(.gradientEffectSelect)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 18, height: 18)
-                            }
-                        }
+                        Image(.myCoinMini)
                     }
 
                     Text(particle.particleName)

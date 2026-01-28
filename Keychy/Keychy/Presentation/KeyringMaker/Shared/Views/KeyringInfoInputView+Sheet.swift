@@ -111,10 +111,14 @@ extension KeyringInfoInputView {
                     .typography(.notosans15M)
                     /// 커서 표시기 색상
                     .tint(.main500)
-
-                    Text("\(textCount)/\(viewModel.maxTextCount)")
-                        .typography(.suit13M)
-                        .foregroundStyle(.gray300)
+   
+                    if viewModel.nameText.count > 0 {
+                        Button {
+                            viewModel.nameText = ""
+                        } label: {
+                            Image(.emptyIcon)
+                        }
+                    }
                 }
                 .padding(.vertical, 13.5)
                 .padding(.horizontal, 16)

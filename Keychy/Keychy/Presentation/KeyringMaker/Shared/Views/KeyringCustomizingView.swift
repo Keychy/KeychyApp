@@ -311,7 +311,7 @@ extension KeyringCustomizingView {
             } label: {
                 Text(hasCartItems ? "구매 \(cartItems.count)" : "다음")
                     .typography(.suit17B)
-                    .foregroundStyle(hasCartItems ? .white100 : .black100)
+                    .foregroundStyle(hasCartItems ? .white100 : .main500)
                     .padding(4.5)
             }
             .buttonStyle(.glassProminent)

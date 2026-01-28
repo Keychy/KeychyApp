@@ -72,7 +72,7 @@ extension KeyringInfoInputView {
             } label: {
                 Text("다음")
                     .typography(.suit17B)
-                    .foregroundStyle(viewModel.nameText.isEmpty || hasProfanity ? .gray300 : .black100)
+                    .foregroundStyle(viewModel.nameText.isEmpty || hasProfanity ? .gray300 : .main500)
                     .padding(5)
             }
             .buttonStyle(.glassProminent)
