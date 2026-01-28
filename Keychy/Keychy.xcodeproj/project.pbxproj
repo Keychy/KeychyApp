@@ -27,6 +27,7 @@
 		3828F5472EC4CCDC00F1B040 /* CollectionView+NormalMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3828F5462EC4CCDC00F1B040 /* CollectionView+NormalMode.swift */; };
 		3828F5492EC4CCE400F1B040 /* CollectionView+SearchMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3828F5482EC4CCE400F1B040 /* CollectionView+SearchMode.swift */; };
 		3828F54B2EC4D0C500F1B040 /* CollectionView+Handlers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3828F54A2EC4D0C500F1B040 /* CollectionView+Handlers.swift */; };
+		38489EBD2F290BD000E41FAE /* CopyTooltipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38489EBC2F290BD000E41FAE /* CopyTooltipView.swift */; };
 		385425BE2EB2989400A06C02 /* CollectionCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385425BD2EB2989400A06C02 /* CollectionCellView.swift */; };
 		385425C02EB2AE7800A06C02 /* CollectionViewModel+Sort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385425BF2EB2AE7800A06C02 /* CollectionViewModel+Sort.swift */; };
 		385425C32EB2C35E00A06C02 /* WidgetSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385425C22EB2C35E00A06C02 /* WidgetSettingView.swift */; };
@@ -475,6 +476,7 @@
 		3828F5462EC4CCDC00F1B040 /* CollectionView+NormalMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionView+NormalMode.swift"; sourceTree = "<group>"; };
 		3828F5482EC4CCE400F1B040 /* CollectionView+SearchMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionView+SearchMode.swift"; sourceTree = "<group>"; };
 		3828F54A2EC4D0C500F1B040 /* CollectionView+Handlers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionView+Handlers.swift"; sourceTree = "<group>"; };
+		38489EBC2F290BD000E41FAE /* CopyTooltipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyTooltipView.swift; sourceTree = "<group>"; };
 		385425BD2EB2989400A06C02 /* CollectionCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionCellView.swift; sourceTree = "<group>"; };
 		385425BF2EB2AE7800A06C02 /* CollectionViewModel+Sort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Sort.swift"; sourceTree = "<group>"; };
 		385425C22EB2C35E00A06C02 /* WidgetSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSettingView.swift; sourceTree = "<group>"; };
@@ -960,6 +962,7 @@
 				38A22A9C2EC27AC400B4C7C5 /* PackagedKeyringView+SaveImage.swift */,
 				3822DDC12EBBC712003125BE /* KeyringEditView.swift */,
 				3822DDBF2EBB2353003125BE /* KeyringMenu.swift */,
+				38489EBC2F290BD000E41FAE /* CopyTooltipView.swift */,
 			);
 			path = Detail;
 			sourceTree = "<group>";
@@ -2544,6 +2547,7 @@
 				4C4733A62F1FA388005D2376 /* KeyringCompleteView+VideoGen.swift in Sources */,
 				4C4733A72F1FA388005D2376 /* KeyringCompleteView.swift in Sources */,
 				4C4733A82F1FA388005D2376 /* AcrylicPhotoVM+ImageLoad.swift in Sources */,
+				38489EBD2F290BD000E41FAE /* CopyTooltipView.swift in Sources */,
 				4C4733A92F1FA388005D2376 /* NeonSignPreview.swift in Sources */,
 				4C4733AA2F1FA388005D2376 /* SpeechBubbleFrameSelectorView.swift in Sources */,
 				4C4733AB2F1FA388005D2376 /* KeyringViewModelProtocol+Reset.swift in Sources */,

@@ -95,15 +95,15 @@ extension CollectionView {
             .padding(.trailing, 10)
             #endif
             
-            CircleGlassButton(imageName: "Widget",
-                              action: {
-                isSearchFieldFocused = false
-                showSearchBar = false
-                
-                router.push(.widgetSettingView)
-            }
-            )
-            .padding(.trailing, 10)
+//            CircleGlassButton(imageName: "Widget",
+//                              action: {
+//                isSearchFieldFocused = false
+//                showSearchBar = false
+//                
+//                router.push(.widgetSettingView)
+//            }
+//            )
+//            .padding(.trailing, 10)
 
             CircleGlassButton(imageName: "BundleIcon",
                               action: {
