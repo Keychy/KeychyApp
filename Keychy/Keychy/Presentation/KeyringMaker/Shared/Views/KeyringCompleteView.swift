@@ -31,7 +31,11 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
     
     // 씬 인터랙션
     @State var isInteractionEnabled = false
-    
+
+    // 선물 포장
+    @State var showPackageAlert = false
+    @State var showPackingAlert = false
+
     // 비디오 생성기
     let videoGenerator = KeyringVideoGenerator()
     
@@ -81,7 +85,6 @@ extension KeyringCompleteView {
                 keyringScene
                     .frame(height: geometry.size.height * 0.53)
                     .cinematicAppear(delay: 0.2, duration: 0.8, style: .full)
-                    .border(.red)
                     .offset(x: 0, y: -20)
                 
                 // 키링 정보
@@ -107,12 +110,44 @@ extension KeyringCompleteView {
             message: "이미지가 저장되었어요!",
             isPresented: $showImageSaved
         )
-        
+
         KeychyAlert(
             type: .imageSave,
             message: "영상이 저장되었어요!",
             isPresented: $showVideoSaved
         )
+
+        // 선물 포장 확인 팝업
+        if showPackageAlert {
+            Color.black20
+                .ignoresSafeArea()
+                .zIndex(99)
+
+            PackagePopup(
+                onCancel: {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        showPackageAlert = false
+                    }
+                },
+                onConfirm: {
+                    handlePackageConfirm()
+                }
+            )
+            .zIndex(100)
+        }
+
+        // 포장 중 로딩
+        if showPackingAlert {
+            Color.black20
+                .ignoresSafeArea()
+                .zIndex(99)
+
+            LoadingAlert(
+                type: .longWithPresent,
+                message: "선물 포장 중.."
+            )
+            .zIndex(101)
+        }
     }
     
     /// 로딩 오버레이
@@ -165,7 +200,7 @@ extension KeyringCompleteView {
 extension KeyringCompleteView {
     /// Alert 표시 중 여부
     private var isAlertShowing: Bool {
-        showImageSaved || showVideoSaved || isGeneratingVideo
+        showImageSaved || showVideoSaved || isGeneratingVideo || showPackageAlert || showPackingAlert
     }
     
     var closeToolbarItem: some ToolbarContent {
@@ -300,7 +335,73 @@ extension KeyringCompleteView {
             
             // 선물하기
             actionButton(image: .present, title: "선물하기") {
-                // TODO: 선물하기 기능
+                // 네트워크 체크
+                guard NetworkManager.shared.isConnected else {
+                    ToastManager.shared.show()
+                    return
+                }
+
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    showPackageAlert = true
+                }
+            }
+        }
+    }
+}
+
+// MARK: - 선물 포장 처리
+extension KeyringCompleteView {
+    /// 선물 포장 확인 처리
+    private func handlePackageConfirm() {
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+            showPackageAlert = false
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            guard let uid = userManager.currentUser?.id,
+                  let keyringDocumentId = viewModel.savedKeyringDocumentId else {
+                print("[Package] uid 또는 keyringDocumentId 없음")
+                return
+            }
+
+            // 포장 중 로딩 표시
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                showPackingAlert = true
+            }
+
+            // 최소 로딩 시간 보장을 위한 시작 시간 기록
+            let startTime = Date()
+            let minimumLoadingDuration: TimeInterval = 1.0
+
+            // 패키징 실행
+            KeyringPackageManager.packageKeyring(
+                uid: uid,
+                keyringDocumentId: keyringDocumentId
+            ) { success, postOfficeId in
+                let elapsed = Date().timeIntervalSince(startTime)
+                let remainingDelay = max(0, minimumLoadingDuration - elapsed)
+
+                // 최소 1초 로딩 후 처리
+                DispatchQueue.main.asyncAfter(deadline: .now() + remainingDelay) {
+                    showPackingAlert = false
+
+                    if success, let postOfficeId = postOfficeId {
+                        // 성공 - 포장 완료 화면으로 이동
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            router.push(.packageComplete(
+                                keyringDocumentId: keyringDocumentId,
+                                postOfficeId: postOfficeId
+                            ))
+
+                            // 네비게이션 애니메이션 완료 후 리셋 (뒤에 있는 뷰가 보이지 않을 때)
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                viewModel.resetAll()
+                            }
+                        }
+                    } else {
+                        print("[Package] 포장 실패")
+                    }
+                }
             }
         }
     }

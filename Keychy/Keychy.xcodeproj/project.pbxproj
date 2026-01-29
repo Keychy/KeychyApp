@@ -241,6 +241,8 @@
 		4C77753F2EB1343600981C3E /* IntroViewModel+Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C77753A2EB1343600981C3E /* IntroViewModel+Login.swift */; };
 		4C7775402EB1343600981C3E /* IntroViewModel+Signup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C77753C2EB1343600981C3E /* IntroViewModel+Signup.swift */; };
 		4C7775412EB1343600981C3E /* IntroViewModel+NicknameSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C77753B2EB1343600981C3E /* IntroViewModel+NicknameSetup.swift */; };
+		4C7A9EC72F2B0567008B520C /* KeyringPackageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7A9EC62F2B0567008B520C /* KeyringPackageManager.swift */; };
+		4C7A9EC92F2B0586008B520C /* KeyringPackageCompleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7A9EC82F2B0586008B520C /* KeyringPackageCompleteView.swift */; };
 		4C8426602ED3585A0050B6FE /* gulimche-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */; };
 		4C8426642ED375840050B6FE /* ColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8426632ED375840050B6FE /* ColorPalette.swift */; };
 		4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A596832EAFEAA20003D712 /* ProfileSetupView.swift */; };
@@ -687,6 +689,8 @@
 		4C77753A2EB1343600981C3E /* IntroViewModel+Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntroViewModel+Login.swift"; sourceTree = "<group>"; };
 		4C77753B2EB1343600981C3E /* IntroViewModel+NicknameSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntroViewModel+NicknameSetup.swift"; sourceTree = "<group>"; };
 		4C77753C2EB1343600981C3E /* IntroViewModel+Signup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntroViewModel+Signup.swift"; sourceTree = "<group>"; };
+		4C7A9EC62F2B0567008B520C /* KeyringPackageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringPackageManager.swift; sourceTree = "<group>"; };
+		4C7A9EC82F2B0586008B520C /* KeyringPackageCompleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringPackageCompleteView.swift; sourceTree = "<group>"; };
 		4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; path = "gulimche-Regular.ttf"; sourceTree = "<group>"; };
 		4C8426632ED375840050B6FE /* ColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPalette.swift; sourceTree = "<group>"; };
 		4C86A6112F25C0B10023AA2D /* WorkshopBundleGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopBundleGridView.swift; sourceTree = "<group>"; };
@@ -938,6 +942,7 @@
 				C645AEA22EB1B8FC004BFE69 /* DataInitializer.swift */,
 				C6830F032EB8A4000059379A /* WorkshopDataManager.swift */,
 				4C07024A2ECF10760026D6DC /* EffectSyncManager.swift */,
+				4C7A9EC62F2B0567008B520C /* KeyringPackageManager.swift */,
 			);
 			path = Firebase;
 			sourceTree = "<group>";
@@ -1216,6 +1221,7 @@
 				4C4733482F1FA388005D2376 /* KeyringInfoInputView+Helpers.swift */,
 				4C4733492F1FA388005D2376 /* KeyringInfoInputView+Sheet.swift */,
 				4C47334A2F1FA388005D2376 /* KeyringInfoInputView+TagManagement.swift */,
+				4C7A9EC82F2B0586008B520C /* KeyringPackageCompleteView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -2671,6 +2677,7 @@
 				3828F54B2EC4D0C500F1B040 /* CollectionView+Handlers.swift in Sources */,
 				4CF2A96A2F0B94EA00BA9FDA /* View+PullToRefresh.swift in Sources */,
 				4C86A61F2F29E52D0023AA2D /* PurchaseHistoryView.swift in Sources */,
+				4C7A9EC72F2B0567008B520C /* KeyringPackageManager.swift in Sources */,
 				38C147BB2EB13B2F00A8E511 /* CircleGlassButton.swift in Sources */,
 				AA6298542EC39065001576C0 /* BundleCreateView.swift in Sources */,
 				38C147C72EB1F57F00A8E511 /* StorageManager.swift in Sources */,
@@ -2711,6 +2718,7 @@
 				4CC8D01F2EF0447100317467 /* ChangeNameViewModel.swift in Sources */,
 				4CC8D0202EF0447100317467 /* MyPageViewModel.swift in Sources */,
 				4C4734072F226B81005D2376 /* WorkshopMakeMenu.swift in Sources */,
+				4C7A9EC92F2B0586008B520C /* KeyringPackageCompleteView.swift in Sources */,
 				38C147C52EB1F16A00A8E511 /* CollectionViewModel+LoadData.swift in Sources */,
 				C6C35F3A2ED2A3C2009642F4 /* FestivalViewModel.swift in Sources */,
 				AAEB46AF2EC1D648002B13E5 /* BundleNameEditView.swift in Sources */,

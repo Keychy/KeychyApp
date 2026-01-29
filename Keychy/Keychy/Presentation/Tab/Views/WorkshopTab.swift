@@ -238,6 +238,14 @@ struct WorkshopTab: View {
                 } : nil
             )
 
+        // MARK: - 선물 포장 완료
+        case .packageComplete(let keyringDocumentId, let postOfficeId):
+            KeyringPackageCompleteView(
+                router: router,
+                keyringDocumentId: keyringDocumentId,
+                postOfficeId: postOfficeId
+            )
+
         // MARK: - Bundle
         case .bundleInventoryView:
             BundleInventoryView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
