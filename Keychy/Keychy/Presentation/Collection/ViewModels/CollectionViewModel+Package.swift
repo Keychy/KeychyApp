@@ -27,7 +27,7 @@ extension CollectionViewModel {
         KeyringPackageManager.packageKeyring(
             uid: uid,
             keyringDocumentId: documentId
-        ) { [weak self] success, postOfficeId in
+        ) { [weak self] success, postOfficeId, _ in  // shareLink는 Collection에서 미사용
             guard let self = self else {
                 completion(false, nil)
                 return

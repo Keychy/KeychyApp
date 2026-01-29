@@ -69,7 +69,7 @@ enum WorkshopRoute: Hashable, BundleRoute {
     case speechBubbleComplete
 
     // MARK: - 선물 포장 완료
-    case packageComplete(keyringDocumentId: String, postOfficeId: String)
+    case packageComplete(keyringDocumentId: String, postOfficeId: String, templateId: String, shareLink: String)
 
     /// template.id 문자열을 WorkshopRoute로 변환
     static func from(string: String) -> WorkshopRoute? {

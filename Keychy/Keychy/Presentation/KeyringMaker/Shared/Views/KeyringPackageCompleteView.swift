@@ -10,13 +10,14 @@ import FirebaseFirestore
 
 struct KeyringPackageCompleteView: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
+    var viewModel: any KeyringViewModelProtocol
 
     let keyringDocumentId: String
     let postOfficeId: String
+    let shareLink: String  // 패키징 시 생성된 링크 직접 전달
 
     @State private var keyring: Keyring?
     @State private var authorName: String = ""
-    @State private var shareLink: String = ""
     @State private var isLoading: Bool = true
     @State private var showLinkCopied: Bool = false
     @State private var showImageSaved: Bool = false
@@ -82,7 +83,6 @@ struct KeyringPackageCompleteView: View {
         .onAppear {
             TabBarManager.hide()
             loadKeyringData()
-            loadShareLink()
         }
     }
 
@@ -110,15 +110,17 @@ extension KeyringPackageCompleteView {
                         .adaptiveTopPadding()
 
                     // 헤더 텍스트
-                    VStack(spacing: 0) {
+                    VStack(spacing: 15) {
                         Text("키링 포장이 완료되었어요!")
                             .typography(.suit20B)
                             .foregroundColor(.black100)
-                            .padding(.bottom, 9)
+                            .padding(.top, 10)
 
-                        Text("링크나 QR로 바로 공유할 수 있어요.")
-                            .typography(.suit16M)
+                        Text("링크나 QR로 바로 공유할 수 있어요\n포장은 보관함에서 풀 수 있습니다")
+                            .font(.suit16M)
                             .foregroundColor(.black100)
+                            .multilineTextAlignment(.center)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                     .padding(.top, isSmallScreen ? -70 : 78)
 
@@ -155,20 +157,36 @@ extension KeyringPackageCompleteView {
 
     private var customNavigationBar: some View {
         CustomNavigationBar {
-            // Leading - 닫기 버튼
+            // Leading - 뒤로가기 버튼 (키링 완성뷰로)
             Button {
-                TabBarManager.show()
-                router.reset()
+                router.pop()
             } label: {
-                Image(.dismiss)
-                    .foregroundColor(.primary)
+                Image(.backIcon)
             }
             .frame(width: 44, height: 44)
             .glassEffect(.regular.interactive(), in: .circle)
         } center: {
             Spacer()
         } trailing: {
-            Spacer()
+            // Trailing - 홈 버튼
+            Button {
+                navigateToHome()
+            } label: {
+                Image(.homeBlack)
+            }
+            .frame(width: 44, height: 44)
+            .glassEffect(.regular.interactive(), in: .circle)
+        }
+    }
+
+    /// 홈 탭으로 이동
+    private func navigateToHome() {
+        TabBarManager.switchTo(.home)
+        TabBarManager.show()
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            viewModel.resetAll()
+            router.reset()
         }
     }
 }
@@ -178,23 +196,33 @@ extension KeyringPackageCompleteView {
     private func loadKeyringData() {
         let db = Firestore.firestore()
 
+        print("[PackageComplete] 키링 로드 시작 - ID: \(keyringDocumentId)")
+
         db.collection("Keyring")
             .document(keyringDocumentId)
             .getDocument { snapshot, error in
                 if let error = error {
                     print("[PackageComplete] 키링 로드 실패: \(error.localizedDescription)")
+                    isLoading = false
                     return
                 }
 
                 guard let data = snapshot?.data() else {
-                    print("[PackageComplete] 키링 데이터 없음")
+                    print("[PackageComplete] 키링 데이터 없음 - documentId: \(keyringDocumentId)")
+                    isLoading = false
                     return
                 }
 
+                print("[PackageComplete] 키링 데이터 수신: \(data.keys)")
+
                 // Keyring 파싱
                 if let keyring = Keyring(documentId: keyringDocumentId, data: data) {
+                    print("[PackageComplete] 키링 파싱 성공: \(keyring.name)")
                     self.keyring = keyring
                     loadAuthorName(authorId: keyring.authorId)
+                } else {
+                    print("[PackageComplete] 키링 파싱 실패 - 필수 필드 누락")
+                    isLoading = false
                 }
             }
     }
@@ -214,16 +242,4 @@ extension KeyringPackageCompleteView {
             }
     }
 
-    private func loadShareLink() {
-        let db = Firestore.firestore()
-
-        db.collection("PostOffice")
-            .document(postOfficeId)
-            .getDocument { snapshot, error in
-                if let data = snapshot?.data(),
-                   let link = data["shareLink"] as? String {
-                    self.shareLink = link
-                }
-            }
-    }
 }
