@@ -10,7 +10,7 @@ import FirebaseFirestore
 
 // MARK: - 포장 처리
 extension CollectionViewModel {
-    
+
     // MARK: - 포장 상태 업데이트
     func packageKeyring(
         uid: String,
@@ -18,180 +18,31 @@ extension CollectionViewModel {
         completion: @escaping (Bool, String?) -> Void
     ) {
         guard let documentId = keyringDocumentIdByLocalId[keyring.id] else {
-            print("키링 문서 ID 없음")
+            print("[Collection] 키링 문서 ID 없음")
             completion(false, nil)
             return
         }
-        
-        let db = Firestore.firestore()
-        
-        // 1. Keyring 상태 업데이트
-        let keyringUpdateData: [String: Any] = [
-            "isPackaged": true
-        ]
-        
-        db.collection("Keyring")
-            .document(documentId)
-            .updateData(keyringUpdateData) { [weak self] error in
-                guard let self = self else {
-                    completion(false, nil)
-                    return
-                }
-                
-                if let error = error {
-                    print("Keyring 상태 업데이트 실패: \(error.localizedDescription)")
-                    completion(false, nil)
-                    return
-                }
-                
-                print("Keyring 상태 업데이트 완료")
-                
-                // 2. PostOffice 문서 먼저 생성 (shareLink 없이)
-                let postOfficeRef = db.collection("PostOffice").document()
-                let postOfficeId = postOfficeRef.documentID
-                
-                postOfficeRef.getDocument { [weak self] checkSnapshot, checkError in
-                    guard let self = self else {
-                        completion(false, nil)
-                        return
-                    }
-                    
-                    if checkSnapshot?.exists == true {
-                        print("[희귀 케이스] PostOffice ID 중복 발견 - 재시도")
-                        
-                        // 재귀 호출로 다시 시도 (최대 3회 정도)
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            self.packageKeyring(uid: uid, keyring: keyring, completion: completion)
-                        }
-                        return
-                    }
-                    
-                    // 3. PostOffice ID로 공유 링크 생성
-                    guard let shareLink = DeepLinkManager.createShareLink(postOfficeId: postOfficeId) else {
-                        print("공유 링크 생성 실패")
-                        completion(false, nil)
-                        return
-                    }
-                    
-                    print("공유 링크 생성: \(shareLink.absoluteString)")
-                    
-                    // 4. PostOffice 문서 생성
-                    let postOfficeData: [String: Any] = [
-                        "type": "receive",
-                        "senderId": uid,
-                        "keyringId": documentId,
-                        "shareLink": shareLink.absoluteString,
-                        "createdAt": Timestamp(date: Date())
-                    ]
-                    
-                    postOfficeRef.setData(postOfficeData) { error in
-                        if let error = error {
-                            print("PostOffice 문서 생성 실패: \(error.localizedDescription)")
-                            completion(false, nil)
-                            return
-                        }
-                        
-                        print("PostOffice 문서 생성 완료: \(postOfficeId)")
-                        
-                        // 5. Bundle에서 키링 제거
-                        self.removeKeyringFromBundles(
-                            uid: uid,
-                            keyringId: documentId
-                        ) { bundleSuccess in
-                            if bundleSuccess {
-                                print("Bundle에서 키링 제거 완료")
-                            } else {
-                                print("Bundle에서 키링 제거 실패 (Bundle 없음)")
-                            }
-                            
-                            // 로컬 상태 업데이트
-                            if let index = self.keyring.firstIndex(where: { $0.id == keyring.id }) {
-                                self.keyring[index].isPackaged = true
-                                self.keyring[index].isEditable = false
-                            }
-                            
-                            completion(true, postOfficeId)
-                        }
-                    }
+
+        // KeyringPackageManager를 사용하여 포장 처리
+        KeyringPackageManager.packageKeyring(
+            uid: uid,
+            keyringDocumentId: documentId
+        ) { [weak self] success, postOfficeId in
+            guard let self = self else {
+                completion(false, nil)
+                return
+            }
+
+            if success {
+                // 로컬 상태 업데이트
+                if let index = self.keyring.firstIndex(where: { $0.id == keyring.id }) {
+                    self.keyring[index].isPackaged = true
+                    self.keyring[index].isEditable = false
                 }
             }
-    }
-    
-    // MARK: - Bundle에서 키링 제거
-    private func removeKeyringFromBundles(
-        uid: String,
-        keyringId: String,
-        completion: @escaping (Bool) -> Void
-    ) {
-        let db = Firestore.firestore()
-        
-        // 해당 사용자의 모든 Bundle 조회
-        db.collection("KeyringBundle")
-            .whereField("userId", isEqualTo: uid)
-            .getDocuments { snapshot, error in
-                if error != nil {
-                    completion(false)
-                    return
-                }
-                
-                guard let documents = snapshot?.documents, !documents.isEmpty else {
-                    print("Bundle 없음")
-                    completion(true)
-                    return
-                }
-                
-                let batch = db.batch()
-                var affectedBundleIds: [String] = []
-                
-                // 각 Bundle에서 해당 키링 ID 제거
-                for document in documents {
-                    guard var keyrings = document.data()["keyrings"] as? [String] else {
-                        continue
-                    }
-                    
-                    var needsUpdate = false
-                    
-                    // 배열을 순회하면서 keyringId를 "none"으로 변경
-                    for (index, keyring) in keyrings.enumerated() {
-                        if keyring == keyringId {
-                            keyrings[index] = "none"
-                            needsUpdate = true
-                            print("Bundle '\(document.documentID)'의 인덱스 \(index)를 'none'으로 변경 예정")
-                        }
-                    }
-                    
-                    if needsUpdate {
-                        let bundleRef = db.collection("KeyringBundle").document(document.documentID)
-                        batch.updateData(["keyrings": keyrings], forDocument: bundleRef)
-                        affectedBundleIds.append(document.documentID)
-                    }
-                }
-                
-                if affectedBundleIds.isEmpty {
-                    print("키링이 포함된 Bundle 없음")
-                    completion(true)
-                    return
-                }
-                
-                // Batch 커밋
-                batch.commit { error in
-                    if let error = error {
-                        print("Bundle 업데이트 실패: \(error.localizedDescription)")
-                        completion(false)
-                        return
-                    }
-                    
-                    print("\(affectedBundleIds.count)개 Bundle에서 키링 제거 완료")
-                    
-                    // 변경된 Bundle들의 캡처 캐시 삭제
-                    for bundleId in affectedBundleIds {
-                        BundleImageCache.shared.delete(for: bundleId)
-                        print("Bundle 캡처 캐시 삭제: \(bundleId)")
-                    }
-                    
-                    completion(true)
-                }
-            }
+
+            completion(success, postOfficeId)
+        }
     }
     
     // MARK: - PostOffice 데이터 가져오기
