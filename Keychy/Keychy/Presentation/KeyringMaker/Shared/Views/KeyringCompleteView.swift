@@ -67,7 +67,6 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
                                 .padding(.top, 10)
                                 .cinematicAppear(delay: 1.0, duration: 0.8, style: .fadeIn)
                                 .opacity(isCapturingImage ? 0 : 1)
-                            //.adaptiveBottomPadding()
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .position(x: geometry.size.width / 2, y: geometry.size.height * 0.8)
@@ -115,15 +114,14 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
                     .zIndex(999)
                 }
 
-                // 커스텀 네비게이션 바
-                customNavigationBar
-                    .blur(radius: showImageSaved ? 15 : 0)
-                    .opacity(isCapturingImage ? 0 : 1)
-                    .adaptiveTopPadding()
             }
         }
         .ignoresSafeArea()
-        .navigationBarBackButtonHidden(true)
+        .navigationBarBackButtonHidden()
+        .toolbar {
+            closeToolbarItem
+            titleToolbarItem
+        }
         .onAppear {
             checkReviewTriggers()
         }
@@ -149,12 +147,16 @@ extension KeyringCompleteView {
     }
 }
 
-//MARK: - 커스텀 네비게이션 바
+// MARK: - Toolbar Items
 extension KeyringCompleteView {
-    private var customNavigationBar: some View {
-        CustomNavigationBar {
-            // Leading (왼쪽)
-            CloseToolbarButton {
+    /// Alert 표시 중 여부
+    private var isAlertShowing: Bool {
+        showImageSaved || showVideoSaved || isGeneratingVideo
+    }
+
+    var closeToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button {
                 viewModel.resetAll()
 
                 // Festival에서 온 경우 콜백 실행
@@ -165,18 +167,22 @@ extension KeyringCompleteView {
                     TabBarManager.show()
                     router.reset()
                 }
+            } label: {
+                Image(.dismissGray600)
             }
-        } center: {
-            // Center (중앙)
-            Text("키링이 완성되었어요!")
+            .opacity(isAlertShowing ? 0 : 1)
+            .allowsHitTesting(!isAlertShowing)
+        }
+        .sharedBackgroundVisibility(isAlertShowing ? .hidden : .visible)
+    }
+
+    var titleToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .principal) {
+            Text("키링 완성!")
                 .typography(.suit17B)
                 .foregroundStyle(.black100)
-        } trailing: {
-            // Trailing (오른쪽) - 빈 공간 유지
-            Spacer()
-                .frame(width: 44, height: 44)
+                .opacity(isAlertShowing ? 0 : 1)
         }
-        .cinematicAppear(delay: 0.6, duration: 0.8, style: .fadeIn)
     }
 }
 
