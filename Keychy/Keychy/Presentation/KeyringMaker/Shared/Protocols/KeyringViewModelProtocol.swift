@@ -37,6 +37,9 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
     var maxMemoCount: Int { get }
     var createdAt: Date { get set }
 
+    /// 저장된 키링 Document ID (Firebase 저장 후 설정됨)
+    var savedKeyringDocumentId: String? { get set }
+
     /// 태그 관련
     var selectedTags: [String] { get set }
 

@@ -109,6 +109,7 @@ class NeonSignVM: KeyringViewModelProtocol {
     var maxMemoCount: Int = 500
     var selectedTags: [String] = []
     var createdAt: Date = Date()
+    var savedKeyringDocumentId: String?
 
     // MARK: - 초기화
     init(userManager: UserManager = UserManager.shared) {

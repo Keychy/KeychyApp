@@ -161,6 +161,8 @@ private class KeyringAdapter: KeyringViewModelProtocol {
     func isInCache(particleId: String) -> Bool { false }
     func downloadSound(_ sound: Sound) async { }
     func downloadParticle(_ particle: Particle) async { }
+    var savedKeyringDocumentId: String?
+
     func resetCustomizingData() { }
     func resetInfoData() { }
     func resetAll() { }

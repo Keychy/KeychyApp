@@ -36,5 +36,6 @@ extension KeyringViewModelProtocol {
     func resetAll() {
         resetCustomizingData()
         resetInfoData()
+        savedKeyringDocumentId = nil
     }
 }

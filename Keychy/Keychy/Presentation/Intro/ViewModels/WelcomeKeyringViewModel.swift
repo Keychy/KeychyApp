@@ -42,6 +42,8 @@ class WelcomeKeyringViewModel: KeyringViewModelProtocol {
     var particleId: String = "Confetti"
     var effectSubject = PassthroughSubject<(soundId: String, particleId: String, type: KeyringUpdateType), Never>()
 
+    var savedKeyringDocumentId: String?
+
     init(nickname: String, bodyImage: UIImage) {
         self.nameText = nickname
         self.bodyImage = bodyImage
