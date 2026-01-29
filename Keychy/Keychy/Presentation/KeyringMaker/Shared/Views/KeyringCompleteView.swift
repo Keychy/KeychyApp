@@ -317,8 +317,7 @@ extension KeyringCompleteView {
             .padding(.vertical, 11.5)
             .padding(.horizontal, 8)
         }
-        .buttonStyle(.plain)
-        .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 24))
+        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 24))
     }
     
     /// 하단 액션 버튼 영역
