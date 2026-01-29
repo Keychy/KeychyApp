@@ -116,11 +116,9 @@ extension KeyringPackageCompleteView {
                             .foregroundColor(.black100)
                             .padding(.top, 10)
 
-                        Text("링크나 QR로 바로 공유할 수 있어요\n포장은 보관함에서 풀 수 있습니다")
+                        Text("링크나 QR로 바로 공유할 수 있어요")
                             .font(.suit16M)
                             .foregroundColor(.black100)
-                            .multilineTextAlignment(.center)
-                            .fixedSize(horizontal: false, vertical: true)
                     }
                     .padding(.top, isSmallScreen ? -70 : 78)
 
