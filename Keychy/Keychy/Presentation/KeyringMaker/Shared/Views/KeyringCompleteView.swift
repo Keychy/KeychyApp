@@ -14,24 +14,24 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @Bindable var viewModel: VM
     let navigationTitle: String
-
+    
     var userManager: UserManager = UserManager.shared
     var reviewManager: ReviewManager = ReviewManager.shared
-
+    
     // Festival에서 왔을 때 처리용 옵셔널 콜백
     var onCloseFromFestival: ((NavigationRouter<WorkshopRoute>) -> Void)?
     
     // 이미지 저장
     @State var showImageSaved = false
     @State var isCapturingImage = false
-
+    
     // 영상 생성
     @State var isGeneratingVideo = false
     @State var showVideoSaved = false
-
+    
     // 씬 인터랙션
     @State var isInteractionEnabled = false
-
+    
     // 비디오 생성기
     let videoGenerator = KeyringVideoGenerator()
     
@@ -39,13 +39,13 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
         ZStack {
             // 1. 배경
             backgroundView
-
+            
             // 2. 메인 컨텐츠
             mainContent
-
+            
             // 3. Alerts 오버레이
             alertsOverlay
-
+            
             // 4. 로딩 오버레이
             loadingOverlay
         }
@@ -53,6 +53,7 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
         .toolbar {
             closeToolbarItem
             titleToolbarItem
+            collectionToolbarItem
         }
         .onAppear {
             checkReviewTriggers()
@@ -71,7 +72,7 @@ extension KeyringCompleteView {
             .cinematicAppear(delay: 0, duration: 0.6, style: .fadeIn)
             .blur(radius: isAlertShowing ? 15 : 0)
     }
-
+    
     /// 메인 컨텐츠 (키링씬 + 정보 + 버튼)
     private var mainContent: some View {
         GeometryReader { geometry in
@@ -82,14 +83,14 @@ extension KeyringCompleteView {
                     .cinematicAppear(delay: 0.2, duration: 0.8, style: .full)
                     .border(.red)
                     .offset(x: 0, y: -20)
-
+                
                 // 키링 정보
                 keyringInfo
                     .cinematicAppear(delay: 0.6, duration: 0.8, style: .slideUp)
                     .padding(.bottom, 30)
-
-                // 저장 버튼
-                saveButton
+                
+                // 액션 버튼
+                actionButtons
                     .cinematicAppear(delay: 1.0, duration: 0.8, style: .fadeIn)
                     .opacity(isCapturingImage ? 0 : 1)
             }
@@ -97,7 +98,7 @@ extension KeyringCompleteView {
         }
         .blur(radius: isAlertShowing ? 15 : 0)
     }
-
+    
     /// Alerts 오버레이
     @ViewBuilder
     private var alertsOverlay: some View {
@@ -106,30 +107,30 @@ extension KeyringCompleteView {
             message: "이미지가 저장되었어요!",
             isPresented: $showImageSaved
         )
-
+        
         KeychyAlert(
             type: .imageSave,
             message: "영상이 저장되었어요!",
             isPresented: $showVideoSaved
         )
     }
-
+    
     /// 로딩 오버레이
     @ViewBuilder
     private var loadingOverlay: some View {
         if isGeneratingVideo {
             Color.black20
                 .ignoresSafeArea()
-
+            
             VStack(spacing: 20) {
                 ProgressView()
                     .scaleEffect(1.5)
                     .tint(.white)
-
+                
                 Text("영상 생성 중...")
                     .typography(.suit17SB)
                     .foregroundColor(.white)
-
+                
                 Text("5~10초 소요")
                     .typography(.suit14M)
                     .foregroundColor(.white.opacity(0.7))
@@ -166,12 +167,12 @@ extension KeyringCompleteView {
     private var isAlertShowing: Bool {
         showImageSaved || showVideoSaved || isGeneratingVideo
     }
-
+    
     var closeToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             Button {
                 viewModel.resetAll()
-
+                
                 // Festival에서 온 경우 콜백 실행
                 if let onCloseFromFestival = onCloseFromFestival {
                     onCloseFromFestival(router)
@@ -188,13 +189,39 @@ extension KeyringCompleteView {
         }
         .sharedBackgroundVisibility(isAlertShowing ? .hidden : .visible)
     }
-
+    
     var titleToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .principal) {
             Text("키링 완성!")
-                .typography(.suit17B)
+                .typography(.notosans17M)
                 .foregroundStyle(.black100)
                 .opacity(isAlertShowing ? 0 : 1)
+        }
+    }
+    
+    var collectionToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button {
+                navigateToCollection()
+            } label: {
+                Image(.goToCollection)
+            }
+            .opacity(isAlertShowing ? 0 : 1)
+            .allowsHitTesting(!isAlertShowing)
+        }
+        .sharedBackgroundVisibility(isAlertShowing ? .hidden : .visible)
+    }
+
+    /// 콜렉션으로 이동 (부드러운 전환)
+    private func navigateToCollection() {
+        // 1. 탭 전환 먼저 (현재 뷰가 보이는 상태에서)
+        TabBarManager.switchTo(.collection)
+        TabBarManager.show()
+
+        // 2. 백그라운드에서 Workshop 스택 정리
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            viewModel.resetAll()
+            router.reset()
         }
     }
 }
@@ -216,7 +243,7 @@ extension KeyringCompleteView {
             if let nickname = userManager.currentUser?.nickname {
                 Text("@\(nickname)")
                     .typography(getBottomPadding(0) == 0 ? .notosans12R : .notosans14R)
-                    .foregroundStyle(.black100)
+                    .foregroundStyle(.gray500)
                     .padding(.vertical, 1)
             }
         }
@@ -230,53 +257,51 @@ extension KeyringCompleteView {
     }
 }
 
-// MARK: - 저장 버튼
+// MARK: - 버튼
 extension KeyringCompleteView {
-    private var saveButton: some View {
-        HStack(spacing: 20) {
-            // 이미지 저장 버튼
-            VStack(spacing: 9) {
-                Button(action: {
-                    captureAndSaveImage()
-                }) {
-                    Image(.imageDownload)
-                }
-                .frame(
-                    width: getBottomPadding(0) == 0 ? 55 : 65,
-                    height: getBottomPadding(0) == 0 ? 55 : 65
-                )
-                .buttonStyle(.plain)
-                .glassEffect(.regular.interactive(), in: .circle)
-
-                Text("이미지 저장")
-                    .typography(.suit13SB)
+    /// 버튼 사이즈 (디바이스별)
+    private var buttonSize: CGFloat {
+        getBottomPadding(0) == 0 ? 55 : 65
+    }
+    
+    /// 액션 버튼 컴포넌트
+    private func actionButton(
+        image: ImageResource,
+        title: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            VStack(spacing: 4) {
+                Image(image)
+                Text(title)
+                    .typography(.suit12M)
                     .foregroundStyle(.black100)
             }
-
-            // 영상 생성 버튼
-            VStack(spacing: 9) {
-                Button(action: {
-                    Task {
-                        await generateAndSaveVideo()
-                    }
-                }) {
-                    Image(systemName: "video.fill")
-                        .font(.system(size: 24))
-                        .foregroundColor(.black100)
-                }
-                .frame(
-                    width: getBottomPadding(0) == 0 ? 55 : 65,
-                    height: getBottomPadding(0) == 0 ? 55 : 65
-                )
-                .buttonStyle(.plain)
-                .glassEffect(.regular.interactive(), in: .circle)
-                .disabled(isGeneratingVideo)
-
-                Text("영상 생성")
-                    .typography(.suit13SB)
-                    .foregroundStyle(.black100)
+            .frame(width: 74, height: 47)
+            .padding(.vertical, 11.5)
+            .padding(.horizontal, 8)
+        }
+        .buttonStyle(.plain)
+        .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 24))
+    }
+    
+    /// 하단 액션 버튼 영역
+    private var actionButtons: some View {
+        HStack(spacing: 17) {
+            // 이미지 저장
+            actionButton(image: .save, title: "이미지 저장") {
+                captureAndSaveImage()
             }
-            .opacity(isGeneratingVideo ? 0.5 : 1)
+            
+            // 공유
+            actionButton(image: .share, title: "공유") {
+                // TODO: 공유 기능
+            }
+            
+            // 선물하기
+            actionButton(image: .present, title: "선물하기") {
+                // TODO: 선물하기 기능
+            }
         }
     }
 }
