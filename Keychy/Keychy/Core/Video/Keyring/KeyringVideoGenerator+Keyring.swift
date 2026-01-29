@@ -162,6 +162,8 @@ private class KeyringAdapter: KeyringViewModelProtocol {
     func downloadSound(_ sound: Sound) async { }
     func downloadParticle(_ particle: Particle) async { }
     var savedKeyringDocumentId: String?
+    var packagedPostOfficeId: String?
+    var packagedShareLink: String?
 
     func resetCustomizingData() { }
     func resetInfoData() { }

@@ -37,5 +37,7 @@ extension KeyringViewModelProtocol {
         resetCustomizingData()
         resetInfoData()
         savedKeyringDocumentId = nil
+        packagedPostOfficeId = nil
+        packagedShareLink = nil
     }
 }

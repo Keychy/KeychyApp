@@ -40,6 +40,10 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
     /// 저장된 키링 Document ID (Firebase 저장 후 설정됨)
     var savedKeyringDocumentId: String? { get set }
 
+    /// 포장 완료 정보 (선물하기 후 저장됨)
+    var packagedPostOfficeId: String? { get set }
+    var packagedShareLink: String? { get set }
+
     /// 태그 관련
     var selectedTags: [String] { get set }
 

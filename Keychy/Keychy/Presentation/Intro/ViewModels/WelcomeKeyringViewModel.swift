@@ -43,6 +43,8 @@ class WelcomeKeyringViewModel: KeyringViewModelProtocol {
     var effectSubject = PassthroughSubject<(soundId: String, particleId: String, type: KeyringUpdateType), Never>()
 
     var savedKeyringDocumentId: String?
+    var packagedPostOfficeId: String?
+    var packagedShareLink: String?
 
     init(nickname: String, bodyImage: UIImage) {
         self.nameText = nickname

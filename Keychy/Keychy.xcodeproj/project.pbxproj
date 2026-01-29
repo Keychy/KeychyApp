@@ -1212,6 +1212,7 @@
 				4C47333F2F1FA388005D2376 /* KeyringCompleteView+ReviewCheck.swift */,
 				4C4733402F1FA388005D2376 /* KeyringCompleteView+SaveImage.swift */,
 				4C4733412F1FA388005D2376 /* KeyringCompleteView+VideoGen.swift */,
+				4C7A9EC82F2B0586008B520C /* KeyringPackageCompleteView.swift */,
 				4C4733422F1FA388005D2376 /* KeyringCustomizingView.swift */,
 				4C4733432F1FA388005D2376 /* KeyringCustomizingView+Cart.swift */,
 				4C4733442F1FA388005D2376 /* KeyringCustomizingView+Purchase.swift */,
@@ -1221,7 +1222,6 @@
 				4C4733482F1FA388005D2376 /* KeyringInfoInputView+Helpers.swift */,
 				4C4733492F1FA388005D2376 /* KeyringInfoInputView+Sheet.swift */,
 				4C47334A2F1FA388005D2376 /* KeyringInfoInputView+TagManagement.swift */,
-				4C7A9EC82F2B0586008B520C /* KeyringPackageCompleteView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";

@@ -73,6 +73,8 @@ class SpeechBubbleVM: KeyringViewModelProtocol {
     var selectedTags: [String] = []
     var createdAt: Date = Date()
     var savedKeyringDocumentId: String?
+    var packagedPostOfficeId: String?
+    var packagedShareLink: String?
 
     // MARK: - Dependencies
     var userManager: UserManager

@@ -62,6 +62,7 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
         .onAppear {
             checkReviewTriggers()
         }
+        .withToast(position: .default)
     }
 }
 
@@ -335,6 +336,19 @@ extension KeyringCompleteView {
             
             // 선물하기
             actionButton(image: .present, title: "선물하기") {
+                // 이미 포장된 경우 바로 이동
+                if let keyringDocumentId = viewModel.savedKeyringDocumentId,
+                   let postOfficeId = viewModel.packagedPostOfficeId,
+                   let shareLink = viewModel.packagedShareLink {
+                    router.push(.packageComplete(
+                        keyringDocumentId: keyringDocumentId,
+                        postOfficeId: postOfficeId,
+                        templateId: viewModel.templateId,
+                        shareLink: shareLink
+                    ))
+                    return
+                }
+
                 // 네트워크 체크
                 guard NetworkManager.shared.isConnected else {
                     ToastManager.shared.show()
@@ -358,9 +372,27 @@ extension KeyringCompleteView {
         }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            guard let uid = userManager.currentUser?.id,
-                  let keyringDocumentId = viewModel.savedKeyringDocumentId else {
-                print("[Package] uid 또는 keyringDocumentId 없음")
+            guard let keyringDocumentId = viewModel.savedKeyringDocumentId else {
+                print("[Package] keyringDocumentId 없음")
+                return
+            }
+
+            // 이미 포장된 경우 바로 이동
+            if let postOfficeId = viewModel.packagedPostOfficeId,
+               let shareLink = viewModel.packagedShareLink {
+                print("[Package] 이미 포장됨 - 바로 이동")
+                router.push(.packageComplete(
+                    keyringDocumentId: keyringDocumentId,
+                    postOfficeId: postOfficeId,
+                    templateId: viewModel.templateId,
+                    shareLink: shareLink
+                ))
+                return
+            }
+
+            // 새로 포장하는 경우
+            guard let uid = userManager.currentUser?.id else {
+                print("[Package] uid 없음")
                 return
             }
 
@@ -377,7 +409,7 @@ extension KeyringCompleteView {
             KeyringPackageManager.packageKeyring(
                 uid: uid,
                 keyringDocumentId: keyringDocumentId
-            ) { success, postOfficeId in
+            ) { success, postOfficeId, shareLink in
                 let elapsed = Date().timeIntervalSince(startTime)
                 let remainingDelay = max(0, minimumLoadingDuration - elapsed)
 
@@ -385,21 +417,23 @@ extension KeyringCompleteView {
                 DispatchQueue.main.asyncAfter(deadline: .now() + remainingDelay) {
                     showPackingAlert = false
 
-                    if success, let postOfficeId = postOfficeId {
+                    if success, let postOfficeId = postOfficeId, let shareLink = shareLink {
+                        // 포장 정보 저장 (뒤로갔다 다시 올 때 사용)
+                        viewModel.packagedPostOfficeId = postOfficeId
+                        viewModel.packagedShareLink = shareLink
+
                         // 성공 - 포장 완료 화면으로 이동
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                             router.push(.packageComplete(
                                 keyringDocumentId: keyringDocumentId,
-                                postOfficeId: postOfficeId
+                                postOfficeId: postOfficeId,
+                                templateId: viewModel.templateId,
+                                shareLink: shareLink
                             ))
-
-                            // 네비게이션 애니메이션 완료 후 리셋 (뒤에 있는 뷰가 보이지 않을 때)
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                viewModel.resetAll()
-                            }
                         }
                     } else {
                         print("[Package] 포장 실패")
+                        ToastManager.shared.show()
                     }
                 }
             }
