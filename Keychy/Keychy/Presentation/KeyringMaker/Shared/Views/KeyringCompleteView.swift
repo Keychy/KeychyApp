@@ -324,7 +324,7 @@ extension KeyringCompleteView {
     private var actionButtons: some View {
         HStack(spacing: 17) {
             // 이미지 저장
-            actionButton(image: .save, title: "이미지 저장") {
+            actionButton(image: .saveBlack, title: "이미지 저장") {
                 captureAndSaveImage()
             }
             
@@ -334,7 +334,7 @@ extension KeyringCompleteView {
             }
             
             // 선물하기
-            actionButton(image: .present, title: "선물하기") {
+            actionButton(image: .presentBlack, title: "선물하기") {
                 // 이미 포장된 경우 바로 이동
                 if let keyringDocumentId = viewModel.savedKeyringDocumentId,
                    let postOfficeId = viewModel.packagedPostOfficeId,
