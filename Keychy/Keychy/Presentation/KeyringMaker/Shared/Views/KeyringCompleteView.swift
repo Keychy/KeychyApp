@@ -36,87 +36,19 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
     let videoGenerator = KeyringVideoGenerator()
     
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                Image(.completeBG2)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: geometry.size.width, height: geometry.size.height)
-                    .clipped()
-                    .ignoresSafeArea()
-                    .cinematicAppear(delay: 0, duration: 0.6, style: .fadeIn)
-                    .blur(radius: showImageSaved ? 15 : 0)
-                
-                VStack(spacing: 0) {
-                    Spacer()
-                    // 키링 씬
-                    
-                    ZStack(alignment: .center) {
-                        keyringScene
-                            .frame(height: geometry.size.height * 0.72)
-                            .cinematicAppear(delay: 0.2, duration: 0.8, style: .full)
-                            .position(x: geometry.size.width / 2, y: geometry.size.height * 0.4)
-                        
-                        VStack {
-                            // 키링 정보
-                            keyringInfo
-                                .cinematicAppear(delay: 0.6, duration: 0.8, style: .slideUp)
-                            
-                            // 이미지 저장 버튼
-                            saveButton
-                                .padding(.top, 10)
-                                .cinematicAppear(delay: 1.0, duration: 0.8, style: .fadeIn)
-                                .opacity(isCapturingImage ? 0 : 1)
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .position(x: geometry.size.width / 2, y: geometry.size.height * 0.8)
-                    }
-                }
-                .blur(radius: showImageSaved ? 15 : 0)
+        ZStack {
+            // 1. 배경
+            backgroundView
 
-                /// 이미지 저장 완료 alert
-                KeychyAlert(
-                    type: .imageSave,
-                    message: "이미지가 저장되었어요!",
-                    isPresented: $showImageSaved
-                )
+            // 2. 메인 컨텐츠
+            mainContent
 
-                /// 영상 저장 완료 alert
-                KeychyAlert(
-                    type: .imageSave,
-                    message: "영상이 저장되었어요!",
-                    isPresented: $showVideoSaved
-                )
+            // 3. Alerts 오버레이
+            alertsOverlay
 
-                /// 영상 생성 중 로딩
-                if isGeneratingVideo {
-                    ZStack {
-                        Color.black20
-                            .ignoresSafeArea()
-
-                        VStack(spacing: 20) {
-                            ProgressView()
-                                .scaleEffect(1.5)
-                                .tint(.white)
-
-                            Text("영상 생성 중...")
-                                .typography(.suit17SB)
-                                .foregroundColor(.white)
-
-                            Text("5~10초 소요")
-                                .typography(.suit14M)
-                                .foregroundColor(.white.opacity(0.7))
-                        }
-                        .padding(40)
-                        .background(.ultraThinMaterial)
-                        .cornerRadius(20)
-                    }
-                    .zIndex(999)
-                }
-
-            }
+            // 4. 로딩 오버레이
+            loadingOverlay
         }
-        .ignoresSafeArea()
         .navigationBarBackButtonHidden()
         .toolbar {
             closeToolbarItem
@@ -124,6 +56,87 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
         }
         .onAppear {
             checkReviewTriggers()
+        }
+    }
+}
+
+// MARK: - View Components
+extension KeyringCompleteView {
+    /// 배경 이미지
+    private var backgroundView: some View {
+        Image(.completeBG2)
+            .resizable()
+            .scaledToFill()
+            .ignoresSafeArea()
+            .cinematicAppear(delay: 0, duration: 0.6, style: .fadeIn)
+            .blur(radius: isAlertShowing ? 15 : 0)
+    }
+
+    /// 메인 컨텐츠 (키링씬 + 정보 + 버튼)
+    private var mainContent: some View {
+        GeometryReader { geometry in
+            VStack(spacing: 0) {
+                // 키링 씬 (화면 높이의 55%)
+                keyringScene
+                    .frame(height: geometry.size.height * 0.53)
+                    .cinematicAppear(delay: 0.2, duration: 0.8, style: .full)
+                    .border(.red)
+                    .offset(x: 0, y: -20)
+
+                // 키링 정보
+                keyringInfo
+                    .cinematicAppear(delay: 0.6, duration: 0.8, style: .slideUp)
+                    .padding(.bottom, 30)
+
+                // 저장 버튼
+                saveButton
+                    .cinematicAppear(delay: 1.0, duration: 0.8, style: .fadeIn)
+                    .opacity(isCapturingImage ? 0 : 1)
+            }
+            .adaptiveTopPaddingAlt()
+        }
+        .blur(radius: isAlertShowing ? 15 : 0)
+    }
+
+    /// Alerts 오버레이
+    @ViewBuilder
+    private var alertsOverlay: some View {
+        KeychyAlert(
+            type: .imageSave,
+            message: "이미지가 저장되었어요!",
+            isPresented: $showImageSaved
+        )
+
+        KeychyAlert(
+            type: .imageSave,
+            message: "영상이 저장되었어요!",
+            isPresented: $showVideoSaved
+        )
+    }
+
+    /// 로딩 오버레이
+    @ViewBuilder
+    private var loadingOverlay: some View {
+        if isGeneratingVideo {
+            Color.black20
+                .ignoresSafeArea()
+
+            VStack(spacing: 20) {
+                ProgressView()
+                    .scaleEffect(1.5)
+                    .tint(.white)
+
+                Text("영상 생성 중...")
+                    .typography(.suit17SB)
+                    .foregroundColor(.white)
+
+                Text("5~10초 소요")
+                    .typography(.suit14M)
+                    .foregroundColor(.white.opacity(0.7))
+            }
+            .padding(40)
+            .background(.ultraThinMaterial)
+            .cornerRadius(20)
         }
     }
 }
@@ -193,6 +206,7 @@ extension KeyringCompleteView {
             Text(viewModel.nameText)
                 .typography(getBottomPadding(0) == 0 ? .malang24B : .malang26B)
                 .foregroundStyle(.black100)
+                .padding(.bottom, 2)
             
             Text(formattedDate(date: viewModel.createdAt))
                 .typography(.suit14M)
@@ -264,5 +278,16 @@ extension KeyringCompleteView {
             }
             .opacity(isGeneratingVideo ? 0.5 : 1)
         }
+    }
+}
+
+// MARK: - Preview
+#Preview {
+    NavigationStack {
+        KeyringCompleteView(
+            router: NavigationRouter<WorkshopRoute>(),
+            viewModel: PolaroidVM(),
+            navigationTitle: "키링 완성"
+        )
     }
 }
