@@ -70,6 +70,9 @@ extension KeyringInfoInputView {
         ) { success, keyringId in
             // 백그라운드로 위젯용 이미지 캡처 및 저장
             if success, let keyringId = keyringId {
+                // Document ID 저장 (선물하기 등에서 사용)
+                self.viewModel.savedKeyringDocumentId = keyringId
+
                 // viewModel이 reset되기 전에 이름과 hookOffsetY, chainLength를 미리 캡처
                 let keyringName = self.viewModel.nameText
                 let chainLength = self.viewModel.chainLength

@@ -106,7 +106,6 @@ extension KeyringSceneView {
         Group {
             if let scene {
                 SpriteView(scene: scene, options: [.allowsTransparency])
-                    .ignoresSafeArea()
                     .contentShape(Rectangle())
                     .frame(maxWidth: .infinity)
             }

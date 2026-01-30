@@ -48,12 +48,16 @@ struct PackagedKeyringView: View {
         .padding(.horizontal, 20)
         .onAppear {
             loadCachedImage()
+            // shareLink가 이미 있으면 QR 생성 (Workshop에서 직접 전달받는 경우)
+            if !shareLink.isEmpty {
+                generateQRCodeImage()
+            }
         }
         .onDisappear {
             cleanupImages()
         }
         .onChange(of: shareLink) { oldValue, newValue in
-            // shareLink가 업데이트되면 QR 코드 생성
+            // shareLink가 업데이트되면 QR 코드 생성 (Collection에서 비동기 로드하는 경우)
             if !newValue.isEmpty {
                 generateQRCodeImage()
             }

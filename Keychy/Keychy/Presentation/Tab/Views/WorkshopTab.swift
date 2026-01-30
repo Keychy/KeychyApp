@@ -238,6 +238,16 @@ struct WorkshopTab: View {
                 } : nil
             )
 
+        // MARK: - 선물 포장 완료
+        case .packageComplete(let keyringDocumentId, let postOfficeId, let templateId, let shareLink):
+            KeyringPackageCompleteView(
+                router: router,
+                viewModel: getViewModelForTemplate(templateId),
+                keyringDocumentId: keyringDocumentId,
+                postOfficeId: postOfficeId,
+                shareLink: shareLink
+            )
+
         // MARK: - Bundle
         case .bundleInventoryView:
             BundleInventoryView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
@@ -309,6 +319,26 @@ struct WorkshopTab: View {
             return newViewModel
         }
         return viewModel
+    }
+
+    // MARK: - ViewModel by TemplateId
+    private func getViewModelForTemplate(_ templateId: String) -> any KeyringViewModelProtocol {
+        switch templateId {
+        case "AcrylicPhoto":
+            return getAcrylicPhotoVM()
+        case "NeonSign":
+            return getNeonSignVM()
+        case "Polaroid":
+            return getPolaroidVM()
+        case "ClearSketch":
+            return getClearSketchVM()
+        case "PixelKeyring":
+            return getPixelKeyringVM()
+        case "SpeechBubble":
+            return getSpeechBubbleVM()
+        default:
+            return getPolaroidVM()
+        }
     }
 
     // MARK: - ViewModel Reset
