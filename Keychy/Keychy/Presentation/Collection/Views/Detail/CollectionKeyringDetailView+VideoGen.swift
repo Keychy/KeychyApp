@@ -58,6 +58,10 @@ extension CollectionKeyringDetailView {
             await MainActor.run {
                 cachedVideoURL = videoURL
                 isGeneratingVideo = false
+            }
+            // 블러 애니메이션 완료 후 공유 시트 표시
+            try? await Task.sleep(for: .seconds(0.3))
+            await MainActor.run {
                 showShareSheet = true
             }
         } catch {
