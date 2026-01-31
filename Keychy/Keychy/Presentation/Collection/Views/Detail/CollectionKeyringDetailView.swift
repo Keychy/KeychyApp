@@ -57,8 +57,6 @@ struct CollectionKeyringDetailView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            let heightRatio = geometry.size.height / 852
-            
             ZStack(alignment: .top) {
                 Image(.whiteBackground)
                     .resizable()
@@ -151,6 +149,7 @@ struct CollectionKeyringDetailView: View {
         }
         .onDisappear {
             handleViewDisappear()
+            cleanupCachedVideo()
         }
         .onPreferenceChange(MenuButtonPreferenceKey.self) { frame in
             menuPosition = frame
@@ -287,7 +286,7 @@ extension CollectionKeyringDetailView {
 
             Spacer()
 
-            downloadImageButton
+            shareButton
         }
         .padding(EdgeInsets(top: 4, leading: 16, bottom: 36, trailing: 16))
         .adaptiveBottomPadding()
@@ -295,33 +294,24 @@ extension CollectionKeyringDetailView {
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isSheetPresented)
     }
 
-    private var downloadVideoButton: some View {
+    private var shareButton: some View {
         Button(action: {
+            if cachedVideoURL != nil {
+                showShareSheet = true
+                return
+            }
             Task {
-                await generateAndSaveVideo()
+                await generateVideoForShare()
             }
         }) {
-            Image(systemName: "video.fill")
-                .foregroundStyle(.black)
+            Image(.share)
         }
-        .disabled(isGeneratingVideo || showUIForCapture == false)
+        .disabled(isGeneratingVideo)
         .frame(width: 48, height: 48)
         .glassEffect(.regular.interactive(), in: .circle)
-        .opacity((isGeneratingVideo || showUIForCapture == false) ? 0.5 : 1)
+        .opacity(isGeneratingVideo ? 0.5 : 1)
     }
 
-    private var downloadImageButton: some View {
-        Button(action: {
-            captureAndSaveImage()
-        }) {
-            Image(.imageDownload)
-        }
-        .disabled(isGeneratingVideo || showUIForCapture == false)
-        .frame(width: 48, height: 48)
-        .glassEffect(.regular.interactive(), in: .circle)
-        .opacity((isGeneratingVideo || showUIForCapture == false) ? 0.5 : 1)
-    }
-    
     private var packageButton: some View {
         Button(action: {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
