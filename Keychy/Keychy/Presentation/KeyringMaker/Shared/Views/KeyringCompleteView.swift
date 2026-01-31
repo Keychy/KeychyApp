@@ -214,8 +214,9 @@ extension KeyringCompleteView {
     var closeToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             Button {
+                cleanupCachedVideo()
                 viewModel.resetAll()
-                
+
                 // Festival에서 온 경우 콜백 실행
                 if let onCloseFromFestival = onCloseFromFestival {
                     onCloseFromFestival(router)
@@ -257,6 +258,8 @@ extension KeyringCompleteView {
 
     /// 콜렉션으로 이동 (부드러운 전환)
     private func navigateToCollection() {
+        cleanupCachedVideo()
+
         // 1. 탭 전환 먼저 (현재 뷰가 보이는 상태에서)
         TabBarManager.switchTo(.collection)
         TabBarManager.show()
