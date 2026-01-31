@@ -53,13 +53,21 @@ extension KeyringCompleteView {
 
         do {
             let videoURL = try await videoGenerator.generateVideo(viewModel: viewModel)
-            cachedVideoURL = videoURL
-            showShareSheet = true
+            await MainActor.run {
+                cachedVideoURL = videoURL
+                isGeneratingVideo = false
+            }
+            // 블러 애니메이션 완료 후 공유 시트 표시
+            try? await Task.sleep(for: .seconds(0.3))
+            await MainActor.run {
+                showShareSheet = true
+            }
         } catch {
             print("[VideoShare] 영상 생성 실패: \(error)")
+            await MainActor.run {
+                isGeneratingVideo = false
+            }
         }
-
-        isGeneratingVideo = false
     }
 
     /// 캐시된 영상 파일 삭제
