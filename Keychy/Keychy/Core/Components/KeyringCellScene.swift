@@ -12,6 +12,7 @@ class KeyringCellScene: SKScene {
     
     // MARK: - Properties
     var bodyImage: String?
+    var bodyUIImage: UIImage?  // UIImage 직접 전달용 (URL 다운로드 스킵)
     var templateId: String?  // 템플릿 ID (옵션)
     var onLoadingComplete: (() -> Void)?
     var hookOffsetY: CGFloat?  // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
@@ -37,6 +38,7 @@ class KeyringCellScene: SKScene {
         ringType: RingType,
         chainType: ChainType,
         bodyImage: String? = nil,
+        bodyUIImage: UIImage? = nil,
         templateId: String? = nil,
         targetSize: CGSize,
         customBackgroundColor: UIColor = .gray50,
@@ -48,12 +50,13 @@ class KeyringCellScene: SKScene {
         self.currentRingType = ringType
         self.currentChainType = chainType
         self.bodyImage = bodyImage
+        self.bodyUIImage = bodyUIImage
         self.templateId = templateId
         self.hookOffsetY = hookOffsetY
         self.chainLength = chainLength
         self.onLoadingComplete = onLoadingComplete
         self.customBackgroundColor = customBackgroundColor
-        
+
         let scaleX = targetSize.width / originalSize.width
         let scaleY = targetSize.height / originalSize.height
         self.scaleFactor = min(scaleX, scaleY) * zoomScale

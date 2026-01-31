@@ -7,21 +7,68 @@
 
 import SwiftUI
 import Photos
+import SpriteKit
 
-// MARK: - Image Capture
+// MARK: - Transparent Keyring Capture
 extension KeyringCompleteView {
-    /// 현재 화면을 직접 캡처 (window hierarchy 사용)
-    @MainActor
-    func captureVisibleScreen() -> UIImage? {
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = windowScene.windows.first else {
+    /// 키링을 투명 배경 PNG로 캡처
+    func captureKeyringToPNG() async -> UIImage? {
+        guard let bodyImage = viewModel.bodyImage else {
+            print("[KeyringCapture] bodyImage 없음")
             return nil
         }
 
-        let renderer = UIGraphicsImageRenderer(bounds: window.bounds)
-        return renderer.image { context in
-            window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
+        // 캡처용 Scene 생성 (투명 배경)
+        let scene = KeyringCellScene(
+            ringType: .basic,
+            chainType: .basic,
+            bodyUIImage: bodyImage,
+            templateId: viewModel.templateId,
+            targetSize: CGSize(width: 350, height: 466),
+            customBackgroundColor: .clear,
+            zoomScale: 2.0,
+            hookOffsetY: viewModel.hookOffsetY != 0 ? viewModel.hookOffsetY : nil,
+            chainLength: viewModel.chainLength
+        )
+        scene.scaleMode = .aspectFill
+
+        // 로딩 완료 대기용 플래그
+        var loadingCompleted = false
+        scene.onLoadingComplete = {
+            loadingCompleted = true
         }
+
+        // SKView 생성 및 Scene 표시
+        let view = SKView(frame: CGRect(origin: .zero, size: scene.size))
+        view.allowsTransparency = true
+        view.backgroundColor = .clear
+        view.presentScene(scene)
+
+        // 로딩 완료 대기 (최대 3초)
+        var waitTime = 0.0
+        let checkInterval = 0.1
+        let maxWaitTime = 3.0
+
+        while !loadingCompleted && waitTime < maxWaitTime {
+            try? await Task.sleep(nanoseconds: UInt64(checkInterval * 1_000_000_000))
+            waitTime += checkInterval
+        }
+
+        if !loadingCompleted {
+            print("[KeyringCapture] 타임아웃 - 로딩 미완료")
+        } else {
+            // 로딩 완료 후 추가 렌더링 대기
+            try? await Task.sleep(nanoseconds: 200_000_000)
+        }
+
+        // PNG 캡처
+        guard let pngData = await scene.captureToPNG(),
+              let image = UIImage(data: pngData) else {
+            print("[KeyringCapture] PNG 캡처 실패")
+            return nil
+        }
+
+        return image
     }
 }
 
@@ -75,28 +122,29 @@ extension KeyringCompleteView {
 
     /// 이미지 캡처 및 저장 (메인 함수)
     func captureAndSaveImage() {
-        // 1. 저장 버튼과 toolbar 임시 숨기기 (애니메이션 없이)
+        // 캡처 중 표시
         withAnimation(.none) {
             isCapturingImage = true
         }
 
-        // 2. UI 업데이트 완전히 대기 후 캡처 (0.5초로 증가)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            guard let image = self.captureVisibleScreen() else {
-                print("Failed to capture image")
-                // UI 복원 (애니메이션 없이)
-                withAnimation(.none) {
-                    self.isCapturingImage = false
+        Task {
+            // 투명 배경 PNG 캡처
+            guard let image = await captureKeyringToPNG() else {
+                print("[KeyringCapture] 캡처 실패")
+                await MainActor.run {
+                    withAnimation(.none) {
+                        isCapturingImage = false
+                    }
                 }
                 return
             }
 
-            // 3. 이미지 저장
-            self.saveImageToLibrary(image)
-
-            // 4. UI 복원 (애니메이션 없이)
-            withAnimation(.none) {
-                self.isCapturingImage = false
+            // 이미지 저장
+            await MainActor.run {
+                saveImageToLibrary(image)
+                withAnimation(.none) {
+                    isCapturingImage = false
+                }
             }
         }
     }
