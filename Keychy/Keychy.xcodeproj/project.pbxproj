@@ -1626,7 +1626,6 @@
 		4CDCADC12F14CC5A00C01972 /* Video */ = {
 			isa = PBXGroup;
 			children = (
-				4C7A9ECA2F2DA419008B520C /* ShareSheet.swift */,
 				4C004F9A2F177C4600D9063E /* Bundle */,
 				4C004FA02F177C4600D9063E /* Keyring */,
 			);
@@ -1801,6 +1800,7 @@
 				38173D0D2EB902FD00E36F7E /* Popup */,
 				4CBBEF202EB3705E00252590 /* Items */,
 				38C147B92EB13B2100A8E511 /* Button */,
+				4C7A9ECA2F2DA419008B520C /* ShareSheet.swift */,
 				4CEC62A62EAE0C130099ECEE /* LottieView.swift */,
 				AA9B2E902EB081750004D31C /* ItemDetailView.swift */,
 				4C8426632ED375840050B6FE /* ColorPalette.swift */,
