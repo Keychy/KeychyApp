@@ -44,5 +44,29 @@ extension KeyringCompleteView {
             PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
         }
     }
+
+    // MARK: - Share
+
+    /// 공유용 영상 생성 (캐싱)
+    func generateVideoForShare() async {
+        isGeneratingVideo = true
+
+        do {
+            let videoURL = try await videoGenerator.generateVideo(viewModel: viewModel)
+            cachedVideoURL = videoURL
+            showShareSheet = true
+        } catch {
+            print("[VideoShare] 영상 생성 실패: \(error)")
+        }
+
+        isGeneratingVideo = false
+    }
+
+    /// 캐시된 영상 파일 삭제
+    func cleanupCachedVideo() {
+        guard let url = cachedVideoURL else { return }
+        try? FileManager.default.removeItem(at: url)
+        cachedVideoURL = nil
+    }
 }
 

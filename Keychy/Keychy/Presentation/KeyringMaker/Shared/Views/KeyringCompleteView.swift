@@ -332,7 +332,16 @@ extension KeyringCompleteView {
             
             // 공유
             actionButton(image: .share, title: "공유") {
-                // TODO: 공유 기능
+                // 캐시된 영상이 있으면 바로 시트
+                if cachedVideoURL != nil {
+                    showShareSheet = true
+                    return
+                }
+
+                // 영상 생성 후 시트
+                Task {
+                    await generateVideoForShare()
+                }
             }
             
             // 선물하기
