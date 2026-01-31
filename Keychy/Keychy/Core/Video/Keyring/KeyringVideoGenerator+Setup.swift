@@ -54,8 +54,12 @@ extension KeyringVideoGenerator {
     /// AVAssetWriter 설정
     /// H.264 코덱으로 1080x1920 비디오 인코딩
     func setupVideoWriter() throws {
+        // 파일 이름에 사용 불가 문자 제거
+        let safeName = keyringName
+            .replacingOccurrences(of: "/", with: "_")
+            .replacingOccurrences(of: ":", with: "_")
         let outputURL = FileManager.default.temporaryDirectory
-            .appendingPathComponent("keyring_video_\(UUID()).mp4")
+            .appendingPathComponent("\(safeName)_\(UUID().uuidString.prefix(8)).mp4")
 
         let writer = try AVAssetWriter(outputURL: outputURL, fileType: .mp4)
 

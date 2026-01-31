@@ -84,6 +84,7 @@ class KeyringVideoGenerator {
 
     var backgroundImage: UIImage?
     var keyringScale: CGFloat = 1.0
+    var keyringName: String = "키링"
 
     // MARK: - Particle Properties
     var particleSpriteNode: SKSpriteNode?
@@ -119,6 +120,7 @@ class KeyringVideoGenerator {
     ) async throws -> URL {
         self.backgroundImage = backgroundImage
         self.keyringScale = keyringScale
+        self.keyringName = viewModel.nameText.isEmpty ? "키링" : viewModel.nameText
 
         // Metal 디바이스 설정
         guard let device = MTLCreateSystemDefaultDevice() else {
