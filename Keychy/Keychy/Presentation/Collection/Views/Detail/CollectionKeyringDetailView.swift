@@ -189,43 +189,73 @@ struct CollectionKeyringDetailView: View {
 
 // MARK: - 툴바
 extension CollectionKeyringDetailView {
-    var customNavigationBar: some View {
-        CustomNavigationBar {
-            // Leading (왼쪽) - 뒤로가기 버튼
-            BackToolbarButton {
-                isSheetPresented = false
-
-                router.pop()
-            }
-            .opacity(showUIForCapture ? 1 : 0)
-        } center: {
-            // Center (중앙)
-            Text(showUIForCapture ? keyring.name : "")
-                .foregroundStyle(.gray600)
-        } trailing: {
-            // Trailing (오른쪽) - 다음/구매 버튼
-            Button(action: {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                    showMenu.toggle()
-                }
-            }) {
-                Image(.menuIcon)
-                    .resizable()
-                    .frame(width: 34, height: 34)
-                    .contentShape(Rectangle())
-                    .background(
-                        GeometryReader { geometry in
-                            Color.clear.preference(
-                                key: MenuButtonPreferenceKey.self,
-                                value: geometry.frame(in: .global)
-                            )
-                        }
-                    )
-            }
-            .frame(width: 44, height: 44)
-            .glassEffect(.regular.interactive(), in: .circle)
-            .opacity(showUIForCapture ? 1 : 0)
+    private var safeAreaTop: CGFloat {
+        guard let window = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first?.windows
+            .first(where: { $0.isKeyWindow }) else {
+            return 0
         }
+        return window.safeAreaInsets.top
+    }
+
+    var customNavigationBar: some View {
+        ZStack {
+            // 타이틀 (화면 정중앙)
+            Text(showUIForCapture ? keyring.name : "")
+                .typography(.notosans17M)
+                .foregroundStyle(.gray600)
+
+            // Leading & Trailing
+            HStack {
+                // 뒤로가기 버튼
+                BackToolbarButton {
+                    isSheetPresented = false
+                    router.pop()
+                }
+                .opacity(showUIForCapture ? 1 : 0)
+
+                Spacer()
+
+                // 오른쪽 버튼들
+                HStack(spacing: 10) {
+                    // 이미지 저장 버튼
+                    Button {
+                        captureAndSaveImage()
+                    } label: {
+                        Image(.imageDownload)
+                    }
+                    .frame(width: 44, height: 44)
+                    .glassEffect(.regular.interactive(), in: .circle)
+
+                    // 메뉴 버튼
+                    Button(action: {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showMenu.toggle()
+                        }
+                    }) {
+                        Image(.menuIcon)
+                            .resizable()
+                            .frame(width: 34, height: 34)
+                            .contentShape(Rectangle())
+                            .background(
+                                GeometryReader { geometry in
+                                    Color.clear.preference(
+                                        key: MenuButtonPreferenceKey.self,
+                                        value: geometry.frame(in: .global)
+                                    )
+                                }
+                            )
+                    }
+                    .frame(width: 44, height: 44)
+                    .glassEffect(.regular.interactive(), in: .circle)
+                }
+                .opacity(showUIForCapture ? 1 : 0)
+            }
+            .padding(.horizontal, 16)
+        }
+        .frame(height: 44)
+        .padding(.top, safeAreaTop)
     }
 }
 
