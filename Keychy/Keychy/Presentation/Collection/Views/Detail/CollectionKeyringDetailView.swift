@@ -82,21 +82,6 @@ struct CollectionKeyringDetailView: View {
                     }
                 }
 
-                // 영상 저장 버튼 - 이미지 저장 버튼 바로 위
-                VStack {
-                    Spacer()
-                    HStack {
-                        Spacer()
-                        downloadVideoButton
-                    }
-                    .padding(.trailing, 16)
-                    .padding(.bottom, 36 + 48 + 12)
-                    .adaptiveBottomPadding()
-                }
-                .opacity(showUIForCapture && !isSheetPresented ? 1 : 0)
-                .blur(radius: shouldApplyBlur ? 15 : 0)
-                .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isSheetPresented)
-                
                 if showMenu {
                     menuOverlay
                 }
@@ -129,7 +114,19 @@ struct CollectionKeyringDetailView: View {
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(false)
         .withToast(position: .default)
-        .sheet(isPresented: $isSheetPresented) {
+        .sheet(isPresented: $isSheetPresented, onDismiss: {
+            // 시트 완전히 닫힌 후 대기 중인 공유 액션 실행
+            if pendingShareAction {
+                pendingShareAction = false
+                if cachedVideoURL != nil {
+                    showShareSheet = true
+                } else {
+                    Task {
+                        await generateVideoForShare()
+                    }
+                }
+            }
+        }) {
             infoSheet
                 .presentationDetents([.fraction(0.48), .fraction(0.93)], selection: $sheetDetent)
                 .presentationDragIndicator(.visible)
