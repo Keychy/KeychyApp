@@ -25,9 +25,11 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
     @State var showImageSaved = false
     @State var isCapturingImage = false
     
-    // 영상 생성
+    // 영상 생성 및 공유
     @State var isGeneratingVideo = false
     @State var showVideoSaved = false
+    @State var cachedVideoURL: URL?
+    @State var showShareSheet = false
     
     // 씬 인터랙션
     @State var isInteractionEnabled = false
