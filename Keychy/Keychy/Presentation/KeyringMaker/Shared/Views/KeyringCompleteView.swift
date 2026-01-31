@@ -25,9 +25,11 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
     @State var showImageSaved = false
     @State var isCapturingImage = false
     
-    // 영상 생성
+    // 영상 생성 및 공유
     @State var isGeneratingVideo = false
     @State var showVideoSaved = false
+    @State var cachedVideoURL: URL?
+    @State var showShareSheet = false
     
     // 씬 인터랙션
     @State var isInteractionEnabled = false
@@ -63,6 +65,11 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
             checkReviewTriggers()
         }
         .withToast(position: .default)
+        .sheet(isPresented: $showShareSheet) {
+            if let url = cachedVideoURL {
+                ShareSheet(items: [url])
+            }
+        }
     }
 }
 
@@ -207,8 +214,9 @@ extension KeyringCompleteView {
     var closeToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             Button {
+                cleanupCachedVideo()
                 viewModel.resetAll()
-                
+
                 // Festival에서 온 경우 콜백 실행
                 if let onCloseFromFestival = onCloseFromFestival {
                     onCloseFromFestival(router)
@@ -250,6 +258,8 @@ extension KeyringCompleteView {
 
     /// 콜렉션으로 이동 (부드러운 전환)
     private func navigateToCollection() {
+        cleanupCachedVideo()
+
         // 1. 탭 전환 먼저 (현재 뷰가 보이는 상태에서)
         TabBarManager.switchTo(.collection)
         TabBarManager.show()
@@ -330,7 +340,16 @@ extension KeyringCompleteView {
             
             // 공유
             actionButton(image: .share, title: "공유") {
-                // TODO: 공유 기능
+                // 캐시된 영상이 있으면 바로 시트
+                if cachedVideoURL != nil {
+                    showShareSheet = true
+                    return
+                }
+
+                // 영상 생성 후 시트
+                Task {
+                    await generateVideoForShare()
+                }
             }
             
             // 선물하기

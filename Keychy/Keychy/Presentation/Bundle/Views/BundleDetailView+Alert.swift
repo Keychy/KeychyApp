@@ -48,17 +48,8 @@ extension BundleDetailView {
 
             // 영상 생성 중 로딩
             if uiState.isGeneratingVideo {
-                VStack(spacing: 20) {
-                    ProgressView()
-                        .scaleEffect(1.5)
-                        .tint(.white)
-
-                    Text("영상 생성 중...")
-                        .typography(.suit17SB)
-                        .foregroundStyle(.white)
-                }
-                .position(x: screenWidth/2, y: screenHeight/2)
-                .zIndex(200)
+                LoadingAlert(type: .longWithKeychy, message: "공유할 영상을 만들고 있어요!")
+                    .zIndex(200)
             }
 
             // 뭉치 삭제 알럿
