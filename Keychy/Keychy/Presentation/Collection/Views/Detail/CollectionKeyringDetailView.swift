@@ -40,10 +40,13 @@ struct CollectionKeyringDetailView: View {
     @State var checkmarkOpacity: Double = 0.0
     @State var showUIForCapture: Bool = true  // 캡처 시 UI 표시 여부
 
-    // 영상 생성 관련
+    // 영상 생성 및 공유
     @State var isGeneratingVideo: Bool = false
     @State var showVideoSaved: Bool = false
     @State var videoGenerator = KeyringVideoGenerator()
+    @State var cachedVideoURL: URL?
+    @State var showShareSheet: Bool = false
+    @State var pendingShareAction: Bool = false  // 시트 닫힌 후 공유 실행 대기
 
     // 포장 관련
     @State var postOfficeId: String = ""
@@ -135,7 +138,13 @@ struct CollectionKeyringDetailView: View {
                 .presentationBackgroundInteraction(.enabled(upThrough: .fraction(0.48)))
                 .interactiveDismissDisabled(false)
         }
-        
+        .sheet(isPresented: $showShareSheet) {
+            if let url = cachedVideoURL {
+                ShareSheet(items: [url])
+                    .presentationDetents([.fraction(0.65)])
+                    .presentationDragIndicator(.visible)
+            }
+        }
         .onAppear {
             handleViewAppear()
             refreshCopyVoucher()
