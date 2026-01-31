@@ -65,6 +65,11 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
             checkReviewTriggers()
         }
         .withToast(position: .default)
+        .sheet(isPresented: $showShareSheet) {
+            if let url = cachedVideoURL {
+                ShareSheet(items: [url])
+            }
+        }
     }
 }
 
