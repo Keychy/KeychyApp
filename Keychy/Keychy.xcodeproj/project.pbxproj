@@ -402,9 +402,9 @@
 		C6B56F342EC061BB0049F969 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6B56F332EC061BB0049F969 /* WidgetKit.framework */; };
 		C6B56F362EC061BB0049F969 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6B56F352EC061BB0049F969 /* SwiftUI.framework */; };
 		C6B56F472EC061BC0049F969 /* WidgetKeychyExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C6B56F322EC061BB0049F969 /* WidgetKeychyExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		C6B56F602EC08BCF0049F969 /* AvailableKeyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F5F2EC08BCF0049F969 /* AvailableKeyring.swift */; };
+		C6B56F602EC08BCF0049F969 /* WidgetKeyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F5F2EC08BCF0049F969 /* WidgetKeyring.swift */; };
 		C6B56F612EC08CCE0049F969 /* KeyringImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F212EC0341B0049F969 /* KeyringImageCache.swift */; };
-		C6B56F702EC08ED40049F969 /* AvailableKeyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F5F2EC08BCF0049F969 /* AvailableKeyring.swift */; };
+		C6B56F702EC08ED40049F969 /* WidgetKeyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B56F5F2EC08BCF0049F969 /* WidgetKeyring.swift */; };
 		C6B5707B2EC2036C0049F969 /* MultiKeyringCaptureScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B5707A2EC2036C0049F969 /* MultiKeyringCaptureScene.swift */; };
 		C6B5707F2EC206CD0049F969 /* BundleImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B5707E2EC206CD0049F969 /* BundleImageCache.swift */; };
 		C6B571062EC2337C0049F969 /* MultiKeyringCaptureScene+Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B571052EC2337C0049F969 /* MultiKeyringCaptureScene+Capture.swift */; };
@@ -854,7 +854,7 @@
 		C6B56F352EC061BB0049F969 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		C6B56F4D2EC0681C0049F969 /* KeychyRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KeychyRelease.entitlements; sourceTree = "<group>"; };
 		C6B56F5C2EC06B310049F969 /* WidgetKeychyExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WidgetKeychyExtension.entitlements; sourceTree = "<group>"; };
-		C6B56F5F2EC08BCF0049F969 /* AvailableKeyring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailableKeyring.swift; sourceTree = "<group>"; };
+		C6B56F5F2EC08BCF0049F969 /* WidgetKeyring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetKeyring.swift; sourceTree = "<group>"; };
 		C6B5707A2EC2036C0049F969 /* MultiKeyringCaptureScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiKeyringCaptureScene.swift; sourceTree = "<group>"; };
 		C6B5707E2EC206CD0049F969 /* BundleImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleImageCache.swift; sourceTree = "<group>"; };
 		C6B571052EC2337C0049F969 /* MultiKeyringCaptureScene+Capture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MultiKeyringCaptureScene+Capture.swift"; sourceTree = "<group>"; };
@@ -1747,7 +1747,7 @@
 			isa = PBXGroup;
 			children = (
 				4CEC61DF2EAE08C00099ECEE /* Keyring.swift */,
-				C6B56F5F2EC08BCF0049F969 /* AvailableKeyring.swift */,
+				C6B56F5F2EC08BCF0049F969 /* WidgetKeyring.swift */,
 				4CEC61E02EAE08C00099ECEE /* RingType.swift */,
 				4CEC61E12EAE08C00099ECEE /* ChainType.swift */,
 				4CEC61E22EAE08C00099ECEE /* BodyType.swift */,
@@ -2513,7 +2513,7 @@
 				382800D32EC0628D005F1332 /* CollectionViewModel+Package.swift in Sources */,
 				38C3C28E2EC1F56B003C5DE1 /* CollectionKeyringDetailView+Sheet.swift in Sources */,
 				4C6530462EBA80DA000F8154 /* PurchaseFailAlert.swift in Sources */,
-				C6B56F602EC08BCF0049F969 /* AvailableKeyring.swift in Sources */,
+				C6B56F602EC08BCF0049F969 /* WidgetKeyring.swift in Sources */,
 				4CEC622A2EAE08DA0099ECEE /* Font+Custom.swift in Sources */,
 				AA2146B72F15E5B60048D40E /* BundleEditView+SelectSheet.swift in Sources */,
 				389080172ED3F05D00D7A49F /* FestivalKeyringDetailView.swift in Sources */,
@@ -2777,7 +2777,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C6B56F702EC08ED40049F969 /* AvailableKeyring.swift in Sources */,
+				C6B56F702EC08ED40049F969 /* WidgetKeyring.swift in Sources */,
 				C6B56F612EC08CCE0049F969 /* KeyringImageCache.swift in Sources */,
 				4CC8D0192EF0395F00317467 /* AppIntent.swift in Sources */,
 				4CC8D01A2EF0395F00317467 /* WidgetConfiguration.mm in Sources */,

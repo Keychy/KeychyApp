@@ -235,10 +235,10 @@ class KeyringImageCache {
         print("📋 [KeyringCache] =====================================")
     }
 
-    // MARK: - 메타데이터 관리 (위젯용)
+    // MARK: - 위젯 메타데이터 관리
 
-    /// 사용 가능한 키링 목록 저장
-    func saveAvailableKeyrings(_ keyrings: [AvailableKeyring]) {
+    /// 위젯용 키링 목록 저장
+    func saveWidgetKeyrings(_ keyrings: [WidgetKeyring]) {
         guard let fileURL = metadataFileURL else {
             print("❌ [KeyringCache] 메타데이터 파일 URL을 찾을 수 없습니다.")
             return
@@ -254,8 +254,8 @@ class KeyringImageCache {
         }
     }
 
-    /// 사용 가능한 키링 목록 로드
-    func loadAvailableKeyrings() -> [AvailableKeyring] {
+    /// 위젯용 키링 목록 로드
+    func loadWidgetKeyrings() -> [WidgetKeyring] {
         guard let fileURL = metadataFileURL else {
             print("❌ [KeyringCache] 메타데이터 파일 URL을 찾을 수 없습니다.")
             return []
@@ -269,7 +269,7 @@ class KeyringImageCache {
         do {
             let data = try Data(contentsOf: fileURL)
             let decoder = JSONDecoder()
-            let keyrings = try decoder.decode([AvailableKeyring].self, from: data)
+            let keyrings = try decoder.decode([WidgetKeyring].self, from: data)
             return keyrings
         } catch {
             print("❌ [KeyringCache] 메타데이터 로드 실패: \(error.localizedDescription)")
@@ -280,23 +280,23 @@ class KeyringImageCache {
     // MARK: - 동기화 메서드
 
     /// 키링 추가 또는 업데이트 (이미지 + 메타데이터)
-    func syncKeyring(id: String, name: String, imageData: Data) {
+    func syncKeyring(id: String, name: String, imageData: Data, createdAt: Date) {
         // 1. 이미지 저장
         save(pngData: imageData, for: id, type: .thumbnail)
 
         // 2. 메타데이터 업데이트
-        var keyrings = loadAvailableKeyrings()
+        var keyrings = loadWidgetKeyrings()
         let imagePath = "\(id)_thumb.png"
 
         if let index = keyrings.firstIndex(where: { $0.id == id }) {
             // 기존 키링 업데이트
-            keyrings[index] = AvailableKeyring(id: id, name: name, imagePath: imagePath)
+            keyrings[index] = WidgetKeyring(id: id, name: name, imagePath: imagePath, createdAt: createdAt)
         } else {
             // 새 키링 추가
-            keyrings.append(AvailableKeyring(id: id, name: name, imagePath: imagePath))
+            keyrings.append(WidgetKeyring(id: id, name: name, imagePath: imagePath, createdAt: createdAt))
         }
 
-        saveAvailableKeyrings(keyrings)
+        saveWidgetKeyrings(keyrings)
 
         // 3. 위젯 타임라인 새로고침
         reloadWidgets()
@@ -308,9 +308,9 @@ class KeyringImageCache {
         delete(for: id, type: .thumbnail)
 
         // 2. 메타데이터에서 제거
-        var keyrings = loadAvailableKeyrings()
+        var keyrings = loadWidgetKeyrings()
         keyrings.removeAll { $0.id == id }
-        saveAvailableKeyrings(keyrings)
+        saveWidgetKeyrings(keyrings)
 
         print("✅ [KeyringCache] 키링 완전 삭제: \(id)")
 

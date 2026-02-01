@@ -224,7 +224,8 @@ class KeyringCacheManager {
                         KeyringImageCache.shared.syncKeyring(
                             id: keyringID,
                             name: keyring.name,
-                            imageData: pngData
+                            imageData: pngData,
+                            createdAt: keyring.createdAt
                         )
                     }
                     
