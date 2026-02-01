@@ -337,9 +337,47 @@ class KeyringImageCache {
 
     // MARK: - 위젯 업데이트
 
-    /// 위젯 타임라인 새로고침
     private func reloadWidgets() {
         WidgetCenter.shared.reloadTimelines(ofKind: widgetKind)
-        print("🔄 [KeyringCache] 위젯 타임라인 새로고침 요청")
+    }
+
+    // MARK: - 마이그레이션
+
+    private let migrationVersionKey = "widgetCacheMigrationVersion"
+    private let currentMigrationVersion = 1
+
+    /// 위젯 키링 데이터 마이그레이션 (한 번만 실행)
+    /// - 삭제된 키링 정리
+    /// - createdAt 누락된 키링 업데이트
+    func migrateWidgetKeyringsIfNeeded(with keyringDates: [String: Date]) {
+        let lastVersion = UserDefaults.standard.integer(forKey: migrationVersionKey)
+        guard lastVersion < currentMigrationVersion else { return }
+
+        let originalKeyrings = loadWidgetKeyrings()
+
+        let migratedKeyrings = originalKeyrings.compactMap { widgetKeyring -> WidgetKeyring? in
+            guard let actualCreatedAt = keyringDates[widgetKeyring.id] else {
+                delete(for: widgetKeyring.id, type: .thumbnail)
+                return nil
+            }
+
+            if widgetKeyring.createdAt == .distantPast {
+                return WidgetKeyring(
+                    id: widgetKeyring.id,
+                    name: widgetKeyring.name,
+                    imagePath: widgetKeyring.imagePath,
+                    createdAt: actualCreatedAt
+                )
+            }
+
+            return widgetKeyring
+        }
+
+        if migratedKeyrings != originalKeyrings {
+            saveWidgetKeyrings(migratedKeyrings)
+            reloadWidgets()
+        }
+
+        UserDefaults.standard.set(currentMigrationVersion, forKey: migrationVersionKey)
     }
 }
