@@ -149,12 +149,11 @@ struct CachedImagesDebugView: View {
     // MARK: - Load Cached Images
 
     private func loadCachedImages() {
-
         // App Group의 메타데이터 로드
-        let availableKeyrings = KeyringImageCache.shared.loadAvailableKeyrings()
+        let widgetKeyrings = KeyringImageCache.shared.loadWidgetKeyrings()
         var loadedImages: [(id: String, name: String, image: Image, size: String)] = []
 
-        for keyring in availableKeyrings {
+        for keyring in widgetKeyrings {
             // 이미지 데이터 로드
             if let imageData = KeyringImageCache.shared.loadImageByPath(keyring.imagePath),
                let uiImage = UIImage(data: imageData) {
@@ -183,10 +182,9 @@ struct CachedImagesDebugView: View {
     // MARK: - Clear All Cache
 
     private func clearAllCache() {
-
         // 모든 키링 메타데이터 삭제
-        let keyrings = KeyringImageCache.shared.loadAvailableKeyrings()
-        for keyring in keyrings {
+        let widgetKeyrings = KeyringImageCache.shared.loadWidgetKeyrings()
+        for keyring in widgetKeyrings {
             KeyringImageCache.shared.removeKeyring(id: keyring.id)
         }
 

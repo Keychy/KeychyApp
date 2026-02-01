@@ -116,9 +116,17 @@ extension CollectionViewModel {
         
         dispatchGroup.notify(queue: .main) { [weak self] in
             guard let self = self else { return }
-            
+
             self.keyring = allKeyrings
-            
+
+            // 위젯 캐시 마이그레이션 (최초 1회만 실행)
+            let keyringDates = Dictionary(
+                uniqueKeysWithValues: allKeyrings
+                    .filter { !$0.isPackaged && !$0.isPublished }
+                    .map { ($0.id.uuidString, $0.createdAt) }
+            )
+            KeyringImageCache.shared.migrateWidgetKeyringsIfNeeded(with: keyringDates)
+
             completion(true)
         }
     }
@@ -440,7 +448,8 @@ extension CollectionViewModel {
                         KeyringImageCache.shared.syncKeyring(
                             id: keyringID,
                             name: keyring.name,
-                            imageData: pngData
+                            imageData: pngData,
+                            createdAt: keyring.createdAt
                         )
                     }
                 }

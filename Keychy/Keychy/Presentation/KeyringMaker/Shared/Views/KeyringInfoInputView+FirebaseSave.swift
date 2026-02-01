@@ -87,7 +87,8 @@ extension KeyringInfoInputView {
                         ringType: .basic,
                         chainType: .basic,
                         hookOffsetY: hookOffsetY,
-                        chainLength: chainLength
+                        chainLength: chainLength,
+                        createdAt: Date()
                     )
                     
                     // 모든 작업 완료 후 CompleteView로 이동
@@ -330,7 +331,8 @@ extension KeyringInfoInputView {
         ringType: RingType,
         chainType: ChainType,
         hookOffsetY: CGFloat?,
-        chainLength: Int
+        chainLength: Int,
+        createdAt: Date
     ) async {
         await withCheckedContinuation { continuation in
             // 이미지 로딩 완료 콜백
@@ -385,7 +387,8 @@ extension KeyringInfoInputView {
                     KeyringImageCache.shared.syncKeyring(
                         id: keyringId,
                         name: keyringName,
-                        imageData: pngData
+                        imageData: pngData,
+                        createdAt: createdAt
                     )
                     
                 } else {

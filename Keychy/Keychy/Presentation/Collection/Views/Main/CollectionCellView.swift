@@ -170,23 +170,24 @@ struct CollectionCellView: View {
 
     // MARK: - 위젯 메타데이터 동기화
     private func syncWidgetMetadata(keyringID: String) {
-        var keyrings = KeyringImageCache.shared.loadAvailableKeyrings()
-        let isInMetadata = keyrings.contains(where: { $0.id == keyringID })
+        var widgetKeyrings = KeyringImageCache.shared.loadWidgetKeyrings()
+        let isInMetadata = widgetKeyrings.contains(where: { $0.id == keyringID })
         let shouldBeInWidget = !keyring.isPackaged && !keyring.isPublished
-        
+
         if shouldBeInWidget && !isInMetadata {
             // 위젯에 있어야 하는데 없음 → 추가
             if let imageData = KeyringImageCache.shared.load(for: keyringID, type: .thumbnail) {
                 KeyringImageCache.shared.syncKeyring(
                     id: keyringID,
                     name: keyring.name,
-                    imageData: imageData
+                    imageData: imageData,
+                    createdAt: keyring.createdAt
                 )
             }
         } else if !shouldBeInWidget && isInMetadata {
             // 위젯에 없어야 하는데 있음 → 제거
-            keyrings.removeAll { $0.id == keyringID }
-            KeyringImageCache.shared.saveAvailableKeyrings(keyrings)
+            widgetKeyrings.removeAll { $0.id == keyringID }
+            KeyringImageCache.shared.saveWidgetKeyrings(widgetKeyrings)
         }
     }
 
@@ -303,7 +304,8 @@ struct CollectionCellView: View {
                         KeyringImageCache.shared.syncKeyring(
                             id: keyringID,
                             name: keyring.name,
-                            imageData: pngData
+                            imageData: pngData,
+                            createdAt: keyring.createdAt
                         )
                     } else {
                         print("[CollectionCell] 캡처 성공 (위젯 제외): \(keyringID)")
