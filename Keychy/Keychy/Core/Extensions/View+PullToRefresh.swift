@@ -73,10 +73,10 @@ struct PullToRefreshModifier: ViewModifier {
     }
 
     /// Refresh 중 content를 밀어내는 Spacer
-    /// - Refresh 중: topPadding이 있으면 topPadding, 없으면 60px (일정한 간격 유지)
+    /// - Refresh 중: 항상 60px (일정한 간격 유지)
     private var contentSpacer: some View {
         Spacer()
-            .frame(height: shouldHoldIndicator ? max(topPadding, 60) : min(pullDistance * 0.3, 60))
+            .frame(height: shouldHoldIndicator ? 50 : min(pullDistance * 0.3, 50))
     }
 
     /// Pull to Refresh Indicator
@@ -90,7 +90,7 @@ struct PullToRefreshModifier: ViewModifier {
             isRefreshing: isRefreshing
         )
         .allowsHitTesting(false)
-        .padding(.top, shouldHoldIndicator ? (topPadding == 0 ? 20 : topPadding + 40) : topPadding - 40)
+        .padding(.top, shouldHoldIndicator ? (topPadding == 0 ? 20 : topPadding + 20) : topPadding - 40)
     }
 
     /// 드래그 제스처
@@ -163,7 +163,7 @@ struct PullToRefreshModifier: ViewModifier {
                 }
 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    withAnimation(.spring(response: 0.4, dampingFraction: 1.0)) {
+                    withAnimation(.easeOut(duration: 0.25)) {
                         shouldHoldIndicator = false
                         indicatorOpacity = 0
                     }
