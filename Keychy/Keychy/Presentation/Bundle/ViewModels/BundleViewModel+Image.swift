@@ -90,9 +90,16 @@ extension BundleViewModel {
     }
     
     /// 뷰모델에 저장된 뭉치 이미지를 BundleImageCache에 저장
+    /// - Parameters:
+    ///   - bundleId: 뭉치 ID
+    ///   - bundleName: 뭉치 이름
+    ///   - widgetImageData: 위젯용 이미지 (배경 없음, optional)
+    ///   - createdAt: 뭉치 생성일 (새 뭉치는 Date(), 기존 뭉치는 bundle.createdAt)
     func saveBundleImageToCache(
         bundleId: String,
-        bundleName: String
+        bundleName: String,
+        widgetImageData: Data? = nil,
+        createdAt: Date = Date()
     ) {
         guard let imageData = bundleCapturedImage else {
             return
@@ -100,7 +107,9 @@ extension BundleViewModel {
         BundleImageCache.shared.syncBundle(
             id: bundleId,
             name: bundleName,
-            imageData: imageData
+            fullImageData: imageData,
+            widgetImageData: widgetImageData,
+            createdAt: createdAt
         )
     }
 }

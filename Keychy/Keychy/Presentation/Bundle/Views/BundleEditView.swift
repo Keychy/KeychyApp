@@ -274,7 +274,7 @@ struct BundleEditView<Route: BundleRoute>: View {
     }
     
     // MARK: - 썸네일 재캡쳐 & 캐시 저장
-    private func recaptureAndCacheBundleThumbnail(bundleId: String, bundleName: String) async {
+    private func recaptureAndCacheBundleThumbnail(bundleId: String, bundleName: String, createdAt: Date) async {
         // 편집 중 상태로 캡쳐
         guard let bg = bundleVM.newSelectedBackground?.background,
               let cb = bundleVM.newSelectedCarabiner?.carabiner else {
@@ -308,8 +308,8 @@ struct BundleEditView<Route: BundleRoute>: View {
             carabinerFrontURL = nil
         }
         
-        // 캡쳐
-        if let pngData = await MultiKeyringCaptureScene.captureBundleImage(
+        // 1. 배경 포함 캡쳐 (앱용)
+        guard let fullImageData = await MultiKeyringCaptureScene.captureBundleImage(
             keyringDataList: captureKeyrings,
             backgroundImageURL: bg.backgroundImage,
             carabinerBackImageURL: carabinerBackURL,
@@ -318,21 +318,38 @@ struct BundleEditView<Route: BundleRoute>: View {
             carabinerX: cb.carabinerX,
             carabinerY: cb.carabinerY,
             carabinerWidth: cb.carabinerWidth
-        ) {
-            // 캐시 저장
-            BundleImageCache.shared.syncBundle(
-                id: bundleId,
-                name: bundleName,
-                imageData: pngData
-            )
-            await MainActor.run {
-                bundleVM.bundleCapturedImage = pngData
-                isCapturing = false
-            }
-        } else {
+        ) else {
             await MainActor.run {
                 isCapturing = false
             }
+            return
+        }
+
+        // 2. 배경 없이 캡쳐 (위젯용 - 투명 여백 제거 후 리사이즈)
+        let widgetImageData = await MultiKeyringCaptureScene.captureBundleImage(
+            keyringDataList: captureKeyrings,
+            backgroundImageURL: nil,
+            carabinerBackImageURL: carabinerBackURL,
+            carabinerFrontImageURL: carabinerFrontURL,
+            carabinerType: carabinerType,
+            carabinerX: cb.carabinerX,
+            carabinerY: cb.carabinerY,
+            carabinerWidth: cb.carabinerWidth,
+            trimTransparentEdges: true
+        )
+
+        // 캐시 저장 (full + widget)
+        BundleImageCache.shared.syncBundle(
+            id: bundleId,
+            name: bundleName,
+            fullImageData: fullImageData,
+            widgetImageData: widgetImageData,
+            createdAt: createdAt
+        )
+
+        await MainActor.run {
+            bundleVM.bundleCapturedImage = fullImageData
+            isCapturing = false
         }
     }
 }
@@ -386,7 +403,7 @@ extension BundleEditView {
                         
                         // 저장 후 썸네일 재캡쳐, 캐시 저장
                         if let bundle = bundleVM.selectedBundle, let documentId = bundleVM.selectedBundle?.documentId {
-                            await recaptureAndCacheBundleThumbnail(bundleId: documentId, bundleName: bundle.name)
+                            await recaptureAndCacheBundleThumbnail(bundleId: documentId, bundleName: bundle.name, createdAt: bundle.createdAt)
                         }
                         
                         await MainActor.run {

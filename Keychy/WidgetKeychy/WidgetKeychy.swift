@@ -7,6 +7,7 @@
 
 import WidgetKit
 import SwiftUI
+import UIKit
 
 // MARK: - Timeline Provider
 
@@ -43,7 +44,7 @@ struct WidgetKeychy: Widget {
                 .containerBackground(.clear, for: .widget)
         }
         .configurationDisplayName("Keychy 위젯")
-        .description("위젯에 표시될 키링을 골라주세요")
+        .description("위젯에 표시될 키링 또는 뭉치를 골라주세요")
         .contentMarginsDisabled()
         .supportedFamilies([.systemSmall, .systemLarge])
     }
@@ -56,15 +57,56 @@ struct KeyringWidgetEntryView: View {
     @Environment(\.widgetFamily) var widgetFamily
 
     var body: some View {
-        if let keyring = entry.configuration.selectedKeyring,
-           let imageData = KeyringImageCache.shared.loadImageByPath("\(keyring.id)_thumb.png"),
-           let uiImage = UIImage(data: imageData) {
+        // 뭉치가 선택된 경우 뭉치 표시
+        if let bundle = entry.configuration.selectedBundle,
+           let uiImage = loadBundleImage(bundleId: bundle.id) {
             Image(uiImage: uiImage)
                 .resizable()
                 .scaledToFit()
-        } else {
+                .scaleEffect(0.85)  // 뭉치 약간 작게
+        }
+        // 키링이 선택된 경우 키링 표시
+        else if let keyring = entry.configuration.selectedKeyring,
+           let uiImage = loadKeyringImage(keyringId: keyring.id) {
+            Image(uiImage: uiImage)
+                .resizable()
+                .scaledToFit()
+                // 키링 기본 크기
+        }
+        // 아무것도 선택되지 않은 경우 placeholder
+        else {
             placeholderView
         }
+    }
+
+    /// 뭉치 이미지 로드 (위젯용 우선, 없으면 full 버전 사용)
+    private func loadBundleImage(bundleId: String) -> UIImage? {
+        // 1. 위젯용 이미지 시도 (_widget.png)
+        if let imageData = BundleImageCache.shared.loadImageByPath("\(bundleId)_widget.png"),
+           let uiImage = UIImage(data: imageData) {
+            return uiImage
+        }
+        // 2. Fallback: full 이미지 (.png)
+        if let imageData = BundleImageCache.shared.loadImageByPath("\(bundleId).png"),
+           let uiImage = UIImage(data: imageData) {
+            return uiImage
+        }
+        return nil
+    }
+
+    /// 키링 이미지 로드 (위젯용 우선, 없으면 썸네일 사용)
+    private func loadKeyringImage(keyringId: String) -> UIImage? {
+        // 1. 위젯용 이미지 시도 (_widget.png)
+        if let imageData = KeyringImageCache.shared.loadImageByPath("\(keyringId)_widget.png"),
+           let uiImage = UIImage(data: imageData) {
+            return uiImage
+        }
+        // 2. Fallback: 썸네일 이미지 (_thumb.png)
+        if let imageData = KeyringImageCache.shared.loadImageByPath("\(keyringId)_thumb.png"),
+           let uiImage = UIImage(data: imageData) {
+            return uiImage
+        }
+        return nil
     }
 
     @ViewBuilder

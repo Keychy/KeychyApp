@@ -17,18 +17,21 @@ class KeyringImageCache {
     enum ImageType {
         case thumbnail  // 175*233 (보관함용)
         case gift       // 304*490 (선물/알림용)
-        
+        case widget     // 350*467 (위젯용 - 더 큼)
+
         var suffix: String {
             switch self {
             case .thumbnail: return "_thumb"
             case .gift: return "_gift"
+            case .widget: return "_widget"
             }
         }
-        
+
         var size: CGSize {
             switch self {
             case .thumbnail: return CGSize(width: 175, height: 233)
             case .gift: return CGSize(width: 304, height: 490)
+            case .widget: return CGSize(width: 350, height: 467)
             }
         }
     }
@@ -130,6 +133,7 @@ class KeyringImageCache {
     func deleteAll(for keyringID: String) {
         delete(for: keyringID, type: .thumbnail)
         delete(for: keyringID, type: .gift)
+        delete(for: keyringID, type: .widget)
     }
 
     // MARK: - 전체 캐시 삭제
@@ -281,12 +285,17 @@ class KeyringImageCache {
 
     /// 키링 추가 또는 업데이트 (이미지 + 메타데이터)
     func syncKeyring(id: String, name: String, imageData: Data, createdAt: Date) {
-        // 1. 이미지 저장
+        // 1. 이미지 저장 (썸네일)
         save(pngData: imageData, for: id, type: .thumbnail)
 
-        // 2. 메타데이터 업데이트
+        // 2. 위젯용 이미지 저장 (더 큰 사이즈)
+        if let widgetData = resizeImageData(imageData, to: ImageType.widget.size) {
+            save(pngData: widgetData, for: id, type: .widget)
+        }
+
+        // 3. 메타데이터 업데이트 (위젯용 이미지 경로 사용)
         var keyrings = loadWidgetKeyrings()
-        let imagePath = "\(id)_thumb.png"
+        let imagePath = "\(id)_widget.png"
 
         if let index = keyrings.firstIndex(where: { $0.id == id }) {
             // 기존 키링 업데이트
@@ -298,14 +307,27 @@ class KeyringImageCache {
 
         saveWidgetKeyrings(keyrings)
 
-        // 3. 위젯 타임라인 새로고침
+        // 4. 위젯 타임라인 새로고침
         reloadWidgets()
+    }
+
+    /// 이미지 리사이즈
+    private func resizeImageData(_ data: Data, to size: CGSize) -> Data? {
+        guard let image = UIImage(data: data) else { return nil }
+
+        UIGraphicsBeginImageContextWithOptions(size, false, 1.0)
+        image.draw(in: CGRect(origin: .zero, size: size))
+        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return resizedImage?.pngData()
     }
 
     /// 키링 삭제 (이미지 + 메타데이터)
     func removeKeyring(id: String) {
-        // 1. 이미지 삭제
+        // 1. 이미지 삭제 (썸네일 + 위젯)
         delete(for: id, type: .thumbnail)
+        delete(for: id, type: .widget)
 
         // 2. 메타데이터에서 제거
         var keyrings = loadWidgetKeyrings()
