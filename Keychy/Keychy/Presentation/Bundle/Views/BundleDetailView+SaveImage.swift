@@ -125,7 +125,8 @@ extension BundleDetailView {
             carabinerFrontURL = nil
         }
         
-        guard let pngData = await MultiKeyringCaptureScene.captureBundleImage(
+        // 1. 배경 포함 캡쳐 (앱용)
+        guard let fullImageData = await MultiKeyringCaptureScene.captureBundleImage(
             keyringDataList: keyringDataList,
             backgroundImageURL: bg.backgroundImage,
             carabinerBackImageURL: carabinerBackURL,
@@ -140,24 +141,40 @@ extension BundleDetailView {
             }
             return
         }
-        
+
         // viewModel에 캡쳐된 이미지 저장
         await MainActor.run {
-            bundleVM.bundleCapturedImage = pngData
+            bundleVM.bundleCapturedImage = fullImageData
         }
-        
+
+        // 캐시가 없는 경우에만 복구 (위젯용 포함)
         if let documentId = bundle.documentId,
            !BundleImageCache.shared.exists(for: documentId) {
+            // 2. 배경 없이 캡쳐 (위젯용 - 투명 여백 제거 후 리사이즈)
+            let widgetImageData = await MultiKeyringCaptureScene.captureBundleImage(
+                keyringDataList: keyringDataList,
+                backgroundImageURL: nil,
+                carabinerBackImageURL: carabinerBackURL,
+                carabinerFrontImageURL: carabinerFrontURL,
+                carabinerType: carabinerType,
+                carabinerX: cb.carabinerX,
+                carabinerY: cb.carabinerY,
+                carabinerWidth: cb.carabinerWidth,
+                trimTransparentEdges: true
+            )
+
             BundleImageCache.shared.syncBundle(
                 id: documentId,
                 name: bundle.name,
-                imageData: pngData
+                fullImageData: fullImageData,
+                widgetImageData: widgetImageData,
+                createdAt: bundle.createdAt
             )
             print("[BundleDetailView] 편집된 뭉치 캐시 복구: \(documentId)")
         }
         
         // PNG 데이터를 UIImage로 변환하여 포토 라이브러리에 저장
-        guard let image = UIImage(data: pngData) else {
+        guard let image = UIImage(data: fullImageData) else {
             await MainActor.run {
                 uiState.isCapturing = false
             }

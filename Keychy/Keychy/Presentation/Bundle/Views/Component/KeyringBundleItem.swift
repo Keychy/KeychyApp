@@ -83,11 +83,18 @@ extension KeyringBundleItem {
         guard let documentId = bundle.documentId else {
             return
         }
-        
+
         // 캐시에서 이미지 로드
         if let imageData = BundleImageCache.shared.load(for: documentId),
            let uiImage = UIImage(data: imageData) {
             cachedImage = Image(uiImage: uiImage)
+
+            // 위젯용 이미지가 없으면 재캡처 (위젯 지원용)
+            if !BundleImageCache.shared.exists(for: documentId, type: .widget) {
+                Task {
+                    await recaptureAndCacheBundleImage(bundleId: documentId, bundleName: bundle.name)
+                }
+            }
         } else {
             // 캐시가 없으면 다시 캡처
             Task {
@@ -159,7 +166,8 @@ extension KeyringBundleItem {
             carabinerFrontURL = nil
         }
         
-        guard let pngData = await MultiKeyringCaptureScene.captureBundleImage(
+        // 1. 배경 포함 캡쳐 (앱용)
+        guard let fullImageData = await MultiKeyringCaptureScene.captureBundleImage(
             keyringDataList: keyringDataList,
             backgroundImageURL: background.backgroundImage,
             carabinerBackImageURL: carabinerBackURL,
@@ -174,16 +182,31 @@ extension KeyringBundleItem {
             }
             return
         }
-        
-        // BundleImageCache에 저장
+
+        // 2. 배경 없이 캡쳐 (위젯용 - 투명 여백 제거 후 리사이즈)
+        let widgetImageData = await MultiKeyringCaptureScene.captureBundleImage(
+            keyringDataList: keyringDataList,
+            backgroundImageURL: nil,
+            carabinerBackImageURL: carabinerBackURL,
+            carabinerFrontImageURL: carabinerFrontURL,
+            carabinerType: carabinerType,
+            carabinerX: carabiner.carabinerX,
+            carabinerY: carabiner.carabinerY,
+            carabinerWidth: carabiner.carabinerWidth,
+            trimTransparentEdges: true
+        )
+
+        // BundleImageCache에 저장 (full + widget)
         BundleImageCache.shared.syncBundle(
             id: bundleId,
             name: bundleName,
-            imageData: pngData
+            fullImageData: fullImageData,
+            widgetImageData: widgetImageData,
+            createdAt: bundle.createdAt
         )
-        
+
         // UI 업데이트
-        if let uiImage = UIImage(data: pngData) {
+        if let uiImage = UIImage(data: fullImageData) {
             await MainActor.run {
                 cachedImage = Image(uiImage: uiImage)
                 isCapturing = false
