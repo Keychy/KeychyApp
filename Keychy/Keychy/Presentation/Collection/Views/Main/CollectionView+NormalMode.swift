@@ -9,6 +9,13 @@ import SwiftUI
 
 // MARK: - Normal Mode View
 extension CollectionView {
+    /// 오버레이 헤더 높이 (headerSection + tagSection + collectionHeader)
+    /// - headerSection: 60(top padding) + ~40(buttons) + 2(padding) ≈ 102pt
+    /// - tagSection: 4(Spacing.xs) + 35(TabBar) ≈ 39pt
+    /// - collectionHeader: ~35pt (sortButton + spacing)
+    /// - 총합: ~185pt
+    private var overlayHeaderHeight: CGFloat { 185 }
+
     // MARK: - Normal Mode View
     var normalModeView: some View {
         Group {
@@ -44,16 +51,26 @@ extension CollectionView {
                     }
                 }
             } else {
-                // 정상 상태: 기존 VStack 형태
-                VStack {
-                    headerSection
-                        .padding(.horizontal, Spacing.margin)
-                        .padding(.top, 2)
-
-                    tagSection
-                        .padding(.horizontal, Spacing.xs)
-
+                // 정상 상태: ZStack 오버레이 형태 (iOS 빌트인 탭 스크롤 지원)
+                ZStack(alignment: .top) {
+                    // 전체 화면 ScrollView (pullToRefresh가 생성)
                     normalCollectionSection
+
+                    // 고정 오버레이 헤더
+                    VStack(spacing: 0) {
+                        headerSection
+                            .padding(.horizontal, Spacing.margin)
+                            .padding(.top, 2)
+
+                        tagSection
+                            .padding(.horizontal, Spacing.xs)
+
+                        collectionHeader
+                            .padding(.horizontal, Spacing.padding)
+                            .padding(.top, 10)
+                            .padding(.bottom, 12)
+                    }
+                    .background(Color.white)
                 }
                 .contentShape(Rectangle())
                 .onTapGesture {
@@ -147,35 +164,37 @@ extension CollectionView {
     }
 
     private var normalCollectionSection: some View {
-        VStack(spacing: 10) {
-            collectionHeader
-                .padding(.horizontal, Spacing.padding)
+        VStack(spacing: 0) {
+            // 오버레이 헤더 높이만큼 상단 여백
+            Spacer()
+                .frame(height: overlayHeaderHeight)
 
             if filteredKeyrings.isEmpty {
                 emptyView
             } else {
                 collectionGridView(keyrings: filteredKeyrings)
                     .padding(.horizontal, Spacing.xs)
-                    .pullToRefresh(topPadding: 0) {
-                        try? await Task.sleep(for: .seconds(1))
-                        fetchUserData()
-                        retryFailedCaches()
-                    }
-                    .simultaneousGesture(
-                        DragGesture().onChanged { _ in
-                            if showSearchBar {
-                                isSearchFieldFocused = false
-
-                                if !isSearching {
-                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                        showSearchBar = false
-                                    }
-                                }
-                            }
-                        }
-                    )
+                    .padding(.top, 20)
             }
         }
+        .pullToRefresh(topPadding: overlayHeaderHeight) {
+            try? await Task.sleep(for: .seconds(1))
+            fetchUserData()
+            retryFailedCaches()
+        }
+        .simultaneousGesture(
+            DragGesture().onChanged { _ in
+                if showSearchBar {
+                    isSearchFieldFocused = false
+
+                    if !isSearching {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showSearchBar = false
+                        }
+                    }
+                }
+            }
+        )
     }
 
     var collectionHeader: some View {
