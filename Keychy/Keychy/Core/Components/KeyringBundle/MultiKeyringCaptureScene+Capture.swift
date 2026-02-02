@@ -51,23 +51,27 @@ extension MultiKeyringCaptureScene {
     /// 번들 이미지 캡처
     /// - Parameters:
     ///   - keyringDataList: 키링 데이터 리스트
-    ///   - backgroundImageURL: 배경 이미지 URL
+    ///   - backgroundImageURL: 배경 이미지 URL (nil이면 배경 없이 캡처)
     ///   - carabinerBackImageURL: 카라비너 뒷면 이미지 URL (hamburger 타입)
     ///   - carabinerFrontImageURL: 카라비너 앞면 이미지 URL (hamburger 타입)
     ///   - carabinerType: 카라비너 타입
     ///   - carabinerX: 카라비너 왼쪽 상단 X 좌표
     ///   - carabinerY: 카라비너 왼쪽 상단 Y 좌표
     ///   - carabinerWidth: 카라비너 너비
+    ///   - trimTransparentEdges: 투명 여백 제거 여부 (위젯용)
+    ///   - customCaptureSize: 커스텀 캡처 사이즈 (nil이면 기본값 사용)
     /// - Returns: 캡처된 PNG 데이터
     static func captureBundleImage(
         keyringDataList: [MultiKeyringCaptureScene.KeyringData],
-        backgroundImageURL: String,
+        backgroundImageURL: String? = nil,
         carabinerBackImageURL: String? = nil,
         carabinerFrontImageURL: String? = nil,
         carabinerType: CarabinerType? = nil,
         carabinerX: CGFloat = 0,
         carabinerY: CGFloat = 0,
         carabinerWidth: CGFloat = 0,
+        trimTransparentEdges: Bool = false,
+        customCaptureSize: CGSize? = nil
     ) async -> Data? {
         do {
             try await preloadAllImages(
@@ -80,9 +84,9 @@ extension MultiKeyringCaptureScene {
         } catch {
             return nil
         }
-        
-        // 고정 캡처 사이즈 (iPhone 16 Pro 기준)
-        let captureSize = CGSize(width: 402, height: 874)
+
+        // 캡처 사이즈 (커스텀 또는 기본값)
+        let captureSize = customCaptureSize ?? CGSize(width: 402, height: 874)
 
 
         return await withCheckedContinuation { continuation in
@@ -131,11 +135,110 @@ extension MultiKeyringCaptureScene {
                 }
 
                 // PNG 캡처
-                let pngData = await scene.captureToPNG()
+                var pngData = await scene.captureToPNG()
+
+                // 투명 여백 제거 (위젯용)
+                if trimTransparentEdges, let data = pngData {
+                    pngData = trimTransparentEdgesFromPNG(data)
+                }
 
                 continuation.resume(returning: pngData)
             }
         }
+    }
+
+    // MARK: - Image Trimming
+
+    /// PNG 이미지에서 투명 여백 제거
+    private static func trimTransparentEdgesFromPNG(_ pngData: Data) -> Data? {
+        guard let uiImage = UIImage(data: pngData),
+              let cgImage = uiImage.cgImage else {
+            return pngData
+        }
+
+        let width = cgImage.width
+        let height = cgImage.height
+
+        guard let context = CGContext(
+            data: nil,
+            width: width,
+            height: height,
+            bitsPerComponent: 8,
+            bytesPerRow: width * 4,
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        ) else {
+            return pngData
+        }
+
+        context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
+
+        guard let pixelData = context.data else {
+            return pngData
+        }
+
+        let data = pixelData.bindMemory(to: UInt8.self, capacity: width * height * 4)
+
+        // 불투명 영역 경계 찾기
+        var minX = width, minY = height, maxX = 0, maxY = 0
+
+        for y in 0..<height {
+            for x in 0..<width {
+                let offset = (y * width + x) * 4
+                let alpha = data[offset + 3]
+
+                if alpha > 0 {
+                    minX = min(minX, x)
+                    minY = min(minY, y)
+                    maxX = max(maxX, x)
+                    maxY = max(maxY, y)
+                }
+            }
+        }
+
+        // 유효한 영역이 없으면 원본 반환
+        guard minX < maxX && minY < maxY else {
+            return pngData
+        }
+
+        // 약간의 패딩 추가 (10px)
+        let padding = 10
+        minX = max(0, minX - padding)
+        minY = max(0, minY - padding)
+        maxX = min(width - 1, maxX + padding)
+        maxY = min(height - 1, maxY + padding)
+
+        let cropRect = CGRect(
+            x: minX,
+            y: minY,
+            width: maxX - minX + 1,
+            height: maxY - minY + 1
+        )
+
+        guard let croppedCGImage = cgImage.cropping(to: cropRect) else {
+            return pngData
+        }
+
+        let croppedImage = UIImage(cgImage: croppedCGImage)
+
+        // 위젯에 적합한 크기로 리사이즈 (최대 500px)
+        let maxSize: CGFloat = 500
+        let croppedWidth = croppedImage.size.width
+        let croppedHeight = croppedImage.size.height
+
+        if croppedWidth <= maxSize && croppedHeight <= maxSize {
+            return croppedImage.pngData() ?? pngData
+        }
+
+        let scale = min(maxSize / croppedWidth, maxSize / croppedHeight)
+        let newSize = CGSize(width: croppedWidth * scale, height: croppedHeight * scale)
+
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+        croppedImage.draw(in: CGRect(origin: .zero, size: newSize))
+        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return resizedImage?.pngData() ?? croppedImage.pngData() ?? pngData
     }
     
     // MARK: - Image Preloading (Cache Warming)
@@ -144,13 +247,15 @@ extension MultiKeyringCaptureScene {
     /// - 캡쳐 전에 호출하여 Scene 내부에서의 이미지 로딩 실패를 방지
     private static func preloadAllImages(
         keyringDataList: [MultiKeyringCaptureScene.KeyringData],
-        backgroundURL: String,
+        backgroundURL: String?,
         carabinerBackURL: String?,
         carabinerFrontURL: String?,
         carabinerType: CarabinerType?
     ) async throws {
-        // 1. 배경 이미지 로드
-        _ = try await StorageManager.shared.getImage(path: backgroundURL)
+        // 1. 배경 이미지 로드 (있는 경우에만)
+        if let bgURL = backgroundURL {
+            _ = try await StorageManager.shared.getImage(path: bgURL)
+        }
         
         // 2. 모든 키링 bodyImage 병렬 로드
         try await withThrowingTaskGroup(of: Void.self) { group in
