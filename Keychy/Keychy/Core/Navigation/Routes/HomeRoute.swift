@@ -7,7 +7,7 @@
 
 /// 홈 탭
 enum HomeRoute: Hashable, BundleRoute {
-    // 나중에 추가
+    // Bundle
     case bundleInventoryView
     case bundleDetailView
     case bundleCreateView
@@ -15,6 +15,8 @@ enum HomeRoute: Hashable, BundleRoute {
     case bundleNameInputView
     case bundleNameEditView
     case bundleEditView
+
+    // Home
     case coinCharge
     case myPageView
     case changeName
@@ -23,4 +25,9 @@ enum HomeRoute: Hashable, BundleRoute {
     case notificationGiftView(postOfficeId: String)
     case introView
     case termsAndPolicy
+
+    // Festival
+    case festivalView
+    case showcase25BoardView
+    case festivalKeyringDetailView(Keyring)
 }
