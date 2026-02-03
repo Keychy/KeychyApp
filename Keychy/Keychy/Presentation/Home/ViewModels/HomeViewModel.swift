@@ -37,6 +37,11 @@ class HomeViewModel {
     
     @MainActor
     func loadMainBundle(collectionViewModel: CollectionViewModel, bundleViewModel: BundleViewModel, onBackgroundLoaded: (() -> Void)?) async {
+        // 이미 데이터가 로드되었고 선택된 뭉치가 있으면 스킵 (탭 전환 후 돌아올 때)
+        if isDataLoaded && bundleViewModel.selectedBundle != nil {
+            return
+        }
+
         let uid = UserManager.shared.userUID
         guard !uid.isEmpty else { return }
 
@@ -178,12 +183,50 @@ class HomeViewModel {
 
     /// 번들의 배경을 Firebase에 업데이트
     private func updateBundleBackground(documentId: String, backgroundId: String) async {
+        try? await db.collection("KeyringBundle").document(documentId).updateData([
+            "selectedBackground": backgroundId
+        ])
+    }
+
+    /// 대표뭉치 설정 (isMain 업데이트) - Batch write로 원자성 보장
+    /// - Parameters:
+    ///   - newMainBundle: 새로 대표뭉치로 설정할 뭉치
+    ///   - bundleViewModel: BundleViewModel
+    @MainActor
+    private func updateMainBundle(newMainBundle: KeyringBundle, bundleViewModel: BundleViewModel) async {
+        guard let newMainDocId = newMainBundle.documentId else { return }
+
+        let previousMainBundle = bundleViewModel.bundles.first(where: { $0.isMain })
+        let batch = db.batch()
+
+        // 1. 기존 대표뭉치 해제 (batch에 추가)
+        if let previousMain = previousMainBundle,
+           let previousDocId = previousMain.documentId,
+           previousDocId != newMainDocId {
+            let previousRef = db.collection("KeyringBundle").document(previousDocId)
+            batch.updateData(["isMain": false], forDocument: previousRef)
+        }
+
+        // 2. 새 대표뭉치 설정 (batch에 추가)
+        let newMainRef = db.collection("KeyringBundle").document(newMainDocId)
+        batch.updateData(["isMain": true], forDocument: newMainRef)
+
+        // 3. Batch commit (원자적 업데이트)
         do {
-            try await db.collection("KeyringBundle").document(documentId).updateData([
-                "selectedBackground": backgroundId
-            ])
+            try await batch.commit()
+
+            // 성공 시 로컬 상태 업데이트
+            if let previousMain = previousMainBundle,
+               let previousDocId = previousMain.documentId,
+               previousDocId != newMainDocId,
+               let index = bundleViewModel.bundles.firstIndex(where: { $0.documentId == previousDocId }) {
+                bundleViewModel.bundles[index].isMain = false
+            }
+            if let index = bundleViewModel.bundles.firstIndex(where: { $0.documentId == newMainDocId }) {
+                bundleViewModel.bundles[index].isMain = true
+            }
         } catch {
-            print("[HomeView] 뭉치 배경 업데이트 실패: \(error.localizedDescription)")
+            // 실패 시 로컬 상태는 변경하지 않음 (데이터 일관성 유지)
         }
     }
 
@@ -196,13 +239,13 @@ class HomeViewModel {
 
     /// 모든 키링 준비 완료되면 0.5초 대기 후 로딩을 삭제함
     func handleAllKeyringsReady() {
-        // 물리 엔진 안정화를 위한 딜레이만 적용 (0.5초)
-        Task {
-            try? await Task.sleep(for: .seconds(0.5)) // 0.5초
+        Task { [weak self] in
+            try? await Task.sleep(for: .seconds(0.5))
 
-            await MainActor.run {
+            await MainActor.run { [weak self] in
+                guard let self else { return }
                 withAnimation(.easeOut(duration: 0.3)) {
-                    isSceneReady = true
+                    self.isSceneReady = true
                 }
             }
         }
@@ -214,6 +257,42 @@ class HomeViewModel {
         guard NetworkManager.shared.isConnected else { return }
         hasNetworkError = false
         await loadMainBundle(collectionViewModel: collectionViewModel, bundleViewModel: bundleViewModel, onBackgroundLoaded: onBackgroundLoaded)
+    }
+
+    // MARK: - Bundle Switching
+
+    /// 다른 뭉치로 전환
+    /// - Parameters:
+    ///   - bundle: 전환할 뭉치
+    ///   - collectionViewModel: CollectionViewModel
+    ///   - bundleViewModel: BundleViewModel
+    @MainActor
+    func switchBundle(to bundle: KeyringBundle, collectionViewModel: CollectionViewModel, bundleViewModel: BundleViewModel) async {
+        // 1. 씬 준비 상태 초기화 (로딩 효과 표시)
+        withAnimation(.easeIn(duration: 0.2)) {
+            isSceneReady = false
+        }
+
+        // 2. 대표뭉치 설정 (isMain 업데이트)
+        await updateMainBundle(newMainBundle: bundle, bundleViewModel: bundleViewModel)
+
+        // 3. 모든 데이터 먼저 준비 (UI 업데이트 전)
+        let resolvedBackground = bundleViewModel.resolveBackground(from: bundle.selectedBackground)
+        let resolvedCarabiner = bundleViewModel.resolveCarabiner(from: bundle.selectedCarabiner)
+
+        guard let carabiner = resolvedCarabiner else { return }
+
+        // 4. 키링 데이터 생성 (새 카라비너 기준)
+        let newKeyringDataList = await createKeyringDataList(bundle: bundle, carabiner: carabiner)
+
+        // 5. 모든 상태를 한 번에 업데이트 (SwiftUI re-render 최소화)
+        bundleViewModel.selectedBundle = bundle
+        bundleViewModel.selectedBackground = resolvedBackground ?? bundleViewModel.backgrounds.first
+        bundleViewModel.selectedCarabiner = carabiner
+        keyringDataList = newKeyringDataList
+
+        // 데이터 로드 완료 표시
+        isDataLoaded = true
     }
 
 }

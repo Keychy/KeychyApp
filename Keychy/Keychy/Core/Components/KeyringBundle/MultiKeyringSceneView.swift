@@ -78,15 +78,7 @@ struct MultiKeyringSceneView: View {
             particleEffectsView
         }
         .onAppear {
-            // 씬이 없을 때 초기 설정 (키링이 없어도 배경과 카라비너는 표시)
             if scene == nil {
-                loadBackgroundImage()
-                setupScene()
-            }
-        }
-        .onChange(of: keyringDataList) { oldValue, newValue in
-            // 데이터가 실제로 변경된 경우에만 씬 재생성
-            if oldValue != newValue {
                 loadBackgroundImage()
                 setupScene()
             }
@@ -172,20 +164,18 @@ extension MultiKeyringSceneView {
 
     /// 씬 초기화 및 설정
     private func setupScene() {
-        // 기존 씬이 있다면 명시적으로 정리
         if scene != nil {
             cleanupScene()
         }
-        
-        // 키링 준비 카운터 리셋
+
         visibleKeyringCount = 0
-        
+
         let newScene = MultiKeyringScene(
             keyringDataList: keyringDataList,
             ringType: ringType,
             chainType: chainType,
-            backgroundColor: .clear,  // 배경은 투명하게
-            backgroundImageURL: nil,  // 배경은 SwiftUI에서 처리
+            backgroundColor: .clear,
+            backgroundImageURL: nil,
             carabinerBackImageURL: carabinerBackImageURL,
             carabinerFrontImageURL: carabinerFrontImageURL,
             carabinerX: carabinerX,

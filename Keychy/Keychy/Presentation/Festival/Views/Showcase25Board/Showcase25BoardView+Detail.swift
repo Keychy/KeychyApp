@@ -37,7 +37,7 @@ extension Showcase25BoardView {
                 if let keyring = Keyring(documentId: document.documentID, data: data) {
                     // 3. DetailView로 이동 (Main thread에서 실행)
                     await MainActor.run {
-                        festivalRouter.push(.festivalKeyringDetailView(keyring))
+                        router.push(.festivalKeyringDetailView(keyring))
                     }
                 } else {
                     print("Keyring 변환 실패")

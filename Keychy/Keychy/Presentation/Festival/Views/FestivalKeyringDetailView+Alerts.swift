@@ -74,8 +74,8 @@ extension FestivalKeyringDetailView {
                         }
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                             isSheetPresented = false
-                            
-                            festivalRouter.push(.coinCharge)
+
+                            router.push(.coinCharge)
                         }
                     }
                 )

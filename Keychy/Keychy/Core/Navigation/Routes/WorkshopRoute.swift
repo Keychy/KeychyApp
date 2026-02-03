@@ -23,10 +23,6 @@ enum WorkshopRoute: Hashable, BundleRoute {
     case bundleNameEditView
     case bundleEditView
 
-    // MARK: - Festival 임시 라우트 (추후 정리 예정)
-    case showcase25BoardView
-    case festivalKeyringDetailView(Keyring)
-
     // MARK: - 아크릴 포토 템플릿
     case acrylicPhotoPreview
     case acrylicPhotoCrop

@@ -11,7 +11,7 @@ import FirebaseFirestore
 import Photos
 
 struct FestivalKeyringDetailView: View {
-    @Bindable var festivalRouter: NavigationRouter<FestivalRoute>
+    @Bindable var router: NavigationRouter<HomeRoute>
     @Bindable var viewModel: Showcase25BoardViewModel
     
     @State var userManager = UserManager.shared
@@ -225,7 +225,7 @@ extension FestivalKeyringDetailView {
             // Leading (왼쪽) - 뒤로가기 버튼
             BackToolbarButton {
                 isSheetPresented = false
-                festivalRouter.pop()
+                router.pop()
             }
         } center: {
             // Center (중앙) - 빈 공간
