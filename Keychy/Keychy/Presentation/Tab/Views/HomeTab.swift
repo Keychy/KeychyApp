@@ -13,6 +13,7 @@ struct HomeTab: View {
     @State private var collectionViewModel = CollectionViewModel()
     @State private var bundleViewModel = BundleViewModel()
     @Bindable private var introViewModel = IntroViewModel()
+    @State private var festivalViewModel = Showcase25BoardViewModel()
 
     /// 배경 로드 완료 콜백
     var onBackgroundLoaded: (() -> Void)? = nil
@@ -59,6 +60,14 @@ struct HomeTab: View {
                         IntroView(viewModel: introViewModel)
                     case .termsAndPolicy:
                         TermsView(router: router)
+
+                    // Festival
+                    case .festivalView:
+                        FestivalView(router: router)
+                    case .showcase25BoardView:
+                        Showcase25BoardView(router: router, viewModel: festivalViewModel)
+                    case .festivalKeyringDetailView(let keyring):
+                        FestivalKeyringDetailView(router: router, viewModel: festivalViewModel, keyring: keyring)
                 }
             }
         }

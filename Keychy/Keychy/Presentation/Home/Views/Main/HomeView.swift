@@ -137,33 +137,35 @@ extension HomeView {
 
     /// 상단 네비게이션 버튼들
     private var navigationButtons: some View {
-        HStack(spacing: 10) {
-            Spacer()
-            
-            // 알림 및 마이페이지 버튼 그룹
-            GlassEffectContainer {
-                HStack {
-                    Button {
-                        router.push(.alarmView)
-                    } label: {
-                        Image(userManager.hasUnreadNotifications ? "alarmSent" : "alarm")
+        VStack(alignment: .trailing, spacing: 12) {
+            HStack(spacing: 10) {
+                Spacer()
+
+                // 알림 및 마이페이지 버튼 그룹
+                GlassEffectContainer {
+                    HStack {
+                        Button {
+                            router.push(.alarmView)
+                        } label: {
+                            Image(userManager.hasUnreadNotifications ? "alarmSent" : "alarm")
+                        }
+                        .frame(width: 44, height: 44)
+                        .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
+                        .buttonStyle(.glass)
+
+                        Button {
+                            router.push(.myPageView)
+                        } label: {
+                            Image(.myPageIcon)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 30, height: 30)
+
+                        }
+                        .frame(width: 44, height: 44)
+                        .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
+                        .buttonStyle(.glass)
                     }
-                    .frame(width: 44, height: 44)
-                    .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
-                    .buttonStyle(.glass)
-                    
-                    Button {
-                        router.push(.myPageView)
-                    } label: {
-                        Image(.myPageIcon)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 30, height: 30)
-                        
-                    }
-                    .frame(width: 44, height: 44)
-                    .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
-                    .buttonStyle(.glass)
                 }
             }
         }
