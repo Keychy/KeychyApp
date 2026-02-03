@@ -27,58 +27,83 @@ struct BundleSwitchPopup: View {
         VStack(alignment: .leading, spacing: 0) {
             // 대표 섹션
             if let main = mainBundle {
-                sectionHeader("대표")
-                bundleRow(bundle: main, isSelected: currentBundle?.documentId == main.documentId)
+                mainSection(bundle: main)
             }
+
+            // 구분선
+            Rectangle()
+                .fill(.gray100)
+                .frame(height: 1)
+                .padding(.horizontal, 18)
 
             // 선택 섹션
             if !selectableBundles.isEmpty {
-                sectionHeader("선택")
-
-                ForEach(selectableBundles, id: \.documentId) { bundle in
-                    bundleRow(bundle: bundle, isSelected: currentBundle?.documentId == bundle.documentId)
-                }
+                selectSection(bundles: selectableBundles)
             }
         }
-        .padding(.vertical, 12)
-        .padding(.horizontal, 4)
-        .frame(width: 160)
-        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 20))
+        .frame(width: 196)
+        .padding(.vertical, 5)
+        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
     }
 
-    // MARK: - Subviews
+    // MARK: - 대표 섹션
 
-    private func sectionHeader(_ title: String) -> some View {
-        Text(title)
-            .typography(.suit13M)
-            .foregroundStyle(.gray400)
-            .padding(.horizontal, 16)
-            .padding(.top, 8)
-            .padding(.bottom, 4)
+    private func mainSection(bundle: KeyringBundle) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("대표")
+                .typography(.suit13M)
+                .foregroundStyle(.gray200)
+                .padding(.horizontal, 20)
+                .padding(.top, 10)
+                .padding(.bottom, 8)
+
+            Button {
+                onSelect(bundle)
+            } label: {
+                HStack {
+                    Text(bundle.name)
+                        .typography(.suit16M)
+                        .foregroundStyle(currentBundle?.documentId == bundle.documentId ? .gray600 : .gray400)
+                    Spacer()
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 12)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+        }
     }
 
-    private func bundleRow(bundle: KeyringBundle, isSelected: Bool) -> some View {
-        Button {
-            onSelect(bundle)
-        } label: {
-            HStack {
-                Text(bundle.name)
-                    .typography(isSelected ? .suit17B : .suit17M)
-                    .foregroundStyle(isSelected ? .main500 : .black100)
+    // MARK: - 선택 섹션
 
-                Spacer()
+    private func selectSection(bundles: [KeyringBundle]) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("선택")
+                .typography(.suit13M)
+                .foregroundStyle(.gray200)
+                .padding(.horizontal, 20)
+                .padding(.top, 12)
+                .padding(.bottom, 10)
 
-                if isSelected {
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(.main500)
+            VStack(alignment: .leading, spacing: 25) {
+                ForEach(bundles, id: \.documentId) { bundle in
+                    Button {
+                        onSelect(bundle)
+                    } label: {
+                        HStack {
+                            Text(bundle.name)
+                                .typography(.suit16M)
+                                .foregroundStyle(currentBundle?.documentId == bundle.documentId ? .gray600 : .gray400)
+                            Spacer()
+                        }
+                        .padding(.horizontal, 20)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
-            .contentShape(Rectangle())
+            .padding(.bottom, 10)
         }
-        .buttonStyle(.plain)
     }
 }
 
@@ -91,21 +116,23 @@ struct BundleSwitchButton: View {
 
     var body: some View {
         Button(action: onTap) {
-            HStack(spacing: 4) {
+            HStack(spacing: 12) {
                 Text(bundleName)
-                    .typography(.suit17SB)
+                    .typography(.nanum24EB)
                     .foregroundStyle(.black100)
 
                 if isEnabled {
                     Image(systemName: "chevron.down")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(.gray500)
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundStyle(.black)
                         .rotationEffect(.degrees(isExpanded ? 180 : 0))
+                        .offset(y: 0.5)
+                        .frame(width: 24, height: 24)
+                        .background(Color.white)
+                        .clipShape(Circle())
+                        .overlay(Circle().stroke(Color(#colorLiteral(red: 0.8861967921, green: 0.8861967921, blue: 0.8861967921, alpha: 1)), lineWidth: 1))
                 }
             }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 8)
-            .glassEffect(.regular.interactive(), in: .capsule)
         }
         .buttonStyle(.plain)
         .disabled(!isEnabled)
