@@ -213,25 +213,23 @@ class UserManager {
 
         let uid = user.uid
 
-        // 1. 먼저 Firebase Auth 계정 삭제 시도 (재인증 필요 여부 확인)
-        user.delete { [weak self] error in
-            guard let self = self else { return }
+        // 1. 먼저 Firestore 데이터 삭제 (Auth 유저가 있어야 권한이 있음)
+        deleteUserData(uid: uid) { [weak self] result in
+            guard self != nil else { return }
 
-            if let error = error {
-                completion(.failure(error))
-            } else {
-                // 2. Auth 삭제 성공 → Firestore 데이터 삭제
-                self.deleteUserData(uid: uid) { result in
-                    switch result {
-                    case .success:
-                        completion(.success(()))
-
-                    case .failure:
-                        // Auth는 이미 삭제됐지만 Firestore는 남아있음
-                        // 어차피 로그인 불가능하므로 성공으로 처리
+            switch result {
+            case .success:
+                // 2. 데이터 삭제 성공 → Firebase Auth 계정 삭제
+                user.delete { error in
+                    if let error = error {
+                        completion(.failure(error))
+                    } else {
                         completion(.success(()))
                     }
                 }
+
+            case .failure(let error):
+                completion(.failure(error))
             }
         }
     }
@@ -245,23 +243,23 @@ class UserManager {
 
         let uid = user.uid
 
-        // 1. Firebase Auth 계정 삭제
-        user.delete { [weak self] error in
-            guard let self = self else { return }
+        // 1. 먼저 Firestore 데이터 삭제 (Auth 유저가 있어야 권한이 있음)
+        deleteUserData(uid: uid) { [weak self] result in
+            guard self != nil else { return }
 
-            if let error = error {
-                completion(.failure(error))
-            } else {
-                // 2. Auth 삭제 성공 → Firestore 데이터 삭제
-                self.deleteUserData(uid: uid) { result in
-                    switch result {
-                    case .success:
-                        completion(.success(()))
-
-                    case .failure:
+            switch result {
+            case .success:
+                // 2. 데이터 삭제 성공 → Firebase Auth 계정 삭제
+                user.delete { error in
+                    if let error = error {
+                        completion(.failure(error))
+                    } else {
                         completion(.success(()))
                     }
                 }
+
+            case .failure(let error):
+                completion(.failure(error))
             }
         }
     }
@@ -404,6 +402,78 @@ class UserManager {
                     }
                     deletionGroup.leave()
                 }
+
+                // KeyringBundle 컬렉션에서 사용자의 뭉치 삭제
+                deletionGroup.enter()
+                self.db.collection("KeyringBundle")
+                    .whereField("userId", isEqualTo: uid)
+                    .getDocuments { querySnapshot, error in
+                        if let error = error {
+                            print("❌ KeyringBundle 조회 실패: \(error.localizedDescription)")
+                            deletionError = error
+                            deletionGroup.leave()
+                            return
+                        }
+
+                        guard let documents = querySnapshot?.documents, !documents.isEmpty else {
+                            print("✅ 삭제할 KeyringBundle 없음")
+                            deletionGroup.leave()
+                            return
+                        }
+
+                        let bundleGroup = DispatchGroup()
+                        for document in documents {
+                            bundleGroup.enter()
+                            document.reference.delete { error in
+                                if let error = error {
+                                    print("❌ KeyringBundle 삭제 실패: \(document.documentID) - \(error.localizedDescription)")
+                                    deletionError = error
+                                } else {
+                                    print("✅ KeyringBundle 삭제 완료: \(document.documentID)")
+                                }
+                                bundleGroup.leave()
+                            }
+                        }
+                        bundleGroup.notify(queue: .main) {
+                            deletionGroup.leave()
+                        }
+                    }
+
+                // Notifications 컬렉션에서 사용자의 알림 삭제
+                deletionGroup.enter()
+                self.db.collection("Notifications")
+                    .whereField("receiverId", isEqualTo: uid)
+                    .getDocuments { querySnapshot, error in
+                        if let error = error {
+                            print("❌ Notifications 조회 실패: \(error.localizedDescription)")
+                            deletionError = error
+                            deletionGroup.leave()
+                            return
+                        }
+
+                        guard let documents = querySnapshot?.documents, !documents.isEmpty else {
+                            print("✅ 삭제할 Notifications 없음")
+                            deletionGroup.leave()
+                            return
+                        }
+
+                        let notificationGroup = DispatchGroup()
+                        for document in documents {
+                            notificationGroup.enter()
+                            document.reference.delete { error in
+                                if let error = error {
+                                    print("❌ Notification 삭제 실패: \(document.documentID) - \(error.localizedDescription)")
+                                    deletionError = error
+                                } else {
+                                    print("✅ Notification 삭제 완료: \(document.documentID)")
+                                }
+                                notificationGroup.leave()
+                            }
+                        }
+                        notificationGroup.notify(queue: .main) {
+                            deletionGroup.leave()
+                        }
+                    }
 
                 // 4. 모든 삭제 완료 후 User 문서 삭제
                 deletionGroup.notify(queue: .main) {
