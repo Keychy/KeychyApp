@@ -11,7 +11,7 @@ import FirebaseFirestore
 
 struct Showcase25BoardView: View {
 
-    @Bindable var festivalRouter: NavigationRouter<FestivalRoute>
+    @Bindable var router: NavigationRouter<HomeRoute>
     @Bindable var viewModel: Showcase25BoardViewModel
     @Environment(\.scenePhase) private var scenePhase
 
@@ -277,7 +277,7 @@ struct Showcase25BoardView: View {
     private var customNavigationBar: some View {
         CustomNavigationBar {
             BackToolbarButton {
-                festivalRouter.pop()
+                router.pop()
             }
         } center: {
             HStack {

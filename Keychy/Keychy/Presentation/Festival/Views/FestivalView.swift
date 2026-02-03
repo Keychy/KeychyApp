@@ -11,7 +11,7 @@ import CoreLocation
 
 struct FestivalView: View {
 
-    @Bindable var router: NavigationRouter<FestivalRoute>
+    @Bindable var router: NavigationRouter<HomeRoute>
     @State private var viewModel = FestivalViewModel()
     @State private var locationManager = LocationManager()
 
