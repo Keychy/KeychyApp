@@ -11,7 +11,7 @@ struct HomeTab: View {
     @Bindable var router: NavigationRouter<HomeRoute>
     @Bindable var userManager: UserManager
     @Bindable var bundleViewModel: BundleViewModel
-    @State private var collectionViewModel = CollectionViewModel()
+    @Bindable var collectionViewModel: CollectionViewModel
     @Bindable private var introViewModel = IntroViewModel()
     @State private var festivalViewModel = Showcase25BoardViewModel()
 
