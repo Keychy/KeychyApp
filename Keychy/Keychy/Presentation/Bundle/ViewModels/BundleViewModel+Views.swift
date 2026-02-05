@@ -1,15 +1,57 @@
 //
-//  BundleViewModel+Image.swift
+//  BundleViewModel+Views.swift
 //  Keychy
 //
-//  Created by 김서현 on 1/12/26.
+//  Created by 길지훈 on 2/5/26.
 //
 
-import NukeUI
-import SwiftUI
+// MARK: - BundleViewModel+Views
+//
+// SwiftUI ViewBuilder 메서드
+// - bundleCaptureSceneView: 캡쳐 미리보기
+// - backCarabinerImage: 뒷 카라비너 이미지
+// - frontCarabinerImage: 앞 카라비너 이미지
+// - backgroundImage: 배경 이미지
 
-// MARK: - Nuke를 통해 캐싱된 이미지, 또는 URL을 통해 이미지를 로드하는 메서드들
+import SwiftUI
+import NukeUI
+
 extension BundleViewModel {
+
+    // MARK: - 뭉치 캡쳐 미리보기
+
+    /// BundleNameInputView, BundleNameEditView에서 사용하는 미리보기 씬
+    @ViewBuilder
+    func bundleCaptureSceneView() -> some View {
+        let widthSize = screenWidth - 176
+        let heightSize = widthSize * 7/5
+
+        Group {
+            if let imageData = bundleCapturedImage,
+               let uiImage = UIImage(data: imageData) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
+                    .offset(y: 30)
+                    .clipped()
+            } else {
+                VStack {
+                    Image(systemName: "photo")
+                        .font(.system(size: 50))
+                        .foregroundColor(.gray)
+                    Text("이미지를 불러오는 중...")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
+            }
+        }
+        .frame(width: widthSize, height: heightSize)
+        .clipShape(RoundedRectangle(cornerRadius: 15))
+        .clipped()
+    }
+
+    // MARK: - 카라비너 이미지
+
     /// 뒷 카라비너 이미지 (또는 단일 카라비너 이미지)
     func backCarabinerImage(carabiner: Carabiner) -> some View {
         LazyImage(url: URL(string: carabiner.backImageURL)) { state in
@@ -24,7 +66,7 @@ extension BundleViewModel {
             }
         }
     }
-    
+
     /// 앞 카라비너 이미지 (햄버거 타입만)
     func frontCarabinerImage(carabiner: Carabiner) -> some View {
         Group {
@@ -45,7 +87,9 @@ extension BundleViewModel {
             }
         }
     }
-    
+
+    // MARK: - 배경 이미지
+
     /// 배경 이미지 뷰
     var backgroundImage: some View {
         Group {
@@ -66,50 +110,5 @@ extension BundleViewModel {
                 Color.clear
             }
         }
-    }
-    
-    /// 캐시에서 번들 이미지를 로드하여 bundleCapturedImage에 설정
-    /// - Parameter bundle: 로드할 번들
-    /// - Returns: 로드 성공 여부
-    @discardableResult
-    func loadBundleImageFromCache(bundle: KeyringBundle) -> Bool {
-        guard let documentId = bundle.documentId else {
-            print("[CollectionViewModel] 번들 documentId가 없습니다.")
-            return false
-        }
-        
-        // BundleImageCache에서 이미지 로드
-        if let imageData = BundleImageCache.shared.load(for: documentId) {
-            self.bundleCapturedImage = imageData
-            print("[CollectionViewModel] 캐시에서 번들 이미지 로드 성공: \(documentId)")
-            return true
-        } else {
-            print("[CollectionViewModel] 캐시에 번들 이미지가 없습니다: \(documentId)")
-            return false
-        }
-    }
-    
-    /// 뷰모델에 저장된 뭉치 이미지를 BundleImageCache에 저장
-    /// - Parameters:
-    ///   - bundleId: 뭉치 ID
-    ///   - bundleName: 뭉치 이름
-    ///   - widgetImageData: 위젯용 이미지 (배경 없음, optional)
-    ///   - createdAt: 뭉치 생성일 (새 뭉치는 Date(), 기존 뭉치는 bundle.createdAt)
-    func saveBundleImageToCache(
-        bundleId: String,
-        bundleName: String,
-        widgetImageData: Data? = nil,
-        createdAt: Date = Date()
-    ) {
-        guard let imageData = bundleCapturedImage else {
-            return
-        }
-        BundleImageCache.shared.syncBundle(
-            id: bundleId,
-            name: bundleName,
-            fullImageData: imageData,
-            widgetImageData: widgetImageData,
-            createdAt: createdAt
-        )
     }
 }
