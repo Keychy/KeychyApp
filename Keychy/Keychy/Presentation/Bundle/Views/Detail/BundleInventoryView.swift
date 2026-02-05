@@ -130,7 +130,7 @@ extension BundleInventoryView {
                             isNavigatingDeeper = true
                             router.push(.bundleDetailView)
                         } label: {
-                            KeyringBundleItem(bundle: bundle)
+                            BundleGridItem(bundle: bundle)
                         }
                     }
                 }

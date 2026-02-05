@@ -22,7 +22,7 @@ extension BundleEditView {
                     }
                 VStack {
                     Spacer()
-                    CarabinerChangePopup(
+                    CarabinerPopup(
                         title: "카라비너를 변경하시겠어요?",
                         message: "새 카라비너로 변경하면\n현재 뭉치에 걸린 키링들이 모두 해제돼요.",
                         onCancel: {

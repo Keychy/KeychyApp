@@ -1,5 +1,5 @@
 //
-//  CarabinerChangePopup.swift
+//  CarabinerPopup.swift
 //  Keychy
 //
 //  Created by 김서현 on 11/12/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct CarabinerChangePopup: View {
+struct CarabinerPopup: View {
     let title: String
     let message: String
     let onCancel: () -> Void

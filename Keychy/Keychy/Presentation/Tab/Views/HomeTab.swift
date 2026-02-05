@@ -10,8 +10,8 @@ import SwiftUI
 struct HomeTab: View {
     @Bindable var router: NavigationRouter<HomeRoute>
     @Bindable var userManager: UserManager
-    @State private var collectionViewModel = CollectionViewModel()
-    @State private var bundleViewModel = BundleViewModel()
+    @Bindable var bundleViewModel: BundleViewModel
+    @Bindable var collectionViewModel: CollectionViewModel
     @Bindable private var introViewModel = IntroViewModel()
     @State private var festivalViewModel = Showcase25BoardViewModel()
 

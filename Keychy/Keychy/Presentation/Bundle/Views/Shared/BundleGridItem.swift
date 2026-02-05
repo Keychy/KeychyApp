@@ -1,5 +1,5 @@
 //
-//  KeyringBundleItem.swift
+//  BundleGridItem.swift
 //  KeytschPrototype
 //
 //  Created by 김서현 on 10/25/25.
@@ -10,7 +10,7 @@ import SwiftUI
 import SpriteKit
 import FirebaseFirestore
 
-struct KeyringBundleItem: View {
+struct BundleGridItem: View {
     let bundle: KeyringBundle
     
     @State private var cachedImage: Image?
@@ -58,7 +58,7 @@ struct KeyringBundleItem: View {
     }
 }
 
-extension KeyringBundleItem {
+extension BundleGridItem {
     // MARK: - Bundle Image View
 
     private var bundleImageView: some View {

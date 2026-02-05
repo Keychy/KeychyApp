@@ -38,7 +38,7 @@ struct SelectBackgroundSheet: View {
     var body: some View {
         LazyVGrid(columns: gridColumns, spacing: 10) {
             ForEach(sortedBackgrounds) { bg in
-                BackgroundSelectableCell(background: bg, isSelected: (bg == selectedBG))
+                BackgroundCell(background: bg, isSelected: (bg == selectedBG))
                     .onTapGesture {
                         onBackgroundTap(bg)
                         

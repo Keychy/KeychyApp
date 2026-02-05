@@ -9,8 +9,8 @@ import SwiftUI
 
 struct CollectionTab: View {
     @Bindable var router: NavigationRouter<CollectionRoute>
-    @State private var collectionViewModel = CollectionViewModel()
-    @State private var bundleViewModel = BundleViewModel()
+    @Bindable var bundleViewModel: BundleViewModel
+    @Bindable var collectionViewModel: CollectionViewModel
     @Binding var shouldRefresh: Bool
     
     var body: some View {

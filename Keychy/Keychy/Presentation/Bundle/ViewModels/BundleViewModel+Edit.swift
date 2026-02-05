@@ -5,10 +5,23 @@
 //  Created by 김서현 on 1/12/26.
 //
 
+// MARK: - BundleViewModel+Edit
+//
+// 뭉치 편집 로직
+// - createKeyringDataListFromSelected: 키링 → Scene 데이터
+// - convertBundleToSelectedKeyrings: 뭉치 → 편집용 변환
+// - convertSelectedKeyringsToBundleFormat: 편집용 → 뭉치 변환
+// - refreshEditData: 편집 화면 새로고침
+// - saveBundleChanges: Firebase 저장
+// - sortedKeyringsForSelection: 키링 정렬
+
 import SwiftUI
 import FirebaseFirestore
 
 extension BundleViewModel {
+
+    // MARK: - 키링 데이터 변환
+
     /// 선택된 키링들로부터 키링 데이터 리스트 생성 (편집용)
     func createKeyringDataListFromSelected(
         selectedKeyrings: [Int: Keyring],
@@ -16,23 +29,19 @@ extension BundleViewModel {
         carabiner: Carabiner
     ) -> [MultiKeyringScene.KeyringData] {
         var dataList: [MultiKeyringScene.KeyringData] = []
-        
-        // 추가된 순서대로 처리
+
         for index in keyringOrder {
             guard let keyring = selectedKeyrings[index] else { continue }
             let soundId = keyring.soundId
-            
-            // 커스텀 사운드 URL 처리
+
             let customSoundURL: URL? = {
                 if soundId.hasPrefix("https://") || soundId.hasPrefix("http://") {
                     return URL(string: soundId)
                 }
                 return nil
             }()
-            
+
             let particleId = keyring.particleId
-            
-            // 절대 좌표 사용 (이미 절대 좌표로 저장됨)
             let position = CGPoint(
                 x: carabiner.keyringXPosition[index],
                 y: carabiner.keyringYPosition[index]
@@ -59,57 +68,53 @@ extension BundleViewModel {
     func convertBundleToSelectedKeyrings(bundle: KeyringBundle) async -> ([Int: Keyring], [Int]) {
         var selectedKeyrings: [Int: Keyring] = [:]
         var keyringOrder: [Int] = []
-        
+
         for (index, keyringId) in bundle.keyrings.enumerated() {
             guard keyringId != "none", !keyringId.isEmpty else { continue }
-            
-            // 사용자의 키링 목록에서 해당 키링 찾기 (documentId로 비교)
+
             if let keyring = self.keyring.first(where: { $0.documentId == keyringId }) {
                 selectedKeyrings[index] = keyring
                 keyringOrder.append(index)
             }
         }
-        
+
         return (selectedKeyrings, keyringOrder)
     }
-    
+
     /// selectedKeyrings를 뭉치 형태의 키링 배열로 변환
     func convertSelectedKeyringsToBundleFormat(
         selectedKeyrings: [Int: Keyring],
         maxKeyringCount: Int
     ) -> [String] {
         var keyrings = Array(repeating: "none", count: maxKeyringCount)
-        
+
         for (index, keyring) in selectedKeyrings {
             if index < maxKeyringCount {
                 keyrings[index] = keyring.documentId ?? "none"
             }
         }
-        
+
         return keyrings
     }
-    
-    // 뭉치 편집뷰에서 화면이 다시 나타날 때 데이터 새로고침 (구매 상태 업데이트) 메서드
+
+    // MARK: - 데이터 새로고침
+
+    /// 편집 화면 데이터 새로고침 (구매 상태 업데이트)
     func refreshEditData() async {
-        // 현재 선택된 아이템의 ID 저장
         let currentBackgroundId = newSelectedBackground?.background.id
         let currentCarabinerId = newSelectedCarabiner?.carabiner.id
-        
-        // 배경 데이터 새로고침
+
         await withCheckedContinuation { continuation in
             fetchAllBackgrounds { _ in
-                // 이전에 선택했던 배경을 다시 찾아서 선택 (구매 상태가 업데이트됨)
                 if let bgId = currentBackgroundId {
                     self.newSelectedBackground = self.backgroundViewData.first { $0.background.id == bgId }
                 }
                 continuation.resume()
             }
         }
-        
-        // 카라비너 데이터 새로고침
+
         await withCheckedContinuation { continuation in
             fetchAllCarabiners { _ in
-                // 이전에 선택했던 카라비너를 다시 찾아서 선택 (구매 상태가 업데이트됨)
                 if let cbId = currentCarabinerId {
                     self.newSelectedCarabiner = self.carabinerViewData.first { $0.carabiner.id == cbId }
                 }
@@ -117,9 +122,10 @@ extension BundleViewModel {
             }
         }
     }
-    
-    // 뭉치 변경사항을 Firebase에 저장
-    
+
+    // MARK: - Firebase 저장
+
+    /// 뭉치 변경사항을 Firebase에 저장
     func saveBundleChanges() async {
         guard let bundle = selectedBundle,
               let documentId = bundle.documentId,
@@ -127,30 +133,26 @@ extension BundleViewModel {
               let carabiner = newSelectedCarabiner else {
             return
         }
-        
-        // ID 안전성 체크
+
         guard let backgroundId = background.background.id,
               let carabinerId = carabiner.carabiner.id else {
             return
         }
-        
-        // 변경사항 체크: 원본 번들과 현재 선택된 항목 비교
+
         let isBackgroundChanged = bundle.selectedBackground != backgroundId
         let isCarabinerChanged = bundle.selectedCarabiner != carabinerId
-        
-        // 키링 변경사항 체크
+
         let currentKeyrings = convertSelectedKeyringsToBundleFormat(
             selectedKeyrings: selectedKeyrings,
             maxKeyringCount: carabiner.carabiner.maxKeyringCount
         ).map { $0.isEmpty ? "none" : $0 }
-        
+
         let isKeyringsChanged = bundle.keyrings != currentKeyrings
-        
-        // 변경사항이 전혀 없으면 저장하지 않고 즉시 리턴
+
         if !isBackgroundChanged && !isCarabinerChanged && !isKeyringsChanged {
             return
         }
-        
+
         do {
             let db = FirebaseFirestore.Firestore.firestore()
             let updateData: [String: Any] = [
@@ -159,26 +161,23 @@ extension BundleViewModel {
                 "selectedCarabiner": carabinerId
             ]
             try await db.collection("KeyringBundle").document(documentId).updateData(updateData)
-            
-            // 로컬 상태도 업데이트
+
             await MainActor.run {
                 if let index = bundles.firstIndex(where: { $0.documentId == documentId }) {
                     bundles[index].keyrings = currentKeyrings
                     bundles[index].selectedBackground = backgroundId
                     bundles[index].selectedCarabiner = carabinerId
                 }
-                
-                // selectedBundle도 업데이트
+
                 if selectedBundle?.documentId == documentId {
                     selectedBundle?.keyrings = currentKeyrings
                     selectedBundle?.selectedBackground = backgroundId
                     selectedBundle?.selectedCarabiner = carabinerId
                 }
-                
-                // 캐시 삭제, BundleInventoryView로 접근했을 때 썸네일 업데이트 하도록 함
+
                 BundleImageCache.shared.delete(for: documentId)
             }
-            
+
         } catch {
             print("❌ Firebase 업데이트 실패: \(error.localizedDescription)")
             if let firestoreError = error as NSError? {
@@ -186,6 +185,53 @@ extension BundleViewModel {
                 print("Firebase 에러 도메인: \(firestoreError.domain)")
                 print("Firebase 에러 상세: \(firestoreError.userInfo)")
             }
+        }
+    }
+
+    // MARK: - 키링 정렬 (선택 시트용)
+
+    /// 키링 선택 시트용 정렬된 키링 리스트
+    /// - 1순위: 현재 위치에 선택된 키링
+    /// - 2순위: 일반 키링들 (선택되지 않고, published/packaged 아님)
+    /// - 3순위: 다른 위치에 장착된 키링들
+    /// - 4순위: published 또는 packaged 상태의 키링들 (맨 뒤)
+    func sortedKeyringsForSelection(selectedKeyrings: [Int: Keyring], selectedPosition: Int) -> [Keyring] {
+        let selectedKeyring = selectedKeyrings[selectedPosition]
+
+        return keyring.sorted { keyring1, keyring2 in
+            let isKeyring1SelectedHere = keyring1.id == selectedKeyring?.id
+            let isKeyring2SelectedHere = keyring2.id == selectedKeyring?.id
+
+            let isKeyring1SelectedElsewhere = selectedKeyrings.values.contains { $0.id == keyring1.id } && !isKeyring1SelectedHere
+            let isKeyring2SelectedElsewhere = selectedKeyrings.values.contains { $0.id == keyring2.id } && !isKeyring2SelectedHere
+
+            let isKeyring1Unavailable = keyring1.status == .published || keyring1.status == .packaged
+            let isKeyring2Unavailable = keyring2.status == .published || keyring2.status == .packaged
+
+            if isKeyring1SelectedHere != isKeyring2SelectedHere {
+                return isKeyring1SelectedHere
+            }
+
+            let isKeyring1Normal = !isKeyring1SelectedElsewhere && !isKeyring1Unavailable
+            let isKeyring2Normal = !isKeyring2SelectedElsewhere && !isKeyring2Unavailable
+
+            if isKeyring1Normal != isKeyring2Normal {
+                return isKeyring1Normal
+            }
+
+            if isKeyring1SelectedElsewhere != isKeyring2SelectedElsewhere {
+                return isKeyring1SelectedElsewhere
+            }
+
+            if isKeyring1Unavailable != isKeyring2Unavailable {
+                return isKeyring2Unavailable
+            }
+
+            guard let index1 = keyring.firstIndex(of: keyring1),
+                  let index2 = keyring.firstIndex(of: keyring2) else {
+                return false
+            }
+            return index1 < index2
         }
     }
 }

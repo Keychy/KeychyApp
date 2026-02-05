@@ -9,6 +9,8 @@ import SwiftUI
 
 struct WorkshopTab: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
+    @Bindable var bundleViewModel: BundleViewModel
+    @Bindable var collectionViewModel: CollectionViewModel
 
     @State private var acrylicPhotoVM: AcrylicPhotoVM?
     @State private var neonSignVM: NeonSignVM?
@@ -17,10 +19,6 @@ struct WorkshopTab: View {
     @State private var pixelKeyringVM: PixelVM?
     @State private var speechBubbleVM: SpeechBubbleVM?
     @State private var workshopViewModel = WorkshopViewModel(userManager: UserManager.shared)
-
-    // Bundle 관련 ViewModel
-    @State private var collectionViewModel = CollectionViewModel()
-    @State private var bundleViewModel = BundleViewModel()
 
     var body: some View {
         NavigationStack(path: $router.path) {

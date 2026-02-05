@@ -80,6 +80,8 @@ extension MainTabView {
         HomeTab(
             router: viewModel.homeRouter,
             userManager: viewModel.userManager,
+            bundleViewModel: viewModel.bundleViewModel,
+            collectionViewModel: viewModel.collectionViewModel,
             onBackgroundLoaded: {
                 DispatchQueue.main.asyncAfter(deadline: .now() + MainTabViewModel.Delay.splashAnimation) {
                     withAnimation(.easeOut(duration: 0.5)) {
@@ -96,7 +98,7 @@ extension MainTabView {
     }
 
     private var workshopTab: some View {
-        WorkshopTab(router: viewModel.workshopRouter)
+        WorkshopTab(router: viewModel.workshopRouter, bundleViewModel: viewModel.bundleViewModel, collectionViewModel: viewModel.collectionViewModel)
             .modifier(TabItemModifier(
                 image: .workshop,
                 title: "공방",
@@ -107,6 +109,8 @@ extension MainTabView {
     private var collectionTab: some View {
         CollectionTab(
             router: viewModel.collectionRouter,
+            bundleViewModel: viewModel.bundleViewModel,
+            collectionViewModel: viewModel.collectionViewModel,
             shouldRefresh: $viewModel.shouldRefreshCollection
         )
         .modifier(TabItemModifier(

@@ -5,6 +5,15 @@
 //  Created by 김서현 on 1/12/26.
 //
 
+// MARK: - BundleViewModel+CRUD
+//
+// Firebase 데이터 쓰기
+// - createBundle: 뭉치 생성
+// - createKeyringDataList: 키링 → Scene 데이터 변환
+// - updateBundleMainStatus: 대표 뭉치 설정
+// - updateBundleName: 이름 변경
+// - incrementUseCount: 사용 횟수 증가
+
 import FirebaseFirestore
 
 extension BundleViewModel {
@@ -238,6 +247,42 @@ extension BundleViewModel {
                 }
                 completion(true)
             }
+        }
+    }
+
+    // MARK: - 사용 횟수 증가
+
+    /// 배경, 카라비너의 사용 횟수를 증가시키는 메서드
+    func incrementUseCount(
+        carabinerId: String?,
+        backgroundId: String?
+    ) {
+        if let carabinerId = carabinerId, !carabinerId.isEmpty {
+            db.collection("Carabiner")
+                .document(carabinerId)
+                .updateData([
+                    "useCount": FieldValue.increment(Int64(1))
+                ]) { error in
+                    if let error = error {
+                        print("[useCount] Carabiner 증가 실패: \(error)")
+                    } else {
+                        print("[useCount] Carabiner 증가 성공: \(carabinerId)")
+                    }
+                }
+        }
+
+        if let backgroundId = backgroundId, !backgroundId.isEmpty {
+            db.collection("Background")
+                .document(backgroundId)
+                .updateData([
+                    "useCount": FieldValue.increment(Int64(1))
+                ]) { error in
+                    if let error = error {
+                        print("[useCount] Background 증가 실패: \(error)")
+                    } else {
+                        print("[useCount] Background 증가 성공: \(backgroundId)")
+                    }
+                }
         }
     }
 }

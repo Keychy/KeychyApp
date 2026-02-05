@@ -48,6 +48,7 @@ class MainTabViewModel {
 
     // ViewModels
     let collectionViewModel = CollectionViewModel()
+    let bundleViewModel = BundleViewModel()
 
     // Managers
     let userManager = UserManager.shared
