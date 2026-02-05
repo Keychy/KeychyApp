@@ -66,74 +66,36 @@ extension BundleEditView {
             }
         } label: {
             HStack(spacing: 5) {
-                if isPurchasing {
+                if bundleVM.isPurchasing {
                     LoadingAlert(type: .short40, message: nil)
                 } else {
                     Image(.myCoinMini)
                 }
-                
-                Text("\(totalCartPrice)")
+
+                Text("\(bundleVM.totalCartPrice)")
                     .typography(.nanum18EB)
                     .padding(.top, 16)
                     .padding(.bottom, 12)
-                
-                Text("(\(payableItemsCount)개)")
+
+                Text("(\(bundleVM.payableItemsCount)개)")
                     .typography(.suit17SB)
             }
             .foregroundStyle(.white100)
             .frame(maxWidth: .infinity)
-            .background(isPurchasing ? .gray400 : .black80)
+            .background(bundleVM.isPurchasing ? .gray400 : .black80)
             .clipShape(RoundedRectangle(cornerRadius: 100))
         }
-        .disabled(isPurchasing)
+        .disabled(bundleVM.isPurchasing)
     }
-    
-    var payableItemsCount: Int {
-        let backgroundCount = (bundleVM.newSelectedBackground != nil && !bundleVM.newSelectedBackground!.isOwned && bundleVM.newSelectedBackground!.background.price > 0) ? 1 : 0
-        let carabinerCount = (bundleVM.newSelectedCarabiner != nil && !bundleVM.newSelectedCarabiner!.isOwned && bundleVM.newSelectedCarabiner!.carabiner.price > 0) ? 1 : 0
-        return backgroundCount + carabinerCount
-    }
-    
-    var totalCartPrice: Int {
-        let backgroundPrice = (bundleVM.newSelectedBackground != nil && !bundleVM.newSelectedBackground!.isOwned && bundleVM.newSelectedBackground!.background.price > 0) ? bundleVM.newSelectedBackground!.background.price : 0
-        let carabinerPrice = (bundleVM.newSelectedCarabiner != nil && !bundleVM.newSelectedCarabiner!.isOwned && bundleVM.newSelectedCarabiner!.carabiner.price > 0) ? bundleVM.newSelectedCarabiner!.carabiner.price : 0
-        return backgroundPrice + carabinerPrice
-    }
-    
+
     // MARK: - 구매 처리
     private func purchaseItems() async {
-        isPurchasing = true
-        
-        var allSuccess = true
-        
-        // 선택된 배경이 유료인 경우 구매
-        if let bg = bundleVM.newSelectedBackground, !bg.isOwned && bg.background.price > 0 {
-            let result = await ItemPurchaseManager.shared.purchaseWorkshopItem(bg.background, userManager: UserManager.shared)
-            
-            switch result {
-            case .success:
-                break
-            case .insufficientCoins, .failed(_):
-                allSuccess = false
-            }
-        }
-        
-        // 선택된 카라비너가 유료이고 이전 구매가 성공한 경우에만 구매
-        if allSuccess, let cb = bundleVM.newSelectedCarabiner, !cb.isOwned && cb.carabiner.price > 0 {
-            let result = await ItemPurchaseManager.shared.purchaseWorkshopItem(cb.carabiner, userManager: UserManager.shared)
-            
-            switch result {
-            case .success:
-                break
-            case .insufficientCoins, .failed(_):
-                allSuccess = false
-            }
-        }
-        
-        if allSuccess {
-            // 모든 구매 성공 - alert만 표시
+        let result = await bundleVM.purchaseSelectedItems()
+
+        switch result {
+        case .success:
+            // 모든 구매 성공
             await MainActor.run {
-                isPurchasing = false
                 showPurchaseSheet = false
                 showPurchaseSuccessAlert = true
                 purchasesSuccessScale = 0.3
@@ -141,29 +103,27 @@ extension BundleEditView {
                     purchasesSuccessScale = 1.0
                 }
             }
-            
+
             await bundleVM.refreshEditData()
-            
+
             // 1초 후 알럿 자동 닫기 및 저장 후 화면 이동
-            try? await Task.sleep(nanoseconds: 1_000_000_000) // 1초 대기
-            
+            try? await Task.sleep(for: .seconds(1))
+
             await bundleVM.saveBundleChanges()
             await MainActor.run {
                 showPurchaseSuccessAlert = false
                 purchasesSuccessScale = 0.3
             }
-            
-        } else {
+
+        case .insufficientCoins, .failed:
             // 구매 실패
             await MainActor.run {
-                isPurchasing = false
-                // 시트 먼저 닫기
                 showPurchaseSheet = false
             }
-            
+
             // 시트 닫히는 애니메이션 대기
-            try? await Task.sleep(nanoseconds: 300_000_000)
-            
+            try? await Task.sleep(for: .seconds(0.3))
+
             await MainActor.run {
                 showPurchaseFailAlert = true
                 purchaseFailScale = 0.3

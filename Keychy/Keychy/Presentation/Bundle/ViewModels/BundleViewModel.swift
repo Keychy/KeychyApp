@@ -39,7 +39,7 @@ class BundleViewModel {
     var db: Firestore {
         Firestore.firestore()
     }
-    
+
     // MARK: - Shared Data
     let dataManager = WorkshopDataManager.shared
 
@@ -53,24 +53,27 @@ class BundleViewModel {
     // 공방에서 "뭉치에 사용하기"로 진입 시 미리 선택할 아이템 ID
     var preSelectedBackgroundId: String?
     var preSelectedCarabinerId: String?
-    
+
     // 뭉치 이름 최대 글자 수
     var maxBundleNameCount: Int = 9
-    
+
     // 뭉치 생성 시 선택 된 키링들을 저장
     var selectedKeyringsForBundle: [Int: Keyring] = [:]
-    
+
     // 뭉치 캡쳐 이미지 (png 데이터)
     var bundleCapturedImage: Data?
-    
+
     // 현재 선택 된 뭉치 - 뭉치 상세뷰 접근 시 데이터 할당 됨
     var selectedBundle: KeyringBundle?
-    
+
     // MARK: - 사용자의 뭉치, 키링 정보를 저장하는 프로퍼티
     var bundles: [KeyringBundle] = []
     var keyring: [Keyring] = []
-    
+
     var isLoading = false
+
+    // MARK: - 구매 관련 상태
+    var isPurchasing = false
     
     // MARK: - 뭉치 편집뷰 용 데이터
     var newSelectedBackground: BackgroundViewData?
@@ -266,5 +269,71 @@ class BundleViewModel {
             print("User carabiners 업데이트 에러: \(error.localizedDescription)")
             return false
         }
+    }
+
+    // MARK: - 구매 관련 Computed Properties
+
+    /// 구매 가능한 아이템 수 (미소유 + 유료)
+    var payableItemsCount: Int {
+        let backgroundCount = (newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) ? 1 : 0
+        let carabinerCount = (newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0) ? 1 : 0
+        return backgroundCount + carabinerCount
+    }
+
+    /// 총 구매 가격
+    var totalCartPrice: Int {
+        let backgroundPrice = (newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0) ? newSelectedBackground!.background.price : 0
+        let carabinerPrice = (newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0) ? newSelectedCarabiner!.carabiner.price : 0
+        return backgroundPrice + carabinerPrice
+    }
+
+    /// 구매하지 않은 유료 아이템이 있는지 확인
+    var hasUnpurchasedItems: Bool {
+        let hasUnpurchasedBackground = newSelectedBackground != nil && !newSelectedBackground!.isOwned && newSelectedBackground!.background.price > 0
+        let hasUnpurchasedCarabiner = newSelectedCarabiner != nil && !newSelectedCarabiner!.isOwned && newSelectedCarabiner!.carabiner.price > 0
+        return hasUnpurchasedBackground || hasUnpurchasedCarabiner
+    }
+
+    // MARK: - 구매 처리
+
+    /// 선택된 아이템들 구매 처리
+    @MainActor
+    func purchaseSelectedItems() async -> PurchaseResult {
+        isPurchasing = true
+
+        // 선택된 배경이 유료인 경우 구매
+        if let bg = newSelectedBackground, !bg.isOwned && bg.background.price > 0 {
+            let result = await ItemPurchaseManager.shared.purchaseWorkshopItem(bg.background, userManager: UserManager.shared)
+
+            switch result {
+            case .success:
+                break
+            case .insufficientCoins:
+                isPurchasing = false
+                return .insufficientCoins
+            case .failed(let message):
+                isPurchasing = false
+                return .failed(message)
+            }
+        }
+
+        // 선택된 카라비너가 유료인 경우 구매
+        if let cb = newSelectedCarabiner, !cb.isOwned && cb.carabiner.price > 0 {
+            let result = await ItemPurchaseManager.shared.purchaseWorkshopItem(cb.carabiner, userManager: UserManager.shared)
+
+            switch result {
+            case .success:
+                break
+            case .insufficientCoins:
+                isPurchasing = false
+                return .insufficientCoins
+            case .failed(let message):
+                isPurchasing = false
+                return .failed(message)
+            }
+        }
+
+        isPurchasing = false
+        return .success
     }
 }

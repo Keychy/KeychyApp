@@ -20,7 +20,6 @@ struct BundleEditView<Route: BundleRoute>: View {
     
     // MARK: - Loading
     @State var isSceneReady = false
-    @State var isPurchasing = false
     @State var isNavigatingAway = false // 화면 전환 중인지 추적
     @State var isKeyringSheetLoading: Bool = true
     @State var isCapturing: Bool = false
@@ -58,7 +57,7 @@ struct BundleEditView<Route: BundleRoute>: View {
     let sheetHeightRatio: CGFloat = 0.43
     
     var shouldApplyBlur: Bool {
-        showPurchaseFailAlert || showPurchaseSuccessAlert || isCapturing || !isSceneReady || isPurchasing || isKeyringSheetLoading
+        showPurchaseFailAlert || showPurchaseSuccessAlert || isCapturing || !isSceneReady || bundleVM.isPurchasing || isKeyringSheetLoading
     }
     
     var body: some View {
@@ -364,11 +363,8 @@ extension BundleEditView {
             }
         } center: {
         } trailing: {
-            let hasPayableItems = (bundleVM.newSelectedBackground != nil && !bundleVM.newSelectedBackground!.isOwned && bundleVM.newSelectedBackground!.background.price > 0) || (bundleVM.newSelectedCarabiner != nil && !bundleVM.newSelectedCarabiner!.isOwned && bundleVM.newSelectedCarabiner!.carabiner.price > 0)
-            
-            if hasPayableItems {
-                let payableCount = ((bundleVM.newSelectedBackground != nil && !bundleVM.newSelectedBackground!.isOwned && bundleVM.newSelectedBackground!.background.price > 0) ? 1 : 0) + ((bundleVM.newSelectedCarabiner != nil && !bundleVM.newSelectedCarabiner!.isOwned && bundleVM.newSelectedCarabiner!.carabiner.price > 0) ? 1 : 0)
-                PurchaseToolbarButton(title: "구매 \(payableCount)") {
+            if bundleVM.hasUnpurchasedItems {
+                PurchaseToolbarButton(title: "구매 \(bundleVM.payableItemsCount)") {
                     showPurchaseSheet = true
                 }
             } else {
