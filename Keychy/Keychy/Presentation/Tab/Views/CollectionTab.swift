@@ -9,9 +9,9 @@ import SwiftUI
 
 struct CollectionTab: View {
     @Bindable var router: NavigationRouter<CollectionRoute>
-    @State private var collectionViewModel = CollectionViewModel()
-    @State private var bundleViewModel = BundleViewModel()
+    @Bindable var bundleViewModel: BundleViewModel
     @Binding var shouldRefresh: Bool
+    @State private var collectionViewModel = CollectionViewModel()
     
     var body: some View {
         NavigationStack(path: $router.path) {

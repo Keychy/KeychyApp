@@ -20,6 +20,9 @@ class HomeViewModel {
     
     /// 데이터 로드 완료 여부
     var isDataLoaded = false
+
+    /// 마지막으로 로드한 뭉치 ID (뭉치 변경 감지용)
+    private var lastLoadedBundleId: String?
     
     /// 네트워크 에러 발생 여부
     var hasNetworkError: Bool = false
@@ -37,8 +40,10 @@ class HomeViewModel {
     
     @MainActor
     func loadMainBundle(collectionViewModel: CollectionViewModel, bundleViewModel: BundleViewModel, onBackgroundLoaded: (() -> Void)?) async {
-        // 이미 데이터가 로드되었고 선택된 뭉치가 있으면 스킵 (탭 전환 후 돌아올 때)
-        if isDataLoaded && bundleViewModel.selectedBundle != nil {
+        // 이미 데이터가 로드되었고, 같은 뭉치가 선택된 상태면 스킵 (탭 전환 후 돌아올 때)
+        if isDataLoaded,
+           let currentBundle = bundleViewModel.selectedBundle,
+           lastLoadedBundleId == currentBundle.documentId {
             return
         }
 
@@ -95,8 +100,9 @@ class HomeViewModel {
         // 5. 키링 데이터 생성
         guard let carabiner = bundleViewModel.selectedCarabiner else { return }
         keyringDataList = await createKeyringDataList(bundle: bundle, carabiner: carabiner)
-        
+
         // 데이터 로드 완료 표시
+        lastLoadedBundleId = bundle.documentId
         isDataLoaded = true
     }
 
@@ -292,6 +298,7 @@ class HomeViewModel {
         keyringDataList = newKeyringDataList
 
         // 데이터 로드 완료 표시
+        lastLoadedBundleId = bundle.documentId
         isDataLoaded = true
     }
 
