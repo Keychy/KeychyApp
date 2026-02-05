@@ -20,7 +20,7 @@ extension BundleEditView {
                 }
                 .padding(.leading, 18)
                 .padding(.bottom, 10)
-                BundleItemCustomSheet(
+                DraggableSheet(
                     sheetHeight: $sheetHeight,
                     content: SelectBackgroundSheet(
                         viewModel: bundleVM,
@@ -43,7 +43,7 @@ extension BundleEditView {
                 }
                 .padding(.leading, 18)
                 .padding(.bottom, 10)
-                BundleItemCustomSheet(
+                DraggableSheet(
                     sheetHeight: $sheetHeight,
                     content: SelectCarabinerSheet(
                         viewModel: bundleVM,
@@ -108,7 +108,7 @@ extension BundleEditView {
                         ScrollView {
                             LazyVGrid(columns: gridColumns, spacing: 10) {
                                 ForEach(bundleVM.sortedKeyringsForSelection(selectedKeyrings: bundleVM.selectedKeyrings, selectedPosition: selectedPosition), id: \.self) { keyring in
-                                    KeyringSelectableCell(
+                                    KeyringCell(
                                         keyring: keyring,
                                         isSelectedHere: bundleVM.selectedKeyrings[selectedPosition]?.id == keyring.id,
                                         isSelectedElsewhere: bundleVM.selectedKeyrings.values.contains { $0.id == keyring.id } && !(bundleVM.selectedKeyrings[selectedPosition]?.id == keyring.id),

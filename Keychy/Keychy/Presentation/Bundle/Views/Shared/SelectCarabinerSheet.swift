@@ -38,7 +38,7 @@ struct SelectCarabinerSheet: View {
     var body: some View {
         LazyVGrid(columns: gridColumns, spacing: 10) {
             ForEach(sortedCarabiners) { cb in
-                CarabinerSelectableCell(carabiner: cb, isSelected: (selectedCarabiner == cb))
+                CarabinerCell(carabiner: cb, isSelected: (selectedCarabiner == cb))
                     .onTapGesture {
                         onCarabinerTap(cb)
                         

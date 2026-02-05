@@ -147,7 +147,7 @@ extension BundleAddKeyringView {
                 let viewX = dx + carabiner.keyringXPosition[index] * scale
                 let viewY = dy + carabiner.keyringYPosition[index] * scale
                 
-                CarabinerAddKeyringButton(
+                AddKeyringButton(
                     isSelected: selectedPosition == index,
                     action: {
                         selectedPosition = index

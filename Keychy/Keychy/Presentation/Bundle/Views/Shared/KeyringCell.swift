@@ -1,5 +1,5 @@
 //
-//  KeyringSelectableCell.swift
+//  KeyringCell.swift
 //  Keychy
 //
 //  Created by 김서현 on 01/13/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct KeyringSelectableCell: View {
+struct KeyringCell: View {
     let keyring: Keyring
     let isSelectedHere: Bool
     let isSelectedElsewhere: Bool

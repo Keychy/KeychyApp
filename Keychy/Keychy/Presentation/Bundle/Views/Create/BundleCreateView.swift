@@ -188,7 +188,7 @@ extension BundleCreateView {
                     }
                     .padding(.leading, 18)
                     .padding(.bottom, 10)
-                    BundleItemCustomSheet(
+                    DraggableSheet(
                         sheetHeight: $sheetHeight,
                         content: SelectBackgroundSheet(
                             viewModel: bundleVM,
@@ -212,7 +212,7 @@ extension BundleCreateView {
                     }
                     .padding(.leading, 18)
                     .padding(.bottom, 10)
-                    BundleItemCustomSheet(
+                    DraggableSheet(
                         sheetHeight: $sheetHeight,
                         content: SelectCarabinerSheet(
                             viewModel: bundleVM,

@@ -229,7 +229,7 @@ struct BundleEditView<Route: BundleRoute>: View {
                     let viewX = dx + carabiner.carabiner.keyringXPosition[index] * scale
                     let viewY = dy + carabiner.carabiner.keyringYPosition[index] * scale
                     
-                    CarabinerAddKeyringButton(
+                    AddKeyringButton(
                         isSelected: selectedPosition == index,
                         action: {
                             selectedPosition = index
