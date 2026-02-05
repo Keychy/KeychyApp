@@ -31,10 +31,10 @@ extension BundleEditView {
             ScrollView {
                 VStack(spacing: 20) {
                     if let bg = bundleVM.newSelectedBackground, !bg.isOwned && bg.background.price > 0 {
-                        cartItemRow(name: bg.background.backgroundName, type: "배경", price: bg.background.price)
+                        BundlePurchaseCartItem(name: bg.background.backgroundName, type: "배경", price: bg.background.price)
                     }
                     if let cb = bundleVM.newSelectedCarabiner, !cb.isOwned && cb.carabiner.price > 0 {
-                        cartItemRow(name: cb.carabiner.carabinerName, type: "카라비너", price: cb.carabiner.price)
+                        BundlePurchaseCartItem(name: cb.carabiner.carabinerName, type: "카라비너", price: cb.carabiner.price)
                     }
                 }
                 .padding(.horizontal, 20)
@@ -58,34 +58,7 @@ extension BundleEditView {
         .presentationDetents([.fraction(0.43)])
     }
     
-    private func cartItemRow(name: String, type: String, price: Int) -> some View {
-        HStack(spacing: 6) {
-            Image(.selectedIcon)
-            
-            Text(name)
-                .typography(.suit16B)
-                .foregroundStyle(.black100)
-                .padding(.trailing, 7)
-            
-            Text(type)
-                .typography(.suit13M)
-                .foregroundStyle(.gray400)
-            
-            Spacer()
-            
-            Text("\(price)")
-                .typography(.nanum16EB)
-                .foregroundStyle(.main500)
-        }
-        .padding(.vertical, 15)
-        .padding(.horizontal, 16)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(.gray50)
-        )
-    }
-    
-    // 구매 버튼, PurchaseManager로 통합한 후에 공통 컴포넌트로 빼야 할 듯.
+    // 구매 버튼
     private var purchaseButton: some View {
         Button {
             Task {

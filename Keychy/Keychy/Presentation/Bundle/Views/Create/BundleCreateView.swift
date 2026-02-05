@@ -181,13 +181,10 @@ extension BundleCreateView {
             if showBackgroundSheet {
                 VStack(spacing: 0) {
                     Spacer()
-                    HStack(spacing: 8) {
-                        editBackgroundButton
-                        editCarabinerButton
-                        Spacer()
-                    }
-                    .padding(.leading, 18)
-                    .padding(.bottom, 10)
+                    BundleSheetToggleButtons(
+                        showBackgroundSheet: $showBackgroundSheet,
+                        showCarabinerSheet: $showCarabinerSheet
+                    )
                     DraggableSheet(
                         sheetHeight: $sheetHeight,
                         content: SelectBackgroundSheet(
@@ -200,18 +197,15 @@ extension BundleCreateView {
                     )
                 }
             }
-            
+
             // 카라비너 시트
             if showCarabinerSheet {
                 VStack(spacing: 0) {
                     Spacer()
-                    HStack(spacing: 8) {
-                        editBackgroundButton
-                        editCarabinerButton
-                        Spacer()
-                    }
-                    .padding(.leading, 18)
-                    .padding(.bottom, 10)
+                    BundleSheetToggleButtons(
+                        showBackgroundSheet: $showBackgroundSheet,
+                        showCarabinerSheet: $showCarabinerSheet
+                    )
                     DraggableSheet(
                         sheetHeight: $sheetHeight,
                         content: SelectCarabinerSheet(
@@ -397,10 +391,10 @@ extension BundleCreateView {
             // 구매할 아이템 목록
             VStack(spacing: 20) {
                 if let bg = selectedBackground, !bg.isOwned && bg.background.price > 0 {
-                    cartItemRow(name: bg.background.backgroundName, type: "배경", price: bg.background.price)
+                    BundlePurchaseCartItem(name: bg.background.backgroundName, type: "배경", price: bg.background.price)
                 }
                 if let cb = selectedCarabiner, !cb.isOwned && cb.carabiner.price > 0 {
-                    cartItemRow(name: cb.carabiner.carabinerName, type: "카라비너", price: cb.carabiner.price)
+                    BundlePurchaseCartItem(name: cb.carabiner.carabinerName, type: "카라비너", price: cb.carabiner.price)
                 }
             }
             .padding(.horizontal, 20)
@@ -424,33 +418,6 @@ extension BundleCreateView {
         .background(
             UnevenRoundedRectangle(topLeadingRadius: 38, topTrailingRadius: 38)
                 .fill(.white100)
-        )
-    }
-    
-    private func cartItemRow(name: String, type: String, price: Int) -> some View {
-        HStack(spacing: 6) {
-            Image(.selectedIcon)
-            
-            Text(name)
-                .typography(.suit16B)
-                .foregroundStyle(.black100)
-                .padding(.trailing, 7)
-            
-            Text(type)
-                .typography(.suit13M)
-                .foregroundStyle(.gray400)
-            
-            Spacer()
-            
-            Text("\(price)")
-                .typography(.nanum16EB)
-                .foregroundStyle(.main500)
-        }
-        .padding(.vertical, 20)
-        .padding(.horizontal, 16)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(.gray50)
         )
     }
     
@@ -577,48 +544,8 @@ extension BundleCreateView {
     }
 }
 
-// MARK: - 하단 버튼
+// MARK: - 유료 아이템 체크
 extension BundleCreateView {
-    private var editBackgroundButton: some View {
-        Button {
-            // 배경 시트 열기
-            showBackgroundSheet = true
-        } label: {
-            VStack(spacing: 0) {
-                Image(showBackgroundSheet ? .backgroundIconWhite100 : .backgroundIconGray600)
-                Text("배경")
-                    .typography(.suit9SB)
-                    .foregroundStyle(showBackgroundSheet ? .white100 : .gray600)
-            }
-            .frame(width: 46, height: 46)
-            .background(
-                RoundedRectangle(cornerRadius: 14.38)
-                    .fill(showBackgroundSheet ? .main500 : .white100)
-            )
-        }
-        .buttonStyle(.plain)
-    }
-    
-    private var editCarabinerButton: some View {
-        Button {
-            // 카라비너 시트 열기
-            showCarabinerSheet = true
-        } label: {
-            VStack(spacing: 0) {
-                Image(showCarabinerSheet ? .carabinerIconWhite100 : .carabinerIconGray600)
-                Text("카라비너")
-                    .typography(.suit9SB)
-                    .foregroundStyle(showCarabinerSheet ? .white100 : .gray600)
-            }
-            .frame(width: 46, height: 46)
-            .background(
-                RoundedRectangle(cornerRadius: 14.38)
-                    .fill(showCarabinerSheet ? .main500 : .white100)
-            )
-        }
-        .buttonStyle(.plain)
-    }
-    
     /// 구매하지 않은 유료 아이템이 있는지 확인
     private var hasUnpurchasedItems: Bool {
         let hasUnpurchasedBackground = selectedBackground != nil && !selectedBackground!.isOwned && selectedBackground!.background.price > 0
