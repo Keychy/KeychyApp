@@ -362,7 +362,6 @@
 		AA3909462EC9F29500D87EEC /* UIApplication+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3909452EC9F29500D87EEC /* UIApplication+Extension.swift */; };
 		AA39098E2ECA061700D87EEC /* GridItemSpacing.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA39098D2ECA061700D87EEC /* GridItemSpacing.swift */; };
 		AA390CE52ECC60A700D87EEC /* BundleRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA390CE42ECC60A700D87EEC /* BundleRoute.swift */; };
-		AA4B07322EB26CD2005F9227 /* BundleAddKeyringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4B07312EB26CD2005F9227 /* BundleAddKeyringView.swift */; };
 		AA6298522EC233D2001576C0 /* BundleEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6298512EC233D2001576C0 /* BundleEditView.swift */; };
 		AA6298542EC39065001576C0 /* BundleCreateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6298532EC39065001576C0 /* BundleCreateView.swift */; };
 		AA6298562EC3AD16001576C0 /* DraggableSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6298552EC3AD16001576C0 /* DraggableSheet.swift */; };
@@ -813,7 +812,6 @@
 		AA3909452EC9F29500D87EEC /* UIApplication+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extension.swift"; sourceTree = "<group>"; };
 		AA39098D2ECA061700D87EEC /* GridItemSpacing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridItemSpacing.swift; sourceTree = "<group>"; };
 		AA390CE42ECC60A700D87EEC /* BundleRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleRoute.swift; sourceTree = "<group>"; };
-		AA4B07312EB26CD2005F9227 /* BundleAddKeyringView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleAddKeyringView.swift; sourceTree = "<group>"; };
 		AA6298512EC233D2001576C0 /* BundleEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleEditView.swift; sourceTree = "<group>"; };
 		AA6298532EC39065001576C0 /* BundleCreateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleCreateView.swift; sourceTree = "<group>"; };
 		AA6298552EC3AD16001576C0 /* DraggableSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraggableSheet.swift; sourceTree = "<group>"; };
@@ -2117,7 +2115,6 @@
 			children = (
 				AA6298532EC39065001576C0 /* BundleCreateView.swift */,
 				AA0219DD2EB1C041006EF269 /* BundleNameInputView.swift */,
-				AA4B07312EB26CD2005F9227 /* BundleAddKeyringView.swift */,
 			);
 			path = Create;
 			sourceTree = "<group>";
@@ -2446,7 +2443,6 @@
 			files = (
 				C6C4028F2EB27458006B58DF /* Particle.swift in Sources */,
 				AA0A54B72EC053E4007B5413 /* CarabinerType.swift in Sources */,
-				AA4B07322EB26CD2005F9227 /* BundleAddKeyringView.swift in Sources */,
 				4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */,
 				4C004FAD2F177F2600D9063E /* BundleDetailView+VideoGen.swift in Sources */,
 				386102462F10F9CE0045C529 /* KeyringReceiveView+Alerts.swift in Sources */,
