@@ -111,6 +111,8 @@ struct BundleEditView<Route: BundleRoute>: View {
         }
         .onDisappear {
             isNavigatingAway = false
+            // 편집 화면 나갈 때 상태 초기화
+            bundleVM.resetEditState()
         }
         .ignoresSafeArea()
         .onChange(of: bundleVM.newSelectedBackground) { _, newBackground in

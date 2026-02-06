@@ -43,15 +43,14 @@ struct CarabinerCell: View {
                 VStack {
                     HStack {
                         // 유료 아이콘
-                        Image(.paidIcon)
-                            .padding(.top, 3)
+                        Image(.myCoinMini)
                             .opacity(carabiner.carabiner.isFree ? 0 : 1)
                         Spacer()
                     }
+                    .padding(.horizontal, 8)
+                    .padding(.top, 8)
                     Spacer()
                 }
-                .padding(.top, 3)
-                .padding(.leading, 7)
                 
                 // 오른쪽 상단: 유료 아이템만 표시 (보유/가격)
                 if !carabiner.carabiner.isFree {

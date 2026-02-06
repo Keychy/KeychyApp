@@ -37,21 +37,19 @@ extension BundleEditView {
     func loadBackgroundAndCarabiner() async {
         await withCheckedContinuation { continuation in
             bundleVM.fetchAllBackgrounds { _ in
+                // 현재 뭉치의 배경으로 항상 초기화
                 if let selectedBundle = bundleVM.selectedBundle {
-                    if bundleVM.newSelectedBackground == nil {
-                        bundleVM.newSelectedBackground = bundleVM.backgroundViewData.first { bgData in
-                            bgData.background.id == selectedBundle.selectedBackground
-                        }
+                    bundleVM.newSelectedBackground = bundleVM.backgroundViewData.first { bgData in
+                        bgData.background.id == selectedBundle.selectedBackground
                     }
                 }
                 self.restoreBackgroundSelection()
-                
+
                 bundleVM.fetchAllCarabiners { _ in
+                    // 현재 뭉치의 카라비너로 항상 초기화
                     if let selectedBundle = bundleVM.selectedBundle {
-                        if bundleVM.newSelectedCarabiner == nil {
-                            bundleVM.newSelectedCarabiner = bundleVM.carabinerViewData.first { cbData in
-                                cbData.carabiner.id == selectedBundle.selectedCarabiner
-                            }
+                        bundleVM.newSelectedCarabiner = bundleVM.carabinerViewData.first { cbData in
+                            cbData.carabiner.id == selectedBundle.selectedCarabiner
                         }
                     }
                     self.restoreCarabinerSelection()

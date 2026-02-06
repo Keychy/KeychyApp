@@ -141,6 +141,9 @@ struct BundleCreateView<Route: BundleRoute>: View {
             TabBarManager.hide()
             bundleVM.resetSheetFilterState()
         }
+        .onDisappear {
+            bundleVM.resetEditState()
+        }
         .sheet(isPresented: $showKeyringSheet) {
             keyringSheetContent
         }
@@ -425,21 +428,6 @@ extension BundleCreateView {
         // 배경 데이터 로드
         await withCheckedContinuation { continuation in
             bundleVM.fetchAllBackgrounds { _ in
-                if self.bundleVM.newSelectedBackground == nil {
-                    // 공방에서 미리 선택된 배경이 있으면 해당 배경 선택
-                    if let preSelectedId = bundleVM.preSelectedBackgroundId {
-                        self.bundleVM.newSelectedBackground = bundleVM.backgroundViewData.first { bg in
-                            bg.background.id == preSelectedId
-                        }
-                        bundleVM.preSelectedBackgroundId = nil // 사용 후 초기화
-                    }
-                    // 미리 선택된 배경이 없으면 "퍼플키치"를 기본으로 선택, 없으면 첫 번째 선택
-                    if self.bundleVM.newSelectedBackground == nil {
-                        self.bundleVM.newSelectedBackground = bundleVM.backgroundViewData.first { bg in
-                            bg.background.backgroundName == "퍼플키치"
-                        } ?? bundleVM.backgroundViewData.first
-                    }
-                }
                 continuation.resume()
             }
         }
@@ -447,22 +435,44 @@ extension BundleCreateView {
         // 카라비너 데이터 로드
         await withCheckedContinuation { continuation in
             bundleVM.fetchAllCarabiners { _ in
-                if self.bundleVM.newSelectedCarabiner == nil {
-                    // 공방에서 미리 선택된 카라비너가 있으면 해당 카라비너 선택
-                    if let preSelectedId = bundleVM.preSelectedCarabinerId {
-                        self.bundleVM.newSelectedCarabiner = bundleVM.carabinerViewData.first { cb in
-                            cb.carabiner.id == preSelectedId
-                        }
-                        bundleVM.preSelectedCarabinerId = nil // 사용 후 초기화
-                    }
-                    // 미리 선택된 카라비너가 없으면 "웰컴 키치"를 기본으로 선택, 없으면 첫 번째 선택
-                    if self.bundleVM.newSelectedCarabiner == nil {
-                        self.bundleVM.newSelectedCarabiner = bundleVM.carabinerViewData.first { cb in
-                            cb.carabiner.carabinerName == "웰컴 키치"
-                        } ?? bundleVM.carabinerViewData.first
-                    }
-                }
                 continuation.resume()
+            }
+        }
+
+        // 코인 충전 후 복귀 시 저장된 선택 복원
+        bundleVM.restoreSelectionIfNeeded()
+
+        // 배경 선택 (복원된 값이 없을 때만)
+        if bundleVM.newSelectedBackground == nil {
+            // 공방에서 미리 선택된 배경이 있으면 해당 배경 선택
+            if let preSelectedId = bundleVM.preSelectedBackgroundId {
+                bundleVM.newSelectedBackground = bundleVM.backgroundViewData.first { bg in
+                    bg.background.id == preSelectedId
+                }
+                bundleVM.preSelectedBackgroundId = nil
+            }
+            // 미리 선택된 배경이 없으면 "퍼플키치"를 기본으로 선택
+            if bundleVM.newSelectedBackground == nil {
+                bundleVM.newSelectedBackground = bundleVM.backgroundViewData.first { bg in
+                    bg.background.backgroundName == "퍼플키치"
+                } ?? bundleVM.backgroundViewData.first
+            }
+        }
+
+        // 카라비너 선택 (복원된 값이 없을 때만)
+        if bundleVM.newSelectedCarabiner == nil {
+            // 공방에서 미리 선택된 카라비너가 있으면 해당 카라비너 선택
+            if let preSelectedId = bundleVM.preSelectedCarabinerId {
+                bundleVM.newSelectedCarabiner = bundleVM.carabinerViewData.first { cb in
+                    cb.carabiner.id == preSelectedId
+                }
+                bundleVM.preSelectedCarabinerId = nil
+            }
+            // 미리 선택된 카라비너가 없으면 "웰컴 키치"를 기본으로 선택
+            if bundleVM.newSelectedCarabiner == nil {
+                bundleVM.newSelectedCarabiner = bundleVM.carabinerViewData.first { cb in
+                    cb.carabiner.carabinerName == "웰컴 키치"
+                } ?? bundleVM.carabinerViewData.first
             }
         }
 
@@ -520,6 +530,7 @@ extension BundleCreateView {
                         onCharge: {
                             showPurchaseFailAlert = false
                             purchaseFailScale = 0.3
+                            bundleVM.saveCurrentSelection()
                             router.push(.coinCharge)
                         }
                     )
@@ -554,10 +565,20 @@ extension BundleCreateView {
             // 구매할 아이템 목록
             VStack(spacing: 20) {
                 if let bg = bundleVM.newSelectedBackground, !bg.isOwned && bg.background.price > 0 {
-                    BundlePurchaseCartItem(name: bg.background.backgroundName, type: "배경", price: bg.background.price)
+                    BundlePurchaseCartItem(
+                        imageURL: bg.background.backgroundImage,
+                        name: bg.background.backgroundName,
+                        type: "배경",
+                        price: bg.background.price
+                    )
                 }
                 if let cb = bundleVM.newSelectedCarabiner, !cb.isOwned && cb.carabiner.price > 0 {
-                    BundlePurchaseCartItem(name: cb.carabiner.carabinerName, type: "카라비너", price: cb.carabiner.price)
+                    BundlePurchaseCartItem(
+                        imageURL: cb.carabiner.carabinerImage.first ?? "",
+                        name: cb.carabiner.carabinerName,
+                        type: "카라비너",
+                        price: cb.carabiner.price
+                    )
                 }
             }
             .padding(.horizontal, 20)
