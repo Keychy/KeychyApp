@@ -8,49 +8,76 @@
 import SwiftUI
 
 struct SelectBackgroundSheet: View {
-    let viewModel: BundleViewModel
+    @Bindable var viewModel: BundleViewModel
     let selectedBG: BackgroundViewData?
     let onBackgroundTap: (BackgroundViewData) -> Void
-    
+
     /// 3열 그리드 컬럼 설정
     private let gridColumns: [GridItem] = [
         GridItem(.flexible(), spacing: 10),
         GridItem(.flexible(), spacing: 10),
         GridItem(.flexible(), spacing: 10)
     ]
-    
-    /// "키치 배경"을 맨 앞으로 정렬
-    private var sortedBackgrounds: [BackgroundViewData] {
-        viewModel.backgroundViewData.sorted { bg1, bg2 in
+
+    /// 필터링 및 정렬된 배경 목록
+    private var filteredAndSortedBackgrounds: [BackgroundViewData] {
+        var result = viewModel.backgroundViewData
+
+        // 필터 적용
+        if viewModel.sheetShowFreeOnly {
+            result = result.filter { $0.background.isFree }
+        } else if viewModel.sheetShowOwnedOnly {
+            result = result.filter { $0.isOwned }
+        }
+
+        // 정렬
+        result = result.sorted { bg1, bg2 in
+            // 키치 배경은 항상 맨 앞
             let isKeychy1 = bg1.background.backgroundName == "키치 배경"
             let isKeychy2 = bg2.background.backgroundName == "키치 배경"
-            
+
             if isKeychy1 && !isKeychy2 {
-                return true  // bg1이 앞으로
+                return true
             } else if !isKeychy1 && isKeychy2 {
-                return false  // bg2가 앞으로
-            } else {
-                return false  // 순서 유지
+                return false
+            }
+
+            // 정렬 기준 적용
+            switch viewModel.sheetSortOrder {
+            case "최신순":
+                return bg1.background.createdAt > bg2.background.createdAt
+            case "인기순":
+                return bg1.background.useCount > bg2.background.useCount
+            default:
+                return false
             }
         }
+
+        return result
     }
-    
+
     var body: some View {
-        LazyVGrid(columns: gridColumns, spacing: 10) {
-            ForEach(sortedBackgrounds) { bg in
-                BackgroundCell(background: bg, isSelected: (bg == selectedBG))
-                    .onTapGesture {
-                        onBackgroundTap(bg)
-                        
-                        // 무료이고, 유저가 보유x인 경우에만 바로 추가
-                        if !bg.isOwned && bg.background.isFree {
-                            Task {
-                                await viewModel.addBackgroundToUser(backgroundName: bg.background.backgroundName, userManager: UserManager.shared)
+        VStack(spacing: 20) {
+            // 필터바
+            BundleSheetFilterBar(viewModel: viewModel)
+
+            // 그리드
+            LazyVGrid(columns: gridColumns, spacing: 20) {
+                ForEach(filteredAndSortedBackgrounds) { bg in
+                    BackgroundCell(background: bg, isSelected: (bg == selectedBG))
+                        .onTapGesture {
+                            onBackgroundTap(bg)
+
+                            // 무료이고, 유저가 보유x인 경우에만 바로 추가
+                            if !bg.isOwned && bg.background.isFree {
+                                Task {
+                                    await viewModel.addBackgroundToUser(backgroundName: bg.background.backgroundName, userManager: UserManager.shared)
+                                }
                             }
                         }
-                    }
+                }
             }
+            .padding(.horizontal, 20)
         }
-        .padding(.horizontal, 20)
     }
 }
