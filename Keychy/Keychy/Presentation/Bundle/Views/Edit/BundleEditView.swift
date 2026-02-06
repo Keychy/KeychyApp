@@ -42,7 +42,8 @@ struct BundleEditView<Route: BundleRoute>: View {
     
     @State var selectedPosition = 0
     @State var sceneRefreshId = UUID()
-    
+    @State var keyringSearchText: String = ""
+
     // 공통 그리드 컬럼 (배경, 카라비너, 키링 모두 동일)
     let gridColumns: [GridItem] = [
         GridItem(.flexible(), spacing: 10),
@@ -57,17 +58,14 @@ struct BundleEditView<Route: BundleRoute>: View {
     let sheetHeightRatio: CGFloat = 0.43
     
     var shouldApplyBlur: Bool {
-        showPurchaseFailAlert || showPurchaseSuccessAlert || isCapturing || !isSceneReady || bundleVM.isPurchasing || isKeyringSheetLoading
+        showPurchaseFailAlert || showPurchaseSuccessAlert || isCapturing || !isSceneReady || bundleVM.isPurchasing
     }
     
     var body: some View {
         ZStack {
             ZStack(alignment: .bottom) {
                 mainContentView
-                
-                // 키링 선택 시트
-                keyringSheetOverlay
-                
+
                 // 배경, 카라비너 선택 시트
                 selectItemSheetContent
             }
@@ -80,6 +78,9 @@ struct BundleEditView<Route: BundleRoute>: View {
         }
         .sheet(isPresented: $showPurchaseSheet) {
             purchaseSheetView
+        }
+        .sheet(isPresented: $showSelectKeyringSheet) {
+            keyringSheetContent
         }
         .sheet(isPresented: $bundleVM.showSheetSortSheet) {
             WorkshopSortSheet(
@@ -124,14 +125,6 @@ struct BundleEditView<Route: BundleRoute>: View {
             guard newCarabiner != nil else { return }
             // 카라비너 변경 시에는 키링 데이터 업데이트만 수행 (Firebase 접근 없음)
             updateKeyringDataList()
-        }
-        // 키링 선택 시트 활성화 시 배경, 카라비너 선택 시트의 높이를 낮춤
-        .onChange(of: showSelectKeyringSheet) { _, newValue in
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                if newValue {
-                    sheetHeight = screenHeight * 0.08
-                }
-            }
         }
     }
     

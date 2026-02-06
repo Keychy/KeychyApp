@@ -100,85 +100,45 @@ extension BundleCreateView {
     }
     
     var keyringSheetContent: some View {
-        VStack(spacing: 15) {
-            if bundleVM.keyring.isEmpty {
-                Image(.surprisedAlert)
-                
-                Text("공방에서 키링을 만들어보세요.\n아직 만들어진 키링이 없어요.")
-                    .typography(.suit15R)
-                    .foregroundStyle(.black100)
-                    .multilineTextAlignment(.center)
-                
-            } else {
-                ScrollView {
-                    LazyVGrid(columns: gridColumns, spacing: 10) {
-                        ForEach(bundleVM.sortedKeyringsForSelection(selectedKeyrings: selectedKeyrings, selectedPosition: selectedPosition), id: \.self) { keyring in
-                            keyringCell(keyring: keyring)
-                        }
-                    }
-                    .padding(.horizontal, 20)
-                }
-            }
-        }
-        .presentationDetents([.fraction(0.45), .fraction(0.85)])
-        .presentationDragIndicator(.visible)
-    }
-    
-    func keyringCell(keyring: Keyring) -> some View {
-        let isSelectedHere = selectedKeyrings[selectedPosition]?.id == keyring.id
-        let isSelectedElsewhere = selectedKeyrings.values.contains { $0.id == keyring.id } && !isSelectedHere
-        
-        return Button {
-            if isSelectedHere {
-                selectedKeyrings[selectedPosition] = nil
-                keyringOrder.removeAll { $0 == selectedPosition }
-            } else if !isSelectedElsewhere {
+        KeyringSelectionContent(
+            searchText: $keyringSearchText,
+            keyrings: sortedKeyringsForSelection,
+            isLoading: false,
+            gridColumns: gridColumns,
+            cellWidth: threeGridCellWidth,
+            cellHeight: threeGridCellHeight,
+            isSelectedHere: { keyring in
+                selectedKeyrings[selectedPosition]?.id == keyring.id
+            },
+            isSelectedElsewhere: { keyring in
+                selectedKeyrings.values.contains { $0.id == keyring.id } &&
+                !(selectedKeyrings[selectedPosition]?.id == keyring.id)
+            },
+            onTapSelect: { keyring in
                 if selectedKeyrings[selectedPosition] != nil {
                     keyringOrder.removeAll { $0 == selectedPosition }
                 }
                 selectedKeyrings[selectedPosition] = keyring
                 keyringOrder.append(selectedPosition)
                 showKeyringSheet = false
+                sceneRefreshId = UUID()
+            },
+            onTapDeselect: { keyring in
+                selectedKeyrings[selectedPosition] = nil
+                keyringOrder.removeAll { $0 == selectedPosition }
+                sceneRefreshId = UUID()
             }
-            sceneRefreshId = UUID()
-        } label: {
-            ZStack(alignment: .topTrailing) {
-                VStack(spacing: 10) {
-                    ZStack {
-                        CollectionCellView(keyring: keyring)
-                            .frame(width: threeGridCellWidth, height: threeGridCellHeight)
-                            .cornerRadius(10)
-                        
-                        RoundedRectangle(cornerRadius: 10)
-                            .strokeBorder(isSelectedHere ? .mainOpacity80 : .clear, lineWidth: 1.8)
-                            .frame(width: threeGridCellWidth, height: threeGridCellHeight)
-                        
-                        if isSelectedElsewhere {
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(.black50)
-                                .frame(width: threeGridCellWidth, height: threeGridCellHeight)
-                        }
-                    }
-                    
-                    Text(keyring.name)
-                        .typography(isSelectedHere ? .notosans14SB : .notosans14M)
-                        .foregroundStyle(isSelectedHere ? .main500 : .black100)
-                        .lineLimit(1)
-                        .truncationMode(.tail)
-                }
-                
-                if isSelectedElsewhere || isSelectedHere {
-                    Text("장착 중")
-                        .foregroundStyle(.white100)
-                        .typography(.suit13M)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 4)
-                        .background(RoundedRectangle(cornerRadius: 20).fill(.mainOpacity80))
-                        .padding(.top, 5)
-                        .padding(.trailing, 5)
-                }
-            }
-        }
-        .disabled(keyring.status == .packaged || keyring.status == .published || isSelectedElsewhere)
+        )
+        .padding(.horizontal, 20)
+        .presentationDetents([.fraction(0.45), .fraction(0.85)])
+        .presentationDragIndicator(.visible)
+    }
+
+    // MARK: - 정렬된 키링 목록 (필터링은 KeyringSelectionContent에서 처리)
+    var sortedKeyringsForSelection: [Keyring] {
+        bundleVM.sortedKeyringsForSelection(
+            selectedKeyrings: selectedKeyrings,
+            selectedPosition: selectedPosition
+        )
     }
 }

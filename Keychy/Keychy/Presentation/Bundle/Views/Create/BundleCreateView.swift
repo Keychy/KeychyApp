@@ -35,6 +35,7 @@ struct BundleCreateView<Route: BundleRoute>: View {
     @State var selectedKeyrings: [Int: Keyring] = [:]
     @State var keyringOrder: [Int] = []
     @State var selectedPosition: Int = 0
+    @State var keyringSearchText: String = ""
 
     // 캡처 상태
     @State var isCapturing: Bool = false

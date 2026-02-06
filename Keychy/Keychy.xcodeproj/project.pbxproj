@@ -109,6 +109,9 @@
 		4C25259D2F3037CD003CC5AD /* WidgetBundleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C25259B2F303745003CC5AD /* WidgetBundleModel.swift */; };
 		4C25259E2F3037D6003CC5AD /* BundleImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B5707E2EC206CD0049F969 /* BundleImageCache.swift */; };
 		4C2525DA2F35B2A7003CC5AD /* BundleSheetFilterBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2525D92F35B2A7003CC5AD /* BundleSheetFilterBar.swift */; };
+		BC00020F2F35F00200000003 /* BundleSearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC00020D2F35F00200000001 /* BundleSearchBar.swift */; };
+		BC0002102F35F00200000004 /* KeyringEmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC00020E2F35F00200000002 /* KeyringEmptyStateView.swift */; };
+		BC0002132F35F00200000006 /* KeyringSelectionContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0002112F35F00200000005 /* KeyringSelectionContent.swift */; };
 		4C3687F72EBFA87800C64E75 /* Pretendard-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C3687F62EBFA87800C64E75 /* Pretendard-Medium.ttf */; };
 		4C3687FA2EBFC0FB00C64E75 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3687F82EBFC0FB00C64E75 /* NotificationManager.swift */; };
 		4C3687FC2EC05E6800C64E75 /* AccountAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3687FB2EC05E6800C64E75 /* AccountAlert.swift */; };
@@ -565,6 +568,9 @@
 		4C07024A2ECF10760026D6DC /* EffectSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectSyncManager.swift; sourceTree = "<group>"; };
 		4C25259B2F303745003CC5AD /* WidgetBundleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetBundleModel.swift; sourceTree = "<group>"; };
 		4C2525D92F35B2A7003CC5AD /* BundleSheetFilterBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleSheetFilterBar.swift; sourceTree = "<group>"; };
+		BC00020D2F35F00200000001 /* BundleSearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleSearchBar.swift; sourceTree = "<group>"; };
+		BC00020E2F35F00200000002 /* KeyringEmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringEmptyStateView.swift; sourceTree = "<group>"; };
+		BC0002112F35F00200000005 /* KeyringSelectionContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringSelectionContent.swift; sourceTree = "<group>"; };
 		4C3687F62EBFA87800C64E75 /* Pretendard-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Medium.ttf"; sourceTree = "<group>"; };
 		4C3687F82EBFC0FB00C64E75 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		4C3687FB2EC05E6800C64E75 /* AccountAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountAlert.swift; sourceTree = "<group>"; };
@@ -1810,6 +1816,9 @@
 				F82FD6112F9442AAAD58DB97 /* BundleSheetToggleButtons.swift */,
 				5E036016318043AC801A19DA /* BundlePurchaseCartItem.swift */,
 				AA6298552EC3AD16001576C0 /* DraggableSheet.swift */,
+				BC00020D2F35F00200000001 /* BundleSearchBar.swift */,
+				BC00020E2F35F00200000002 /* KeyringEmptyStateView.swift */,
+				BC0002112F35F00200000005 /* KeyringSelectionContent.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -2755,6 +2764,9 @@
 				AA0A54B92EC05C41007B5413 /* BundleRingComponent.swift in Sources */,
 				C6C361422ED44EE4009642F4 /* Showcase25BoardView+Sheet.swift in Sources */,
 				4C2525DA2F35B2A7003CC5AD /* BundleSheetFilterBar.swift in Sources */,
+				BC00020F2F35F00200000003 /* BundleSearchBar.swift in Sources */,
+				BC0002102F35F00200000004 /* KeyringEmptyStateView.swift in Sources */,
+				BC0002132F35F00200000006 /* KeyringSelectionContent.swift in Sources */,
 				3828F5452EC4CC0A00F1B040 /* CollectionViewModel+Filter.swift in Sources */,
 				38C3C28A2EC1D879003C5DE1 /* UnpackPopup.swift in Sources */,
 				C6C361E42ED4AF48009642F4 /* Showcase25BoardView+Grid.swift in Sources */,
