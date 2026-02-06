@@ -102,6 +102,7 @@ extension BundleEditView {
                             Text("공방에서 키링을 만들어보세요.\n아직 만들어진 키링이 없어요.")
                                 .typography(.suit15R)
                                 .foregroundStyle(.black100)
+                                .multilineTextAlignment(.center)
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 60)

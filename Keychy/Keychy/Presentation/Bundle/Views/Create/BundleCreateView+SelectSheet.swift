@@ -14,17 +14,17 @@ extension BundleCreateView {
             let sceneWidth: CGFloat = 402
             let sceneHeight: CGFloat = 874
             let scale = max(geometry.size.width / sceneWidth, geometry.size.height / sceneHeight)
-
+            
             let contentW = sceneWidth * scale
             let contentH = sceneHeight * scale
-
+            
             let dx = (geometry.size.width - contentW) / 2
             let dy = (geometry.size.height - contentH) / 2
-
+            
             ForEach(0..<carabiner.maxKeyringCount, id: \.self) { index in
                 let viewX = dx + carabiner.keyringXPosition[index] * scale
                 let viewY = dy + carabiner.keyringYPosition[index] * scale
-
+                
                 AddKeyringButton(
                     isSelected: selectedPosition == index,
                     action: {
@@ -45,7 +45,7 @@ extension BundleCreateView {
     var sheetContent: some View {
         ZStack(alignment: .bottom) {
             Color.clear
-
+            
             if showItemSheet {
                 // 시트가 있을 때: 셀렉터 + 시트가 함께 움직임
                 VStack(spacing: 0) {
@@ -54,7 +54,7 @@ extension BundleCreateView {
                         isBackgroundMode: $isBackgroundMode
                     )
                     .padding(.bottom, 10)
-
+                    
                     DraggableSheet(
                         sheetHeight: $sheetHeight,
                         header: BundleSheetFilterBar(viewModel: bundleVM),
@@ -77,7 +77,7 @@ extension BundleCreateView {
         }
         .animation(.easeInOut(duration: 0.25), value: showItemSheet)
     }
-
+    
     @ViewBuilder
     var itemSheetContent: some View {
         if isBackgroundMode {
@@ -98,24 +98,17 @@ extension BundleCreateView {
             )
         }
     }
-
+    
     var keyringSheetContent: some View {
-        VStack(spacing: 18) {
-            Text("키링 선택")
-                .typography(.suit16B)
-                .foregroundStyle(.black100)
-                .padding(.top, 20)
-
+        VStack(spacing: 15) {
             if bundleVM.keyring.isEmpty {
-                VStack(spacing: 16) {
-                    Image(.surprisedAlert)
-
-                    Text("공방에서 키링을 만들어보세요.\n아직 만들어진 키링이 없어요.")
-                        .typography(.suit15R)
-                        .foregroundStyle(.black100)
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 60)
+                Image(.surprisedAlert)
+                
+                Text("공방에서 키링을 만들어보세요.\n아직 만들어진 키링이 없어요.")
+                    .typography(.suit15R)
+                    .foregroundStyle(.black100)
+                    .multilineTextAlignment(.center)
+                
             } else {
                 ScrollView {
                     LazyVGrid(columns: gridColumns, spacing: 10) {
@@ -130,11 +123,11 @@ extension BundleCreateView {
         .presentationDetents([.fraction(0.45), .fraction(0.85)])
         .presentationDragIndicator(.visible)
     }
-
+    
     func keyringCell(keyring: Keyring) -> some View {
         let isSelectedHere = selectedKeyrings[selectedPosition]?.id == keyring.id
         let isSelectedElsewhere = selectedKeyrings.values.contains { $0.id == keyring.id } && !isSelectedHere
-
+        
         return Button {
             if isSelectedHere {
                 selectedKeyrings[selectedPosition] = nil
@@ -155,25 +148,25 @@ extension BundleCreateView {
                         CollectionCellView(keyring: keyring)
                             .frame(width: threeGridCellWidth, height: threeGridCellHeight)
                             .cornerRadius(10)
-
+                        
                         RoundedRectangle(cornerRadius: 10)
                             .strokeBorder(isSelectedHere ? .mainOpacity80 : .clear, lineWidth: 1.8)
                             .frame(width: threeGridCellWidth, height: threeGridCellHeight)
-
+                        
                         if isSelectedElsewhere {
                             RoundedRectangle(cornerRadius: 10)
                                 .fill(.black50)
                                 .frame(width: threeGridCellWidth, height: threeGridCellHeight)
                         }
                     }
-
+                    
                     Text(keyring.name)
                         .typography(isSelectedHere ? .notosans14SB : .notosans14M)
                         .foregroundStyle(isSelectedHere ? .main500 : .black100)
                         .lineLimit(1)
                         .truncationMode(.tail)
                 }
-
+                
                 if isSelectedElsewhere || isSelectedHere {
                     Text("장착 중")
                         .foregroundStyle(.white100)
