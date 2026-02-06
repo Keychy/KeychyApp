@@ -54,7 +54,7 @@ struct DraggableSheet<Header: View, Content: View>: View {
         }
         .frame(height: sheetHeight)
         .background(
-            RoundedRectangle(cornerRadius: 30)
+            RoundedRectangle(cornerRadius: 34)
                 .stroke(.gray50, lineWidth: 1)
                 .shadow(color: .black15, radius: 9, x: 0, y: 0)
         )

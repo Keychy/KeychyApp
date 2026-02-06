@@ -41,7 +41,6 @@ struct BundleSheetFilterBar: View {
                 Image(systemName: "chevron.down")
                     .foregroundColor(.gray500)
             }
-            .padding(.horizontal, Spacing.gap)
             .padding(.vertical, Spacing.sm)
             .frame(height: 34)
         }

@@ -32,10 +32,11 @@ struct CarabinerCell: View {
                 }
                 .padding(3.55)
                 .frame(width: threeSquareGridCellSize, height: threeSquareGridCellSize)
+                .background(.white100)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
                         .strokeBorder(isSelected ? .mainOpacity80 : .clear, lineWidth: 1.8)
-                    
                 )
                 
                 // 유료 재화 표시

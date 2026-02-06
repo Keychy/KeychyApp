@@ -27,6 +27,7 @@ struct BackgroundCell: View {
                     }
                 }
                 .frame(width: threeSquareGridCellSize, height: threeSquareGridCellSize)
+                .background(.white100)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
