@@ -10,21 +10,22 @@ import SwiftUI
 struct DraggableSheet<Content: View>: View {
     @Binding var sheetHeight: CGFloat
     let content: Content
-    
+    var onDismiss: (() -> Void)? = nil
+
     // 화면 높이 기준 비율
-    private let smallRatio: CGFloat = 0.08
-    private let mediumRatio: CGFloat = 0.32
-    private let largeRatio: CGFloat = 0.8
+    private let dismissRatio: CGFloat = 0.15
+    private let mediumRatio: CGFloat = 0.40
+    private let largeRatio: CGFloat = 0.80
     
     // 계산된 높이 값들
-    private var smallHeight: CGFloat {
-        screenHeight * smallRatio
+    private var dismissHeight: CGFloat {
+        screenHeight * dismissRatio
     }
-    
+
     private var mediumHeight: CGFloat {
         screenHeight * mediumRatio
     }
-    
+
     private var largeHeight: CGFloat {
         screenHeight * largeRatio
     }
@@ -63,9 +64,7 @@ struct DraggableSheet<Content: View>: View {
         .glassEffect(.regular, in: .rect)
         .clipShape(RoundedRectangle(cornerRadius: 30))
         .onAppear {
-            if sheetHeight == 360 {
-                sheetHeight = mediumHeight // 기본값을 중간 크기로 설정
-            }
+            sheetHeight = mediumHeight
         }
     }
     
@@ -73,22 +72,26 @@ struct DraggableSheet<Content: View>: View {
         DragGesture()
             .onChanged { value in
                 let newHeight = sheetHeight - value.translation.height
-                if newHeight >= smallHeight && newHeight <= largeHeight {
+                // 0 이상, largeHeight 이하까지 드래그 가능
+                if newHeight >= 0 && newHeight <= largeHeight {
                     sheetHeight = newHeight
                 }
             }
             .onEnded { _ in
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                    // 3단계로 스냅
-                    let midSmallMedium = (smallHeight + mediumHeight) / 2
-                    let midMediumLarge = (mediumHeight + largeHeight) / 2
-                    
-                    if sheetHeight < midSmallMedium {
-                        sheetHeight = smallHeight
-                    } else if sheetHeight < midMediumLarge {
-                        sheetHeight = mediumHeight
-                    } else {
-                        sheetHeight = largeHeight
+                // 내리면 닫기 (거의 끝까지 내려야 닫힘)
+                let dismissThreshold = dismissHeight + (mediumHeight - dismissHeight) * 0.05
+                let midMediumLarge = (mediumHeight + largeHeight) / 2
+
+                if sheetHeight < dismissThreshold {
+                    // dismiss는 호출하는 쪽에서 애니메이션 제어
+                    onDismiss?()
+                } else {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        if sheetHeight < midMediumLarge {
+                            sheetHeight = mediumHeight
+                        } else {
+                            sheetHeight = largeHeight
+                        }
                     }
                 }
             }
