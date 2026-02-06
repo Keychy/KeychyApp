@@ -18,6 +18,9 @@ struct HomeView: View {
     @State var collectionViewModel: CollectionViewModel
     @State var bundleViewModel: BundleViewModel
 
+    /// 탭 선택 상태 (탭 전환 감지용)
+    @Binding var selectedTab: Int
+
     /// 배경 로드 완료 콜백
     var onBackgroundLoaded: (() -> Void)? = nil
 
@@ -121,6 +124,14 @@ struct HomeView: View {
                   }
               }
           }
+        .onChange(of: selectedTab) { _, _ in
+            // 탭 전환 시 뭉치 변경 팝업 닫기
+            if showBundleSwitchPopup {
+                withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                    showBundleSwitchPopup = false
+                }
+            }
+        }
         .withToast(position: .tabbar)
     }
 }

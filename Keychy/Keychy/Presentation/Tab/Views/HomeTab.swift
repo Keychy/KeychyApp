@@ -12,6 +12,7 @@ struct HomeTab: View {
     @Bindable var userManager: UserManager
     @Bindable var bundleViewModel: BundleViewModel
     @Bindable var collectionViewModel: CollectionViewModel
+    @Binding var selectedTab: Int
     @Bindable private var introViewModel = IntroViewModel()
     @State private var festivalViewModel = Showcase25BoardViewModel()
 
@@ -23,7 +24,9 @@ struct HomeTab: View {
             HomeView(
                 router: router,
                 userManager: userManager,
-                collectionViewModel: collectionViewModel, bundleViewModel: bundleViewModel,
+                collectionViewModel: collectionViewModel,
+                bundleViewModel: bundleViewModel,
+                selectedTab: $selectedTab,
                 onBackgroundLoaded: onBackgroundLoaded
             )
                 .navigationDestination(for: HomeRoute.self) {route in
