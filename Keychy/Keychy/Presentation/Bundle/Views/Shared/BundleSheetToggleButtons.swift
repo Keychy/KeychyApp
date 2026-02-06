@@ -41,10 +41,10 @@ struct BundleSheetToggleButtons: View {
             }
         } label: {
             VStack(spacing: 0) {
-                Image(isBackgroundSelected ? .backgroundIconWhite100 : .backgroundIconGray600)
+                Image(isBackgroundSelected ? .backgroundIconWhite100 : .backgroundIconGray400)
                 Text("배경")
                     .typography(.suit9SB)
-                    .foregroundStyle(isBackgroundSelected ? .white100 : .gray600)
+                    .foregroundStyle(isBackgroundSelected ? .white100 : .gray400)
             }
             .frame(width: 46, height: 46)
             .background(
@@ -69,10 +69,10 @@ struct BundleSheetToggleButtons: View {
             }
         } label: {
             VStack(spacing: 0) {
-                Image(isCarabinerSelected ? .carabinerIconWhite100 : .carabinerIconGray600)
+                Image(isCarabinerSelected ? .carabinerIconWhite100 : .carabinerIconGray400)
                 Text("카라비너")
                     .typography(.suit9SB)
-                    .foregroundStyle(isCarabinerSelected ? .white100 : .gray600)
+                    .foregroundStyle(isCarabinerSelected ? .white100 : .gray400)
             }
             .frame(width: 46, height: 46)
             .background(
