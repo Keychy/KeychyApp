@@ -57,26 +57,21 @@ struct SelectCarabinerSheet: View {
     }
 
     var body: some View {
-        VStack(spacing: 20) {
-            // 필터바
-            BundleSheetFilterBar(viewModel: viewModel)
+        // 그리드만 (필터바는 DraggableSheet header로 이동)
+        LazyVGrid(columns: gridColumns, spacing: 20) {
+            ForEach(filteredAndSortedCarabiners) { cb in
+                CarabinerCell(carabiner: cb, isSelected: (selectedCarabiner == cb))
+                    .onTapGesture {
+                        onCarabinerTap(cb)
 
-            // 그리드
-            LazyVGrid(columns: gridColumns, spacing: 20) {
-                ForEach(filteredAndSortedCarabiners) { cb in
-                    CarabinerCell(carabiner: cb, isSelected: (selectedCarabiner == cb))
-                        .onTapGesture {
-                            onCarabinerTap(cb)
-
-                            if !cb.isOwned && cb.carabiner.isFree {
-                                Task {
-                                    await viewModel.addCarabinerToUser(carabinerName: cb.carabiner.carabinerName, userManager: UserManager.shared)
-                                }
+                        if !cb.isOwned && cb.carabiner.isFree {
+                            Task {
+                                await viewModel.addCarabinerToUser(carabinerName: cb.carabiner.carabinerName, userManager: UserManager.shared)
                             }
                         }
-                }
+                    }
             }
-            .padding(.horizontal, 20)
         }
+        .padding(.horizontal, 20)
     }
 }

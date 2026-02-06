@@ -232,6 +232,7 @@ extension BundleCreateView {
 
                     DraggableSheet(
                         sheetHeight: $sheetHeight,
+                        header: BundleSheetFilterBar(viewModel: bundleVM),
                         content: itemSheetContent,
                         onDismiss: {
                             showItemSheet = false

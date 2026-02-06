@@ -57,27 +57,22 @@ struct SelectBackgroundSheet: View {
     }
 
     var body: some View {
-        VStack(spacing: 20) {
-            // 필터바
-            BundleSheetFilterBar(viewModel: viewModel)
+        // 그리드만 (필터바는 DraggableSheet header로 이동)
+        LazyVGrid(columns: gridColumns, spacing: 20) {
+            ForEach(filteredAndSortedBackgrounds) { bg in
+                BackgroundCell(background: bg, isSelected: (bg == selectedBG))
+                    .onTapGesture {
+                        onBackgroundTap(bg)
 
-            // 그리드
-            LazyVGrid(columns: gridColumns, spacing: 20) {
-                ForEach(filteredAndSortedBackgrounds) { bg in
-                    BackgroundCell(background: bg, isSelected: (bg == selectedBG))
-                        .onTapGesture {
-                            onBackgroundTap(bg)
-
-                            // 무료이고, 유저가 보유x인 경우에만 바로 추가
-                            if !bg.isOwned && bg.background.isFree {
-                                Task {
-                                    await viewModel.addBackgroundToUser(backgroundName: bg.background.backgroundName, userManager: UserManager.shared)
-                                }
+                        // 무료이고, 유저가 보유x인 경우에만 바로 추가
+                        if !bg.isOwned && bg.background.isFree {
+                            Task {
+                                await viewModel.addBackgroundToUser(backgroundName: bg.background.backgroundName, userManager: UserManager.shared)
                             }
                         }
-                }
+                    }
             }
-            .padding(.horizontal, 20)
         }
+        .padding(.horizontal, 20)
     }
 }

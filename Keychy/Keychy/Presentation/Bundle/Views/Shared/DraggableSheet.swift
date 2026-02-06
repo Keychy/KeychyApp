@@ -7,8 +7,9 @@
 
 import SwiftUI
 
-struct DraggableSheet<Content: View>: View {
+struct DraggableSheet<Header: View, Content: View>: View {
     @Binding var sheetHeight: CGFloat
+    let header: Header
     let content: Content
     var onDismiss: (() -> Void)? = nil
 
@@ -41,6 +42,11 @@ struct DraggableSheet<Content: View>: View {
                 .contentShape(Rectangle())
                 .highPriorityGesture(dragGesture)
 
+            // 고정 헤더 (스크롤 안 됨)
+            header
+                .padding(.bottom, 10)
+
+            // 스크롤 콘텐츠
             ScrollView {
                 content
             }
