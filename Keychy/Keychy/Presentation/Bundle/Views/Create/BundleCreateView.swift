@@ -33,6 +33,7 @@ struct BundleCreateView<Route: BundleRoute>: View {
     // 캡처 상태
     @State private var isCapturing: Bool = false
     @State private var sceneRefreshId = UUID()
+    @State private var isSceneReady: Bool = false
 
     // 구매 시트
     @State var showPurchaseSheet = false
@@ -70,7 +71,20 @@ struct BundleCreateView<Route: BundleRoute>: View {
                         carabinerX: cb.carabiner.carabinerX,
                         carabinerY: cb.carabiner.carabinerY,
                         carabinerWidth: cb.carabiner.carabinerWidth,
-                        currentCarabinerType: cb.carabiner.type
+                        currentCarabinerType: cb.carabiner.type,
+                        onBackgroundLoaded: {
+                            // 키링이 없으면 배경 로드 시 바로 준비 완료
+                            if selectedKeyrings.isEmpty {
+                                withAnimation(.easeOut(duration: 0.3)) {
+                                    isSceneReady = true
+                                }
+                            }
+                        },
+                        onAllKeyringsReady: {
+                            withAnimation(.easeOut(duration: 0.3)) {
+                                isSceneReady = true
+                            }
+                        }
                     )
                     .id("scene_\(bg.background.id ?? "bg")_\(cb.carabiner.id ?? "cb")_\(selectedKeyrings.count)_\(sceneRefreshId.uuidString)")
 
@@ -184,6 +198,7 @@ extension BundleCreateView {
                     }
                 )
                 .position(x: viewX, y: viewY)
+                .opacity(isSceneReady ? 1.0 : 0.0)
             }
         }
         .ignoresSafeArea()
