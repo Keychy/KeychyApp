@@ -81,6 +81,12 @@ struct BundleEditView<Route: BundleRoute>: View {
         .sheet(isPresented: $showPurchaseSheet) {
             purchaseSheetView
         }
+        .sheet(isPresented: $bundleVM.showSheetSortSheet) {
+            WorkshopSortSheet(
+                showSheet: $bundleVM.showSheetSortSheet,
+                sortOrder: $bundleVM.sheetSortOrder
+            )
+        }
         .navigationBarBackButtonHidden()
         .withToast(position: .default)
         .task {

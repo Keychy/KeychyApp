@@ -143,6 +143,17 @@ struct BundleCreateView<Route: BundleRoute>: View {
         .sheet(isPresented: $showKeyringSheet) {
             keyringSheetContent
         }
+        .sheet(isPresented: $bundleVM.showSheetSortSheet) {
+            sortSheetContent
+        }
+    }
+
+    /// 정렬 선택 시트
+    private var sortSheetContent: some View {
+        WorkshopSortSheet(
+            showSheet: $bundleVM.showSheetSortSheet,
+            sortOrder: $bundleVM.sheetSortOrder
+        )
     }
 }
 

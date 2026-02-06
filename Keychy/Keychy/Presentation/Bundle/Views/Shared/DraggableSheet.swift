@@ -31,29 +31,20 @@ struct DraggableSheet<Content: View>: View {
     }
     
     var body: some View {
-        VStack(spacing: 10) {
-            // 인디케이터
-            VStack(spacing:0) {
-                RoundedRectangle(cornerRadius: 3)
-                    .fill(.gray300)
-                    .frame(width: 36, height: 5)
-                    .padding(6)
-                Text("선택")
-                    .typography(.suit16B)
-                    .foregroundStyle(.black100)
-                    .padding(EdgeInsets(top: 14, leading: 0, bottom: 12, trailing: 0))
-            }
-            .frame(maxWidth: .infinity)
-            .contentShape(Rectangle())
-            .highPriorityGesture(dragGesture)
-            
+        VStack(spacing: 0) {
+            // 인디케이터 (터치 영역은 인디케이터 주변만)
+            RoundedRectangle(cornerRadius: 3)
+                .fill(.gray100)
+                .frame(width: 40, height: 4)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 10)
+                .contentShape(Rectangle())
+                .highPriorityGesture(dragGesture)
+
             ScrollView {
                 content
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .scrollContentBackground(.hidden)
-            .safeAreaPadding(.top, 0) // ScrollView 상단 패딩 제거
-            .gesture(dragGesture)
         }
         .frame(height: sheetHeight)
         .background(

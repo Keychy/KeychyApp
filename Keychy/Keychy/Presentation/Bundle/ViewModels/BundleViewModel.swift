@@ -75,6 +75,13 @@ class BundleViewModel {
     var isLoading = false
     var isPurchasing = false
 
+    // MARK: - 시트 필터/정렬 상태
+
+    var sheetSortOrder: String = "최신순"
+    var sheetShowFreeOnly: Bool = false
+    var sheetShowOwnedOnly: Bool = false
+    var showSheetSortSheet: Bool = false
+
     // MARK: - 편집 화면용 데이터
 
     var newSelectedBackground: BackgroundViewData?
