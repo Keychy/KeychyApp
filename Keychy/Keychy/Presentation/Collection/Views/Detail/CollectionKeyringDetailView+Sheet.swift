@@ -87,12 +87,15 @@ extension CollectionKeyringDetailView {
             Spacer()
             
             Button(action: {
-                captureAndSaveImage()
+                // 공유 액션 대기 설정 후 시트 닫기
+                pendingShareAction = true
+                isSheetPresented = false
             }) {
-                Image(.save)
+                Image(.share)
                     .resizable()
                     .frame(width: 28, height: 28)
             }
+            .disabled(isGeneratingVideo)
             .opacity(showUIForCapture ? 1 : 0)
         }
         .padding(.top, 14)

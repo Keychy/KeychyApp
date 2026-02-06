@@ -10,6 +10,14 @@ import UIKit
 
 /// 탭바 표시/숨김 전역 관리
 enum TabBarManager {
+    /// 탭 인덱스
+    enum TabIndex: Int {
+        case home = 0
+        case workshop = 1
+        case collection = 2
+        case festival = 3
+    }
+
     /// 탭바 숨기기
     static func hide() {
         guard let tabBarController = findTabBarController() else { return }
@@ -22,6 +30,12 @@ enum TabBarManager {
         UIView.animate(withDuration: 0.3) {
             tabBarController.tabBar.isHidden = false
         }
+    }
+
+    /// 특정 탭으로 전환
+    static func switchTo(_ tab: TabIndex) {
+        guard let tabBarController = findTabBarController() else { return }
+        tabBarController.selectedIndex = tab.rawValue
     }
 
     /// TabBarController 찾기

@@ -10,9 +10,10 @@ import SwiftUI
 struct HomeTab: View {
     @Bindable var router: NavigationRouter<HomeRoute>
     @Bindable var userManager: UserManager
-    @State private var collectionViewModel = CollectionViewModel()
-    @State private var bundleViewModel = BundleViewModel()
+    @Bindable var bundleViewModel: BundleViewModel
+    @Bindable var collectionViewModel: CollectionViewModel
     @Bindable private var introViewModel = IntroViewModel()
+    @State private var festivalViewModel = Showcase25BoardViewModel()
 
     /// 배경 로드 완료 콜백
     var onBackgroundLoaded: (() -> Void)? = nil
@@ -62,6 +63,15 @@ struct HomeTab: View {
                     case .widgetSettingView:
                         WidgetSettingView(router: router)
                     }
+
+                    // Festival
+                    case .festivalView:
+                        FestivalView(router: router)
+                    case .showcase25BoardView:
+                        Showcase25BoardView(router: router, viewModel: festivalViewModel)
+                    case .festivalKeyringDetailView(let keyring):
+                        FestivalKeyringDetailView(router: router, viewModel: festivalViewModel, keyring: keyring)
+                }
             }
         }
     }

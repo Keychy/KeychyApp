@@ -1,0 +1,487 @@
+//
+//  BundleCreateView.swift
+//  Keychy
+//
+//  Created by 김서현 on 11/12/25.
+//
+
+import SwiftUI
+import NukeUI
+import SceneKit
+import FirebaseFirestore
+
+struct BundleCreateView<Route: BundleRoute>: View {
+    
+    //MARK: - 프로퍼티들
+    @Bindable var router: NavigationRouter<Route>
+    @State var collectionVM: CollectionViewModel
+    @Bindable var bundleVM: BundleViewModel
+
+    // 시트 활성화 상태
+    @State private var showBackgroundSheet: Bool = false
+    @State private var showCarabinerSheet: Bool = false
+    
+    // 임시 초기값
+    @State private var sheetHeight: CGFloat = 360
+    private let sheetHeightRatio: CGFloat = 0.5
+    
+    // 구매 시트
+    @State var showPurchaseSheet = false
+
+    // 구매 Alert 애니메이션
+    @State var showPurchaseSuccessAlert = false
+    @State var purchasesSuccessScale: CGFloat = 0.3
+    @State var showPurchaseFailAlert = false
+    @State var purchaseFailScale: CGFloat = 0.3
+    
+    
+    // 공통 그리드 컬럼 (배경, 카라비너, 키링 모두 동일)
+    private let gridColumns: [GridItem] = [
+        GridItem(.flexible(), spacing: 10),
+        GridItem(.flexible(), spacing: 10),
+        GridItem(.flexible(), spacing: 10)
+    ]
+    
+    //MARK: 메인 뷰
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            if let bg = bundleVM.newSelectedBackground,
+               let cb = bundleVM.newSelectedCarabiner {
+                // 배경과 카라비너만 보여줌
+                MultiKeyringSceneView(
+                    keyringDataList: [],
+                    ringType: .basic,
+                    chainType: .basic,
+                    backgroundColor: .clear,
+                    backgroundImageURL: bg.background.backgroundImage,
+                    carabinerBackImageURL: cb.carabiner.backImageURL,
+                    carabinerFrontImageURL: cb.carabiner.frontImageURL,
+                    carabinerX: cb.carabiner.carabinerX,
+                    carabinerY: cb.carabiner.carabinerY,
+                    carabinerWidth: cb.carabiner.carabinerWidth,
+                    currentCarabinerType: cb.carabiner.type
+                )
+                .id("scene_\(bg.background.id ?? "bg")_\(cb.carabiner.id ?? "cb")")
+                .blur(radius: showPurchaseSuccessAlert ? 10 : 0)
+                
+                sheetContent()
+                    .blur(radius: showPurchaseSuccessAlert ? 10 : 0)
+                
+                customNavigationBar
+                    .blur(radius: showPurchaseSuccessAlert ? 10 : 0)
+            }
+            
+            
+            // Alert들, 컨텐츠가 화면의 중앙에 오도록 함
+            alertContent
+                .position(x: screenWidth / 2, y: screenHeight / 2)
+            
+            ZStack {
+                Color.black20
+                    .ignoresSafeArea()
+                    .zIndex(10)
+                // 구매 시트 - 화면 맨 밑에 표시
+                    VStack {
+                        Spacer()
+                        purchaseSheetView
+                    }
+                    .zIndex(100)
+                    .ignoresSafeArea()
+                    .transition(.move(edge: .bottom))
+                    .animation(.easeInOut(duration: 0.3), value: showPurchaseSheet)
+            }
+            .opacity(showPurchaseSheet ? 1 : 0)
+            .blur(radius: showPurchaseSuccessAlert ? 10 : 0)
+        }
+        .ignoresSafeArea()
+        .navigationBarBackButtonHidden()
+        .task {
+            await initializeData()
+        }
+        .onAppear {
+            // 화면이 나타날 때마다 데이터 새로고침
+            Task {
+                await refreshData()
+            }
+            TabBarManager.hide()
+            // 화면 첫 진입 시 배경 시트를 보여줌
+            if !showBackgroundSheet && !showCarabinerSheet {
+                showBackgroundSheet = true
+            }
+        }
+        // 선택 타입이 배경화면이면 카라비너 시트는 닫고, 카라비너 열리면 배경화면은 닫힘
+        .onChange(of: showBackgroundSheet) { oldValue, newValue in
+            if newValue {
+                showCarabinerSheet = false
+            }
+        }
+        .onChange(of: showCarabinerSheet) { oldValue, newValue in
+            if newValue {
+                showBackgroundSheet = false
+            }
+        }
+    }
+}
+
+// MARK: - 커스텀 네비게이션 바
+extension BundleCreateView {
+    private var customNavigationBar: some View {
+        CustomNavigationBar {
+            BackToolbarButton {
+                router.pop()
+            }
+        } center: {
+        } trailing: {
+            if bundleVM.hasUnpurchasedItems {
+                PurchaseToolbarButton(title: "구매 \(bundleVM.payableItemsCount)") {
+                    showPurchaseSheet = true
+                }
+            } else {
+                NextToolbarButton {
+                    // ViewModel 상태를 selectedBackground/selectedCarabiner로도 동기화
+                    if let bg = bundleVM.newSelectedBackground {
+                        bundleVM.selectedBackground = bg.background
+                    }
+                    if let cb = bundleVM.newSelectedCarabiner {
+                        bundleVM.selectedCarabiner = cb.carabiner
+                    }
+                    router.push(.bundleAddKeyringView)
+                }
+            }
+        }
+        
+    }
+}
+
+//MARK: - 시트 뷰
+extension BundleCreateView {
+    private func sheetContent() -> some View {
+        Group {
+            // 배경 시트
+            if showBackgroundSheet {
+                VStack(spacing: 0) {
+                    Spacer()
+                    BundleSheetToggleButtons(
+                        showBackgroundSheet: $showBackgroundSheet,
+                        showCarabinerSheet: $showCarabinerSheet
+                    )
+                    DraggableSheet(
+                        sheetHeight: $sheetHeight,
+                        content: SelectBackgroundSheet(
+                            viewModel: bundleVM,
+                            selectedBG: bundleVM.newSelectedBackground,
+                            onBackgroundTap: { bg in
+                                bundleVM.newSelectedBackground = bg
+                            }
+                        )
+                    )
+                }
+            }
+
+            // 카라비너 시트
+            if showCarabinerSheet {
+                VStack(spacing: 0) {
+                    Spacer()
+                    BundleSheetToggleButtons(
+                        showBackgroundSheet: $showBackgroundSheet,
+                        showCarabinerSheet: $showCarabinerSheet
+                    )
+                    DraggableSheet(
+                        sheetHeight: $sheetHeight,
+                        content: SelectCarabinerSheet(
+                            viewModel: bundleVM,
+                            selectedCarabiner: bundleVM.newSelectedCarabiner,
+                            onCarabinerTap: { carabiner in
+                                bundleVM.newSelectedCarabiner = carabiner
+                            }
+                        )
+                    )
+                }
+            }
+        }
+    }
+}
+
+
+
+// MARK: - 데이터 가져오는 메서드
+extension BundleCreateView {
+    
+    /// 초기 데이터 로딩
+    private func initializeData() async {
+        // 사용자가 소유한 배경과 카라비너 데이터를 가져옴
+        await loadUserOwnedItems()
+    }
+    
+    /// 화면이 다시 나타날 때 데이터 새로고침
+    private func refreshData() async {
+        guard let _ = UserManager.shared.currentUser else {
+            return
+        }
+        
+        // 현재 선택된 아이템의 ID 저장
+        let currentBackgroundId = bundleVM.newSelectedBackground?.background.id
+        let currentCarabinerId = bundleVM.newSelectedCarabiner?.carabiner.id
+        
+        // 배경 데이터 새로고침
+        await withCheckedContinuation { continuation in
+            bundleVM.fetchAllBackgrounds { _ in
+                // 이전에 선택했던 배경을 다시 찾아서 선택 (구매 상태가 업데이트됨)
+                if let bgId = currentBackgroundId {
+                    self.bundleVM.newSelectedBackground = bundleVM.backgroundViewData.first { $0.background.id == bgId }
+                }
+                continuation.resume()
+            }
+        }
+        
+        // 카라비너 데이터 새로고침
+        await withCheckedContinuation { continuation in
+            bundleVM.fetchAllCarabiners { _ in
+                // 이전에 선택했던 카라비너를 다시 찾아서 선택 (구매 상태가 업데이트됨)
+                if let cbId = currentCarabinerId {
+                    self.bundleVM.newSelectedCarabiner = bundleVM.carabinerViewData.first { $0.carabiner.id == cbId }
+                }
+                continuation.resume()
+            }
+        }
+    }
+    
+    /// 사용자가 소유한 배경과 카라비너 아이템들을 로드
+    private func loadUserOwnedItems() async {
+        guard let _ = UserManager.shared.currentUser else {
+            return
+        }
+        
+        // 배경 데이터 로드
+        await withCheckedContinuation { continuation in
+            bundleVM.fetchAllBackgrounds { _ in
+                if self.bundleVM.newSelectedBackground == nil {
+                    // 공방에서 미리 선택된 배경이 있으면 해당 배경 선택
+                    if let preSelectedId = bundleVM.preSelectedBackgroundId {
+                        self.bundleVM.newSelectedBackground = bundleVM.backgroundViewData.first { bg in
+                            bg.background.id == preSelectedId
+                        }
+                        bundleVM.preSelectedBackgroundId = nil // 사용 후 초기화
+                    }
+                    // 미리 선택된 배경이 없으면 "퍼플키치"를 기본으로 선택, 없으면 첫 번째 선택
+                    if self.bundleVM.newSelectedBackground == nil {
+                        self.bundleVM.newSelectedBackground = bundleVM.backgroundViewData.first { bg in
+                            bg.background.backgroundName == "퍼플키치"
+                        } ?? bundleVM.backgroundViewData.first
+                    }
+                }
+
+                continuation.resume()
+            }
+        }
+
+        // 카라비너 데이터 로드
+        await withCheckedContinuation { continuation in
+            bundleVM.fetchAllCarabiners { _ in
+                if self.bundleVM.newSelectedCarabiner == nil {
+                    // 공방에서 미리 선택된 카라비너가 있으면 해당 카라비너 선택
+                    if let preSelectedId = bundleVM.preSelectedCarabinerId {
+                        self.bundleVM.newSelectedCarabiner = bundleVM.carabinerViewData.first { cb in
+                            cb.carabiner.id == preSelectedId
+                        }
+                        bundleVM.preSelectedCarabinerId = nil // 사용 후 초기화
+                    }
+                    // 미리 선택된 카라비너가 없으면 "웰컴 키치"를 기본으로 선택, 없으면 첫 번째 선택
+                    if self.bundleVM.newSelectedCarabiner == nil {
+                        self.bundleVM.newSelectedCarabiner = bundleVM.carabinerViewData.first { cb in
+                            cb.carabiner.carabinerName == "웰컴 키치"
+                        } ?? bundleVM.carabinerViewData.first
+                    }
+                }
+
+                continuation.resume()
+            }
+        }
+    }
+}
+
+// MARK: - Alert 컨텐츠
+extension BundleCreateView {
+    private var alertContent: some View {
+        ZStack {
+            // 구매 성공 Alert
+            if showPurchaseSuccessAlert {
+                Color.black20
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        showPurchaseSuccessAlert = false
+                        purchasesSuccessScale = 0.3
+                        router.push(.bundleAddKeyringView)
+                    }
+                
+                KeychyAlert(type: .checkmark, message: "구매가 완료되었어요!", isPresented: $showPurchaseSuccessAlert)
+                    .zIndex(101)
+            }
+            
+            // 구매 실패 Alert
+            if showPurchaseFailAlert {
+                ZStack {
+                    Color.black20
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            showPurchaseFailAlert = false
+                            purchaseFailScale = 0.3
+                        }
+                    
+                    PurchaseFailAlert(
+                        checkmarkScale: purchaseFailScale,
+                        onCancel: {
+                            showPurchaseFailAlert = false
+                            purchaseFailScale = 0.3
+                        },
+                        onCharge: {
+                            showPurchaseFailAlert = false
+                            purchaseFailScale = 0.3
+                            router.push(.coinCharge)
+                        }
+                    )
+                    .padding(.horizontal, 51)
+                }
+            }
+        }
+    }
+}
+
+// MARK: - 구매 시트 뷰
+extension BundleCreateView {
+    private var purchaseSheetView: some View {
+        VStack(spacing: 12) {
+            // 상단 섹션 - 닫기 버튼, 타이틀
+            HStack {
+                Button {
+                    showPurchaseSheet = false
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 20))
+                        .foregroundStyle(.gray600)
+                }
+                Spacer()
+                Text("구매하기")
+                    .typography(.suit17B)
+                    .foregroundStyle(.gray600)
+                Spacer()
+            }
+            .padding(EdgeInsets(top: 30, leading: 20, bottom: 10, trailing: 20))
+            
+            // 구매할 아이템 목록
+            VStack(spacing: 20) {
+                if let bg = bundleVM.newSelectedBackground, !bg.isOwned && bg.background.price > 0 {
+                    BundlePurchaseCartItem(name: bg.background.backgroundName, type: "배경", price: bg.background.price)
+                }
+                if let cb = bundleVM.newSelectedCarabiner, !cb.isOwned && cb.carabiner.price > 0 {
+                    BundlePurchaseCartItem(name: cb.carabiner.carabinerName, type: "카라비너", price: cb.carabiner.price)
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 30)
+            
+            // 내 보유 재화와 총 가격
+            HStack(spacing: 6) {
+                Text("내 보유 : ")
+                    .typography(.suit15M25)
+                    .foregroundStyle(.black100)
+                    .padding(.vertical, 4.5)
+                Text("\(UserManager.shared.currentUser?.coin ?? 0)")
+                    .typography(.nanum16EB)
+                    .foregroundStyle(.main500)
+            }
+            purchaseButton
+                .padding(.horizontal, 33.2)
+                .padding(.bottom, 40)
+                .adaptiveBottomPadding()
+        }
+        .background(
+            UnevenRoundedRectangle(topLeadingRadius: 38, topTrailingRadius: 38)
+                .fill(.white100)
+        )
+    }
+    
+    // 구매 버튼
+    private var purchaseButton: some View {
+        Button {
+            Task {
+                await purchaseItems()
+            }
+        } label: {
+            HStack(spacing: 5) {
+                if bundleVM.isPurchasing {
+                    LoadingAlert(type: .short40, message: nil)
+                } else {
+                    Image(.myCoinMini)
+                }
+
+                Text("\(bundleVM.totalCartPrice)")
+                    .typography(.nanum18EB)
+                    .padding(.top, 16)
+                    .padding(.bottom, 12)
+
+                Text("(\(bundleVM.payableItemsCount)개)")
+                    .typography(.suit17SB)
+            }
+            .foregroundStyle(.white100)
+            .frame(maxWidth: .infinity)
+            .background(bundleVM.isPurchasing ? .gray400 : .black80)
+            .clipShape(RoundedRectangle(cornerRadius: 100))
+        }
+        .disabled(bundleVM.isPurchasing)
+    }
+
+    // MARK: - 구매 처리
+    private func purchaseItems() async {
+        let result = await bundleVM.purchaseSelectedItems()
+
+        switch result {
+        case .success:
+            // 모든 구매 성공
+            await refreshData()
+
+            await MainActor.run {
+                // ViewModel 상태 동기화
+                if let bg = bundleVM.newSelectedBackground {
+                    bundleVM.selectedBackground = bg.background
+                }
+                if let cb = bundleVM.newSelectedCarabiner {
+                    bundleVM.selectedCarabiner = cb.carabiner
+                }
+
+                showPurchaseSheet = false
+                showPurchaseSuccessAlert = true
+                purchasesSuccessScale = 0.3
+                withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
+                    purchasesSuccessScale = 1.0
+                }
+            }
+
+            // 2.5초 후 알럿 자동 닫기 (Alert duration 2초 + 0.5초 여유)
+            try? await Task.sleep(for: .seconds(2.5))
+
+            await MainActor.run {
+                showPurchaseSuccessAlert = false
+                purchasesSuccessScale = 0.3
+            }
+
+        case .insufficientCoins, .failed:
+            // 구매 실패
+            await MainActor.run {
+                showPurchaseSheet = false
+            }
+
+            // 시트 닫히는 애니메이션 대기
+            try? await Task.sleep(for: .seconds(0.3))
+
+            await MainActor.run {
+                showPurchaseFailAlert = true
+                purchaseFailScale = 0.3
+                withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
+                    purchaseFailScale = 1.0
+                }
+            }
+        }
+    }
+}
+

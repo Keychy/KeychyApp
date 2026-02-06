@@ -191,7 +191,7 @@ class MyPageViewModel {
 
     // MARK: - Delete Account
 
-    /// 회원탈퇴
+    /// 회원탈퇴 - 항상 재인증 먼저 진행 (데이터 보호)
     func deleteAccount(userManager: UserManager, introViewModel: IntroViewModel) {
         // 네트워크 체크
         guard NetworkManager.shared.isConnected else {
@@ -199,76 +199,49 @@ class MyPageViewModel {
             return
         }
 
-        guard let user = Auth.auth().currentUser else {
+        guard Auth.auth().currentUser != nil else {
             return
         }
 
-        let uid = user.uid
-
-        // LoadingAlert 표시
-        showLoadingAlert = true
-        withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
-            loadingAlertScale = 1.0
-        }
-
-        // 1. 먼저 Firebase Auth 계정 삭제 시도 (재인증 필요 여부 확인)
-        user.delete { [weak self] error in
-            guard let self = self else { return }
-
-            if let error = error {
-                // LoadingAlert 숨기기
-                self.hideLoadingAlert()
-
-                // 재인증 필요 에러 처리
-                let nsError = error as NSError
-                if nsError.code == 17014 { // FIRAuthErrorCodeRequiresRecentLogin
-                    self.showReauthAlert = true
-                }
-            } else {
-                // 2. Auth 삭제 성공 → Firestore 데이터 삭제
-                userManager.deleteUserData(uid: uid) { [weak self] result in
-                    guard let self = self else { return }
-
-                    // LoadingAlert 숨기기
-                    self.hideLoadingAlert()
-
-                    // 3. UserManager 초기화 및 로그인 화면으로 이동
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        userManager.clearUserInfo()  // 로컬 캐시 정리
-                        introViewModel.isLoggedIn = false
-                        introViewModel.needsProfileSetup = false
-                    }
-                }
-            }
-        }
+        // 재인증 먼저 진행 (재인증 성공 후에만 데이터 삭제)
+        startReauthentication(userManager: userManager, introViewModel: introViewModel)
     }
 
     /// 재인증 후 회원탈퇴 진행
     func deleteAccountAfterReauth(user: FirebaseAuth.User, userManager: UserManager, introViewModel: IntroViewModel) {
         let uid = user.uid
 
-        // 1. Firebase Auth 계정 삭제
-        user.delete { [weak self] error in
+        // 1. 먼저 Firestore 데이터 삭제 (Auth 유저가 있어야 권한이 있음)
+        userManager.deleteUserData(uid: uid) { [weak self] result in
             guard let self = self else { return }
 
-            if error != nil {
-                // LoadingAlert 숨기기
-                self.hideLoadingAlert()
-            } else {
-                // 2. Auth 삭제 성공 → Firestore 데이터 삭제
-                userManager.deleteUserData(uid: uid) { [weak self] result in
+            switch result {
+            case .success:
+                // 2. 데이터 삭제 성공 → Firebase Auth 계정 삭제
+                user.delete { [weak self] error in
                     guard let self = self else { return }
 
                     // LoadingAlert 숨기기
                     self.hideLoadingAlert()
 
-                    // 3. UserManager 초기화 및 로그인 화면으로 이동
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        userManager.clearUserInfo()  // 로컬 캐시 정리
-                        introViewModel.isLoggedIn = false
-                        introViewModel.needsProfileSetup = false
+                    if let error = error {
+                        // Auth 삭제 실패
+                        print("회원탈퇴 Auth 삭제 실패: \(error.localizedDescription)")
+                        ToastManager.shared.show()
+                    } else {
+                        // 3. UserManager 초기화 및 로그인 화면으로 이동
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            userManager.clearUserInfo()  // 로컬 캐시 정리
+                            introViewModel.isLoggedIn = false
+                            introViewModel.needsProfileSetup = false
+                        }
                     }
                 }
+
+            case .failure:
+                // LoadingAlert 숨기기
+                self.hideLoadingAlert()
+                ToastManager.shared.show()
             }
         }
     }
@@ -325,6 +298,7 @@ class MyPageViewModel {
             if error != nil {
                 // LoadingAlert 숨기기
                 self.hideLoadingAlert()
+                ToastManager.shared.show()
             } else {
                 // 재인증 성공 → 회원탈퇴 진행
                 self.deleteAccountAfterReauth(user: user, userManager: userManager, introViewModel: introViewModel)

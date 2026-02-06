@@ -7,21 +7,56 @@
 
 import SwiftUI
 import Photos
+import SpriteKit
 
-// MARK: - Image Capture
+// MARK: - Transparent Keyring Capture
 extension CollectionKeyringDetailView {
-    /// 현재 화면을 직접 캡처 (window hierarchy 사용)
-    @MainActor
-    func captureVisibleScreen() -> UIImage? {
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = windowScene.windows.first else {
+    /// 키링을 투명 배경 PNG로 캡처
+    func captureKeyringToPNG() async -> UIImage? {
+        // 캡처용 Scene 생성 (투명 배경)
+        let scene = KeyringCellScene(
+            ringType: RingType.fromID(keyring.selectedRing),
+            chainType: ChainType.fromID(keyring.selectedChain),
+            bodyImage: keyring.bodyImage,
+            templateId: keyring.selectedTemplate,
+            targetSize: CGSize(width: 350, height: 466),
+            customBackgroundColor: UIColor.clear,
+            zoomScale: 2.0,
+            hookOffsetY: keyring.hookOffsetY,
+            chainLength: keyring.chainLength
+        )
+        scene.scaleMode = .aspectFill
+
+        var loadingCompleted = false
+        scene.onLoadingComplete = {
+            loadingCompleted = true
+        }
+
+        let view = SKView(frame: CGRect(origin: .zero, size: scene.size))
+        view.allowsTransparency = true
+        view.backgroundColor = .clear
+        view.presentScene(scene)
+
+        // 로딩 완료 대기 (최대 3초)
+        var waitTime = 0.0
+        let checkInterval = 0.1
+        let maxWaitTime = 3.0
+
+        while !loadingCompleted && waitTime < maxWaitTime {
+            try? await Task.sleep(nanoseconds: UInt64(checkInterval * 1_000_000_000))
+            waitTime += checkInterval
+        }
+
+        if loadingCompleted {
+            try? await Task.sleep(nanoseconds: 200_000_000)
+        }
+
+        guard let pngData = await scene.captureToPNG(),
+              let image = UIImage(data: pngData) else {
             return nil
         }
 
-        let renderer = UIGraphicsImageRenderer(bounds: window.bounds)
-        return renderer.image { context in
-            window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
-        }
+        return image
     }
 }
 
@@ -81,31 +116,13 @@ extension CollectionKeyringDetailView {
 
     /// 이미지 캡처 및 저장 (메인 함수)
     func captureAndSaveImage() {
-        // 1. 시트 내리기 + UI opacity를 0으로 (서서히 사라짐)
-        withAnimation(.easeOut(duration: 0.3)) {
-            showUIForCapture = false
-            isSheetPresented = false
-        }
-
-        // 2. 애니메이션 완료 대기
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            // 3. 캡처 (UI 없는 깨끗한 화면)
-            guard let image = self.captureVisibleScreen() else {
-                // 실패 시 UI 복원
-                withAnimation(.easeIn(duration: 0.3)) {
-                    self.showUIForCapture = true
-                    self.isSheetPresented = false
-                }
+        Task {
+            guard let image = await captureKeyringToPNG() else {
+                print("[ImageCapture] 캡처 실패")
                 return
             }
-
-            // 4. 이미지 저장
-            self.saveImageToLibrary(image)
-
-            // 5. UI 복원 (서서히 나타남)
-            withAnimation(.easeIn(duration: 0.3)) {
-                self.showUIForCapture = true
-                self.isSheetPresented = false
+            await MainActor.run {
+                saveImageToLibrary(image)
             }
         }
     }

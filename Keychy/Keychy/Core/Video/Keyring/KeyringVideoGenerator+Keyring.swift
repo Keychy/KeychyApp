@@ -24,8 +24,11 @@ extension KeyringVideoGenerator {
         backgroundImage: UIImage? = UIImage(named: "completeBG2"),
         keyringScale: CGFloat = 3.5
     ) async throws -> URL {
-        // Keyring 모델을 래핑하는 어댑터 생성
-        let adapter = KeyringAdapter(keyring: keyring)
+        // 이미지를 비동기로 먼저 다운로드 (메인스레드 블로킹 방지)
+        let preloadedImage = await downloadBodyImage(from: keyring.bodyImage)
+
+        // Keyring 모델을 래핑하는 어댑터 생성 (미리 로드된 이미지 전달)
+        let adapter = KeyringAdapter(keyring: keyring, preloadedBodyImage: preloadedImage)
 
         // 기존 메서드 호출
         return try await generateVideo(
@@ -33,6 +36,19 @@ extension KeyringVideoGenerator {
             backgroundImage: backgroundImage,
             keyringScale: keyringScale
         )
+    }
+
+    /// 이미지 URL에서 비동기로 다운로드
+    private func downloadBodyImage(from urlString: String) async -> UIImage? {
+        guard let url = URL(string: urlString) else { return nil }
+
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            return UIImage(data: data)
+        } catch {
+            print("[KeyringVideoGenerator] 이미지 다운로드 실패: \(error)")
+            return nil
+        }
     }
 }
 
@@ -44,9 +60,11 @@ extension KeyringVideoGenerator {
 private class KeyringAdapter: KeyringViewModelProtocol {
 
     let keyring: Keyring
+    private let preloadedBodyImage: UIImage?
 
-    init(keyring: Keyring) {
+    init(keyring: Keyring, preloadedBodyImage: UIImage?) {
         self.keyring = keyring
+        self.preloadedBodyImage = preloadedBodyImage
     }
 
     // MARK: - KeyringViewModelProtocol 구현
@@ -76,13 +94,8 @@ private class KeyringAdapter: KeyringViewModelProtocol {
     }
 
     var bodyImage: UIImage? {
-        // URL 문자열을 UIImage로 변환 (동기 처리)
-        guard let url = URL(string: keyring.bodyImage),
-              let data = try? Data(contentsOf: url),
-              let image = UIImage(data: data) else {
-            return nil
-        }
-        return image
+        // 미리 로드된 이미지 반환 (비동기 다운로드 완료된 상태)
+        preloadedBodyImage
     }
 
     var hookOffsetY: CGFloat {
@@ -161,6 +174,10 @@ private class KeyringAdapter: KeyringViewModelProtocol {
     func isInCache(particleId: String) -> Bool { false }
     func downloadSound(_ sound: Sound) async { }
     func downloadParticle(_ particle: Particle) async { }
+    var savedKeyringDocumentId: String?
+    var packagedPostOfficeId: String?
+    var packagedShareLink: String?
+
     func resetCustomizingData() { }
     func resetInfoData() { }
     func resetAll() { }

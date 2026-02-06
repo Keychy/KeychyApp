@@ -69,18 +69,18 @@ extension KeyringCellScene {
                     return images
                 }
                 
-                // Body 이미지 다운
+                // Body 이미지 처리
                 var processedBodyImage: UIImage?
-                if let bodyImageURL = self.bodyImage {
-                    // 1. 이미지 다운로드
-                    let downloadedImage = try await StorageManager.shared.getImage(path: bodyImageURL)
-                    
-                    // 2. 이미지 처리 (메인 스레드가 아닌 백그라운드에서 실행)
+                if let directImage = self.bodyUIImage {
+                    // UIImage가 직접 전달된 경우 (URL 다운로드 스킵)
                     processedBodyImage = await Task.detached(priority: .userInitiated) {
-                        // orientation 정규화
-                        let fixedImage = await downloadedImage.fixedOrientation()
-                        
-                        return fixedImage
+                        await directImage.fixedOrientation()
+                    }.value
+                } else if let bodyImageURL = self.bodyImage {
+                    // URL로 다운로드
+                    let downloadedImage = try await StorageManager.shared.getImage(path: bodyImageURL)
+                    processedBodyImage = await Task.detached(priority: .userInitiated) {
+                        await downloadedImage.fixedOrientation()
                     }.value
                 }
                 

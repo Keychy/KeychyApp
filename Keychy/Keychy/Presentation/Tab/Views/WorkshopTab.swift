@@ -9,8 +9,8 @@ import SwiftUI
 
 struct WorkshopTab: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
-    @Bindable var festivalRouter: NavigationRouter<FestivalRoute>
-    @Bindable var festivalVM: Showcase25BoardViewModel
+    @Bindable var bundleViewModel: BundleViewModel
+    @Bindable var collectionViewModel: CollectionViewModel
 
     @State private var acrylicPhotoVM: AcrylicPhotoVM?
     @State private var neonSignVM: NeonSignVM?
@@ -19,10 +19,6 @@ struct WorkshopTab: View {
     @State private var pixelKeyringVM: PixelVM?
     @State private var speechBubbleVM: SpeechBubbleVM?
     @State private var workshopViewModel = WorkshopViewModel(userManager: UserManager.shared)
-
-    // Bundle 관련 ViewModel
-    @State private var collectionViewModel = CollectionViewModel()
-    @State private var bundleViewModel = BundleViewModel()
 
     var body: some View {
         NavigationStack(path: $router.path) {
@@ -71,17 +67,6 @@ struct WorkshopTab: View {
         case .widgetSettingView:
             WidgetSettingView(router: router)
 
-        // MARK: - 쇼케이스용 페스티벌 임시 라우트
-        case .showcase25BoardView:
-            Showcase25BoardView(festivalRouter: festivalRouter, viewModel: festivalVM)
-
-        case .festivalKeyringDetailView(let keyring):
-            FestivalKeyringDetailView(
-                festivalRouter: festivalRouter,
-                viewModel: festivalVM,
-                keyring: keyring
-            )
-
         // MARK: - AcrylicPhoto
         case .acrylicPhotoPreview:
             AcrylicPhotoPreView(router: router, viewModel: getAcrylicPhotoVM())
@@ -105,10 +90,7 @@ struct WorkshopTab: View {
             KeyringCompleteView(
                 router: router,
                 viewModel: getAcrylicPhotoVM(),
-                navigationTitle: "키링이 완성되었어요!",
-                onCloseFromFestival: festivalVM.isFromFestivalTab ? { router in
-                    festivalVM.onKeyringCompleteFromFestival?(router)
-                } : nil
+                navigationTitle: "키링이 완성되었어요!"
             )
 
         // MARK: - NeonSign
@@ -130,10 +112,7 @@ struct WorkshopTab: View {
             KeyringCompleteView(
                 router: router,
                 viewModel: getNeonSignVM(),
-                navigationTitle: "키링이 완성되었어요!",
-                onCloseFromFestival: festivalVM.isFromFestivalTab ? { router in
-                    festivalVM.onKeyringCompleteFromFestival?(router)
-                } : nil
+                navigationTitle: "키링이 완성되었어요!"
             )
 
         // MARK: - Polaroid
@@ -155,10 +134,7 @@ struct WorkshopTab: View {
             KeyringCompleteView(
                 router: router,
                 viewModel: getPolaroidVM(),
-                navigationTitle: "키링이 완성되었어요!",
-                onCloseFromFestival: festivalVM.isFromFestivalTab ? { router in
-                    festivalVM.onKeyringCompleteFromFestival?(router)
-                } : nil
+                navigationTitle: "키링이 완성되었어요!"
             )
 
         // MARK: - ClearSketch
@@ -184,10 +160,7 @@ struct WorkshopTab: View {
             KeyringCompleteView(
                 router: router,
                 viewModel: getClearSketchVM(),
-                navigationTitle: "키링이 완성되었어요!",
-                onCloseFromFestival: festivalVM.isFromFestivalTab ? { router in
-                    festivalVM.onKeyringCompleteFromFestival?(router)
-                } : nil
+                navigationTitle: "키링이 완성되었어요!"
             )
 
         // MARK: - Pixel
@@ -211,10 +184,7 @@ struct WorkshopTab: View {
             KeyringCompleteView(
                 router: router,
                 viewModel: getPixelKeyringVM(),
-                navigationTitle: "키링이 완성되었어요!",
-                onCloseFromFestival: festivalVM.isFromFestivalTab ? { router in
-                    festivalVM.onKeyringCompleteFromFestival?(router)
-                } : nil
+                navigationTitle: "키링이 완성되었어요!"
             )
 
         // MARK: - SpeechBubble
@@ -236,10 +206,17 @@ struct WorkshopTab: View {
             KeyringCompleteView(
                 router: router,
                 viewModel: getSpeechBubbleVM(),
-                navigationTitle: "키링이 완성되었어요!",
-                onCloseFromFestival: festivalVM.isFromFestivalTab ? { router in
-                    festivalVM.onKeyringCompleteFromFestival?(router)
-                } : nil
+                navigationTitle: "키링이 완성되었어요!"
+            )
+
+        // MARK: - 선물 포장 완료
+        case .packageComplete(let keyringDocumentId, let postOfficeId, let templateId, let shareLink):
+            KeyringPackageCompleteView(
+                router: router,
+                viewModel: getViewModelForTemplate(templateId),
+                keyringDocumentId: keyringDocumentId,
+                postOfficeId: postOfficeId,
+                shareLink: shareLink
             )
 
         // MARK: - Bundle
@@ -313,6 +290,26 @@ struct WorkshopTab: View {
             return newViewModel
         }
         return viewModel
+    }
+
+    // MARK: - ViewModel by TemplateId
+    private func getViewModelForTemplate(_ templateId: String) -> any KeyringViewModelProtocol {
+        switch templateId {
+        case "AcrylicPhoto":
+            return getAcrylicPhotoVM()
+        case "NeonSign":
+            return getNeonSignVM()
+        case "Polaroid":
+            return getPolaroidVM()
+        case "ClearSketch":
+            return getClearSketchVM()
+        case "PixelKeyring":
+            return getPixelKeyringVM()
+        case "SpeechBubble":
+            return getSpeechBubbleVM()
+        default:
+            return getPolaroidVM()
+        }
     }
 
     // MARK: - ViewModel Reset

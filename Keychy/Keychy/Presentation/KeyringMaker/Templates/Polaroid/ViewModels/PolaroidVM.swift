@@ -120,6 +120,9 @@ class PolaroidVM: KeyringViewModelProtocol {
     var maxMemoCount: Int = 500
     var selectedTags: [String] = []
     var createdAt: Date = Date()
+    var savedKeyringDocumentId: String?
+    var packagedPostOfficeId: String?
+    var packagedShareLink: String?
 
     // MARK: - 초기화
     init(userManager: UserManager = UserManager.shared) {

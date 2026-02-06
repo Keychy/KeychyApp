@@ -9,7 +9,7 @@ import SwiftUI
 
 /// 앱의 메인 탭 화면
 ///
-/// 4개의 메인 탭(홈, 공방, 보관함, 페스티벌)을 관리하고
+/// 3개의 메인 탭(홈, 공방, 보관함)을 관리하고
 /// 딥링크 처리, 스플래시 화면, 배지 카운트 동기화 등을 담당
 struct MainTabView: View {
     @State private var viewModel = MainTabViewModel()
@@ -50,7 +50,6 @@ extension MainTabView {
             homeTab
             workshopTab
             collectionTab
-            festivalTab
         }
         .tint(.main500)
         .tabBarMinimizeBehavior(.onScrollDown)
@@ -81,6 +80,8 @@ extension MainTabView {
         HomeTab(
             router: viewModel.homeRouter,
             userManager: viewModel.userManager,
+            bundleViewModel: viewModel.bundleViewModel,
+            collectionViewModel: viewModel.collectionViewModel,
             onBackgroundLoaded: {
                 DispatchQueue.main.asyncAfter(deadline: .now() + MainTabViewModel.Delay.splashAnimation) {
                     withAnimation(.easeOut(duration: 0.5)) {
@@ -97,21 +98,19 @@ extension MainTabView {
     }
 
     private var workshopTab: some View {
-        WorkshopTab(
-            router: viewModel.workshopRouter,
-            festivalRouter: viewModel.festivalRouter,
-            festivalVM: viewModel.festivalViewModel
-        )
-        .modifier(TabItemModifier(
-            image: .workshop,
-            title: "공방",
-            tag: MainTabViewModel.TabIndex.workshop.rawValue
-        ))
+        WorkshopTab(router: viewModel.workshopRouter, bundleViewModel: viewModel.bundleViewModel, collectionViewModel: viewModel.collectionViewModel)
+            .modifier(TabItemModifier(
+                image: .workshop,
+                title: "공방",
+                tag: MainTabViewModel.TabIndex.workshop.rawValue
+            ))
     }
 
     private var collectionTab: some View {
         CollectionTab(
             router: viewModel.collectionRouter,
+            bundleViewModel: viewModel.bundleViewModel,
+            collectionViewModel: viewModel.collectionViewModel,
             shouldRefresh: $viewModel.shouldRefreshCollection
         )
         .modifier(TabItemModifier(
@@ -121,23 +120,6 @@ extension MainTabView {
         ))
     }
 
-    private var festivalTab: some View {
-        FestivalTab(
-            router: viewModel.festivalRouter,
-            showcaseVM: viewModel.festivalViewModel,
-            onSwitchToKeyringMaker: { route in
-                viewModel.handleSwitchToKeyringMaker(route)
-            },
-            onSwitchToWorkshop: { route in
-                viewModel.handleSwitchToWorkshop(route)
-            }
-        )
-        .modifier(TabItemModifier(
-            image: .festival,
-            title: "페스티벌",
-            tag: MainTabViewModel.TabIndex.festival.rawValue
-        ))
-    }
 }
 
 // MARK: - Sheet Contents

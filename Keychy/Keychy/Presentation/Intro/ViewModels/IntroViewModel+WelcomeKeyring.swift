@@ -145,7 +145,8 @@ extension IntroViewModel {
                     KeyringImageCache.shared.syncKeyring(
                         id: keyringId,
                         name: nickname,
-                        imageData: pngData
+                        imageData: pngData,
+                        createdAt: Date()
                     )
                     print("[WelcomeKeyring] 위젯 캐싱 완료: \(keyringId)")
                 } else {

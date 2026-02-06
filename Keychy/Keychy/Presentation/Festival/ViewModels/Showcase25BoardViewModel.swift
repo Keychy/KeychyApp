@@ -115,9 +115,9 @@ class Showcase25BoardViewModel {
 
     /// 실시간 리스너 중지
     func stopListening() {
+        guard listener != nil else { return }
         listener?.remove()
         listener = nil
-        print("🛑 Stopped listening to ShowcaseFestivalKeyring")
     }
 
     // MARK: - 쇼케이스 키링 로드

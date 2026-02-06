@@ -181,32 +181,42 @@ class MultiKeyringScene: SKScene {
     }
 
     private func beginLoading() {
-        // 카라비너 이미지와 키링들을 로드
-        Task {
-            async let carabinerBackTask: Void = {
-                if let carabinerBackURL = await carabinerBackImageURL {
-                    if carabinerBackURL != "none" {
-                        await setupCarabinerBackImageAsync(url: carabinerBackURL)
-                    }
-                }
-                await MainActor.run { self.carabinerBackReady = true }
-            }()
+        Task { [weak self] in
+            guard let self else { return }
+            guard !self.isCleaningUp else { return }
 
-            async let carabinerFrontTask: Void = {
-                if let carabinerFrontURL = await carabinerFrontImageURL {
-                    await setupCarabinerFrontImageAsync(url: carabinerFrontURL)
-                }
-                await MainActor.run { self.carabinerFrontReady = true }
-            }()
+            // 카라비너 이미지 병렬 로드
+            async let backLoaded: Void = self.loadCarabinerBack()
+            async let frontLoaded: Void = self.loadCarabinerFront()
 
-            // 카라비너 이미지 로드 병렬 실행
-            await carabinerBackTask
-            await carabinerFrontTask
+            await backLoaded
+            await frontLoaded
 
             // 키링 설정 (카라비너 준비 후)
-            await MainActor.run {
+            await MainActor.run { [weak self] in
+                guard let self, !self.isCleaningUp else { return }
                 self.setupKeyringsIfNeeded()
             }
+        }
+    }
+
+    /// 카라비너 뒷면 이미지 로드
+    private func loadCarabinerBack() async {
+        if let url = carabinerBackImageURL, url != "none" {
+            await setupCarabinerBackImageAsync(url: url)
+        }
+        await MainActor.run { [weak self] in
+            self?.carabinerBackReady = true
+        }
+    }
+
+    /// 카라비너 앞면 이미지 로드
+    private func loadCarabinerFront() async {
+        if let url = carabinerFrontImageURL {
+            await setupCarabinerFrontImageAsync(url: url)
+        }
+        await MainActor.run { [weak self] in
+            self?.carabinerFrontReady = true
         }
     }
 
@@ -328,7 +338,6 @@ class MultiKeyringScene: SKScene {
 
     private func setupKeyringsIfNeeded() {
         guard !didStartKeyringSetup else { return }
-        // 카라비너가 준비된 뒤에만 시작
         guard carabinerBackReady && carabinerFrontReady else { return }
         didStartKeyringSetup = true
         setupKeyrings()

@@ -40,10 +40,13 @@ struct CollectionKeyringDetailView: View {
     @State var checkmarkOpacity: Double = 0.0
     @State var showUIForCapture: Bool = true  // 캡처 시 UI 표시 여부
 
-    // 영상 생성 관련
+    // 영상 생성 및 공유
     @State var isGeneratingVideo: Bool = false
     @State var showVideoSaved: Bool = false
     @State var videoGenerator = KeyringVideoGenerator()
+    @State var cachedVideoURL: URL?
+    @State var showShareSheet: Bool = false
+    @State var pendingShareAction: Bool = false  // 시트 닫힌 후 공유 실행 대기
 
     // 포장 관련
     @State var postOfficeId: String = ""
@@ -54,8 +57,6 @@ struct CollectionKeyringDetailView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            let heightRatio = geometry.size.height / 852
-            
             ZStack(alignment: .top) {
                 Image(.whiteBackground)
                     .resizable()
@@ -81,21 +82,6 @@ struct CollectionKeyringDetailView: View {
                     }
                 }
 
-                // 영상 저장 버튼 - 이미지 저장 버튼 바로 위
-                VStack {
-                    Spacer()
-                    HStack {
-                        Spacer()
-                        downloadVideoButton
-                    }
-                    .padding(.trailing, 16)
-                    .padding(.bottom, 36 + 48 + 12)
-                    .adaptiveBottomPadding()
-                }
-                .opacity(showUIForCapture && !isSheetPresented ? 1 : 0)
-                .blur(radius: shouldApplyBlur ? 15 : 0)
-                .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isSheetPresented)
-                
                 if showMenu {
                     menuOverlay
                 }
@@ -128,20 +114,39 @@ struct CollectionKeyringDetailView: View {
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(false)
         .withToast(position: .default)
-        .sheet(isPresented: $isSheetPresented) {
+        .sheet(isPresented: $isSheetPresented, onDismiss: {
+            // 시트 완전히 닫힌 후 대기 중인 공유 액션 실행
+            if pendingShareAction {
+                pendingShareAction = false
+                if cachedVideoURL != nil {
+                    showShareSheet = true
+                } else {
+                    Task {
+                        await generateVideoForShare()
+                    }
+                }
+            }
+        }) {
             infoSheet
                 .presentationDetents([.fraction(0.48), .fraction(0.93)], selection: $sheetDetent)
                 .presentationDragIndicator(.visible)
                 .presentationBackgroundInteraction(.enabled(upThrough: .fraction(0.48)))
                 .interactiveDismissDisabled(false)
         }
-        
+        .sheet(isPresented: $showShareSheet) {
+            if let url = cachedVideoURL {
+                ShareSheet(items: [url])
+                    .presentationDetents([.fraction(0.65)])
+                    .presentationDragIndicator(.visible)
+            }
+        }
         .onAppear {
             handleViewAppear()
             refreshCopyVoucher()
         }
         .onDisappear {
             handleViewDisappear()
+            cleanupCachedVideo()
         }
         .onPreferenceChange(MenuButtonPreferenceKey.self) { frame in
             menuPosition = frame
@@ -184,43 +189,73 @@ struct CollectionKeyringDetailView: View {
 
 // MARK: - 툴바
 extension CollectionKeyringDetailView {
-    var customNavigationBar: some View {
-        CustomNavigationBar {
-            // Leading (왼쪽) - 뒤로가기 버튼
-            BackToolbarButton {
-                isSheetPresented = false
-
-                router.pop()
-            }
-            .opacity(showUIForCapture ? 1 : 0)
-        } center: {
-            // Center (중앙)
-            Text(showUIForCapture ? keyring.name : "")
-                .foregroundStyle(.gray600)
-        } trailing: {
-            // Trailing (오른쪽) - 다음/구매 버튼
-            Button(action: {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                    showMenu.toggle()
-                }
-            }) {
-                Image(.menuIcon)
-                    .resizable()
-                    .frame(width: 34, height: 34)
-                    .contentShape(Rectangle())
-                    .background(
-                        GeometryReader { geometry in
-                            Color.clear.preference(
-                                key: MenuButtonPreferenceKey.self,
-                                value: geometry.frame(in: .global)
-                            )
-                        }
-                    )
-            }
-            .frame(width: 44, height: 44)
-            .glassEffect(.regular.interactive(), in: .circle)
-            .opacity(showUIForCapture ? 1 : 0)
+    private var safeAreaTop: CGFloat {
+        guard let window = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first?.windows
+            .first(where: { $0.isKeyWindow }) else {
+            return 0
         }
+        return window.safeAreaInsets.top
+    }
+
+    var customNavigationBar: some View {
+        ZStack {
+            // 타이틀 (화면 정중앙)
+            Text(showUIForCapture ? keyring.name : "")
+                .typography(.notosans17M)
+                .foregroundStyle(.gray600)
+
+            // Leading & Trailing
+            HStack {
+                // 뒤로가기 버튼
+                BackToolbarButton {
+                    isSheetPresented = false
+                    router.pop()
+                }
+                .opacity(showUIForCapture ? 1 : 0)
+
+                Spacer()
+
+                // 오른쪽 버튼들
+                HStack(spacing: 10) {
+                    // 이미지 저장 버튼
+                    Button {
+                        captureAndSaveImage()
+                    } label: {
+                        Image(.imageDownload)
+                    }
+                    .frame(width: 44, height: 44)
+                    .glassEffect(.regular.interactive(), in: .circle)
+
+                    // 메뉴 버튼
+                    Button(action: {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showMenu.toggle()
+                        }
+                    }) {
+                        Image(.menuIcon)
+                            .resizable()
+                            .frame(width: 34, height: 34)
+                            .contentShape(Rectangle())
+                            .background(
+                                GeometryReader { geometry in
+                                    Color.clear.preference(
+                                        key: MenuButtonPreferenceKey.self,
+                                        value: geometry.frame(in: .global)
+                                    )
+                                }
+                            )
+                    }
+                    .frame(width: 44, height: 44)
+                    .glassEffect(.regular.interactive(), in: .circle)
+                }
+                .opacity(showUIForCapture ? 1 : 0)
+            }
+            .padding(.horizontal, 16)
+        }
+        .frame(height: 44)
+        .padding(.top, safeAreaTop)
     }
 }
 
@@ -278,7 +313,7 @@ extension CollectionKeyringDetailView {
 
             Spacer()
 
-            downloadImageButton
+            shareButton
         }
         .padding(EdgeInsets(top: 4, leading: 16, bottom: 36, trailing: 16))
         .adaptiveBottomPadding()
@@ -286,33 +321,24 @@ extension CollectionKeyringDetailView {
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isSheetPresented)
     }
 
-    private var downloadVideoButton: some View {
+    private var shareButton: some View {
         Button(action: {
+            if cachedVideoURL != nil {
+                showShareSheet = true
+                return
+            }
             Task {
-                await generateAndSaveVideo()
+                await generateVideoForShare()
             }
         }) {
-            Image(systemName: "video.fill")
-                .foregroundStyle(.black)
+            Image(.share)
         }
-        .disabled(isGeneratingVideo || showUIForCapture == false)
+        .disabled(isGeneratingVideo)
         .frame(width: 48, height: 48)
         .glassEffect(.regular.interactive(), in: .circle)
-        .opacity((isGeneratingVideo || showUIForCapture == false) ? 0.5 : 1)
+        .opacity(isGeneratingVideo ? 0.5 : 1)
     }
 
-    private var downloadImageButton: some View {
-        Button(action: {
-            captureAndSaveImage()
-        }) {
-            Image(.imageDownload)
-        }
-        .disabled(isGeneratingVideo || showUIForCapture == false)
-        .frame(width: 48, height: 48)
-        .glassEffect(.regular.interactive(), in: .circle)
-        .opacity((isGeneratingVideo || showUIForCapture == false) ? 0.5 : 1)
-    }
-    
     private var packageButton: some View {
         Button(action: {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {

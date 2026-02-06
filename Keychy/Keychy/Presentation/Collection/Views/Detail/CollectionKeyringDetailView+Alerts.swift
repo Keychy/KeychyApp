@@ -353,23 +353,8 @@ extension CollectionKeyringDetailView {
                 .ignoresSafeArea()
                 .zIndex(99)
 
-            VStack(spacing: 20) {
-                ProgressView()
-                    .scaleEffect(1.5)
-                    .tint(.white)
-
-                Text("영상 생성 중...")
-                    .typography(.suit17SB)
-                    .foregroundColor(.white)
-
-                Text("5~10초 소요")
-                    .typography(.suit14M)
-                    .foregroundColor(.white.opacity(0.7))
-            }
-            .padding(40)
-            .background(.ultraThinMaterial)
-            .cornerRadius(20)
-            .zIndex(100)
+            LoadingAlert(type: .longWithKeychy, message: "공유할 영상을 만들고 있어요!")
+                .zIndex(100)
         }
     }
 }

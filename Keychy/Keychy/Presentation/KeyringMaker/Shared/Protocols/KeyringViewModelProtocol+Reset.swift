@@ -36,5 +36,8 @@ extension KeyringViewModelProtocol {
     func resetAll() {
         resetCustomizingData()
         resetInfoData()
+        savedKeyringDocumentId = nil
+        packagedPostOfficeId = nil
+        packagedShareLink = nil
     }
 }

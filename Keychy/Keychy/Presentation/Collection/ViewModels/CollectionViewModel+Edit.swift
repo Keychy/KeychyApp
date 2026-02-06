@@ -50,14 +50,16 @@ extension CollectionViewModel {
 
                     // 이름이 변경된 경우 App Group 메타데이터 업데이트
                     if keyring.name != name {
-                        var keyrings = KeyringImageCache.shared.loadAvailableKeyrings()
-                        if let keyringIndex = keyrings.firstIndex(where: { $0.id == documentId }) {
-                            keyrings[keyringIndex] = AvailableKeyring(
+                        var widgetKeyrings = KeyringImageCache.shared.loadWidgetKeyrings()
+                        if let keyringIndex = widgetKeyrings.firstIndex(where: { $0.id == documentId }) {
+                            let existing = widgetKeyrings[keyringIndex]
+                            widgetKeyrings[keyringIndex] = WidgetKeyring(
                                 id: documentId,
                                 name: name,
-                                imagePath: keyrings[keyringIndex].imagePath
+                                imagePath: existing.imagePath,
+                                createdAt: existing.createdAt
                             )
-                            KeyringImageCache.shared.saveAvailableKeyrings(keyrings)
+                            KeyringImageCache.shared.saveWidgetKeyrings(widgetKeyrings)
 
                             // 위젯 타임라인 새로고침
                             WidgetCenter.shared.reloadTimelines(ofKind: "WidgetKeychy")

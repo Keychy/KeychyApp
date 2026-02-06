@@ -17,18 +17,21 @@ class KeyringImageCache {
     enum ImageType {
         case thumbnail  // 175*233 (보관함용)
         case gift       // 304*490 (선물/알림용)
-        
+        case widget     // 350*467 (위젯용 - 더 큼)
+
         var suffix: String {
             switch self {
             case .thumbnail: return "_thumb"
             case .gift: return "_gift"
+            case .widget: return "_widget"
             }
         }
-        
+
         var size: CGSize {
             switch self {
             case .thumbnail: return CGSize(width: 175, height: 233)
             case .gift: return CGSize(width: 304, height: 490)
+            case .widget: return CGSize(width: 350, height: 467)
             }
         }
     }
@@ -130,6 +133,7 @@ class KeyringImageCache {
     func deleteAll(for keyringID: String) {
         delete(for: keyringID, type: .thumbnail)
         delete(for: keyringID, type: .gift)
+        delete(for: keyringID, type: .widget)
     }
 
     // MARK: - 전체 캐시 삭제
@@ -235,10 +239,10 @@ class KeyringImageCache {
         print("📋 [KeyringCache] =====================================")
     }
 
-    // MARK: - 메타데이터 관리 (위젯용)
+    // MARK: - 위젯 메타데이터 관리
 
-    /// 사용 가능한 키링 목록 저장
-    func saveAvailableKeyrings(_ keyrings: [AvailableKeyring]) {
+    /// 위젯용 키링 목록 저장
+    func saveWidgetKeyrings(_ keyrings: [WidgetKeyring]) {
         guard let fileURL = metadataFileURL else {
             print("❌ [KeyringCache] 메타데이터 파일 URL을 찾을 수 없습니다.")
             return
@@ -254,8 +258,8 @@ class KeyringImageCache {
         }
     }
 
-    /// 사용 가능한 키링 목록 로드
-    func loadAvailableKeyrings() -> [AvailableKeyring] {
+    /// 위젯용 키링 목록 로드
+    func loadWidgetKeyrings() -> [WidgetKeyring] {
         guard let fileURL = metadataFileURL else {
             print("❌ [KeyringCache] 메타데이터 파일 URL을 찾을 수 없습니다.")
             return []
@@ -269,7 +273,7 @@ class KeyringImageCache {
         do {
             let data = try Data(contentsOf: fileURL)
             let decoder = JSONDecoder()
-            let keyrings = try decoder.decode([AvailableKeyring].self, from: data)
+            let keyrings = try decoder.decode([WidgetKeyring].self, from: data)
             return keyrings
         } catch {
             print("❌ [KeyringCache] 메타데이터 로드 실패: \(error.localizedDescription)")
@@ -280,37 +284,55 @@ class KeyringImageCache {
     // MARK: - 동기화 메서드
 
     /// 키링 추가 또는 업데이트 (이미지 + 메타데이터)
-    func syncKeyring(id: String, name: String, imageData: Data) {
-        // 1. 이미지 저장
+    func syncKeyring(id: String, name: String, imageData: Data, createdAt: Date) {
+        // 1. 이미지 저장 (썸네일)
         save(pngData: imageData, for: id, type: .thumbnail)
 
-        // 2. 메타데이터 업데이트
-        var keyrings = loadAvailableKeyrings()
-        let imagePath = "\(id)_thumb.png"
+        // 2. 위젯용 이미지 저장 (더 큰 사이즈)
+        if let widgetData = resizeImageData(imageData, to: ImageType.widget.size) {
+            save(pngData: widgetData, for: id, type: .widget)
+        }
+
+        // 3. 메타데이터 업데이트 (위젯용 이미지 경로 사용)
+        var keyrings = loadWidgetKeyrings()
+        let imagePath = "\(id)_widget.png"
 
         if let index = keyrings.firstIndex(where: { $0.id == id }) {
             // 기존 키링 업데이트
-            keyrings[index] = AvailableKeyring(id: id, name: name, imagePath: imagePath)
+            keyrings[index] = WidgetKeyring(id: id, name: name, imagePath: imagePath, createdAt: createdAt)
         } else {
             // 새 키링 추가
-            keyrings.append(AvailableKeyring(id: id, name: name, imagePath: imagePath))
+            keyrings.append(WidgetKeyring(id: id, name: name, imagePath: imagePath, createdAt: createdAt))
         }
 
-        saveAvailableKeyrings(keyrings)
+        saveWidgetKeyrings(keyrings)
 
-        // 3. 위젯 타임라인 새로고침
+        // 4. 위젯 타임라인 새로고침
         reloadWidgets()
+    }
+
+    /// 이미지 리사이즈
+    private func resizeImageData(_ data: Data, to size: CGSize) -> Data? {
+        guard let image = UIImage(data: data) else { return nil }
+
+        UIGraphicsBeginImageContextWithOptions(size, false, 1.0)
+        image.draw(in: CGRect(origin: .zero, size: size))
+        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return resizedImage?.pngData()
     }
 
     /// 키링 삭제 (이미지 + 메타데이터)
     func removeKeyring(id: String) {
-        // 1. 이미지 삭제
+        // 1. 이미지 삭제 (썸네일 + 위젯)
         delete(for: id, type: .thumbnail)
+        delete(for: id, type: .widget)
 
         // 2. 메타데이터에서 제거
-        var keyrings = loadAvailableKeyrings()
+        var keyrings = loadWidgetKeyrings()
         keyrings.removeAll { $0.id == id }
-        saveAvailableKeyrings(keyrings)
+        saveWidgetKeyrings(keyrings)
 
         print("✅ [KeyringCache] 키링 완전 삭제: \(id)")
 
@@ -337,9 +359,47 @@ class KeyringImageCache {
 
     // MARK: - 위젯 업데이트
 
-    /// 위젯 타임라인 새로고침
     private func reloadWidgets() {
         WidgetCenter.shared.reloadTimelines(ofKind: widgetKind)
-        print("🔄 [KeyringCache] 위젯 타임라인 새로고침 요청")
+    }
+
+    // MARK: - 마이그레이션
+
+    private let migrationVersionKey = "widgetCacheMigrationVersion"
+    private let currentMigrationVersion = 1
+
+    /// 위젯 키링 데이터 마이그레이션 (한 번만 실행)
+    /// - 삭제된 키링 정리
+    /// - createdAt 누락된 키링 업데이트
+    func migrateWidgetKeyringsIfNeeded(with keyringDates: [String: Date]) {
+        let lastVersion = UserDefaults.standard.integer(forKey: migrationVersionKey)
+        guard lastVersion < currentMigrationVersion else { return }
+
+        let originalKeyrings = loadWidgetKeyrings()
+
+        let migratedKeyrings = originalKeyrings.compactMap { widgetKeyring -> WidgetKeyring? in
+            guard let actualCreatedAt = keyringDates[widgetKeyring.id] else {
+                delete(for: widgetKeyring.id, type: .thumbnail)
+                return nil
+            }
+
+            if widgetKeyring.createdAt == .distantPast {
+                return WidgetKeyring(
+                    id: widgetKeyring.id,
+                    name: widgetKeyring.name,
+                    imagePath: widgetKeyring.imagePath,
+                    createdAt: actualCreatedAt
+                )
+            }
+
+            return widgetKeyring
+        }
+
+        if migratedKeyrings != originalKeyrings {
+            saveWidgetKeyrings(migratedKeyrings)
+            reloadWidgets()
+        }
+
+        UserDefaults.standard.set(currentMigrationVersion, forKey: migrationVersionKey)
     }
 }

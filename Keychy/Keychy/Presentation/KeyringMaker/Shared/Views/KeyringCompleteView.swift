@@ -14,118 +14,173 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @Bindable var viewModel: VM
     let navigationTitle: String
-
+    
     var userManager: UserManager = UserManager.shared
     var reviewManager: ReviewManager = ReviewManager.shared
-
+    
     // Festival에서 왔을 때 처리용 옵셔널 콜백
     var onCloseFromFestival: ((NavigationRouter<WorkshopRoute>) -> Void)?
     
     // 이미지 저장
     @State var showImageSaved = false
     @State var isCapturingImage = false
-
-    // 영상 생성
+    
+    // 영상 생성 및 공유
     @State var isGeneratingVideo = false
     @State var showVideoSaved = false
-
+    @State var cachedVideoURL: URL?
+    @State var showShareSheet = false
+    
     // 씬 인터랙션
     @State var isInteractionEnabled = false
+
+    // 선물 포장
+    @State var showPackageAlert = false
+    @State var showPackingAlert = false
 
     // 비디오 생성기
     let videoGenerator = KeyringVideoGenerator()
     
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                Image(.completeBG2)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: geometry.size.width, height: geometry.size.height)
-                    .clipped()
-                    .ignoresSafeArea()
-                    .cinematicAppear(delay: 0, duration: 0.6, style: .fadeIn)
-                    .blur(radius: showImageSaved ? 15 : 0)
-                
-                VStack(spacing: 0) {
-                    Spacer()
-                    // 키링 씬
-                    
-                    ZStack(alignment: .center) {
-                        keyringScene
-                            .frame(height: geometry.size.height * 0.72)
-                            .cinematicAppear(delay: 0.2, duration: 0.8, style: .full)
-                            .position(x: geometry.size.width / 2, y: geometry.size.height * 0.4)
-                        
-                        VStack {
-                            // 키링 정보
-                            keyringInfo
-                                .cinematicAppear(delay: 0.6, duration: 0.8, style: .slideUp)
-                            
-                            // 이미지 저장 버튼
-                            saveButton
-                                .padding(.top, 10)
-                                .cinematicAppear(delay: 1.0, duration: 0.8, style: .fadeIn)
-                                .opacity(isCapturingImage ? 0 : 1)
-                            //.adaptiveBottomPadding()
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .position(x: geometry.size.width / 2, y: geometry.size.height * 0.8)
-                    }
-                }
-                .blur(radius: showImageSaved ? 15 : 0)
-
-                /// 이미지 저장 완료 alert
-                KeychyAlert(
-                    type: .imageSave,
-                    message: "이미지가 저장되었어요!",
-                    isPresented: $showImageSaved
-                )
-
-                /// 영상 저장 완료 alert
-                KeychyAlert(
-                    type: .imageSave,
-                    message: "영상이 저장되었어요!",
-                    isPresented: $showVideoSaved
-                )
-
-                /// 영상 생성 중 로딩
-                if isGeneratingVideo {
-                    ZStack {
-                        Color.black20
-                            .ignoresSafeArea()
-
-                        VStack(spacing: 20) {
-                            ProgressView()
-                                .scaleEffect(1.5)
-                                .tint(.white)
-
-                            Text("영상 생성 중...")
-                                .typography(.suit17SB)
-                                .foregroundColor(.white)
-
-                            Text("5~10초 소요")
-                                .typography(.suit14M)
-                                .foregroundColor(.white.opacity(0.7))
-                        }
-                        .padding(40)
-                        .background(.ultraThinMaterial)
-                        .cornerRadius(20)
-                    }
-                    .zIndex(999)
-                }
-
-                // 커스텀 네비게이션 바
-                customNavigationBar
-                    .blur(radius: showImageSaved ? 15 : 0)
-                    .opacity(isCapturingImage ? 0 : 1)
-                    .adaptiveTopPadding()
-            }
+        ZStack {
+            // 1. 배경
+            backgroundView
+            
+            // 2. 메인 컨텐츠
+            mainContent
+            
+            // 3. Alerts 오버레이
+            alertsOverlay
+            
+            // 4. 로딩 오버레이
+            loadingOverlay
         }
-        .ignoresSafeArea()
-        .navigationBarBackButtonHidden(true)
+        .navigationBarBackButtonHidden()
+        .toolbar {
+            closeToolbarItem
+            titleToolbarItem
+            collectionToolbarItem
+        }
         .onAppear {
             checkReviewTriggers()
+        }
+        .withToast(position: .default)
+        .sheet(isPresented: $showShareSheet) {
+            if let url = cachedVideoURL {
+                ShareSheet(items: [url])
+            }
+        }
+    }
+}
+
+// MARK: - View Components
+extension KeyringCompleteView {
+    /// 배경 이미지
+    private var backgroundView: some View {
+        Image(.completeBG2)
+            .resizable()
+            .scaledToFill()
+            .ignoresSafeArea()
+            .cinematicAppear(delay: 0, duration: 0.6, style: .fadeIn)
+            .blur(radius: isAlertShowing ? 15 : 0)
+    }
+    
+    /// 메인 컨텐츠 (키링씬 + 정보 + 버튼)
+    private var mainContent: some View {
+        GeometryReader { geometry in
+            VStack(spacing: 0) {
+                // 키링 씬 (화면 높이의 55%)
+                keyringScene
+                    .frame(height: geometry.size.height * 0.53)
+                    .cinematicAppear(delay: 0.2, duration: 0.8, style: .full)
+                    .offset(x: 0, y: -20)
+                
+                // 키링 정보
+                keyringInfo
+                    .cinematicAppear(delay: 0.6, duration: 0.8, style: .slideUp)
+                    .padding(.bottom, 30)
+                
+                // 액션 버튼
+                actionButtons
+                    .cinematicAppear(delay: 1.0, duration: 0.8, style: .fadeIn)
+                    .opacity(isCapturingImage ? 0 : 1)
+            }
+            .adaptiveTopPaddingAlt()
+        }
+        .blur(radius: isAlertShowing ? 15 : 0)
+    }
+    
+    /// Alerts 오버레이
+    @ViewBuilder
+    private var alertsOverlay: some View {
+        KeychyAlert(
+            type: .imageSave,
+            message: "이미지가 저장되었어요!",
+            isPresented: $showImageSaved
+        )
+
+        KeychyAlert(
+            type: .imageSave,
+            message: "영상이 저장되었어요!",
+            isPresented: $showVideoSaved
+        )
+
+        // 선물 포장 확인 팝업
+        if showPackageAlert {
+            Color.black20
+                .ignoresSafeArea()
+                .zIndex(99)
+
+            PackagePopup(
+                onCancel: {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        showPackageAlert = false
+                    }
+                },
+                onConfirm: {
+                    handlePackageConfirm()
+                }
+            )
+            .zIndex(100)
+        }
+
+        // 포장 중 로딩
+        if showPackingAlert {
+            Color.black20
+                .ignoresSafeArea()
+                .zIndex(99)
+
+            LoadingAlert(
+                type: .longWithPresent,
+                message: "선물 포장 중.."
+            )
+            .zIndex(101)
+        }
+    }
+    
+    /// 로딩 오버레이
+    @ViewBuilder
+    private var loadingOverlay: some View {
+        if isGeneratingVideo {
+            Color.black20
+                .ignoresSafeArea()
+            
+            VStack(spacing: 20) {
+                ProgressView()
+                    .scaleEffect(1.5)
+                    .tint(.white)
+                
+                Text("영상 생성 중...")
+                    .typography(.suit17SB)
+                    .foregroundColor(.white)
+                
+                Text("5~10초 소요")
+                    .typography(.suit14M)
+                    .foregroundColor(.white.opacity(0.7))
+            }
+            .padding(40)
+            .background(.ultraThinMaterial)
+            .cornerRadius(20)
         }
     }
 }
@@ -149,12 +204,17 @@ extension KeyringCompleteView {
     }
 }
 
-//MARK: - 커스텀 네비게이션 바
+// MARK: - Toolbar Items
 extension KeyringCompleteView {
-    private var customNavigationBar: some View {
-        CustomNavigationBar {
-            // Leading (왼쪽)
-            CloseToolbarButton {
+    /// Alert 표시 중 여부
+    private var isAlertShowing: Bool {
+        showImageSaved || showVideoSaved || isGeneratingVideo || showPackageAlert || showPackingAlert
+    }
+    
+    var closeToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button {
+                cleanupCachedVideo()
                 viewModel.resetAll()
 
                 // Festival에서 온 경우 콜백 실행
@@ -165,18 +225,50 @@ extension KeyringCompleteView {
                     TabBarManager.show()
                     router.reset()
                 }
+            } label: {
+                Image(.dismissGray600)
             }
-        } center: {
-            // Center (중앙)
-            Text("키링이 완성되었어요!")
-                .typography(.suit17B)
-                .foregroundStyle(.black100)
-        } trailing: {
-            // Trailing (오른쪽) - 빈 공간 유지
-            Spacer()
-                .frame(width: 44, height: 44)
+            .opacity(isAlertShowing ? 0 : 1)
+            .allowsHitTesting(!isAlertShowing)
         }
-        .cinematicAppear(delay: 0.6, duration: 0.8, style: .fadeIn)
+        .sharedBackgroundVisibility(isAlertShowing ? .hidden : .visible)
+    }
+    
+    var titleToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .principal) {
+            Text("키링 완성!")
+                .typography(.notosans17M)
+                .foregroundStyle(.black100)
+                .opacity(isAlertShowing ? 0 : 1)
+        }
+    }
+    
+    var collectionToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button {
+                navigateToCollection()
+            } label: {
+                Image(.goToCollection)
+            }
+            .opacity(isAlertShowing ? 0 : 1)
+            .allowsHitTesting(!isAlertShowing)
+        }
+        .sharedBackgroundVisibility(isAlertShowing ? .hidden : .visible)
+    }
+
+    /// 콜렉션으로 이동 (부드러운 전환)
+    private func navigateToCollection() {
+        cleanupCachedVideo()
+
+        // 1. 탭 전환 먼저 (현재 뷰가 보이는 상태에서)
+        TabBarManager.switchTo(.collection)
+        TabBarManager.show()
+
+        // 2. 백그라운드에서 Workshop 스택 정리
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            viewModel.resetAll()
+            router.reset()
+        }
     }
 }
 
@@ -187,6 +279,7 @@ extension KeyringCompleteView {
             Text(viewModel.nameText)
                 .typography(getBottomPadding(0) == 0 ? .malang24B : .malang26B)
                 .foregroundStyle(.black100)
+                .padding(.bottom, 2)
             
             Text(formattedDate(date: viewModel.createdAt))
                 .typography(.suit14M)
@@ -196,7 +289,7 @@ extension KeyringCompleteView {
             if let nickname = userManager.currentUser?.nickname {
                 Text("@\(nickname)")
                     .typography(getBottomPadding(0) == 0 ? .notosans12R : .notosans14R)
-                    .foregroundStyle(.black100)
+                    .foregroundStyle(.gray500)
                     .padding(.vertical, 1)
             }
         }
@@ -210,53 +303,169 @@ extension KeyringCompleteView {
     }
 }
 
-// MARK: - 저장 버튼
+// MARK: - 버튼
 extension KeyringCompleteView {
-    private var saveButton: some View {
-        HStack(spacing: 20) {
-            // 이미지 저장 버튼
-            VStack(spacing: 9) {
-                Button(action: {
-                    captureAndSaveImage()
-                }) {
-                    Image(.imageDownload)
-                }
-                .frame(
-                    width: getBottomPadding(0) == 0 ? 55 : 65,
-                    height: getBottomPadding(0) == 0 ? 55 : 65
-                )
-                .buttonStyle(.plain)
-                .glassEffect(.regular.interactive(), in: .circle)
-
-                Text("이미지 저장")
-                    .typography(.suit13SB)
+    /// 버튼 사이즈 (디바이스별)
+    private var buttonSize: CGFloat {
+        getBottomPadding(0) == 0 ? 55 : 65
+    }
+    
+    /// 액션 버튼 컴포넌트
+    private func actionButton(
+        image: ImageResource,
+        title: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            VStack(spacing: 4) {
+                Image(image)
+                Text(title)
+                    .typography(.suit12M)
                     .foregroundStyle(.black100)
             }
-
-            // 영상 생성 버튼
-            VStack(spacing: 9) {
-                Button(action: {
-                    Task {
-                        await generateAndSaveVideo()
-                    }
-                }) {
-                    Image(systemName: "video.fill")
-                        .font(.system(size: 24))
-                        .foregroundColor(.black100)
-                }
-                .frame(
-                    width: getBottomPadding(0) == 0 ? 55 : 65,
-                    height: getBottomPadding(0) == 0 ? 55 : 65
-                )
-                .buttonStyle(.plain)
-                .glassEffect(.regular.interactive(), in: .circle)
-                .disabled(isGeneratingVideo)
-
-                Text("영상 생성")
-                    .typography(.suit13SB)
-                    .foregroundStyle(.black100)
-            }
-            .opacity(isGeneratingVideo ? 0.5 : 1)
+            .frame(width: 74, height: 47)
+            .padding(.vertical, 11.5)
+            .padding(.horizontal, 8)
         }
+        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 24))
+    }
+    
+    /// 하단 액션 버튼 영역
+    private var actionButtons: some View {
+        HStack(spacing: 17) {
+            // 이미지 저장
+            actionButton(image: .saveBlack, title: "이미지 저장") {
+                captureAndSaveImage()
+            }
+            
+            // 공유
+            actionButton(image: .share, title: "공유") {
+                // 캐시된 영상이 있으면 바로 시트
+                if cachedVideoURL != nil {
+                    showShareSheet = true
+                    return
+                }
+
+                // 영상 생성 후 시트
+                Task {
+                    await generateVideoForShare()
+                }
+            }
+            
+            // 선물하기
+            actionButton(image: .presentBlack, title: "선물하기") {
+                // 이미 포장된 경우 바로 이동
+                if let keyringDocumentId = viewModel.savedKeyringDocumentId,
+                   let postOfficeId = viewModel.packagedPostOfficeId,
+                   let shareLink = viewModel.packagedShareLink {
+                    router.push(.packageComplete(
+                        keyringDocumentId: keyringDocumentId,
+                        postOfficeId: postOfficeId,
+                        templateId: viewModel.templateId,
+                        shareLink: shareLink
+                    ))
+                    return
+                }
+
+                // 네트워크 체크
+                guard NetworkManager.shared.isConnected else {
+                    ToastManager.shared.show()
+                    return
+                }
+
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    showPackageAlert = true
+                }
+            }
+        }
+    }
+}
+
+// MARK: - 선물 포장 처리
+extension KeyringCompleteView {
+    /// 선물 포장 확인 처리
+    private func handlePackageConfirm() {
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+            showPackageAlert = false
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            guard let keyringDocumentId = viewModel.savedKeyringDocumentId else {
+                print("[Package] keyringDocumentId 없음")
+                return
+            }
+
+            // 이미 포장된 경우 바로 이동
+            if let postOfficeId = viewModel.packagedPostOfficeId,
+               let shareLink = viewModel.packagedShareLink {
+                print("[Package] 이미 포장됨 - 바로 이동")
+                router.push(.packageComplete(
+                    keyringDocumentId: keyringDocumentId,
+                    postOfficeId: postOfficeId,
+                    templateId: viewModel.templateId,
+                    shareLink: shareLink
+                ))
+                return
+            }
+
+            // 새로 포장하는 경우
+            guard let uid = userManager.currentUser?.id else {
+                print("[Package] uid 없음")
+                return
+            }
+
+            // 포장 중 로딩 표시
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                showPackingAlert = true
+            }
+
+            // 최소 로딩 시간 보장을 위한 시작 시간 기록
+            let startTime = Date()
+            let minimumLoadingDuration: TimeInterval = 1.0
+
+            // 패키징 실행
+            KeyringPackageManager.packageKeyring(
+                uid: uid,
+                keyringDocumentId: keyringDocumentId
+            ) { success, postOfficeId, shareLink in
+                let elapsed = Date().timeIntervalSince(startTime)
+                let remainingDelay = max(0, minimumLoadingDuration - elapsed)
+
+                // 최소 1초 로딩 후 처리
+                DispatchQueue.main.asyncAfter(deadline: .now() + remainingDelay) {
+                    showPackingAlert = false
+
+                    if success, let postOfficeId = postOfficeId, let shareLink = shareLink {
+                        // 포장 정보 저장 (뒤로갔다 다시 올 때 사용)
+                        viewModel.packagedPostOfficeId = postOfficeId
+                        viewModel.packagedShareLink = shareLink
+
+                        // 성공 - 포장 완료 화면으로 이동
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            router.push(.packageComplete(
+                                keyringDocumentId: keyringDocumentId,
+                                postOfficeId: postOfficeId,
+                                templateId: viewModel.templateId,
+                                shareLink: shareLink
+                            ))
+                        }
+                    } else {
+                        print("[Package] 포장 실패")
+                        ToastManager.shared.show()
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Preview
+#Preview {
+    NavigationStack {
+        KeyringCompleteView(
+            router: NavigationRouter<WorkshopRoute>(),
+            viewModel: PolaroidVM(),
+            navigationTitle: "키링 완성"
+        )
     }
 }
