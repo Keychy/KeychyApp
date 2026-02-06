@@ -38,8 +38,6 @@ struct HomeTab: View {
                         BundleDetailView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
                     case .bundleCreateView:
                         BundleCreateView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
-                    case .bundleAddKeyringView:
-                        BundleAddKeyringView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
                     case .bundleNameInputView:
                         BundleNameInputView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
                     case .bundleNameEditView:
