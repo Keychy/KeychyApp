@@ -18,7 +18,6 @@ enum WorkshopRoute: Hashable, BundleRoute {
     case bundleInventoryView
     case bundleDetailView
     case bundleCreateView
-    case bundleAddKeyringView
     case bundleNameInputView
     case bundleNameEditView
     case bundleEditView

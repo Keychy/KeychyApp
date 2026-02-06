@@ -24,24 +24,28 @@ struct BundleSwitchPopup: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            // 대표 섹션
-            if let main = mainBundle {
-                mainSection(bundle: main)
-            }
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 0) {
+                // 대표 섹션
+                if let main = mainBundle {
+                    mainSection(bundle: main)
+                }
 
-            // 구분선
-            Rectangle()
-                .fill(.gray100)
-                .frame(height: 1)
-                .padding(.horizontal, 18)
+                // 구분선
+                Rectangle()
+                    .fill(.gray100)
+                    .frame(height: 1)
+                    .padding(.horizontal, 18)
 
-            // 선택 섹션
-            if !selectableBundles.isEmpty {
-                selectSection(bundles: selectableBundles)
+                // 선택 섹션
+                if !selectableBundles.isEmpty {
+                    selectSection(bundles: selectableBundles)
+                }
             }
         }
+        .scrollBounceBehavior(.basedOnSize)
         .frame(width: 196)
+        .frame(maxHeight: 270)
         .padding(.vertical, 5)
         .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
     }

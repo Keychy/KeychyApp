@@ -9,7 +9,7 @@ import SwiftUI
 
 extension BundleEditView {
     var purchaseSheetView: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 0) {
             // 상단 섹션 - 닫기 버튼, 타이틀
             HStack {
                 Button {
@@ -26,15 +26,26 @@ extension BundleEditView {
                 Spacer()
             }
             .padding(EdgeInsets(top: 30, leading: 20, bottom: 10, trailing: 20))
+            .padding(.bottom, 12)
             
             // 구매할 아이템 목록
             ScrollView {
                 VStack(spacing: 20) {
                     if let bg = bundleVM.newSelectedBackground, !bg.isOwned && bg.background.price > 0 {
-                        BundlePurchaseCartItem(name: bg.background.backgroundName, type: "배경", price: bg.background.price)
+                        BundlePurchaseCartItem(
+                            imageURL: bg.background.backgroundImage,
+                            name: bg.background.backgroundName,
+                            type: "배경",
+                            price: bg.background.price
+                        )
                     }
                     if let cb = bundleVM.newSelectedCarabiner, !cb.isOwned && cb.carabiner.price > 0 {
-                        BundlePurchaseCartItem(name: cb.carabiner.carabinerName, type: "카라비너", price: cb.carabiner.price)
+                        BundlePurchaseCartItem(
+                            imageURL: cb.carabiner.carabinerImage.first ?? "",
+                            name: cb.carabiner.carabinerName,
+                            type: "카라비너",
+                            price: cb.carabiner.price
+                        )
                     }
                 }
                 .padding(.horizontal, 20)
@@ -45,11 +56,13 @@ extension BundleEditView {
                 Text("내 보유 : ")
                     .typography(.suit15M25)
                     .foregroundStyle(.black100)
-                    .padding(.vertical, 4.5)
                 Text("\(UserManager.shared.currentUser?.coin ?? 0)")
                     .typography(.nanum16EB)
                     .foregroundStyle(.main500)
+                    .padding(.top, 2)
             }
+            .padding(.top, 20)
+            
             purchaseButton
                 .padding(.horizontal, 33.2)
                 .adaptiveBottomPadding()
