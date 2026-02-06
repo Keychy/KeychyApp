@@ -139,6 +139,7 @@ struct BundleCreateView<Route: BundleRoute>: View {
                 await refreshData()
             }
             TabBarManager.hide()
+            bundleVM.resetSheetFilterState()
         }
         .sheet(isPresented: $showKeyringSheet) {
             keyringSheetContent

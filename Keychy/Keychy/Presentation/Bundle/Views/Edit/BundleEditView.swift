@@ -102,6 +102,7 @@ struct BundleEditView<Route: BundleRoute>: View {
                 await bundleVM.refreshEditData()
             }
             TabBarManager.hide()
+            bundleVM.resetSheetFilterState()
             // 화면 첫 진입 시 배경 시트를 보여줌
             if !showItemSheet {
                 isBackgroundMode = true

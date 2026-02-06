@@ -82,6 +82,14 @@ class BundleViewModel {
     var sheetShowOwnedOnly: Bool = false
     var showSheetSortSheet: Bool = false
 
+    /// 시트 필터/정렬 상태 초기화
+    func resetSheetFilterState() {
+        sheetSortOrder = "최신순"
+        sheetShowFreeOnly = false
+        sheetShowOwnedOnly = false
+        showSheetSortSheet = false
+    }
+
     // MARK: - 편집 화면용 데이터
 
     var newSelectedBackground: BackgroundViewData?
