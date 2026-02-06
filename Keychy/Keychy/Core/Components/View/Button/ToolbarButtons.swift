@@ -26,13 +26,16 @@ struct BackToolbarButton: View {
 // MARK: - Next Toolbar Button
 struct NextToolbarButton: View {
     let title: String
+    let isDisabled: Bool
     let action: () -> Void
 
     init(
         title: String = "다음",
+        isDisabled: Bool = false,
         action: @escaping () -> Void
     ) {
         self.title = title
+        self.isDisabled = isDisabled
         self.action = action
     }
 
@@ -41,10 +44,11 @@ struct NextToolbarButton: View {
             Text(title)
                 .typography(.suit17B)
                 .padding(4)
-                .foregroundStyle(.black100)
+                .foregroundStyle(isDisabled ? .gray300 : .black100)
         }
         .frame(width: 62, height: 44)
         .glassEffect(.regular.interactive(), in: .capsule)
+        .disabled(isDisabled)
     }
 }
 

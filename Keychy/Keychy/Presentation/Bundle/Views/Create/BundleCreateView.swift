@@ -160,12 +160,11 @@ extension BundleCreateView {
                     showPurchaseSheet = true
                 }
             } else {
-                NextToolbarButton {
+                NextToolbarButton(isDisabled: isCapturing || selectedKeyrings.isEmpty) {
                     Task {
                         await captureAndSaveScene()
                     }
                 }
-                .disabled(isCapturing)
             }
         }
     }
