@@ -25,8 +25,8 @@ struct BundleEditView<Route: BundleRoute>: View {
     @State var isCapturing: Bool = false
     
     // MARK: - Sheet
-    @State var showBackgroundSheet: Bool = false
-    @State var showCarabinerSheet: Bool = false
+    @State var showItemSheet: Bool = false
+    @State var isBackgroundMode: Bool = true  // true: 배경, false: 카라비너
     @State var showPurchaseSheet = false
     @State var showSelectKeyringSheet = false
     
@@ -97,25 +97,15 @@ struct BundleEditView<Route: BundleRoute>: View {
             }
             TabBarManager.hide()
             // 화면 첫 진입 시 배경 시트를 보여줌
-            if !showBackgroundSheet && !showCarabinerSheet {
-                showBackgroundSheet = true
+            if !showItemSheet {
+                isBackgroundMode = true
+                showItemSheet = true
             }
         }
         .onDisappear {
             isNavigatingAway = false
         }
         .ignoresSafeArea()
-        // 배경 시트와 카라비너 시트는 동시에 열릴 수 없음 (하나가 열리면 다른 하나는 자동으로 닫힘)
-        .onChange(of: showBackgroundSheet) { oldValue, newValue in
-            if newValue {
-                showCarabinerSheet = false
-            }
-        }
-        .onChange(of: showCarabinerSheet) { oldValue, newValue in
-            if newValue {
-                showBackgroundSheet = false
-            }
-        }
         .onChange(of: bundleVM.newSelectedBackground) { _, newBackground in
             guard newBackground != nil else { return }
             // 배경 변경 시에는 키링 데이터 업데이트만 수행 (Firebase 접근 없음)
