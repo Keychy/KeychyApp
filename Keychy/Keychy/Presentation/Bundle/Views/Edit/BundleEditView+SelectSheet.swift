@@ -96,19 +96,15 @@ extension BundleEditView {
                         .frame(maxWidth: .infinity)
                         .frame(height: screenHeight * (sheetHeightRatio - 0.08)) // 버튼 영역 제외한 대략 높이
                     } else if collectionVM.keyring.isEmpty {
-                        VStack {
-                            Image(.emptyViewIcon)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 77)
-                            Text("공방에서 키링을 만들 수 있어요")
+                        VStack(spacing: 16) {
+                            Image(.surprisedAlert)
+
+                            Text("공방에서 키링을 만들어보세요.\n아직 만들어진 키링이 없어요.")
                                 .typography(.suit15R)
                                 .foregroundStyle(.black100)
-                                .padding(.vertical, 15)
                         }
-                        .padding(.bottom, 77)
-                        .padding(.top, 62)
                         .frame(maxWidth: .infinity)
+                        .padding(.vertical, 60)
                         
                     } else {
                         ScrollView {

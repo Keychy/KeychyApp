@@ -357,8 +357,13 @@
 		AA2146B12F15D43C0048D40E /* BundleEditView+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146B02F15D43C0048D40E /* BundleEditView+Alert.swift */; };
 		AA2146B52F15D8490048D40E /* KeyringCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146B42F15D8490048D40E /* KeyringCell.swift */; };
 		AA2146B72F15E5B60048D40E /* BundleEditView+SelectSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146B62F15E5B60048D40E /* BundleEditView+SelectSheet.swift */; };
-		AA2146B92F160E2B0048D40E /* BundleEditView+RestoreSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146B82F160E2B0048D40E /* BundleEditView+RestoreSelection.swift */; };
 		AA2146BB2F161D0C0048D40E /* BundleEditView+Initialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146BA2F161D0C0048D40E /* BundleEditView+Initialization.swift */; };
+		BC0001072F35F00100000007 /* BundleCreateView+SelectSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0001012F35F00100000001 /* BundleCreateView+SelectSheet.swift */; };
+		BC0001082F35F00100000008 /* BundleCreateView+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0001022F35F00100000002 /* BundleCreateView+Alert.swift */; };
+		BC0001092F35F00100000009 /* BundleCreateView+Purchase.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0001032F35F00100000003 /* BundleCreateView+Purchase.swift */; };
+		BC00010A2F35F0010000000A /* BundleCreateView+Initialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0001042F35F00100000004 /* BundleCreateView+Initialization.swift */; };
+		BC00010B2F35F0010000000B /* BundleCreateView+Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0001052F35F00100000005 /* BundleCreateView+Capture.swift */; };
+		BC00010C2F35F0010000000C /* BundleEditView+Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0001062F35F00100000006 /* BundleEditView+Capture.swift */; };
 		AA3908F82EC8BF0400D87EEC /* BundleDetailView+SaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3908F72EC8BF0400D87EEC /* BundleDetailView+SaveImage.swift */; };
 		AA3909462EC9F29500D87EEC /* UIApplication+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3909452EC9F29500D87EEC /* UIApplication+Extension.swift */; };
 		AA39098E2ECA061700D87EEC /* GridItemSpacing.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA39098D2ECA061700D87EEC /* GridItemSpacing.swift */; };
@@ -808,8 +813,13 @@
 		AA2146B02F15D43C0048D40E /* BundleEditView+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleEditView+Alert.swift"; sourceTree = "<group>"; };
 		AA2146B42F15D8490048D40E /* KeyringCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringCell.swift; sourceTree = "<group>"; };
 		AA2146B62F15E5B60048D40E /* BundleEditView+SelectSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleEditView+SelectSheet.swift"; sourceTree = "<group>"; };
-		AA2146B82F160E2B0048D40E /* BundleEditView+RestoreSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleEditView+RestoreSelection.swift"; sourceTree = "<group>"; };
 		AA2146BA2F161D0C0048D40E /* BundleEditView+Initialization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleEditView+Initialization.swift"; sourceTree = "<group>"; };
+		BC0001012F35F00100000001 /* BundleCreateView+SelectSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleCreateView+SelectSheet.swift"; sourceTree = "<group>"; };
+		BC0001022F35F00100000002 /* BundleCreateView+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleCreateView+Alert.swift"; sourceTree = "<group>"; };
+		BC0001032F35F00100000003 /* BundleCreateView+Purchase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleCreateView+Purchase.swift"; sourceTree = "<group>"; };
+		BC0001042F35F00100000004 /* BundleCreateView+Initialization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleCreateView+Initialization.swift"; sourceTree = "<group>"; };
+		BC0001052F35F00100000005 /* BundleCreateView+Capture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleCreateView+Capture.swift"; sourceTree = "<group>"; };
+		BC0001062F35F00100000006 /* BundleEditView+Capture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleEditView+Capture.swift"; sourceTree = "<group>"; };
 		AA3908F72EC8BF0400D87EEC /* BundleDetailView+SaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleDetailView+SaveImage.swift"; sourceTree = "<group>"; };
 		AA3909452EC9F29500D87EEC /* UIApplication+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extension.swift"; sourceTree = "<group>"; };
 		AA39098D2ECA061700D87EEC /* GridItemSpacing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridItemSpacing.swift; sourceTree = "<group>"; };
@@ -2117,6 +2127,11 @@
 			isa = PBXGroup;
 			children = (
 				AA6298532EC39065001576C0 /* BundleCreateView.swift */,
+				BC0001042F35F00100000004 /* BundleCreateView+Initialization.swift */,
+				BC0001052F35F00100000005 /* BundleCreateView+Capture.swift */,
+				BC0001022F35F00100000002 /* BundleCreateView+Alert.swift */,
+				BC0001012F35F00100000001 /* BundleCreateView+SelectSheet.swift */,
+				BC0001032F35F00100000003 /* BundleCreateView+Purchase.swift */,
 				AA0219DD2EB1C041006EF269 /* BundleNameInputView.swift */,
 			);
 			path = Create;
@@ -2184,7 +2199,7 @@
 			children = (
 				AA6298512EC233D2001576C0 /* BundleEditView.swift */,
 				AA2146BA2F161D0C0048D40E /* BundleEditView+Initialization.swift */,
-				AA2146B82F160E2B0048D40E /* BundleEditView+RestoreSelection.swift */,
+				BC0001062F35F00100000006 /* BundleEditView+Capture.swift */,
 				AA2146B02F15D43C0048D40E /* BundleEditView+Alert.swift */,
 				AA2146B62F15E5B60048D40E /* BundleEditView+SelectSheet.swift */,
 				AA2146AE2F15D0160048D40E /* BundleEditView+Purchase.swift */,
@@ -2799,7 +2814,12 @@
 				4CEC61EC2EAE08C00099ECEE /* BodyType.swift in Sources */,
 				C6C361E22ED4AC49009642F4 /* SubmitCompleteAlert.swift in Sources */,
 				C6C361442ED44EF1009642F4 /* Showcase25BoardView+Detail.swift in Sources */,
-				AA2146B92F160E2B0048D40E /* BundleEditView+RestoreSelection.swift in Sources */,
+				BC0001072F35F00100000007 /* BundleCreateView+SelectSheet.swift in Sources */,
+				BC0001082F35F00100000008 /* BundleCreateView+Alert.swift in Sources */,
+				BC0001092F35F00100000009 /* BundleCreateView+Purchase.swift in Sources */,
+				BC00010A2F35F0010000000A /* BundleCreateView+Initialization.swift in Sources */,
+				BC00010B2F35F0010000000B /* BundleCreateView+Capture.swift in Sources */,
+				BC00010C2F35F0010000000C /* BundleEditView+Capture.swift in Sources */,
 				38C3C2922EC1F787003C5DE1 /* CollectionKeyringDetailView+Lifecycle.swift in Sources */,
 				4C8426642ED375840050B6FE /* ColorPalette.swift in Sources */,
 				C6C402A32EB40ACA006B58DF /* AlarmView.swift in Sources */,

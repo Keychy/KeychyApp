@@ -43,7 +43,6 @@ extension BundleEditView {
                         bgData.background.id == selectedBundle.selectedBackground
                     }
                 }
-                self.restoreBackgroundSelection()
 
                 bundleVM.fetchAllCarabiners { _ in
                     // 현재 뭉치의 카라비너로 항상 초기화
@@ -52,7 +51,9 @@ extension BundleEditView {
                             cbData.carabiner.id == selectedBundle.selectedCarabiner
                         }
                     }
-                    self.restoreCarabinerSelection()
+
+                    // 코인 충전 후 복귀 시 저장된 선택 복원
+                    bundleVM.restoreSelectionIfNeeded()
                     
                     Task {
                         // Firebase 데이터를 한 번만 로컬 상태로 초기화
