@@ -75,6 +75,56 @@ class BundleViewModel {
     var isLoading = false
     var isPurchasing = false
 
+    // MARK: - 시트 필터/정렬 상태
+
+    var sheetSortOrder: String = "최신순"
+    var sheetShowFreeOnly: Bool = false
+    var sheetShowOwnedOnly: Bool = false
+    var showSheetSortSheet: Bool = false
+
+    /// 시트 필터/정렬 상태 초기화
+    func resetSheetFilterState() {
+        sheetSortOrder = "최신순"
+        sheetShowFreeOnly = false
+        sheetShowOwnedOnly = false
+        showSheetSortSheet = false
+    }
+
+    /// 편집 화면 상태 초기화 (편집 화면 나갈 때 호출)
+    func resetEditState() {
+        newSelectedBackground = nil
+        newSelectedCarabiner = nil
+        selectedKeyrings = [:]
+        keyringOrder = []
+        selectedKeyringPosition = 0
+    }
+
+    /// 현재 선택 상태를 UserDefaults에 임시 저장 (코인 충전 등 화면 이동 전)
+    func saveCurrentSelection() {
+        if let bg = newSelectedBackground {
+            UserDefaults.standard.set(bg.background.id, forKey: "tempSelectedBackgroundId")
+        }
+        if let cb = newSelectedCarabiner {
+            UserDefaults.standard.set(cb.carabiner.id, forKey: "tempSelectedCarabinerId")
+        }
+    }
+
+    /// UserDefaults에서 선택 상태 복원 (복원 후 삭제)
+    func restoreSelectionIfNeeded() {
+        if let savedBackgroundId = UserDefaults.standard.string(forKey: "tempSelectedBackgroundId") {
+            if let restoredBackground = backgroundViewData.first(where: { $0.background.id == savedBackgroundId }) {
+                newSelectedBackground = restoredBackground
+            }
+            UserDefaults.standard.removeObject(forKey: "tempSelectedBackgroundId")
+        }
+        if let savedCarabinerId = UserDefaults.standard.string(forKey: "tempSelectedCarabinerId") {
+            if let restoredCarabiner = carabinerViewData.first(where: { $0.carabiner.id == savedCarabinerId }) {
+                newSelectedCarabiner = restoredCarabiner
+            }
+            UserDefaults.standard.removeObject(forKey: "tempSelectedCarabinerId")
+        }
+    }
+
     // MARK: - 편집 화면용 데이터
 
     var newSelectedBackground: BackgroundViewData?

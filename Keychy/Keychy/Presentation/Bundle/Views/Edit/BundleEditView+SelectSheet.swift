@@ -9,47 +9,60 @@ import SwiftUI
 
 extension BundleEditView {
     var selectItemSheetContent: some View {
-        Group {
-            // 배경 시트
-            VStack(spacing: 0) {
-                Spacer()
-                BundleSheetToggleButtons(
-                    showBackgroundSheet: $showBackgroundSheet,
-                    showCarabinerSheet: $showCarabinerSheet
-                )
-                DraggableSheet(
-                    sheetHeight: $sheetHeight,
-                    content: SelectBackgroundSheet(
-                        viewModel: bundleVM,
-                        selectedBG: bundleVM.newSelectedBackground,
-                        onBackgroundTap: { bg in
-                            bundleVM.newSelectedBackground = bg
-                        }
-                    )
-                )
-            }
-            .opacity(showBackgroundSheet ? 1 : 0)
+        ZStack(alignment: .bottom) {
+            Color.clear
 
-            // 카라비너 시트
-            VStack(spacing: 0) {
-                Spacer()
-                BundleSheetToggleButtons(
-                    showBackgroundSheet: $showBackgroundSheet,
-                    showCarabinerSheet: $showCarabinerSheet
-                )
-                DraggableSheet(
-                    sheetHeight: $sheetHeight,
-                    content: SelectCarabinerSheet(
-                        viewModel: bundleVM,
-                        selectedCarabiner: bundleVM.newSelectedCarabiner,
-                        onCarabinerTap: { carabiner in
-                            selectCarabiner = carabiner
-                            showChangeCarabinerAlert = true
+            if showItemSheet {
+                // 시트가 있을 때: 셀렉터 + 시트가 함께 움직임
+                VStack(spacing: 0) {
+                    BundleSheetToggleButtons(
+                        showItemSheet: $showItemSheet,
+                        isBackgroundMode: $isBackgroundMode
+                    )
+                    .padding(.bottom, 10)
+
+                    DraggableSheet(
+                        sheetHeight: $sheetHeight,
+                        header: BundleSheetFilterBar(viewModel: bundleVM),
+                        content: itemSheetContent,
+                        onDismiss: {
+                            showItemSheet = false
                         }
                     )
+                }
+                .transition(.move(edge: .bottom))
+            } else {
+                // 시트가 없을 때: 셀렉터만 하단에 고정
+                BundleSheetToggleButtons(
+                    showItemSheet: $showItemSheet,
+                    isBackgroundMode: $isBackgroundMode
                 )
+                .padding(.bottom, 50)
+                .transition(.identity)
             }
-            .opacity(showCarabinerSheet ? 1 : 0)
+        }
+        .animation(.easeInOut(duration: 0.25), value: showItemSheet)
+    }
+
+    @ViewBuilder
+    private var itemSheetContent: some View {
+        if isBackgroundMode {
+            SelectBackgroundSheet(
+                viewModel: bundleVM,
+                selectedBG: bundleVM.newSelectedBackground,
+                onBackgroundTap: { bg in
+                    bundleVM.newSelectedBackground = bg
+                }
+            )
+        } else {
+            SelectCarabinerSheet(
+                viewModel: bundleVM,
+                selectedCarabiner: bundleVM.newSelectedCarabiner,
+                onCarabinerTap: { carabiner in
+                    selectCarabiner = carabiner
+                    showChangeCarabinerAlert = true
+                }
+            )
         }
     }
     

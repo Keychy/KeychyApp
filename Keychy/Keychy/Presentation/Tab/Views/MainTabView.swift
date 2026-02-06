@@ -82,6 +82,7 @@ extension MainTabView {
             userManager: viewModel.userManager,
             bundleViewModel: viewModel.bundleViewModel,
             collectionViewModel: viewModel.collectionViewModel,
+            selectedTab: $viewModel.selectedTab,
             onBackgroundLoaded: {
                 DispatchQueue.main.asyncAfter(deadline: .now() + MainTabViewModel.Delay.splashAnimation) {
                     withAnimation(.easeOut(duration: 0.5)) {

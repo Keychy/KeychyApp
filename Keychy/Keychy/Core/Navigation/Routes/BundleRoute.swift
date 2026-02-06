@@ -12,7 +12,6 @@ protocol BundleRoute: Hashable {
     static var bundleInventoryView: Self { get }
     static var bundleDetailView: Self { get }
     static var bundleCreateView: Self { get }
-    static var bundleAddKeyringView: Self { get }
     static var bundleNameInputView: Self { get }
     static var bundleNameEditView: Self { get }
     static var bundleEditView: Self { get }
