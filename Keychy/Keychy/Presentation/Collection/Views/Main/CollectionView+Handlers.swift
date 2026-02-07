@@ -21,6 +21,18 @@ extension CollectionView {
         }
     }
     
+    // 뭉치 데이터 로드
+    func fetchBundleData() {
+        let uid = UserManager.shared.userUID
+        guard !uid.isEmpty else { return }
+        
+        bundleViewModel.fetchAllBundles(uid: uid) { success in
+            if !success {
+                print("뭉치 로드 실패")
+            }
+        }
+    }
+    
     // 키링 로드
     func fetchUserKeyrings(uid: String) {
         collectionViewModel.fetchUserKeyrings(uid: uid) { success in

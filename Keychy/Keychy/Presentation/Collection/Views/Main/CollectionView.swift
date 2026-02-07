@@ -11,6 +11,7 @@ import SpriteKit
 struct CollectionView: View {
     @Bindable var router: NavigationRouter<CollectionRoute>
     @State var collectionViewModel: CollectionViewModel
+    @State var bundleViewModel: BundleViewModel
     @Binding var shouldRefresh: Bool
     @State var userManager = UserManager.shared
     
@@ -113,6 +114,8 @@ struct CollectionView: View {
                 TabBarManager.show()
             }
             fetchUserData()
+            fetchBundleData()
+            
             setupNotifications()
 
             // 백그라운드에서 캐시 없는 키링들 사전 캡처
