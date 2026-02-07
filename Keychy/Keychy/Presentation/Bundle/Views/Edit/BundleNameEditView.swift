@@ -55,15 +55,22 @@ struct BundleNameEditView<Route: BundleRoute>: View {
             }
             TabBarManager.hide()
         }
+        // 키보드 높이 변경 시 SwiftUI 애니메이션 비활성화
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { notification in
             if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
-                keyboardHeight = keyboardFrame.height
-                UIView.setAnimationsEnabled(false)
+                var transaction = Transaction()
+                transaction.disablesAnimations = true
+                withTransaction(transaction) {
+                    keyboardHeight = keyboardFrame.height
+                }
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
-            keyboardHeight = 0
-            UIView.setAnimationsEnabled(false)
+            var transaction = Transaction()
+            transaction.disablesAnimations = true
+            withTransaction(transaction) {
+                keyboardHeight = 0
+            }
         }
     }
 }
