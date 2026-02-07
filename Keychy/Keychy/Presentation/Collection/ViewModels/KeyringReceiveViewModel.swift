@@ -206,11 +206,7 @@ class KeyringReceiveViewModel {
         false
     }
     
-    var backgroundImageName: String {
-        // 로딩 중이 아니고, (이미 수락됨 또는 에러 또는 keyring이 nil)
-        if !isLoading && (isAlreadyReceived || keyring == nil) {
-            return "WhiteBackground"
-        }
-        return "GreenBackground"
+    var shouldShowWhiteBackground: Bool {
+        hasDeepLinkError || (!isLoading && (isAlreadyReceived || keyring == nil))
     }
 }

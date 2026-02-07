@@ -153,11 +153,7 @@ class KeyringCollectViewModel {
         false
     }
     
-    var backgroundImageName: ImageResource {
-        // 로딩 중이 아니고, (이미 수락됨 또는 에러 또는 keyring이 nil)
-        if !isLoading && (keyring == nil) {
-            return .whiteBackground
-        }
-        return .greenBackground
+    var shouldShowWhiteBackground: Bool {
+        hasDeepLinkError || (!isLoading && (keyring == nil))
     }
 }

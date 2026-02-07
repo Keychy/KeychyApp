@@ -273,10 +273,15 @@ struct KeyringReceiveView: View {
     
     @ViewBuilder
     private var backgroundImage: some View {
-        Image(viewModel.backgroundImageName)
-            .resizable()
-            .scaledToFill()
-            .ignoresSafeArea()
+        if viewModel.shouldShowWhiteBackground {
+            Color.white
+                .ignoresSafeArea()
+        } else {
+            Image("GreenBackground")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+        }
     }
 }
 
