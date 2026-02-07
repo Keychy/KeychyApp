@@ -160,14 +160,14 @@ extension BundleNameInputView {
         } center: {
             EmptyView()
         } trailing: {
-            TextToolbarButton(title: "완료") {
+            TextToolbarButton(
+                title: "완료",
+                isDisabled: isUploading ||
+                    bundleName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                    hasProfanity
+            ) {
                 handleNextButtonTap()
             }
-            .disabled(
-                isUploading ||
-                bundleName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
-                hasProfanity
-            )
         }
     }
     

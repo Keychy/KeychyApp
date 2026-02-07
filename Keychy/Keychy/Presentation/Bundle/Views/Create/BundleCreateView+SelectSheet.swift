@@ -1,17 +1,51 @@
 //
-//  BundleEditView+SelectSheet.swift
+//  BundleCreateView+SelectSheet.swift
 //  Keychy
 //
-//  Created by 김서현 on 1/13/26.
+//  Created by 김서현 on 11/12/25.
 //
 
 import SwiftUI
 
-extension BundleEditView {
-    var selectItemSheetContent: some View {
+// MARK: - 키링 버튼
+extension BundleCreateView {
+    func keyringButtons(carabiner: Carabiner) -> some View {
+        GeometryReader { geometry in
+            let sceneWidth: CGFloat = 402
+            let sceneHeight: CGFloat = 874
+            let scale = max(geometry.size.width / sceneWidth, geometry.size.height / sceneHeight)
+            
+            let contentW = sceneWidth * scale
+            let contentH = sceneHeight * scale
+            
+            let dx = (geometry.size.width - contentW) / 2
+            let dy = (geometry.size.height - contentH) / 2
+            
+            ForEach(0..<carabiner.maxKeyringCount, id: \.self) { index in
+                let viewX = dx + carabiner.keyringXPosition[index] * scale
+                let viewY = dy + carabiner.keyringYPosition[index] * scale
+                
+                AddKeyringButton(
+                    isSelected: selectedPosition == index,
+                    action: {
+                        selectedPosition = index
+                        showKeyringSheet = true
+                    }
+                )
+                .position(x: viewX, y: viewY)
+                .opacity(isSceneReady ? 1.0 : 0.0)
+            }
+        }
+        .ignoresSafeArea()
+    }
+}
+
+// MARK: - 하단 시트
+extension BundleCreateView {
+    var sheetContent: some View {
         ZStack(alignment: .bottom) {
             Color.clear
-
+            
             if showItemSheet {
                 // 시트가 있을 때: 셀렉터 + 시트가 함께 움직임
                 VStack(spacing: 0) {
@@ -20,7 +54,7 @@ extension BundleEditView {
                         isBackgroundMode: $isBackgroundMode
                     )
                     .padding(.bottom, 10)
-
+                    
                     DraggableSheet(
                         sheetHeight: $sheetHeight,
                         header: BundleSheetFilterBar(viewModel: bundleVM),
@@ -43,9 +77,9 @@ extension BundleEditView {
         }
         .animation(.easeInOut(duration: 0.25), value: showItemSheet)
     }
-
+    
     @ViewBuilder
-    private var itemSheetContent: some View {
+    var itemSheetContent: some View {
         if isBackgroundMode {
             SelectBackgroundSheet(
                 viewModel: bundleVM,
@@ -59,64 +93,62 @@ extension BundleEditView {
                 viewModel: bundleVM,
                 selectedCarabiner: bundleVM.newSelectedCarabiner,
                 onCarabinerTap: { carabiner in
-                    selectCarabiner = carabiner
-                    showChangeCarabinerAlert = true
+                    bundleVM.newSelectedCarabiner = carabiner
                 }
             )
         }
     }
     
-    /// 키링 선택 시트 (Create와 동일한 SwiftUI sheet 방식)
     var keyringSheetContent: some View {
         KeyringSelectionContent(
             searchText: $keyringSearchText,
             keyrings: sortedKeyringsForSelection,
-            isLoading: isKeyringSheetLoading,
+            isLoading: false,
             gridColumns: gridColumns,
             cellWidth: threeGridCellWidth,
             cellHeight: threeGridCellHeight,
             isSelectedHere: { keyring in
-                bundleVM.selectedKeyrings[selectedPosition]?.id == keyring.id
+                selectedKeyrings[selectedPosition]?.id == keyring.id
             },
             isSelectedElsewhere: { keyring in
-                bundleVM.selectedKeyrings.values.contains { $0.id == keyring.id } &&
-                !(bundleVM.selectedKeyrings[selectedPosition]?.id == keyring.id)
+                selectedKeyrings.values.contains { $0.id == keyring.id } &&
+                !(selectedKeyrings[selectedPosition]?.id == keyring.id)
             },
             onTapSelect: { keyring in
                 // 다른 위치에 이미 장착된 키링인지 확인
-                let existingPosition = bundleVM.selectedKeyrings.first { $0.value.id == keyring.id }?.key
+                let existingPosition = selectedKeyrings.first { $0.value.id == keyring.id }?.key
 
                 if let existingPos = existingPosition, existingPos != selectedPosition {
                     // 다른 위치에서 제거만 (현재 위치에 장착 X, 시트 유지)
-                    bundleVM.selectedKeyrings[existingPos] = nil
-                    bundleVM.keyringOrder.removeAll { $0 == existingPos }
+                    selectedKeyrings[existingPos] = nil
+                    keyringOrder.removeAll { $0 == existingPos }
                 } else {
                     // 새 키링 선택 → 현재 위치에 장착, 시트 닫기
-                    if bundleVM.selectedKeyrings[selectedPosition] != nil {
-                        bundleVM.keyringOrder.removeAll { $0 == selectedPosition }
+                    if selectedKeyrings[selectedPosition] != nil {
+                        keyringOrder.removeAll { $0 == selectedPosition }
                     }
-                    bundleVM.selectedKeyrings[selectedPosition] = keyring
-                    bundleVM.keyringOrder.append(selectedPosition)
-                    showSelectKeyringSheet = false
+                    selectedKeyrings[selectedPosition] = keyring
+                    keyringOrder.append(selectedPosition)
+                    showKeyringSheet = false
                 }
-                updateKeyringDataList()
+                sceneRefreshId = UUID()
             },
             onTapDeselect: { keyring in
-                bundleVM.selectedKeyrings[selectedPosition] = nil
-                bundleVM.keyringOrder.removeAll { $0 == selectedPosition }
-                showSelectKeyringSheet = false  // 시트 닫기
-                updateKeyringDataList()
+                selectedKeyrings[selectedPosition] = nil
+                keyringOrder.removeAll { $0 == selectedPosition }
+                showKeyringSheet = false  // 시트 닫기
+                sceneRefreshId = UUID()
             }
         )
         .padding(.horizontal, 20)
-        .presentationDetents([.fraction(0.45), .fraction(0.85)])
+        .presentationDetents([.fraction(0.45), .fraction(0.95)])
         .presentationDragIndicator(.visible)
     }
 
     // MARK: - 정렬된 키링 목록 (필터링은 KeyringSelectionContent에서 처리)
     var sortedKeyringsForSelection: [Keyring] {
         bundleVM.sortedKeyringsForSelection(
-            selectedKeyrings: bundleVM.selectedKeyrings,
+            selectedKeyrings: selectedKeyrings,
             selectedPosition: selectedPosition
         )
     }

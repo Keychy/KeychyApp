@@ -20,34 +20,25 @@ struct KeyringCell: View {
         Button {
             if isSelectedHere {
                 onTapDeselect()
-            } else if !isSelectedElsewhere {
-                onTapSelect()
             } else {
-                // 중복 선택 방지: 아무 것도 하지 않음
+                onTapSelect()
             }
         } label: {
             ZStack(alignment: .bottomTrailing) {
-                VStack(spacing: 10) {
+                VStack(spacing: 6) {
                     ZStack {
-                        CollectionCellView(keyring: keyring)
+                        BundleKeyringCellView(keyring: keyring, isSelected: isSelectedHere || isSelectedElsewhere)
                             .frame(width: width, height: height)
                             .cornerRadius(10)
 
                         // 선택 테두리
                         RoundedRectangle(cornerRadius: 10)
-                            .strokeBorder(isSelectedHere ? .mainOpacity80 : .clear, lineWidth: 1.8)
+                            .strokeBorder(isSelectedHere ? .main500 : .clear, lineWidth: 2)
                             .frame(width: width, height: height)
-
-                        // 다른 위치에 장착된 경우 dim
-                        if isSelectedElsewhere {
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(Color.black50)
-                                .frame(width: width, height: height)
-                        }
                     }
 
                     Text(keyring.name)
-                        .typography(isSelectedHere ? .notosans14SB : .notosans14M)
+                        .typography(isSelectedHere ? .notosans13SB : .notosans13M)
                         .foregroundStyle(isSelectedHere ? .main500 : .black100)
                         .lineLimit(1)
                         .truncationMode(.tail)
@@ -58,9 +49,9 @@ struct KeyringCell: View {
                     VStack {
                         HStack {
                             Spacer()
-                            Text("장착 중")
+                            Text("장착중")
                                 .foregroundStyle(.white100)
-                                .typography(.suit13M)
+                                .typography(.suit12M)
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 4)
                                 .background(
@@ -75,7 +66,7 @@ struct KeyringCell: View {
                 }
             }
         }
-        .disabled(keyring.status == .packaged || keyring.status == .published || isSelectedElsewhere)
+        .disabled(keyring.status == .packaged || keyring.status == .published)
         .opacity(1.0)
     }
 }

@@ -357,7 +357,6 @@
 		AA2146B12F15D43C0048D40E /* BundleEditView+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146B02F15D43C0048D40E /* BundleEditView+Alert.swift */; };
 		AA2146B52F15D8490048D40E /* KeyringCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146B42F15D8490048D40E /* KeyringCell.swift */; };
 		AA2146B72F15E5B60048D40E /* BundleEditView+SelectSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146B62F15E5B60048D40E /* BundleEditView+SelectSheet.swift */; };
-		AA2146B92F160E2B0048D40E /* BundleEditView+RestoreSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146B82F160E2B0048D40E /* BundleEditView+RestoreSelection.swift */; };
 		AA2146BB2F161D0C0048D40E /* BundleEditView+Initialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146BA2F161D0C0048D40E /* BundleEditView+Initialization.swift */; };
 		AA3908F82EC8BF0400D87EEC /* BundleDetailView+SaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3908F72EC8BF0400D87EEC /* BundleDetailView+SaveImage.swift */; };
 		AA3909462EC9F29500D87EEC /* UIApplication+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3909452EC9F29500D87EEC /* UIApplication+Extension.swift */; };
@@ -384,6 +383,16 @@
 		AABA4DBD2ED2D6CA00A7D062 /* festivalCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABA4DBC2ED2D6CA00A7D062 /* festivalCard.swift */; };
 		AAEB46AD2EC1C893002B13E5 /* BundleMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEB46AC2EC1C893002B13E5 /* BundleMenu.swift */; };
 		AAEB46AF2EC1D648002B13E5 /* BundleNameEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEB46AE2EC1D648002B13E5 /* BundleNameEditView.swift */; };
+		BC0001072F35F00100000007 /* BundleCreateView+SelectSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0001012F35F00100000001 /* BundleCreateView+SelectSheet.swift */; };
+		BC0001082F35F00100000008 /* BundleCreateView+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0001022F35F00100000002 /* BundleCreateView+Alert.swift */; };
+		BC0001092F35F00100000009 /* BundleCreateView+Purchase.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0001032F35F00100000003 /* BundleCreateView+Purchase.swift */; };
+		BC00010A2F35F0010000000A /* BundleCreateView+Initialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0001042F35F00100000004 /* BundleCreateView+Initialization.swift */; };
+		BC00010B2F35F0010000000B /* BundleCreateView+Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0001052F35F00100000005 /* BundleCreateView+Capture.swift */; };
+		BC00010C2F35F0010000000C /* BundleEditView+Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0001062F35F00100000006 /* BundleEditView+Capture.swift */; };
+		BC00020F2F35F00200000003 /* BundleSearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC00020D2F35F00200000001 /* BundleSearchBar.swift */; };
+		BC0002102F35F00200000004 /* KeyringEmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC00020E2F35F00200000002 /* KeyringEmptyStateView.swift */; };
+		BC0002132F35F00200000006 /* KeyringSelectionContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0002112F35F00200000005 /* KeyringSelectionContent.swift */; };
+		BC0002152F35F00200000008 /* BundleKeyringCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC0002142F35F00200000007 /* BundleKeyringCellView.swift */; };
 		C645AE9F2EB1055C004BFE69 /* CategoryTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C645AE9E2EB1055C004BFE69 /* CategoryTabBar.swift */; };
 		C645AEA32EB1B8FC004BFE69 /* DataInitializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C645AEA22EB1B8FC004BFE69 /* DataInitializer.swift */; };
 		C665DDE82EAEFA8700CE4495 /* CoinChargeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */; };
@@ -808,7 +817,6 @@
 		AA2146B02F15D43C0048D40E /* BundleEditView+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleEditView+Alert.swift"; sourceTree = "<group>"; };
 		AA2146B42F15D8490048D40E /* KeyringCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringCell.swift; sourceTree = "<group>"; };
 		AA2146B62F15E5B60048D40E /* BundleEditView+SelectSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleEditView+SelectSheet.swift"; sourceTree = "<group>"; };
-		AA2146B82F160E2B0048D40E /* BundleEditView+RestoreSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleEditView+RestoreSelection.swift"; sourceTree = "<group>"; };
 		AA2146BA2F161D0C0048D40E /* BundleEditView+Initialization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleEditView+Initialization.swift"; sourceTree = "<group>"; };
 		AA3908F72EC8BF0400D87EEC /* BundleDetailView+SaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleDetailView+SaveImage.swift"; sourceTree = "<group>"; };
 		AA3909452EC9F29500D87EEC /* UIApplication+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extension.swift"; sourceTree = "<group>"; };
@@ -835,6 +843,16 @@
 		AABA4DBC2ED2D6CA00A7D062 /* festivalCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = festivalCard.swift; sourceTree = "<group>"; };
 		AAEB46AC2EC1C893002B13E5 /* BundleMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleMenu.swift; sourceTree = "<group>"; };
 		AAEB46AE2EC1D648002B13E5 /* BundleNameEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleNameEditView.swift; sourceTree = "<group>"; };
+		BC0001012F35F00100000001 /* BundleCreateView+SelectSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleCreateView+SelectSheet.swift"; sourceTree = "<group>"; };
+		BC0001022F35F00100000002 /* BundleCreateView+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleCreateView+Alert.swift"; sourceTree = "<group>"; };
+		BC0001032F35F00100000003 /* BundleCreateView+Purchase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleCreateView+Purchase.swift"; sourceTree = "<group>"; };
+		BC0001042F35F00100000004 /* BundleCreateView+Initialization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleCreateView+Initialization.swift"; sourceTree = "<group>"; };
+		BC0001052F35F00100000005 /* BundleCreateView+Capture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleCreateView+Capture.swift"; sourceTree = "<group>"; };
+		BC0001062F35F00100000006 /* BundleEditView+Capture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleEditView+Capture.swift"; sourceTree = "<group>"; };
+		BC00020D2F35F00200000001 /* BundleSearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleSearchBar.swift; sourceTree = "<group>"; };
+		BC00020E2F35F00200000002 /* KeyringEmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringEmptyStateView.swift; sourceTree = "<group>"; };
+		BC0002112F35F00200000005 /* KeyringSelectionContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringSelectionContent.swift; sourceTree = "<group>"; };
+		BC0002142F35F00200000007 /* BundleKeyringCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleKeyringCellView.swift; sourceTree = "<group>"; };
 		C645AE9E2EB1055C004BFE69 /* CategoryTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTabBar.swift; sourceTree = "<group>"; };
 		C645AEA22EB1B8FC004BFE69 /* DataInitializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataInitializer.swift; sourceTree = "<group>"; };
 		C665DDE72EAEFA8700CE4495 /* CoinChargeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinChargeView.swift; sourceTree = "<group>"; };
@@ -1792,6 +1810,7 @@
 				4CEC61F62EAE08DA0099ECEE /* BackgroundCell.swift */,
 				AA9115072EB126A60026E9BC /* CarabinerCell.swift */,
 				AA2146B42F15D8490048D40E /* KeyringCell.swift */,
+				BC0002142F35F00200000007 /* BundleKeyringCellView.swift */,
 				AAA4467B2EC64C9900080AB1 /* SelectBackgroundSheet.swift */,
 				AAA446812EC6519700080AB1 /* SelectCarabinerSheet.swift */,
 				4C2525D92F35B2A7003CC5AD /* BundleSheetFilterBar.swift */,
@@ -1800,6 +1819,9 @@
 				F82FD6112F9442AAAD58DB97 /* BundleSheetToggleButtons.swift */,
 				5E036016318043AC801A19DA /* BundlePurchaseCartItem.swift */,
 				AA6298552EC3AD16001576C0 /* DraggableSheet.swift */,
+				BC00020D2F35F00200000001 /* BundleSearchBar.swift */,
+				BC00020E2F35F00200000002 /* KeyringEmptyStateView.swift */,
+				BC0002112F35F00200000005 /* KeyringSelectionContent.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -2117,6 +2139,11 @@
 			isa = PBXGroup;
 			children = (
 				AA6298532EC39065001576C0 /* BundleCreateView.swift */,
+				BC0001042F35F00100000004 /* BundleCreateView+Initialization.swift */,
+				BC0001052F35F00100000005 /* BundleCreateView+Capture.swift */,
+				BC0001022F35F00100000002 /* BundleCreateView+Alert.swift */,
+				BC0001012F35F00100000001 /* BundleCreateView+SelectSheet.swift */,
+				BC0001032F35F00100000003 /* BundleCreateView+Purchase.swift */,
 				AA0219DD2EB1C041006EF269 /* BundleNameInputView.swift */,
 			);
 			path = Create;
@@ -2184,7 +2211,7 @@
 			children = (
 				AA6298512EC233D2001576C0 /* BundleEditView.swift */,
 				AA2146BA2F161D0C0048D40E /* BundleEditView+Initialization.swift */,
-				AA2146B82F160E2B0048D40E /* BundleEditView+RestoreSelection.swift */,
+				BC0001062F35F00100000006 /* BundleEditView+Capture.swift */,
 				AA2146B02F15D43C0048D40E /* BundleEditView+Alert.swift */,
 				AA2146B62F15E5B60048D40E /* BundleEditView+SelectSheet.swift */,
 				AA2146AE2F15D0160048D40E /* BundleEditView+Purchase.swift */,
@@ -2740,6 +2767,10 @@
 				AA0A54B92EC05C41007B5413 /* BundleRingComponent.swift in Sources */,
 				C6C361422ED44EE4009642F4 /* Showcase25BoardView+Sheet.swift in Sources */,
 				4C2525DA2F35B2A7003CC5AD /* BundleSheetFilterBar.swift in Sources */,
+				BC00020F2F35F00200000003 /* BundleSearchBar.swift in Sources */,
+				BC0002102F35F00200000004 /* KeyringEmptyStateView.swift in Sources */,
+				BC0002132F35F00200000006 /* KeyringSelectionContent.swift in Sources */,
+				BC0002152F35F00200000008 /* BundleKeyringCellView.swift in Sources */,
 				3828F5452EC4CC0A00F1B040 /* CollectionViewModel+Filter.swift in Sources */,
 				38C3C28A2EC1D879003C5DE1 /* UnpackPopup.swift in Sources */,
 				C6C361E42ED4AF48009642F4 /* Showcase25BoardView+Grid.swift in Sources */,
@@ -2799,7 +2830,12 @@
 				4CEC61EC2EAE08C00099ECEE /* BodyType.swift in Sources */,
 				C6C361E22ED4AC49009642F4 /* SubmitCompleteAlert.swift in Sources */,
 				C6C361442ED44EF1009642F4 /* Showcase25BoardView+Detail.swift in Sources */,
-				AA2146B92F160E2B0048D40E /* BundleEditView+RestoreSelection.swift in Sources */,
+				BC0001072F35F00100000007 /* BundleCreateView+SelectSheet.swift in Sources */,
+				BC0001082F35F00100000008 /* BundleCreateView+Alert.swift in Sources */,
+				BC0001092F35F00100000009 /* BundleCreateView+Purchase.swift in Sources */,
+				BC00010A2F35F0010000000A /* BundleCreateView+Initialization.swift in Sources */,
+				BC00010B2F35F0010000000B /* BundleCreateView+Capture.swift in Sources */,
+				BC00010C2F35F0010000000C /* BundleEditView+Capture.swift in Sources */,
 				38C3C2922EC1F787003C5DE1 /* CollectionKeyringDetailView+Lifecycle.swift in Sources */,
 				4C8426642ED375840050B6FE /* ColorPalette.swift in Sources */,
 				C6C402A32EB40ACA006B58DF /* AlarmView.swift in Sources */,

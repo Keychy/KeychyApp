@@ -96,7 +96,7 @@ extension BundleEditView {
                     onCharge: {
                         showPurchaseFailAlert = false
                         purchaseFailScale = 0.3
-                        saveCurrentSelection()
+                        bundleVM.saveCurrentSelection()
                         router.push(.coinCharge)
                     }
                 )
