@@ -320,7 +320,7 @@ extension CollectionView {
                 .resizable()
                 .frame(width: 124, height: 111)
             
-            Text("공방에서 뭉치를 만들어봐요")
+            Text("새로운 뭉치를 만들어주세요")
                 .typography(.suit15R)
                 .padding(.top, 15)
             
