@@ -26,6 +26,17 @@ class CollectionViewModel {
     var selectedKeyrings: [Keyring] = []
     var hasNetworkError: Bool = false
     
+    // MARK: - 탭 토글 (true = 키링, false = 뭉치)
+    var collectionToggle: Bool = true {
+        didSet {
+            // 탭 전환 시 초기화
+            if !collectionToggle {
+                // 뭉치 탭으로 전환 시
+                selectedSort = "최신순"
+            }
+        }
+    }
+    
     // Firestore 문서 ID 매핑: 로컬 Keyring(UUID) -> Firestore 문서 ID(String)
     var keyringDocumentIdByLocalId: [UUID: String] = [:]
 
