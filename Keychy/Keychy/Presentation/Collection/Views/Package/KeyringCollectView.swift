@@ -238,7 +238,7 @@ struct KeyringCollectView: View {
             Color.white
                 .ignoresSafeArea()
         } else {
-            Image("GreenBackground")
+            Image(.greenBackground)
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
