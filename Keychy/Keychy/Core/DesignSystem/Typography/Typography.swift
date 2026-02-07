@@ -66,6 +66,7 @@ struct Typography {
     /// 10
     static let suit10R = Typography(font: .custom(.suitRegular, size: 10), lineSpacing: 0)
     static let suit10SB = Typography(font: .custom(.suitSemiBold, size: 10), lineSpacing: 0)
+    static let suit10H = Typography(font: .custom(.suitHeavy, size: 10), lineSpacing: 0)
     
     /// 9
     static let suit9B = Typography(font: .custom(.suitBold, size: 9), lineSpacing: 0)

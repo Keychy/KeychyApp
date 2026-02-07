@@ -220,13 +220,28 @@ struct CollectionView: View {
                     .frame(width: twoGridCellWidth, height: twoGridCellHeight)
                     .cornerRadius(10)
                 
-                HStack(spacing: 3) {
+                HStack(spacing: 4) {
                     if keyring.isNew {
-                        Circle()
-                            .fill(.pink)
-                            .frame(width: 9, height: 9)
-                            .padding(.vertical, 5)
-                            .padding(.horizontal, 1.5)
+                        // NEW 뱃지
+                        Text("NEW!")
+                            .typography(.suit10H)
+                            .foregroundColor(.main500)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 4)
+                            .background(
+                                RoundedRectangle(cornerRadius: 30)
+                                    .fill(
+                                        LinearGradient(
+                                            colors: [
+                                                NewIndicatorColor.light.opacity(0.6),
+                                                NewIndicatorColor.main.opacity(0.25),
+                                            ],
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    )
+
+                            )
                     }
                     
                     // 검색 모드일 때 하이라이트 적용
