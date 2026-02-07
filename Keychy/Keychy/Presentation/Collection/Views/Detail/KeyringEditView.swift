@@ -143,48 +143,36 @@ extension KeyringEditView {
     
     private var completeToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
-            if isCompleteEnabled {
-                Button(role: .confirm, action: {
-                    // 네트워크 체크
-                    guard NetworkManager.shared.isConnected else {
-                        ToastManager.shared.show()
-                        return
-                    }
-
-                    viewModel.updateKeyring(
-                        keyring: keyring,
-                        name: editedName,
-                        memo: editedMemo,
-                        tags: editedTags
-                    ) { success in
-                        if success {
-                            router.reset()
-                            TabBarManager.show()
-                        }
-                    }
-                }) {
-                    Image(.recCheck)
-                        .resizable()
-                        .renderingMode(.template)
-                        .foregroundStyle(.white100)
-                        .frame(width: 32, height: 32)
-
+            Button {
+                guard isCompleteEnabled else { return }
+                
+                // 네트워크 체크
+                guard NetworkManager.shared.isConnected else {
+                    ToastManager.shared.show()
+                    return
                 }
-            }
-            else {
-                Button(action: {
-                    // disabled
-                }) {
-                    Image(.recCheck)
-                        .resizable()
-                        .renderingMode(.template)
-                        .foregroundStyle(.gray300)
-                        .frame(width: 32, height: 32)
 
+                viewModel.updateKeyring(
+                    keyring: keyring,
+                    name: editedName,
+                    memo: editedMemo,
+                    tags: editedTags
+                ) { success in
+                    if success {
+                        router.reset()
+                        TabBarManager.show()
+                        
+                        //TODO: 수정완료 후 pop (데이터 새로고침 로직 추가 예정)
+                        //router.pop()
+                    }
                 }
-                .disabled(true)
+            } label:  {
+                Text("완료")
+                    .typography(.suit17B)
+                    .foregroundStyle(isCompleteEnabled ? .main500 : .gray200)
             }
-
+            .frame(width: 56, height: 44)
+            .disabled(!isCompleteEnabled)
         }
     }
 }
