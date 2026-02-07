@@ -130,7 +130,7 @@ extension BundleCreateView {
             }
         )
         .padding(.horizontal, 20)
-        .presentationDetents([.fraction(0.45), .fraction(0.85)])
+        .presentationDetents([.fraction(0.45), .fraction(0.95)])
         .presentationDragIndicator(.visible)
     }
 
