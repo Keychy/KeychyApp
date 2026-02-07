@@ -2,7 +2,7 @@
 //  KeyringSelectionContent.swift
 //  Keychy
 //
-//  Created by Claude on 2/6/26.
+//  Created by 길지훈 on 2/6/26.
 //
 
 import SwiftUI
