@@ -13,11 +13,12 @@ struct KeyringCollectView: View {
     @State var viewModel: KeyringCollectViewModel
     @State private var scene: KeyringCellScene?
     
-    init(viewModel: CollectionViewModel, postOfficeId: String) {
+    init(viewModel: CollectionViewModel, postOfficeId: String, deepLinkError: DeepLinkError? = nil) {
         _viewModel = State(
             initialValue: KeyringCollectViewModel(
                 collectionViewModel: viewModel,
-                postOfficeId: postOfficeId
+                postOfficeId: postOfficeId,
+                deepLinkError: deepLinkError
             )
         )
     }
@@ -40,6 +41,7 @@ struct KeyringCollectView: View {
                 
                 // 정상 키링 수신 화면일 때만 네비게이션 바 표시
                 if !viewModel.isLoading &&
+                   !viewModel.hasDeepLinkError &&
                    viewModel.keyring != nil {
                     customNavigationBar
                         .blur(radius: viewModel.shouldApplyBlur ? 15 : 0)
@@ -116,6 +118,7 @@ struct KeyringCollectView: View {
                 
                 Text("유효하지 않거나\n더 이상 사용할 수 없는 링크입니다")
                     .typography(.suit15R)
+                    .multilineTextAlignment(.center)
                     .foregroundColor(.black100)
                     .padding(.bottom, 15)
 

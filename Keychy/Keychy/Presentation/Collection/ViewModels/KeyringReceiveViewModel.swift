@@ -20,6 +20,9 @@ class KeyringReceiveViewModel {
     var isAccepted: Bool = false
     var isAlreadyReceived: Bool = false
     
+    // DeepLink Error
+    var hasDeepLinkError: Bool = false
+    
     // Alert States
     var showAcceptCompleteAlert: Bool = false
     var showInvenFullAlert: Bool = false
@@ -29,13 +32,20 @@ class KeyringReceiveViewModel {
     private let postOfficeId: String
     
     // MARK: - Init
-    init(collectionViewModel: CollectionViewModel, postOfficeId: String) {
+    init(collectionViewModel: CollectionViewModel, postOfficeId: String, deepLinkError: DeepLinkError? = nil) {
         self.collectionViewModel = collectionViewModel
         self.postOfficeId = postOfficeId
+        self.hasDeepLinkError = (deepLinkError != nil)
     }
     
     // MARK: - 데이터 로드
     func loadKeyringData() {
+        // DeepLink 에러가 있으면 바로 종료 (errorView로 연결)
+        if hasDeepLinkError {
+            self.isLoading = false
+            return
+        }
+        
         print("PostOffice 데이터 로드 시작")
         
         collectionViewModel.fetchPostOfficeData(postOfficeId: postOfficeId) { postOfficeData in

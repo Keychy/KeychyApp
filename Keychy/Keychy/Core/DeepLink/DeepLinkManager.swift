@@ -15,12 +15,19 @@ enum DeepLinkType {
     case notification // 푸시 알림
 }
 
+enum DeepLinkError {
+    case notFound           // 존재하지 않는 링크
+    case missingType        // type 필드 없음
+    case typeMismatch       // URL 타입과 문서 타입 불일치
+}
+
 @Observable
 class DeepLinkManager {
     static let shared = DeepLinkManager()
     
     var pendingPostOfficeId: String?
     var pendingDeepLinkType: DeepLinkType?
+    var pendingError: DeepLinkError?
     
     private init() {}
     
@@ -31,11 +38,14 @@ class DeepLinkManager {
         
         // 1. Firestore에서 PostOffice 조회
         db.collection("PostOffice").document(postOfficeId).getDocument { snapshot, error in
-            guard let data = snapshot?.data(),
-                  let documentTypeString = data["type"] as? String,
-                  let documentType = PostOfficeType(rawValue: documentTypeString) else {
+            // 문서가 존재하지 않거나 에러 발생
+            guard error == nil, let data = snapshot?.data() else {
                 print("존재하지 않는 링크입니다")
-                // TODO: UI 상 처리 필요
+                DispatchQueue.main.async {
+                    self.pendingPostOfficeId = postOfficeId
+                    self.pendingDeepLinkType = type
+                    self.pendingError = .notFound
+                }
                 return
             }
             
@@ -43,7 +53,11 @@ class DeepLinkManager {
             guard let documentTypeString = data["type"] as? String,
                   let documentType = PostOfficeType(rawValue: documentTypeString) else {
                 print("type 필드 없음")
-                // TODO: UI 상 처리 필요
+                DispatchQueue.main.async {
+                    self.pendingPostOfficeId = postOfficeId
+                    self.pendingDeepLinkType = type
+                    self.pendingError = .missingType
+                }
                 return
             }
             
@@ -52,31 +66,36 @@ class DeepLinkManager {
             
             guard isValid else {
                 print("타입 불일치 - URL: \(type), Document: \(documentType)")
-                // TODO: UI 상 처리 필요
+                DispatchQueue.main.async {
+                    self.pendingPostOfficeId = postOfficeId
+                    self.pendingDeepLinkType = type
+                    self.pendingError = .typeMismatch
+                }
                 return
             }
-            
-            self.pendingPostOfficeId = postOfficeId
-            self.pendingDeepLinkType = type
             
             // 4. 검증 통과 → 정상 처리
             DispatchQueue.main.async {
                 self.pendingPostOfficeId = postOfficeId
                 self.pendingDeepLinkType = type
+                self.pendingError = nil
             }
         }
     }
     
-    func consumePendingDeepLink() -> (postOfficeId: String, type: DeepLinkType)? {
+    func consumePendingDeepLink() -> (postOfficeId: String, type: DeepLinkType, error: DeepLinkError?)? {
         guard let postOfficeId = pendingPostOfficeId,
               let type = pendingDeepLinkType else {
             return nil
         }
         
+        let error = pendingError
+        
         self.pendingPostOfficeId = nil
         self.pendingDeepLinkType = nil
+        self.pendingError = nil
         
-        return (postOfficeId, type)
+        return (postOfficeId, type, error)
     }
     
     static func createTestReceiveLink(postOfficeId: String) -> URL? {
