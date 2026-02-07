@@ -109,9 +109,9 @@ struct BundleKeyringCellView: View {
                         .overlay(
                             Circle()
                                 .strokeBorder(.white100, lineWidth: 1)
-                                .shadow(color: Color.black.opacity(0.25), radius: 4, x: 0, y: 0)
+                                .shadow(color: Color.black.opacity(0.25), radius: 2, x: 0, y: 0)
                         )
-                        .shadow(color: Color.black.opacity(0.25), radius: 4, x: 0, y: 0)
+                        .shadow(color: Color.black.opacity(0.25), radius: 2, x: 0, y: 0)
                 } else {
                     Circle()
                         .fill(.clear)
@@ -119,9 +119,9 @@ struct BundleKeyringCellView: View {
                         .overlay(
                             Circle()
                                 .strokeBorder(.white100, lineWidth: 1)
-                                .shadow(color: Color.black.opacity(0.25), radius: 4, x: 0, y: 0)
+                                .shadow(color: Color.black.opacity(0.25), radius: 2, x: 0, y: 0)
                         )
-                        .shadow(color: Color.black.opacity(0.25), radius: 4, x: 0, y: 0)
+                        .shadow(color: Color.black.opacity(0.25), radius: 2, x: 0, y: 0)
                 }
             }
         }
