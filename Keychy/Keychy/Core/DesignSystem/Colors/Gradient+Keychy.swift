@@ -13,6 +13,7 @@ import SwiftUI
 
 enum GradientStyle {
     case primary
+    case festivalPublished
 }
 
 extension GradientStyle {
@@ -21,6 +22,12 @@ extension GradientStyle {
         case .primary:
             return LinearGradient(
                 colors: [.gradient1, .gradient2],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        case .festivalPublished:
+            return LinearGradient(
+                colors: [.gradient3, .gradient4],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
