@@ -28,8 +28,8 @@ struct CollectionCellView: View {
             }
 
             // 비활성 상태 오버레이 (포장중, 출품중)
-            if let info = keyring.status.overlayInfo {
-                statusOverlay(info: info)
+            if let status = keyring.status.overlayInfo {
+                statusOverlay(status: keyring.status)
             }
         }
         .onAppear {
@@ -146,13 +146,19 @@ struct CollectionCellView: View {
     }
     
     // MARK: - 상태 오버레이
-    private func statusOverlay(info: String) -> some View {
-        RoundedRectangle(cornerRadius: 10)
-            .fill(.black50)
-            .overlay {
-                VStack {
-                    Text(info)
-                        .typography(.suit13M)
+    private func statusOverlay(status: KeyringStatus) -> some View {
+        ZStack {
+            // 어두운 배경
+            RoundedRectangle(cornerRadius: 10)
+                .fill(.black20)
+            
+            // 상태별 UI
+            VStack {
+                switch status {
+                case .packaged:
+                    // 포장중: 텍스트만
+                    Text(status.overlayInfo ?? "")
+                        .typography(.suit13B)
                         .foregroundColor(.white100)
                         .padding(.vertical, 4)
                         .frame(maxWidth: .infinity)
@@ -162,10 +168,35 @@ struct CollectionCellView: View {
                                 .frame(height: 26)
                         )
                     
-                    Spacer()
+                case .published:
+                    // 출품중: 그라데이션 카드 디자인
+                    Text(status.overlayInfo ?? "")
+                        .typography(.suit13B)
+                        .foregroundColor(.main500)
+                        .padding(.vertical, 4)
+                        .frame(maxWidth: .infinity)
+                        .background(
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(LinearGradient(
+                                    colors: [.gradient3, .gradient4],
+                                    startPoint: .leading,
+                                    endPoint: .trailing))
+                                .frame(height: 26)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(.main50, lineWidth:1)
+                          )
+                        
+                    
+                default:
+                    EmptyView()
                 }
-                .padding(5)
+                
+                Spacer()
             }
+            .padding(10)
+        }
     }
 
     // MARK: - 위젯 메타데이터 동기화
