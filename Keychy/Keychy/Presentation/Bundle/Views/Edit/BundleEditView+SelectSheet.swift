@@ -83,18 +83,28 @@ extension BundleEditView {
                 !(bundleVM.selectedKeyrings[selectedPosition]?.id == keyring.id)
             },
             onTapSelect: { keyring in
-                if bundleVM.selectedKeyrings[selectedPosition] != nil {
-                    bundleVM.keyringOrder.removeAll { $0 == selectedPosition }
+                // 다른 위치에 이미 장착된 키링인지 확인
+                let existingPosition = bundleVM.selectedKeyrings.first { $0.value.id == keyring.id }?.key
+
+                if let existingPos = existingPosition, existingPos != selectedPosition {
+                    // 다른 위치에서 제거만 (현재 위치에 장착 X, 시트 유지)
+                    bundleVM.selectedKeyrings[existingPos] = nil
+                    bundleVM.keyringOrder.removeAll { $0 == existingPos }
+                } else {
+                    // 새 키링 선택 → 현재 위치에 장착, 시트 닫기
+                    if bundleVM.selectedKeyrings[selectedPosition] != nil {
+                        bundleVM.keyringOrder.removeAll { $0 == selectedPosition }
+                    }
+                    bundleVM.selectedKeyrings[selectedPosition] = keyring
+                    bundleVM.keyringOrder.append(selectedPosition)
+                    showSelectKeyringSheet = false
                 }
-                bundleVM.selectedKeyrings[selectedPosition] = keyring
-                bundleVM.keyringOrder.append(selectedPosition)
-                showSelectKeyringSheet = false
                 updateKeyringDataList()
             },
             onTapDeselect: { keyring in
                 bundleVM.selectedKeyrings[selectedPosition] = nil
                 bundleVM.keyringOrder.removeAll { $0 == selectedPosition }
-                showSelectKeyringSheet = false
+                showSelectKeyringSheet = false  // 시트 닫기
                 updateKeyringDataList()
             }
         )

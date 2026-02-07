@@ -192,41 +192,39 @@ extension BundleViewModel {
 
     /// 키링 선택 시트용 정렬된 키링 리스트
     /// - 1순위: 현재 위치에 선택된 키링
-    /// - 2순위: 일반 키링들 (선택되지 않고, published/packaged 아님)
-    /// - 3순위: 다른 위치에 장착된 키링들
+    /// - 1순위: 현재 위치에 장착된 키링
+    /// - 2순위: 다른 위치에 장착된 키링들
+    /// - 3순위: 일반 키링들 (선택되지 않고, published/packaged 아님)
     /// - 4순위: published 또는 packaged 상태의 키링들 (맨 뒤)
     func sortedKeyringsForSelection(selectedKeyrings: [Int: Keyring], selectedPosition: Int) -> [Keyring] {
-        let selectedKeyring = selectedKeyrings[selectedPosition]
+        let currentKeyring = selectedKeyrings[selectedPosition]
 
         return keyring.sorted { keyring1, keyring2 in
-            let isKeyring1SelectedHere = keyring1.id == selectedKeyring?.id
-            let isKeyring2SelectedHere = keyring2.id == selectedKeyring?.id
+            let isKeyring1Current = keyring1.id == currentKeyring?.id
+            let isKeyring2Current = keyring2.id == currentKeyring?.id
 
-            let isKeyring1SelectedElsewhere = selectedKeyrings.values.contains { $0.id == keyring1.id } && !isKeyring1SelectedHere
-            let isKeyring2SelectedElsewhere = selectedKeyrings.values.contains { $0.id == keyring2.id } && !isKeyring2SelectedHere
+            let isKeyring1Elsewhere = selectedKeyrings.values.contains { $0.id == keyring1.id } && !isKeyring1Current
+            let isKeyring2Elsewhere = selectedKeyrings.values.contains { $0.id == keyring2.id } && !isKeyring2Current
 
             let isKeyring1Unavailable = keyring1.status == .published || keyring1.status == .packaged
             let isKeyring2Unavailable = keyring2.status == .published || keyring2.status == .packaged
 
-            if isKeyring1SelectedHere != isKeyring2SelectedHere {
-                return isKeyring1SelectedHere
+            // 1순위: 현재 위치 키링
+            if isKeyring1Current != isKeyring2Current {
+                return isKeyring1Current
             }
 
-            let isKeyring1Normal = !isKeyring1SelectedElsewhere && !isKeyring1Unavailable
-            let isKeyring2Normal = !isKeyring2SelectedElsewhere && !isKeyring2Unavailable
-
-            if isKeyring1Normal != isKeyring2Normal {
-                return isKeyring1Normal
+            // 2순위: 다른 위치 장착 키링
+            if isKeyring1Elsewhere != isKeyring2Elsewhere {
+                return isKeyring1Elsewhere
             }
 
-            if isKeyring1SelectedElsewhere != isKeyring2SelectedElsewhere {
-                return isKeyring1SelectedElsewhere
-            }
-
+            // 3순위: 일반 키링 (사용 불가 아닌 것)
             if isKeyring1Unavailable != isKeyring2Unavailable {
                 return isKeyring2Unavailable
             }
 
+            // 동일 순위면 원래 순서 유지
             guard let index1 = keyring.firstIndex(of: keyring1),
                   let index2 = keyring.firstIndex(of: keyring2) else {
                 return false

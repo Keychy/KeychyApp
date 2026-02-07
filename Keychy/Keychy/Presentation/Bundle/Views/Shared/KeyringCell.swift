@@ -20,16 +20,14 @@ struct KeyringCell: View {
         Button {
             if isSelectedHere {
                 onTapDeselect()
-            } else if !isSelectedElsewhere {
-                onTapSelect()
             } else {
-                // 중복 선택 방지: 아무 것도 하지 않음
+                onTapSelect()
             }
         } label: {
             ZStack(alignment: .bottomTrailing) {
                 VStack(spacing: 6) {
                     ZStack {
-                        BundleKeyringCellView(keyring: keyring, isSelected: isSelectedHere)
+                        BundleKeyringCellView(keyring: keyring, isSelected: isSelectedHere || isSelectedElsewhere)
                             .frame(width: width, height: height)
                             .cornerRadius(10)
 
@@ -37,13 +35,6 @@ struct KeyringCell: View {
                         RoundedRectangle(cornerRadius: 10)
                             .strokeBorder(isSelectedHere ? .main500 : .clear, lineWidth: 2)
                             .frame(width: width, height: height)
-
-                        // 다른 위치에 장착된 경우 dim
-                        if isSelectedElsewhere {
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(Color.black50)
-                                .frame(width: width, height: height)
-                        }
                     }
 
                     Text(keyring.name)
@@ -75,7 +66,7 @@ struct KeyringCell: View {
                 }
             }
         }
-        .disabled(keyring.status == .packaged || keyring.status == .published || isSelectedElsewhere)
+        .disabled(keyring.status == .packaged || keyring.status == .published)
         .opacity(1.0)
     }
 }
