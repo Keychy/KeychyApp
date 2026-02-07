@@ -14,7 +14,8 @@ import SpriteKit
 /// - 상태 오버레이
 struct BundleKeyringCellView: View {
     let keyring: Keyring
-    
+    let isSelected: Bool
+
     @State private var isLoading = true
     @State private var cachedImage: UIImage?
     @State private var scene: KeyringCellScene?
@@ -40,6 +41,9 @@ struct BundleKeyringCellView: View {
             // 상태 오버레이 (포장중/출품중)
             if let info = keyring.status.overlayInfo {
                 statusOverlay(info: info)
+            } else {
+                // 선택 원 (선택 시 체크마크, 미선택 시 빈 원)
+                selectionCircle
             }
         }
         .onAppear { loadContent() }
@@ -89,6 +93,41 @@ struct BundleKeyringCellView: View {
         scene = nil
     }
     
+    // MARK: - 선택 원
+    private var selectionCircle: some View {
+        VStack {
+            Spacer()
+            HStack {
+                Spacer()
+                if isSelected {
+                    Circle()
+                        .fill(.main500)
+                        .frame(width: 26.14, height: 26.14)
+                        .overlay(
+                            Image(.checkMarkWhite)
+                        )
+                        .overlay(
+                            Circle()
+                                .strokeBorder(.white100, lineWidth: 1)
+                                .shadow(color: Color.black.opacity(0.25), radius: 4, x: 0, y: 0)
+                        )
+                        .shadow(color: Color.black.opacity(0.25), radius: 4, x: 0, y: 0)
+                } else {
+                    Circle()
+                        .fill(.clear)
+                        .frame(width: 26.14, height: 26.14)
+                        .overlay(
+                            Circle()
+                                .strokeBorder(.white100, lineWidth: 1)
+                                .shadow(color: Color.black.opacity(0.25), radius: 4, x: 0, y: 0)
+                        )
+                        .shadow(color: Color.black.opacity(0.25), radius: 4, x: 0, y: 0)
+                }
+            }
+        }
+        .padding(6)
+    }
+
     // MARK: - 상태 오버레이
     private func statusOverlay(info: String) -> some View {
         RoundedRectangle(cornerRadius: 10)

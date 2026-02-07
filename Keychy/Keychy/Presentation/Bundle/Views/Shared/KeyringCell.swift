@@ -29,7 +29,7 @@ struct KeyringCell: View {
             ZStack(alignment: .bottomTrailing) {
                 VStack(spacing: 6) {
                     ZStack {
-                        BundleKeyringCellView(keyring: keyring)
+                        BundleKeyringCellView(keyring: keyring, isSelected: isSelectedHere)
                             .frame(width: width, height: height)
                             .cornerRadius(10)
 
