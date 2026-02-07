@@ -136,6 +136,7 @@ struct PurchaseToolbarButton: View {
 // MARK: - Custom Text Toolbar Button
 struct TextToolbarButton: View {
     let title: String
+    var isDisabled: Bool = false
     let action: () -> Void
 
     var body: some View {
@@ -143,9 +144,10 @@ struct TextToolbarButton: View {
             Text(title)
                 .typography(.suit17B)
                 .padding(4)
-                .foregroundStyle(.black100)
+                .foregroundStyle(isDisabled ? .gray300 : .main500)
         }
         .frame(width: 62, height: 44)
         .glassEffect(.regular.interactive(), in: .capsule)
+        .disabled(isDisabled)
     }
 }

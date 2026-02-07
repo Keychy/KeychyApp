@@ -182,11 +182,19 @@ extension BundleCreateView {
                     showPurchaseSheet = true
                 }
             } else {
-                NextToolbarButton(isDisabled: isCapturing || selectedKeyrings.isEmpty) {
+                Button {
                     Task {
                         await captureAndSaveScene()
                     }
+                } label: {
+                    Text("다음")
+                        .typography(.suit17B)
+                        .padding(4)
+                        .foregroundStyle(isCapturing || selectedKeyrings.isEmpty ? .gray300 : .main500)
                 }
+                .frame(width: 62, height: 44)
+                .glassEffect(.regular.interactive(), in: .capsule)
+                .disabled(isCapturing || selectedKeyrings.isEmpty)
             }
         }
     }
