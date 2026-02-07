@@ -67,6 +67,7 @@ struct CollectionView: View {
     var body: some View {
         ZStack {
             mainContent
+                .zIndex(0)
             
             // 검색바
             if showSearchBar {
@@ -95,6 +96,7 @@ struct CollectionView: View {
             }
             
             alertOverlays
+                .zIndex(300)
             
         }
         .toolbar(isSearching ? .hidden : .visible, for: .tabBar)
