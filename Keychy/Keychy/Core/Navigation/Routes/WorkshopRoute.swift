@@ -21,6 +21,7 @@ enum WorkshopRoute: Hashable, BundleRoute {
     case bundleNameInputView
     case bundleNameEditView
     case bundleEditView
+    case bundleCompleteView
 
     // MARK: - 아크릴 포토 템플릿
     case acrylicPhotoPreview

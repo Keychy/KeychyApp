@@ -15,5 +15,6 @@ protocol BundleRoute: Hashable {
     static var bundleNameInputView: Self { get }
     static var bundleNameEditView: Self { get }
     static var bundleEditView: Self { get }
+    static var bundleCompleteView: Self { get }
     static var coinCharge: Self { get }
 }

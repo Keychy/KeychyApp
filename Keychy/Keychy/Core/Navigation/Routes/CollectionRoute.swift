@@ -22,6 +22,7 @@ enum CollectionRoute: Hashable, BundleRoute {
     case bundleNameInputView
     case bundleNameEditView
     case bundleEditView
+    case bundleCompleteView
     
     // 위젯 안내
     case widgetSettingView
