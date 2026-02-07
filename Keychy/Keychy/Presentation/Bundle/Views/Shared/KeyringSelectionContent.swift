@@ -56,8 +56,8 @@ struct KeyringSelectionContent: View {
             BundleSearchBar(searchText: $searchText)
                 .padding(.top, 45)
 
-            ScrollView {
-                LazyVGrid(columns: gridColumns, spacing: 10) {
+            ScrollView(showsIndicators: false) {
+                LazyVGrid(columns: gridColumns, spacing: 14) {
                     ForEach(filteredKeyrings, id: \.self) { keyring in
                         KeyringCell(
                             keyring: keyring,

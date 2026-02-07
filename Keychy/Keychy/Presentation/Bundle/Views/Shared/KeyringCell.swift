@@ -27,7 +27,7 @@ struct KeyringCell: View {
             }
         } label: {
             ZStack(alignment: .bottomTrailing) {
-                VStack(spacing: 10) {
+                VStack(spacing: 6) {
                     ZStack {
                         CollectionCellView(keyring: keyring)
                             .frame(width: width, height: height)
@@ -35,7 +35,7 @@ struct KeyringCell: View {
 
                         // 선택 테두리
                         RoundedRectangle(cornerRadius: 10)
-                            .strokeBorder(isSelectedHere ? .mainOpacity80 : .clear, lineWidth: 1.8)
+                            .strokeBorder(isSelectedHere ? .main500 : .clear, lineWidth: 2)
                             .frame(width: width, height: height)
 
                         // 다른 위치에 장착된 경우 dim
@@ -47,7 +47,7 @@ struct KeyringCell: View {
                     }
 
                     Text(keyring.name)
-                        .typography(isSelectedHere ? .notosans14SB : .notosans14M)
+                        .typography(isSelectedHere ? .notosans13SB : .notosans13M)
                         .foregroundStyle(isSelectedHere ? .main500 : .black100)
                         .lineLimit(1)
                         .truncationMode(.tail)
@@ -58,9 +58,9 @@ struct KeyringCell: View {
                     VStack {
                         HStack {
                             Spacer()
-                            Text("장착 중")
+                            Text("장착중")
                                 .foregroundStyle(.white100)
-                                .typography(.suit13M)
+                                .typography(.suit12M)
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 4)
                                 .background(
