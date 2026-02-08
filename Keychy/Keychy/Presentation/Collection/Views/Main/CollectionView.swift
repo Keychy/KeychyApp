@@ -305,7 +305,12 @@ struct CollectionView: View {
                         title: sort,
                         isSelected: collectionViewModel.selectedSort == sort
                     ) {
-                        collectionViewModel.updateSortOrder(sort)
+                        // 현재 탭에 따라 정렬 적용
+                        if collectionViewModel.collectionToggle {
+                            collectionViewModel.updateSortOrder(sort)
+                        } else {
+                            bundleViewModel.updateSortOrder(sort)
+                        }
                         showSortSheet = false
                     }
                 }

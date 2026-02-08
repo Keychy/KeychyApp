@@ -20,12 +20,7 @@ extension BundleViewModel {
             }
         }
         
-        // 정렬 적용 (메인 뭉치 우선, 그 다음 최신순)
-        return result.sorted { a, b in
-            if a.isMain != b.isMain {
-                return a.isMain
-            }
-            return a.createdAt > b.createdAt
-        }
+        // 정렬 적용
+        return sortBundles(result)
     }
 }

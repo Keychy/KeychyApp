@@ -380,7 +380,7 @@ extension CollectionView {
             showSortSheet = true
         }) {
             HStack(spacing: 2) {
-                Text(collectionViewModel.selectedSort)
+                Text(currentSortText)
                     .typography(.suit14SB18)
                     .foregroundColor(.gray500)
                 
@@ -397,6 +397,13 @@ extension CollectionView {
             
         }
         .buttonStyle(PlainButtonStyle())
+    }
+    
+    // 현재 탭에 따른 정렬 텍스트
+    private var currentSortText: String {
+        collectionViewModel.collectionToggle
+            ? collectionViewModel.selectedSort
+            : bundleViewModel.selectedSort
     }
     
     var emptyView: some View {
