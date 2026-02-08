@@ -55,7 +55,6 @@ extension CollectionView {
                 VStack {
                     headerSection
                         .padding(.horizontal, Spacing.margin)
-                        .padding(.top, 2)
 
                     if collectionViewModel.collectionToggle {
                         tagSection
@@ -77,7 +76,7 @@ extension CollectionView {
             // 고정 오버레이 헤더
             VStack(spacing: 0) {
                 headerSection
-                    .padding(.horizontal, Spacing.md)
+                    .padding(.horizontal, Spacing.margin)
                     .padding(.bottom, 10)
 
                 tagSection
@@ -307,6 +306,7 @@ extension CollectionView {
             }
         }
         .padding(.bottom, 90)
+        .padding(.horizontal, Spacing.gap)
     }
     
     private var bundleEmptyView: some View {
