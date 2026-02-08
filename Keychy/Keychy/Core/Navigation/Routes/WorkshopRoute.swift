@@ -67,6 +67,9 @@ enum WorkshopRoute: Hashable, BundleRoute {
     // MARK: - 선물 포장 완료
     case packageComplete(keyringDocumentId: String, postOfficeId: String, templateId: String, shareLink: String)
 
+    // MARK: - 위젯 가이딩
+    case widgetSettingView
+    
     /// template.id 문자열을 WorkshopRoute로 변환
     static func from(string: String) -> WorkshopRoute? {
         switch string {

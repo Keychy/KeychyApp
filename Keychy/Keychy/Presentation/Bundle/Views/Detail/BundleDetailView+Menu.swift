@@ -67,6 +67,13 @@ extension BundleDetailView {
                             uiState.showDeleteAlert = true
                         }
                     },
+                    onWidget: {
+                        uiState.showMenu = false
+                        
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            router.push(.widgetSettingView)
+                        }
+                    },
                     isMain: bundle.isMain
                 )
                 .zIndex(50)

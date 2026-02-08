@@ -62,6 +62,10 @@ struct WorkshopTab: View {
         // MARK: - 재화 구매뷰
         case .coinCharge:
             CoinChargeView(router: router)
+            
+        // MARK: - 위젯 가이딩
+        case .widgetSettingView:
+            WidgetSettingView(router: router)
 
         // MARK: - AcrylicPhoto
         case .acrylicPhotoPreview:
