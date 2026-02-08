@@ -53,7 +53,21 @@ struct CollectionKeyringDetailView: View {
 
     let isSearchMode: Bool  // 검색모드 여부
     
-    let keyring: Keyring
+    // 키링 정보
+    @State var keyring: Keyring
+    
+    // 초기화 시 keyring을 받아서 State에 저장
+    init(
+        router: NavigationRouter<CollectionRoute>,
+        viewModel: CollectionViewModel,
+        keyring: Keyring,
+        isSearchMode: Bool = false
+    ) {
+        self.router = router
+        self.viewModel = viewModel
+        self._keyring = State(initialValue: keyring)
+        self.isSearchMode = isSearchMode
+    }
     
     var body: some View {
         GeometryReader { geometry in
@@ -151,7 +165,10 @@ struct CollectionKeyringDetailView: View {
         .onPreferenceChange(MenuButtonPreferenceKey.self) { frame in
             menuPosition = frame
         }
-
+        .task {
+            // 뷰가 다시 나타날 때 키링 데이터 새로고침
+            await refreshKeyringData()
+        }
     }
     
     private var shouldApplyBlur: Bool {
@@ -172,6 +189,30 @@ struct CollectionKeyringDetailView: View {
         viewModel.fetchUserCollectionData(uid: uid) { success in
             if success {
                 print("복사권 새로고침: \(viewModel.copyVoucher)개")
+            }
+        }
+    }
+    
+    /// 키링 데이터 새로고침 (편집 후 돌아왔을 때)
+    private func refreshKeyringData() async {
+        guard let documentId = keyring.documentId else { return }
+        
+        // ViewModel에서 최신 키링 데이터 찾기
+        if let updatedKeyring = viewModel.keyring.first(where: { $0.documentId == documentId }) {
+            await MainActor.run {
+                self.keyring = updatedKeyring
+            }
+        } else {
+            // 로컬에 없으면 Firebase에서 직접 가져오기
+            await withCheckedContinuation { continuation in
+                viewModel.fetchKeyringById(keyringId: documentId) { fetchedKeyring in
+                    if let fetchedKeyring = fetchedKeyring {
+                        Task { @MainActor in
+                            self.keyring = fetchedKeyring
+                        }
+                    }
+                    continuation.resume()
+                }
             }
         }
     }

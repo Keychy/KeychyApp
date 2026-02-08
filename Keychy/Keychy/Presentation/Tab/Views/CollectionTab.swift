@@ -20,7 +20,7 @@ struct CollectionTab: View {
                     switch route {
                         
                     case .collectionKeyringDetailView(let keyring, let isSearchMode):
-                        CollectionKeyringDetailView(router: router, viewModel: collectionViewModel, isSearchMode: isSearchMode, keyring: keyring)
+                        CollectionKeyringDetailView(router: router, viewModel: collectionViewModel, keyring: keyring, isSearchMode: isSearchMode)
                     case .collectionKeyringPackageView(let keyring, let isSearchMode):
                         CollectionKeyringPackageView(router: router, viewModel: collectionViewModel, isSearchMode: isSearchMode, keyring: keyring)
                     case .keyringEditView(let keyring):
