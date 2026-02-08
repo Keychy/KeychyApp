@@ -72,16 +72,22 @@ struct BundleNameInputView<Route: BundleRoute>: View {
         .onTapGesture {
             isTextFieldFocused = false
         }
-        // 키보드 올라옴 내려옴을 감지하는 notification center, 개발록 '키보드가 올라오면서 화면을 가릴 때'에서 소개한 내용과 같습니다.
+        // 키보드 높이 변경 시 SwiftUI 애니메이션 비활성화
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { notification in
             if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
-                keyboardHeight = keyboardFrame.height
-                UIView.setAnimationsEnabled(false)
+                var transaction = Transaction()
+                transaction.disablesAnimations = true
+                withTransaction(transaction) {
+                    keyboardHeight = keyboardFrame.height
+                }
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
-            keyboardHeight = 0
-            UIView.setAnimationsEnabled(false)
+            var transaction = Transaction()
+            transaction.disablesAnimations = true
+            withTransaction(transaction) {
+                keyboardHeight = 0
+            }
         }
     }
 }
@@ -225,10 +231,8 @@ extension BundleNameInputView {
                 // 생성된 번들을 selectedBundle에 할당
                 // createBundle의 completion이 배열 업데이트 후 호출되므로 안전
                 bundleVM.selectedBundle = bundleVM.bundles.first { $0.documentId == bundleId }
-                router.reset()
-                router.push(.bundleInventoryView)
-                // 네비게이션: 상세 페이지로 이동
-                router.push(.bundleDetailView)
+                // 네비게이션: 완성 화면으로 이동
+                router.push(.bundleCompleteView)
             } else {
                 // 실패 처리
                 isUploading = false

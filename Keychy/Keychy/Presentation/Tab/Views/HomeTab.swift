@@ -44,6 +44,8 @@ struct HomeTab: View {
                         BundleNameEditView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
                     case .bundleEditView:
                         BundleEditView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
+                    case .bundleCompleteView:
+                        BundleCompleteView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
                         // 재화 충전
                     case .coinCharge:
                         CoinChargeView(router: router)

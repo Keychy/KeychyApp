@@ -37,6 +37,8 @@ struct CollectionTab: View {
                         BundleNameEditView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
                     case .bundleEditView:
                         BundleEditView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
+                    case .bundleCompleteView:
+                        BundleCompleteView(router: router, collectionVM: collectionViewModel, bundleVM: bundleViewModel)
                     case .widgetSettingView:
                         WidgetSettingView(router: router)
                     case .packageCompleteView(let keyring, let postOfficeId):
