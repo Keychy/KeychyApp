@@ -13,6 +13,11 @@ struct CollectionCellView: View {
     @State private var isLoading: Bool = true
     @State private var cachedImage: UIImage?
     @State private var scene: KeyringCellScene?
+    @State private var rotation: CGFloat = 0.0
+    
+    // 카드 스타일
+    private let radius: CGFloat = 10
+    private let lineWidth: CGFloat = 2
 
     var body: some View {
         ZStack {
@@ -26,14 +31,27 @@ struct CollectionCellView: View {
                         LoadingAlert(type: .short40, message: nil)
                     }
             }
+            
+            // NEW 키링 그라데이션 보더
+            if keyring.isNew {
+                newKeyringBorder
+            }
 
             // 비활성 상태 오버레이 (포장중, 출품중)
-            if let info = keyring.status.overlayInfo {
-                statusOverlay(info: info)
+            if let status = keyring.status.overlayInfo {
+                statusOverlay(status: keyring.status)
             }
         }
+        .cornerRadius(radius)
         .onAppear {
             loadContent()
+            
+            // NEW 키링의 회전 애니메이션 시작
+            if keyring.isNew {
+                withAnimation(.linear(duration: 4).repeatForever(autoreverses: false)) {
+                    rotation = 360
+                }
+            }
         }
         .onDisappear {
             if let keyringID = keyring.documentId {
@@ -62,6 +80,39 @@ struct CollectionCellView: View {
         } else {
             // 로딩 전 기본 배경
             Color.gray50
+        }
+    }
+    
+    // MARK: - NEW 키링 그라데이션 보더
+    private var newKeyringBorder: some View {
+        ZStack {
+            // 기본 보더
+            RoundedRectangle(cornerRadius: radius, style: .continuous)
+                .strokeBorder(NewIndicatorColor.main, lineWidth: lineWidth)
+                .overlay {
+                    RoundedRectangle(cornerRadius: radius, style: .continuous)
+                        .stroke(Color.black.opacity(0.25), lineWidth: lineWidth + 2)
+                        .blur(radius: 1)
+                        .mask(
+                            RoundedRectangle(cornerRadius: radius, style: .continuous)
+                        )
+                }
+            
+            // 회전하는 그라데이션 보더
+            AngularGradient(
+                gradient: Gradient(colors: [
+                    NewIndicatorColor.main,
+                    NewIndicatorColor.light,
+                    NewIndicatorColor.sub,
+                    NewIndicatorColor.main
+                ]),
+                center: .center,
+                angle: .degrees(rotation)
+            )
+            .mask {
+                RoundedRectangle(cornerRadius: radius, style: .continuous)
+                    .strokeBorder(lineWidth: lineWidth)
+            }
         }
     }
     
@@ -146,13 +197,19 @@ struct CollectionCellView: View {
     }
     
     // MARK: - 상태 오버레이
-    private func statusOverlay(info: String) -> some View {
-        RoundedRectangle(cornerRadius: 10)
-            .fill(.black50)
-            .overlay {
-                VStack {
-                    Text(info)
-                        .typography(.suit13M)
+    private func statusOverlay(status: KeyringStatus) -> some View {
+        ZStack {
+            // 어두운 배경
+            RoundedRectangle(cornerRadius: 10)
+                .fill(.black20)
+            
+            // 상태별 UI
+            VStack {
+                switch status {
+                case .packaged:
+                    // 포장중: 텍스트만
+                    Text(status.overlayInfo ?? "")
+                        .typography(.suit13B)
                         .foregroundColor(.white100)
                         .padding(.vertical, 4)
                         .frame(maxWidth: .infinity)
@@ -162,10 +219,35 @@ struct CollectionCellView: View {
                                 .frame(height: 26)
                         )
                     
-                    Spacer()
+                case .published:
+                    // 출품중: 그라데이션 카드 디자인
+                    Text(status.overlayInfo ?? "")
+                        .typography(.suit13B)
+                        .foregroundColor(.main500)
+                        .padding(.vertical, 4)
+                        .frame(maxWidth: .infinity)
+                        .background(
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(LinearGradient(
+                                    colors: [.gradient3, .gradient4],
+                                    startPoint: .leading,
+                                    endPoint: .trailing))
+                                .frame(height: 26)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(.main50, lineWidth:1)
+                          )
+                        
+                    
+                default:
+                    EmptyView()
                 }
-                .padding(5)
+                
+                Spacer()
             }
+            .padding(10)
+        }
     }
 
     // MARK: - 위젯 메타데이터 동기화
@@ -327,4 +409,12 @@ struct CollectionCellView: View {
             }
         }
     }
+}
+
+// MARK: - NewColor 정의
+enum NewIndicatorColor {
+    // Main
+    static let main = Color(hex: "#A72CFF")
+    static let light = Color(hex: "#C2FEFF")
+    static let sub = Color(hex: "#A863FF")
 }

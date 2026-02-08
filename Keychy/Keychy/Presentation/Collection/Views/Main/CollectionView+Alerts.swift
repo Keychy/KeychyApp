@@ -13,24 +13,28 @@ extension CollectionView {
     var alertOverlays: some View {
         if let menuCategory = showingMenuFor {
             categoryMenuView(menuCategory: menuCategory)
+                .zIndex(300)
         }
         
         if showRenameAlert {
             renameAlertOverlay
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .ignoresSafeArea()
+                .zIndex(301)
         }
         
         if showDeleteAlert || showDeleteCompleteAlert {
             deleteAlertOverlay
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .ignoresSafeArea()
+                .zIndex(302)
         }
         
         if showInvenExpandAlert || showPurchaseSuccessAlert || showPurchaseFailAlert {
             invenAlertOverlay
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .ignoresSafeArea()
+                .zIndex(303)
         }
     }
     

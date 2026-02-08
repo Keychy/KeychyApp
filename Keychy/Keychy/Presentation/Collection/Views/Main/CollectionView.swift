@@ -11,6 +11,7 @@ import SpriteKit
 struct CollectionView: View {
     @Bindable var router: NavigationRouter<CollectionRoute>
     @State var collectionViewModel: CollectionViewModel
+    @State var bundleViewModel: BundleViewModel
     @Binding var shouldRefresh: Bool
     @State var userManager = UserManager.shared
     
@@ -66,6 +67,7 @@ struct CollectionView: View {
     var body: some View {
         ZStack {
             mainContent
+                .zIndex(0)
             
             // 검색바
             if showSearchBar {
@@ -94,6 +96,7 @@ struct CollectionView: View {
             }
             
             alertOverlays
+                .zIndex(300)
             
         }
         .toolbar(isSearching ? .hidden : .visible, for: .tabBar)
@@ -113,6 +116,8 @@ struct CollectionView: View {
                 TabBarManager.show()
             }
             fetchUserData()
+            fetchBundleData()
+            
             setupNotifications()
 
             // 백그라운드에서 캐시 없는 키링들 사전 캡처
@@ -217,13 +222,28 @@ struct CollectionView: View {
                     .frame(width: twoGridCellWidth, height: twoGridCellHeight)
                     .cornerRadius(10)
                 
-                HStack(spacing: 3) {
+                HStack(spacing: 4) {
                     if keyring.isNew {
-                        Circle()
-                            .fill(.pink)
-                            .frame(width: 9, height: 9)
-                            .padding(.vertical, 5)
-                            .padding(.horizontal, 1.5)
+                        // NEW 뱃지
+                        Text("NEW!")
+                            .typography(.suit10H)
+                            .foregroundColor(.main500)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 4)
+                            .background(
+                                RoundedRectangle(cornerRadius: 30)
+                                    .fill(
+                                        LinearGradient(
+                                            colors: [
+                                                NewIndicatorColor.light.opacity(0.6),
+                                                NewIndicatorColor.main.opacity(0.25),
+                                            ],
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    )
+
+                            )
                     }
                     
                     // 검색 모드일 때 하이라이트 적용

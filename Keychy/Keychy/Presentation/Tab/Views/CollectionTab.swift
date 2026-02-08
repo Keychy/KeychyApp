@@ -15,7 +15,7 @@ struct CollectionTab: View {
     
     var body: some View {
         NavigationStack(path: $router.path) {
-            CollectionView(router: router, collectionViewModel: collectionViewModel, shouldRefresh: $shouldRefresh)
+            CollectionView(router: router, collectionViewModel: collectionViewModel, bundleViewModel: bundleViewModel, shouldRefresh: $shouldRefresh)
                 .navigationDestination(for: CollectionRoute.self) { route in
                     switch route {
                         
