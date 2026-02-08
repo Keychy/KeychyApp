@@ -61,24 +61,22 @@ struct BundleMenu: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     
                     // 삭제 버튼
-                    Button(action: onDelete) {
-                        HStack(spacing: 8) {
-                            Image(.trash)
-                                .renderingMode(.template)
-                                .resizable()
-                                .frame(width: 24, height: 24)
-                                .foregroundColor(isMain ? .gray300 : .pink)
-                            
-                            Text("삭제")
-                                .typography(.suit16M)
-                                .foregroundColor(isMain ? .gray300 : .pink)
-                            
-                            Spacer()
-                        }
-                        .padding(.vertical, 10)
-                        .padding(.horizontal, 10)
-                        .contentShape(Rectangle())
+                    HStack(spacing: 8) {
+                        Image(.trash)
+                            .renderingMode(.template)
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                            .foregroundColor(isMain ? .gray300 : .pink)
+                        
+                        Text("삭제")
+                            .typography(.suit16M)
+                            .foregroundColor(isMain ? .gray300 : .pink)
+                        
+                        Spacer()
                     }
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 10)
+                    .contentShape(Rectangle())
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .onTapGesture {
                         if !isMain {
