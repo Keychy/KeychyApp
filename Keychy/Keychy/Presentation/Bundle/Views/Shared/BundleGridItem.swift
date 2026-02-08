@@ -12,6 +12,7 @@ import FirebaseFirestore
 
 struct BundleGridItem: View {
     let bundle: KeyringBundle
+    var searchKeyword: String = "" // 검색 키워드 (기본값 빈 문자열)
     
     @State private var cachedImage: Image?
     @State private var isCapturing: Bool = false
@@ -46,16 +47,60 @@ struct BundleGridItem: View {
                     .padding(10)
                 }
             }
-            HStack {
-                Text(bundle.name)
-                    .typography(.notosans14M)
-                    .foregroundStyle(.black100)
-            }
+            // 번들 이름 (검색 키워드 하이라이트 적용)
+            bundleNameView
         } //: VSTACK
         .onAppear {
             loadBundleImage()
         }
     }
+
+    // MARK: - Bundle Name View
+    private var bundleNameView: some View {
+        HStack {
+            if !searchKeyword.isEmpty {
+                // 검색 모드: 하이라이트 적용
+                Text(highlightedText(text: bundle.name, keyword: searchKeyword))
+            } else {
+                // 일반 모드
+                Text(bundle.name)
+                    .typography(.notosans14M)
+                    .foregroundStyle(.black100)
+            }
+        }
+    }
+    
+    // MARK: - 검색 키워드 Highlighted Text
+    private func highlightedText(text: String, keyword: String) -> AttributedString {
+        var attributedString = AttributedString(text)
+        
+        guard !keyword.isEmpty else {
+            attributedString.font = .notosans14M
+            return attributedString
+        }
+        
+        attributedString.font = .notosans14M
+        attributedString.foregroundColor = .black100
+        
+        let lowerText = text.lowercased()
+        let lowerKeyword = keyword.lowercased()
+        
+        var searchRange = lowerText.startIndex..<lowerText.endIndex
+        
+        while let range = lowerText.range(of: lowerKeyword, range: searchRange) {
+            let startIndex = attributedString.index(attributedString.startIndex, offsetByCharacters: lowerText.distance(from: lowerText.startIndex, to: range.lowerBound))
+            let endIndex = attributedString.index(startIndex, offsetByCharacters: lowerKeyword.count)
+            let attributedRange = startIndex..<endIndex
+            
+            attributedString[attributedRange].foregroundColor = .main500
+            attributedString[attributedRange].font = .notosans14SB
+            
+            searchRange = range.upperBound..<lowerText.endIndex
+        }
+        
+        return attributedString
+    }
+
 }
 
 extension BundleGridItem {
