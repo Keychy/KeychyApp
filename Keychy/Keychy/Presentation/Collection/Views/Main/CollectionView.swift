@@ -8,6 +8,11 @@
 import SwiftUI
 import SpriteKit
 
+enum SearchSegment {
+    case keyring
+    case bundle
+}
+
 struct CollectionView: View {
     @Bindable var router: NavigationRouter<CollectionRoute>
     @State var collectionViewModel: CollectionViewModel
@@ -32,6 +37,7 @@ struct CollectionView: View {
     @State var newCategoryName: String = ""
     @State var showingMenuFor: String?
     @State var menuPosition: CGRect = .zero
+    @State var searchSegment: SearchSegment = .keyring
 
     // 디버그용
     @State var showCachedImagesDebug: Bool = false
@@ -57,6 +63,11 @@ struct CollectionView: View {
             category: selectedCategory,
             searchText: isSearching ? searchText : ""
         )
+    }
+    
+    // 필터링된 뭉치 (검색)
+    var filteredBundles: [KeyringBundle] {
+        bundleViewModel.getFilteredBundles(searchText: isSearching ? searchText : "")
     }
     
     let columns: [GridItem] = [
