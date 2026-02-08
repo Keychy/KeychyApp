@@ -29,11 +29,7 @@ class CollectionViewModel {
     // MARK: - 탭 토글 (true = 키링, false = 뭉치)
     var collectionToggle: Bool = true {
         didSet {
-            // 탭 전환 시 초기화
-            if !collectionToggle {
-                // 뭉치 탭으로 전환 시
-                selectedSort = "최신순"
-            }
+            // 탭 전환해도 정렬 상태는 유지 (각 탭이 독립적으로 정렬방식 유지)
         }
     }
     
