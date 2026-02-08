@@ -53,6 +53,10 @@ struct BundleDetailView<Route: BundleRoute>: View {
     /// 영상 생성기
     @State var videoGenerator = BundleVideoGenerator()
     
+    // 영상 공유 관련
+    @State var cachedVideoURL: URL?
+    @State var showShareSheet: Bool = false
+    
     // MARK: - Body
     var body: some View {
         GeometryReader { geometry in
@@ -110,18 +114,8 @@ struct BundleDetailView<Route: BundleRoute>: View {
                         
                         VStack {
                             Spacer()
+                            
                             bottomSection
-                        }
-
-                        // 영상 저장 버튼 - 이미지 저장 버튼 바로 위
-                        VStack {
-                            Spacer()
-                            HStack {
-                                Spacer()
-                                downloadVideoButton
-                            }
-                            .padding(.trailing, 16)
-                            .padding(.bottom, 36 + 48 + 12) // bottomSection padding + button height + spacing
                         }
                     }
                     menuOverlay
@@ -137,6 +131,13 @@ struct BundleDetailView<Route: BundleRoute>: View {
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .withToast(position: .default)
+        .sheet(isPresented: $showShareSheet) {
+            if let url = cachedVideoURL {
+                ShareSheet(items: [url])
+                    .presentationDetents([.fraction(0.65)])
+                    .presentationDragIndicator(.visible)
+            }
+        }
         .onPreferenceChange(MenuButtonPreferenceKey.self) { frame in
             if frame != .zero {
                 menuPosition = frame
@@ -150,6 +151,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
         }
         .onDisappear {
             uiState.resetOverlays()
+            cleanupCachedVideo()
             
             // 진행 중인 작업들 취소
             readyDelayTask?.cancel()
@@ -172,6 +174,14 @@ struct BundleDetailView<Route: BundleRoute>: View {
                     }
                 }
             }
+        }
+    }
+    
+    // MARK: - 캐시된 영상 정리
+    private func cleanupCachedVideo() {
+        if let url = cachedVideoURL {
+            try? FileManager.default.removeItem(at: url)
+            cachedVideoURL = nil
         }
     }
 }
@@ -336,11 +346,18 @@ extension BundleDetailView {
                 Text("\(bundle.name)")
             }
         } trailing: {
-            MenuToolbarButton {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                    uiState.showMenu.toggle()
+            HStack(spacing: 10) {
+                // 이미지 다운 버튼
+                downloadImageButton
+                
+                // 메뉴 버튼
+                MenuToolbarButton {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        uiState.showMenu.toggle()
+                    }
                 }
             }
+
         }
     }
 }
@@ -371,7 +388,7 @@ extension BundleDetailView {
                 
                 Spacer()
 
-                downloadImageButton
+                shareButton
             }
         }
         .padding(EdgeInsets(top: 4, leading: 16, bottom: 36, trailing: 16))
@@ -409,6 +426,25 @@ extension BundleDetailView {
         }
     }
     
+    /// 공유 버튼
+    private var shareButton: some View {
+        Button(action: {
+            if cachedVideoURL != nil {
+                showShareSheet = true
+                return
+            }
+            Task {
+                await generateVideoForShare()
+            }
+        }) {
+            Image(.share)
+        }
+        .disabled(uiState.isGeneratingVideo || uiState.isCapturing)
+        .frame(width: 48, height: 48)
+        .glassEffect(in: .circle)
+        .opacity((uiState.isGeneratingVideo || uiState.isCapturing) ? 0.5 : 1)
+    }
+    
     /// 영상 다운로드 버튼
     private var downloadVideoButton: some View {
         Button(action: {
@@ -435,7 +471,7 @@ extension BundleDetailView {
             Image(.imageDownload)
         }
         .disabled(uiState.isCapturing || uiState.isGeneratingVideo)
-        .frame(width: 48, height: 48)
+        .frame(width: 44, height: 44)
         .glassEffect(in: .circle)
         .opacity((uiState.isCapturing || uiState.isGeneratingVideo) ? 0.5 : 1)
     }
