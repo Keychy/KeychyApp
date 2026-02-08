@@ -77,8 +77,7 @@ extension CollectionView {
             // 고정 오버레이 헤더
             VStack(spacing: 0) {
                 headerSection
-                    .padding(.horizontal, Spacing.margin)
-                    .padding(.top, 2)
+                    .padding(.horizontal, Spacing.md)
                     .padding(.bottom, 10)
 
                 tagSection
@@ -110,7 +109,6 @@ extension CollectionView {
             VStack(spacing: 0) {
                 headerSection
                     .padding(.horizontal, Spacing.margin)
-                    .padding(.top, 2)
                     .padding(.bottom, 10)
                 
                 collectionHeader
