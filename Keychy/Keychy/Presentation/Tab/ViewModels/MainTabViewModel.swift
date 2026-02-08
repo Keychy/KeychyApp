@@ -41,6 +41,8 @@ class MainTabViewModel {
     var showCollectSheet = false
     var receivedPostOfficeId: String?
     var collectedPostOfficeId: String?
+    var receivedDeepLinkError: DeepLinkError?
+    var collectedDeepLinkError: DeepLinkError?
     var shouldRefreshCollection = false
 
     // Splash
@@ -78,8 +80,8 @@ class MainTabViewModel {
     // MARK: - Private Methods
     /// 대기 중인 딥링크가 있는지 확인하고 처리
     private func checkPendingDeepLink() {
-        if let (postOfficeId, type) = deepLinkManager.consumePendingDeepLink() {
-            handleDeepLink(postOfficeId: postOfficeId, type: type)
+        if let (postOfficeId, type, error) = deepLinkManager.consumePendingDeepLink() {
+            handleDeepLink(postOfficeId: postOfficeId, type: type, error: error)
         }
     }
 
@@ -87,12 +89,12 @@ class MainTabViewModel {
     /// - Parameters:
     ///   - postOfficeId: 우체국 ID
     ///   - type: 딥링크 타입 (receive, collect, notification)
-    private func handleDeepLink(postOfficeId: String, type: DeepLinkType) {
+    private func handleDeepLink(postOfficeId: String, type: DeepLinkType, error: DeepLinkError?) {
         switch type {
         case .receive:
-            handleSheetDeepLink(postOfficeId: postOfficeId, isReceive: true)
+            handleSheetDeepLink(postOfficeId: postOfficeId, isReceive: true, error: error)
         case .collect:
-            handleSheetDeepLink(postOfficeId: postOfficeId, isReceive: false)
+            handleSheetDeepLink(postOfficeId: postOfficeId, isReceive: false, error: error)
         case .notification:
             selectedTab = TabIndex.home.rawValue
             Task { @MainActor in
@@ -106,13 +108,15 @@ class MainTabViewModel {
     /// - Parameters:
     ///   - postOfficeId: 우체국 ID
     ///   - isReceive: true면 받기 Sheet, false면 모으기 Sheet
-    private func handleSheetDeepLink(postOfficeId: String, isReceive: Bool) {
+    private func handleSheetDeepLink(postOfficeId: String, isReceive: Bool, error: DeepLinkError?) {
         selectedTab = TabIndex.collection.rawValue
 
         if isReceive {
             receivedPostOfficeId = postOfficeId
+            receivedDeepLinkError = error
         } else {
             collectedPostOfficeId = postOfficeId
+            collectedDeepLinkError = error
         }
 
         Task { @MainActor in

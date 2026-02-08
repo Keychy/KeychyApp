@@ -13,11 +13,12 @@ struct KeyringReceiveView: View {
     @State var viewModel: KeyringReceiveViewModel
     @State private var scene: KeyringCellScene?
     
-    init(viewModel: CollectionViewModel, postOfficeId: String) {
+    init(viewModel: CollectionViewModel, postOfficeId: String, deepLinkError: DeepLinkError? = nil) {
         _viewModel = State(
             initialValue: KeyringReceiveViewModel(
                 collectionViewModel: viewModel,
-                postOfficeId: postOfficeId
+                postOfficeId: postOfficeId,
+                deepLinkError: deepLinkError
             )
         )
     }
@@ -38,10 +39,16 @@ struct KeyringReceiveView: View {
 
                 alertOverlayView(geometry: geometry)
                 
-                customNavigationBar
-                    .blur(radius: viewModel.shouldApplyBlur ? 15 : 0)
-                    .adaptiveTopPadding()
-                    .zIndex(0)
+                // 정상 키링 수신 화면일 때만 네비게이션 바 표시
+                if !viewModel.isLoading &&
+                   !viewModel.hasDeepLinkError &&
+                   !viewModel.isAlreadyReceived &&
+                   viewModel.keyring != nil {
+                    customNavigationBar
+                        .blur(radius: viewModel.shouldApplyBlur ? 15 : 0)
+                        .adaptiveTopPadding()
+                        .zIndex(0)
+                }
             }
         }
         .ignoresSafeArea()
@@ -79,23 +86,33 @@ struct KeyringReceiveView: View {
     
     private var alreadyReceivedView: some View {
         VStack(spacing: 20) {
-            VStack(spacing: 0) {
-                Image(.emptyViewIcon)
+            VStack(spacing: 10) {
+                Image(.noInternetBangMark)
                     .resizable()
-                    .frame(width: 124, height: 111)
+                    .frame(width: 26, height: 48)
+                    .padding(.bottom, 15)
 
                 Text("이미 수락된 선물이에요")
+                    .typography(.suit18SB)
+                    .foregroundColor(.black100)
+                
+                Text("이 키링은 이미 다른 사람이 수락했어요")
                     .typography(.suit15R)
                     .foregroundColor(.black100)
-                    .padding(.vertical, 15)
+                    .padding(.bottom, 15)
 
                 Button {
                     dismiss()
                 } label: {
                     Text("닫기")
-                        .typography(.suit15R)
-                        .foregroundColor(.main500)
-                        .padding(.vertical, 15)
+                        .typography(.suit17B)
+                        .foregroundColor(.black100)
+                        .padding(.vertical, 13.5)
+                        .padding(.horizontal, 20)
+                        .background(
+                            RoundedRectangle(cornerRadius: 15)
+                                .fill(.gray50)
+                        )
                 }
             }
         }
@@ -128,23 +145,34 @@ struct KeyringReceiveView: View {
     
     private var errorView: some View {
         VStack(spacing: 20) {
-            VStack(spacing: 0) {
-                Image(.emptyViewIcon)
+            VStack(spacing: 10) {
+                Image(.noInternetBangMark)
                     .resizable()
-                    .frame(width: 124, height: 111)
+                    .frame(width: 26, height: 48)
+                    .padding(.bottom, 15)
 
-                Text("키링을 불러올 수 없습니다.")
-                    .typography(.suit15R)
+                Text("키링을 불러 올 수 없습니다")
+                    .typography(.suit18SB)
                     .foregroundColor(.black100)
-                    .padding(.vertical, 15)
+                
+                Text("유효하지 않거나\n더 이상 사용할 수 없는 링크입니다")
+                    .typography(.suit15R)
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(.black100)
+                    .padding(.bottom, 15)
 
                 Button {
                     dismiss()
                 } label: {
                     Text("닫기")
-                        .typography(.suit15R)
-                        .foregroundColor(.main500)
-                        .padding(.vertical, 15)
+                        .typography(.suit17B)
+                        .foregroundColor(.black100)
+                        .padding(.vertical, 13.5)
+                        .padding(.horizontal, 20)
+                        .background(
+                            RoundedRectangle(cornerRadius: 15)
+                                .fill(.gray50)
+                        )
                 }
             }
         }
@@ -245,10 +273,15 @@ struct KeyringReceiveView: View {
     
     @ViewBuilder
     private var backgroundImage: some View {
-        Image(viewModel.backgroundImageName)
-            .resizable()
-            .scaledToFill()
-            .ignoresSafeArea()
+        if viewModel.shouldShowWhiteBackground {
+            Color.white
+                .ignoresSafeArea()
+        } else {
+            Image(.greenBackground)
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+        }
     }
 }
 

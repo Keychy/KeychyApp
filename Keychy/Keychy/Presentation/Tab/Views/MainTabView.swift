@@ -130,7 +130,8 @@ extension MainTabView {
         if let postOfficeId = viewModel.receivedPostOfficeId {
             KeyringReceiveView(
                 viewModel: viewModel.collectionViewModel,
-                postOfficeId: postOfficeId
+                postOfficeId: postOfficeId,
+                deepLinkError: viewModel.receivedDeepLinkError
             )
         } else {
             EmptyView()
@@ -142,7 +143,8 @@ extension MainTabView {
         if let postOfficeId = viewModel.collectedPostOfficeId {
             KeyringCollectView(
                 viewModel: viewModel.collectionViewModel,
-                postOfficeId: postOfficeId
+                postOfficeId: postOfficeId,
+                deepLinkError: viewModel.collectedDeepLinkError
             )
         } else {
             EmptyView()
