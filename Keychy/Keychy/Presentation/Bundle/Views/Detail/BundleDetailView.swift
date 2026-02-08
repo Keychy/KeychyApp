@@ -121,6 +121,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
                     menuOverlay
 
                     customnavigationBar
+                        .adaptiveTopPadding()
                 }
                 .blur(radius: shouldShowAlertOverlay ? 15 : 0)
                 .ignoresSafeArea()
@@ -333,32 +334,50 @@ extension BundleDetailView {
 
 // MARK: - 커스텀 네비게이션 바
 extension BundleDetailView {
+    private var safeAreaTop: CGFloat {
+        guard let window = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first?.windows
+            .first(where: { $0.isKeyWindow }) else {
+            return 0
+        }
+        return window.safeAreaInsets.top
+    }
+    
     private var customnavigationBar: some View {
-        CustomNavigationBar {
-            BackToolbarButton {
-                bundleVM.lastKeyringsIdForDetail = ""
-                bundleVM.lastCarabinerIdForDetail = ""
-                bundleVM.lastBackgroundIdForDetail = ""
-                router.pop()
-            }
-        } center: {
+        ZStack {
             if let bundle = bundleVM.selectedBundle {
                 Text("\(bundle.name)")
+                    .typography(.notosans17M)
+                    .foregroundStyle(.gray600)
             }
-        } trailing: {
-            HStack(spacing: 10) {
-                // 이미지 다운 버튼
-                downloadImageButton
+            
+            HStack {
+                BackToolbarButton {
+                    bundleVM.lastKeyringsIdForDetail = ""
+                    bundleVM.lastCarabinerIdForDetail = ""
+                    bundleVM.lastBackgroundIdForDetail = ""
+                    router.pop()
+                }
                 
-                // 메뉴 버튼
-                MenuToolbarButton {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        uiState.showMenu.toggle()
+                Spacer()
+                
+                HStack(spacing: 10) {
+                    // 이미지 다운 버튼
+                    downloadImageButton
+                    
+                    // 메뉴 버튼
+                    MenuToolbarButton {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            uiState.showMenu.toggle()
+                        }
                     }
                 }
             }
-
+            .padding(.horizontal, 16)
         }
+        .frame(height: 44)
+        .padding(.top, safeAreaTop)
     }
 }
 
