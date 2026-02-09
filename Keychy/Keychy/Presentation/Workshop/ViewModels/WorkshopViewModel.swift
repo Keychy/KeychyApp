@@ -148,19 +148,6 @@ class WorkshopViewModel {
     var isWorkshopBannerLoading: Bool = true
     var hasNetworkError: Bool = false
 
-    // WorkshopDataManager의 값을 직접 참조 (중복 저장 방지)
-    var workshopBannerURL: URL? {
-        dataManager.workshopBannerURL
-    }
-
-    var workshopThumbnailURL: URL? {
-        dataManager.workshopThumbnailURL
-    }
-
-    var workshopThumbnailImage: UIImage? {
-        dataManager.workshopThumbnailImage
-    }
-
     /// 보유 아이템 로딩 완료 여부 (templates가 로드되면 자동 계산 가능)
     var hasLoadedOwnedItems: Bool {
         !loadedCategories.isEmpty
