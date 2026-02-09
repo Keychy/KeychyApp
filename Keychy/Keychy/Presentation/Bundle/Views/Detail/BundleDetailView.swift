@@ -43,6 +43,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
     @State var isNavigatingDeeper: Bool = true
     @State private var dismissTask: Task<Void, Never>?
     @State private var readyDelayTask: Task<Void, Never>?
+    @State private var sceneReloadTrigger = UUID()
     
     /// MultiKeyringScene에 전달할 키링 데이터 리스트
     @State var keyringDataList: [MultiKeyringScene.KeyringData] = []
@@ -97,14 +98,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
                         )
                         .animation(.easeInOut(duration: 0.3), value: isSceneReady)
                         /// 씬 재생성 조건을 위한 ID 설정 -> 배경, 카라비너, 키링 구성이 변경되면 씬을 완전히 재생성
-                        .id("scene_\(background.id ?? "")_\(carabiner.id ?? "")_\(keyringDataList.map { "\($0.index)_\($0.bodyImageURL.hashValue)" }.joined(separator: "_"))")
-                        .onAppear {
-                            bundleVM.returnBackgroundId = bundle.selectedBackground
-                            bundleVM.returnCarabinerId = bundle.selectedCarabiner
-                            bundleVM.returnKeyringsId = bundle.keyrings
-                                .sorted()
-                                .joined(separator: "|")
-                        }
+                        .id("scene_\(background.id ?? "")_\(carabiner.id ?? "")_\(keyringDataList.map { "\($0.index)_\($0.bodyImageURL.hashValue)" }.joined(separator: "_"))_\(sceneReloadTrigger.uuidString)")
                         
                         VStack {
                             Spacer()
