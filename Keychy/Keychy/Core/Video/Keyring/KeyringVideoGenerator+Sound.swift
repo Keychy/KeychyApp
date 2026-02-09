@@ -77,18 +77,25 @@ extension KeyringVideoGenerator {
             }
 
             let audioAsset = AVURLAsset(url: soundURL)
-            guard let audioTrack = try await audioAsset.loadTracks(withMediaType: .audio).first else {
-                continue
+
+            do {
+                let tracks = try await audioAsset.loadTracks(withMediaType: .audio)
+
+                guard let audioTrack = tracks.first else {
+                    continue
+                }
+
+                let audioDuration = try await audioAsset.load(.duration)
+                let startTime = CMTime(seconds: event.time, preferredTimescale: 600)
+
+                try compositionAudioTrack?.insertTimeRange(
+                    CMTimeRange(start: .zero, duration: audioDuration),
+                    of: audioTrack,
+                    at: startTime
+                )
+            } catch {
+                print("[VideoGenerator] 오디오 트랙 삽입 실패: \(error.localizedDescription)")
             }
-
-            let audioDuration = try await audioAsset.load(.duration)
-            let startTime = CMTime(seconds: event.time, preferredTimescale: 600)
-
-            try compositionAudioTrack?.insertTimeRange(
-                CMTimeRange(start: .zero, duration: audioDuration),
-                of: audioTrack,
-                at: startTime
-            )
         }
 
         // 최종 비디오 Export
@@ -111,22 +118,29 @@ extension KeyringVideoGenerator {
     }
 
     /// 사운드 파일 URL 찾기
-    /// 1. Firebase 캐시 확인 (sounds/soundId.mp3)
-    /// 2. 커스텀 녹음 파일인 경우 URL 직접 반환
+    /// 1. Firebase Storage URL인 경우 (커스텀 사운드) 캐시에서 파일명으로 찾기
+    /// 2. 일반 사운드 ID인 경우 캐시에서 찾기
     private func findSoundURL(soundId: String) -> URL? {
-        // 커스텀 녹음 파일 (URL 형식)
-        if soundId.starts(with: "file://") || soundId.starts(with: "/") {
-            return URL(fileURLWithPath: soundId.replacingOccurrences(of: "file://", with: ""))
+        let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        let soundsDir = cacheDirectory.appendingPathComponent("sounds")
+
+        // 1. Firebase Storage URL (커스텀 사운드)
+        if soundId.hasPrefix("https://") || soundId.hasPrefix("http://") {
+            let fileName = soundId.firebaseStorageFileName
+            let cachedURL = soundsDir.appendingPathComponent(fileName)
+
+            guard FileManager.default.fileExists(atPath: cachedURL.path) else {
+                return nil
+            }
+            return cachedURL
         }
 
-        // Firebase 캐시
-        let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-        let cachedURL = cacheDirectory.appendingPathComponent("sounds/\(soundId).mp3")
+        // 2. 일반 사운드 ID (Firebase 캐시)
+        let cachedURL = soundsDir.appendingPathComponent("\(soundId).mp3")
 
         guard FileManager.default.fileExists(atPath: cachedURL.path) else {
             return nil
         }
-
         return cachedURL
     }
 }
