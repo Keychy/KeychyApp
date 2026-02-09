@@ -90,12 +90,6 @@ struct BundleDetailView<Route: BundleRoute>: View {
                                             withAnimation(.easeOut(duration: 0.3)) {
                                                 isSceneReady = true
                                             }
-                                            // 마지막으로 로드한 구성 id를 뷰모델에 저장 (뷰모델이 다음 진입 시 동일 구성 판정)
-                                            bundleVM.updateLastConfigIds(
-                                                background: bundleVM.selectedBackground,
-                                                carabiner: bundleVM.selectedCarabiner,
-                                                keyringDataList: keyringDataList
-                                            )
                                         }
                                     }
                                 }
@@ -222,6 +216,17 @@ extension BundleDetailView {
         let newKeyringDataList = await bundleVM.createKeyringDataList(bundle: bundle, carabiner: carabiner)
         keyringDataList = newKeyringDataList
         
+        // 항상 lastConfigIds 업데이트
+        let bgId = bundleVM.makeBackgroundId(bundleVM.selectedBackground)
+        let cbId = bundleVM.makeCarabinerId(bundleVM.selectedCarabiner)
+        let krId = bundleVM.makeKeyringsId(newKeyringDataList)
+        
+        bundleVM.lastBackgroundIdForDetail = bgId
+        bundleVM.lastCarabinerIdForDetail = cbId
+        bundleVM.lastKeyringsIdForDetail = krId
+        
+        sceneReloadTrigger = UUID()
+        
         // 키링 데이터까지 불러오고 난 후에도 키링의 개수가 0개라면 바로 씬을 준비 완료 상태로 체크
         if newKeyringDataList.isEmpty {
             isSceneReady = true
@@ -289,12 +294,17 @@ extension BundleDetailView {
     @MainActor
     private func handleBundleChange() async {
         guard let bundle = bundleVM.selectedBundle else { return }
+        
         // 동일 구성인지 확인(+변경 감지)
-        if bundleVM.shouldSkipReloadForReturnedConfig() {
+        let shouldSkip = bundleVM.shouldSkipReloadForReturnedConfig()
+        
+        if shouldSkip {
             restoreSceneIfNeeded(bundle)
             isSceneReady = true
             return
         }
+        
+        // 리로드 진행 - loadBundleData 호출
         isSceneReady = false
         readyDelayTask?.cancel()
         readyDelayTask = nil
@@ -312,6 +322,19 @@ extension BundleDetailView {
         if bundleVM.selectedCarabiner == nil {
             bundleVM.selectedCarabiner = bundleVM.resolveCarabiner(from: bundle.selectedCarabiner)
         }
+        
+        // keyringDataList도 복원 (NameEditView에서 돌아올 때 필요)
+        if keyringDataList.isEmpty, let carabiner = bundleVM.selectedCarabiner {
+            Task {
+                let newKeyringDataList = await bundleVM.createKeyringDataList(bundle: bundle, carabiner: carabiner)
+                await MainActor.run {
+                    keyringDataList = newKeyringDataList
+                    isSceneReady = true
+                }
+            }
+            return
+        }
+        
         readyDelayTask?.cancel()
         readyDelayTask = nil
         isSceneReady = true
