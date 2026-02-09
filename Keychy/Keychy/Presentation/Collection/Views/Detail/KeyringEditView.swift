@@ -159,11 +159,7 @@ extension KeyringEditView {
                     tags: editedTags
                 ) { success in
                     if success {
-                        router.reset()
-                        TabBarManager.show()
-                        
-                        //TODO: 수정완료 후 pop (데이터 새로고침 로직 추가 예정)
-                        //router.pop()
+                        router.pop()
                     }
                 }
             } label:  {

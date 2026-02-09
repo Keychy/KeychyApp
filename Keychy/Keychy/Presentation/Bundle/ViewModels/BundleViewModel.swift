@@ -75,6 +75,10 @@ class BundleViewModel {
     var isLoading = false
     var isPurchasing = false
 
+    // MARK: - 정렬 상태
+    
+    var selectedSort: String = "최신순" // 기본값
+    
     // MARK: - 시트 필터/정렬 상태
 
     var sheetSortOrder: String = "최신순"
@@ -150,12 +154,7 @@ class BundleViewModel {
     // MARK: - 정렬된 뭉치
 
     var sortedBundles: [KeyringBundle] {
-        bundles.sorted { a, b in
-            if a.isMain != b.isMain {
-                return a.isMain
-            }
-            return a.createdAt > b.createdAt
-        }
+        sortBundles(bundles)
     }
 
     // MARK: - 구성 ID 저장소 (편집 → 상세 화면 전환용)

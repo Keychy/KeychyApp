@@ -86,4 +86,54 @@ extension BundleDetailView {
             return nil
         }
     }
+    
+    /// 공유용 영상 생성
+    @MainActor
+    func generateVideoForShare() async {
+        guard !uiState.isGeneratingVideo else { return }
+        
+        // 이미 캐시된 영상이 있으면 바로 공유
+        if cachedVideoURL != nil {
+            showShareSheet = true
+            return
+        }
+        
+        uiState.isGeneratingVideo = true
+        
+        guard let bundle = bundleVM.selectedBundle,
+              let background = bundleVM.selectedBackground,
+              let carabiner = bundleVM.selectedCarabiner else {
+            uiState.isGeneratingVideo = false
+            return
+        }
+        
+        do {
+            // 배경 이미지 로드
+            let backgroundImage = await loadImage(from: background.backgroundImage)
+            
+            // 영상 생성 (기존 generateVideo 함수 사용)
+            let videoURL = try await videoGenerator.generateVideo(
+                keyringDataList: keyringDataList,
+                backgroundImage: backgroundImage,
+                backgroundImageURL: background.backgroundImage,
+                carabinerBackImageURL: carabiner.backImageURL,
+                carabinerFrontImageURL: carabiner.frontImageURL,
+                carabinerX: carabiner.carabinerX,
+                carabinerY: carabiner.carabinerY,
+                carabinerWidth: carabiner.carabinerWidth,
+                carabinerType: carabiner.type,
+                bundleScale: 2.5
+            )
+            
+            cachedVideoURL = videoURL
+            uiState.isGeneratingVideo = false
+            
+            // 영상 생성 완료 후 공유 시트 표시
+            showShareSheet = true
+            
+        } catch {
+            print("[BundleDetail] 영상 생성 실패: \(error.localizedDescription)")
+            uiState.isGeneratingVideo = false
+        }
+    }
 }

@@ -15,6 +15,9 @@ enum HomeRoute: Hashable, BundleRoute {
     case bundleNameEditView
     case bundleEditView
     case bundleCompleteView
+    
+    // Widget
+    case widgetSettingView
 
     // Home
     case coinCharge
