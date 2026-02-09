@@ -285,9 +285,8 @@ class EffectSyncManager {
             return
         }
 
-        // URL path에서 마지막 컴포넌트만 추출 (예: 6FBEABEA-F603-40EA-B953-7D2F0AA9EB03.m4a)
-        let pathComponents = downloadURL.path.components(separatedBy: "/")
-        let fileName = pathComponents.last ?? "custom_sound.m4a"
+        // Firebase Storage URL에서 파일명 추출
+        let fileName = soundURLString.firebaseStorageFileName
 
         let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
         let soundsDir = cacheDirectory.appendingPathComponent("sounds")
@@ -306,19 +305,12 @@ class EffectSyncManager {
 
         // 이미 다운로드되어 있으면 스킵
         if FileManager.default.fileExists(atPath: localURL.path) {
-            print("[EffectSync] 커스텀 사운드 이미 캐시에 있음: \(fileName)")
             return
         }
 
         do {
-            // URLSession으로 직접 다운로드
             let (tempURL, _) = try await URLSession.shared.download(from: downloadURL)
-
-            // 임시 파일을 최종 위치로 이동
             try FileManager.default.moveItem(at: tempURL, to: localURL)
-
-            print("[EffectSync] 커스텀 사운드 다운로드 완료: \(fileName)")
-
         } catch {
             print("[EffectSync] 커스텀 사운드 다운로드 실패 (\(fileName)): \(error.localizedDescription)")
         }
