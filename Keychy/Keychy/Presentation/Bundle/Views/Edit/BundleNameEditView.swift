@@ -54,6 +54,16 @@ struct BundleNameEditView<Route: BundleRoute>: View {
                 morePadding = 40
             }
             TabBarManager.hide()
+            
+            Task {
+                await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+                    bundleVM.fetchAllBackgrounds { _ in
+                        bundleVM.fetchAllCarabiners { _ in
+                            continuation.resume()
+                        }
+                    }
+                }
+            }
         }
         // 키보드 높이 변경 시 SwiftUI 애니메이션 비활성화
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { notification in
@@ -150,16 +160,61 @@ extension BundleNameEditView {
     private var customNavigationBar: some View {
         CustomNavigationBar {
             BackToolbarButton {
-                router.pop()
+                
+                if let bundle = bundleVM.selectedBundle {
+                    // resolveBackground/Carabiner가 nil을 반환할 수 있으므로 확인
+                    guard let bg = bundleVM.resolveBackground(from: bundle.selectedBackground),
+                          let cb = bundleVM.resolveCarabiner(from: bundle.selectedCarabiner) else {
+                        router.pop()
+                        return
+                    }
+                    
+                    let bgId = bundleVM.makeBackgroundId(bg)
+                    let cbId = bundleVM.makeCarabinerId(cb)
+                    
+                    bundleVM.returnBackgroundId = bgId
+                    bundleVM.returnCarabinerId = cbId
+                    
+                    Task {
+                        var krList: [MultiKeyringScene.KeyringData] = []
+                        krList = await bundleVM.createKeyringDataList(bundle: bundle, carabiner: cb)
+                        let krId = bundleVM.makeKeyringsId(krList)
+                        
+                        await MainActor.run {
+                            bundleVM.returnKeyringsId = krId
+                            // returnIds 설정 완료, pop
+                            router.pop()
+                        }
+                    }
+                } else {
+                    // bundle이 nil, 바로 pop
+                    router.pop()
+                }
             }
         } center: {
             EmptyView()
         } trailing: {
-            NextToolbarButton {
-                handleCheckButtonTap()
-            }
-            .disabled(isUpdating || bundleName.isEmpty || bundleName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || hasProfanity)
+            completeButton
         }
+    }
+    
+    private var completeButton: some View {
+        let isCompleteEnabled = !isUpdating &&
+                               !bundleName.isEmpty &&
+                               !bundleName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+                               !hasProfanity
+        
+        return Button {
+            guard isCompleteEnabled else { return }
+            handleCheckButtonTap()
+        } label: {
+            Text("완료")
+                .typography(.suit17B)
+                .foregroundStyle(isCompleteEnabled ? .main500 : .gray200)
+        }
+        .frame(width: 62, height: 44)
+        .glassEffect(.regular.interactive(), in: .capsule)
+        .disabled(!isCompleteEnabled)
     }
     
     private func handleCheckButtonTap() {
@@ -182,8 +237,8 @@ extension BundleNameEditView {
         let bgId = bundleVM.makeBackgroundId(bg)
         let cbId = bundleVM.makeCarabinerId(cb)
         
-        // keyringsId는 현재 번들의 구성 기반으로 재구성
         Task {
+            // returnIds 먼저 설정
             var krList: [MultiKeyringScene.KeyringData] = []
             if let carabiner = cb {
                 krList = await bundleVM.createKeyringDataList(bundle: bundle, carabiner: carabiner)
@@ -195,14 +250,15 @@ extension BundleNameEditView {
                 bundleVM.returnCarabinerId = cbId
                 bundleVM.returnKeyringsId = krId
             }
-        }
-        
-        bundleVM.updateBundleName(bundle: bundle, newName: bundleName.trimmingCharacters(in: .whitespacesAndNewlines)) { success in
-            DispatchQueue.main.async {
-                self.isUpdating = false
-                if success {
-                    bundleVM.selectedBundle?.name = self.bundleName.trimmingCharacters(in: .whitespacesAndNewlines)
-                    router.pop()
+            
+            // returnIds 설정 완료 후 이름 업데이트
+            bundleVM.updateBundleName(bundle: bundle, newName: bundleName.trimmingCharacters(in: .whitespacesAndNewlines)) { success in
+                DispatchQueue.main.async {
+                    self.isUpdating = false
+                    if success {
+                        bundleVM.selectedBundle?.name = self.bundleName.trimmingCharacters(in: .whitespacesAndNewlines)
+                        router.pop()
+                    }
                 }
             }
         }

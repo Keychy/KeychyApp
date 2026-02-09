@@ -246,6 +246,10 @@ extension BundleEditView {
     private var customNavigationBar: some View {
         CustomNavigationBar {
             BackToolbarButton {
+                bundleVM.lastBackgroundIdForDetail = ""
+                bundleVM.lastCarabinerIdForDetail = ""
+                bundleVM.lastKeyringsIdForDetail = ""
+                
                 isNavigatingAway = true
                 router.pop()
             }
