@@ -30,15 +30,21 @@ extension KeyringInfoInputView {
             
             // 2. 커스텀 사운드가 있으면 Firebase Storage에 업로드
             if let customSoundURL = self.viewModel.customSoundURL {
-                self.uploadSoundToStorage(soundURL: customSoundURL, uid: uid) { soundURL in
-                    guard let soundURL = soundURL else {
+                self.uploadSoundToStorage(soundURL: customSoundURL, uid: uid) { firebaseURL in
+                    guard let firebaseURL = firebaseURL else {
                         // 업로드 실패 시 기존 soundId 사용
                         self.createKeyringWithData(uid: uid, imageURL: imageURL, soundId: self.viewModel.soundId)
                         return
                     }
-                    
+
                     // 업로드 성공 - Firebase Storage URL을 soundId로 사용
-                    self.createKeyringWithData(uid: uid, imageURL: imageURL, soundId: soundURL)
+                    // viewModel도 업데이트하여 CompleteView에서 올바른 soundId 사용
+                    self.viewModel.soundId = firebaseURL
+
+                    // 로컬 사운드 파일을 캐시에 복사 (영상 생성 시 사용)
+                    self.copySoundToCache(localURL: customSoundURL, firebaseURL: firebaseURL)
+
+                    self.createKeyringWithData(uid: uid, imageURL: imageURL, soundId: firebaseURL)
                 }
             } else {
                 // 커스텀 사운드 없음 - 기존 soundId 사용
@@ -127,10 +133,10 @@ extension KeyringInfoInputView {
             completion(nil)
             return
         }
-        
+
         let fileName = "\(UUID().uuidString).m4a"
         let path = "Keyrings/CustomSounds/\(uid)/\(fileName)"
-        
+
         Task {
             do {
                 let downloadURL = try await StorageManager.shared.uploadAudio(soundData, path: path)
@@ -141,7 +147,35 @@ extension KeyringInfoInputView {
             }
         }
     }
-    
+
+    // MARK: - 로컬 사운드 파일을 캐시에 복사
+    /// 새로 생성된 키링의 커스텀 사운드를 영상 생성 시 사용할 수 있도록 캐시에 복사
+    private func copySoundToCache(localURL: URL, firebaseURL: String) {
+        let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        let soundsDir = cacheDirectory.appendingPathComponent("sounds")
+
+        // sounds 디렉토리 생성
+        if !FileManager.default.fileExists(atPath: soundsDir.path) {
+            try? FileManager.default.createDirectory(at: soundsDir, withIntermediateDirectories: true)
+        }
+
+        // Firebase URL에서 파일명 추출
+        let fileName = firebaseURL.firebaseStorageFileName
+        let destinationURL = soundsDir.appendingPathComponent(fileName)
+
+        do {
+            // 이미 존재하면 삭제
+            if FileManager.default.fileExists(atPath: destinationURL.path) {
+                try FileManager.default.removeItem(at: destinationURL)
+            }
+
+            // 로컬 파일을 캐시로 복사
+            try FileManager.default.copyItem(at: localURL, to: destinationURL)
+        } catch {
+            print("[SoundCache] 사운드 캐시 복사 실패: \(error.localizedDescription)")
+        }
+    }
+
     // MARK: - 새 키링 생성 및 User에 추가
     func createKeyring(
         uid: String,
