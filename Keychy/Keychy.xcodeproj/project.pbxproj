@@ -111,6 +111,7 @@
 		4C25259D2F3037CD003CC5AD /* WidgetBundleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C25259B2F303745003CC5AD /* WidgetBundleModel.swift */; };
 		4C25259E2F3037D6003CC5AD /* BundleImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B5707E2EC206CD0049F969 /* BundleImageCache.swift */; };
 		4C2525DA2F35B2A7003CC5AD /* BundleSheetFilterBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2525D92F35B2A7003CC5AD /* BundleSheetFilterBar.swift */; };
+		4C2525DD2F39E38C003CC5AD /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 4C2525DC2F39E38C003CC5AD /* FirebaseAppCheck */; };
 		4C3687F72EBFA87800C64E75 /* Pretendard-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C3687F62EBFA87800C64E75 /* Pretendard-Medium.ttf */; };
 		4C3687FA2EBFC0FB00C64E75 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3687F82EBFC0FB00C64E75 /* NotificationManager.swift */; };
 		4C3687FC2EC05E6800C64E75 /* AccountAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3687FB2EC05E6800C64E75 /* AccountAlert.swift */; };
@@ -920,6 +921,7 @@
 				38A5943C2EAE4EE20003D712 /* FirebaseAnalytics in Frameworks */,
 				38A5943E2EAE4EE20003D712 /* FirebaseAuth in Frameworks */,
 				38A594462EAE4EE20003D712 /* FirebaseMessaging in Frameworks */,
+				4C2525DD2F39E38C003CC5AD /* FirebaseAppCheck in Frameworks */,
 				38A594422EAE4EE20003D712 /* FirebaseCrashlytics in Frameworks */,
 				38A594402EAE4EE20003D712 /* FirebaseCore in Frameworks */,
 				38A594482EAE4EE20003D712 /* FirebaseStorage in Frameworks */,
@@ -2367,6 +2369,7 @@
 				38A594472EAE4EE20003D712 /* FirebaseStorage */,
 				4CBBEF192EB2565900252590 /* Nuke */,
 				4CBBEF1B2EB2565900252590 /* NukeUI */,
+				4C2525DC2F39E38C003CC5AD /* FirebaseAppCheck */,
 			);
 			productName = Keychy;
 			productReference = 4CEC61B12EAE071B0099ECEE /* Keychy.app */;
@@ -3298,6 +3301,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 38A5943A2EAE4EE20003D712 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		4C2525DC2F39E38C003CC5AD /* FirebaseAppCheck */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FirebaseAppCheck;
 		};
 		4C6621DA2EAE0D93001760B5 /* Lottie */ = {
 			isa = XCSwiftPackageProductDependency;

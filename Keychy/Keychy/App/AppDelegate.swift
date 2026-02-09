@@ -9,6 +9,7 @@ import SwiftUI
 import FirebaseCore
 import FirebaseAuth
 import FirebaseMessaging
+import FirebaseAppCheck
 import UserNotifications
 
 /// UIKit AppDelegate를 SwiftUI 앱에 통합
@@ -42,7 +43,15 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        
+
+        // App Check 설정 (Firebase 초기화 전에 해야 함)
+        #if DEBUG
+        let providerFactory = AppCheckDebugProviderFactory()
+        #else
+        let providerFactory = DeviceCheckProviderFactory()
+        #endif
+        AppCheck.setAppCheckProviderFactory(providerFactory)
+
         // Firebase 초기화
         FirebaseApp.configure()
 
