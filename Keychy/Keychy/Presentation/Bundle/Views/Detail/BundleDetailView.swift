@@ -98,7 +98,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
                         )
                         .animation(.easeInOut(duration: 0.3), value: isSceneReady)
                         /// 씬 재생성 조건을 위한 ID 설정 -> 배경, 카라비너, 키링 구성이 변경되면 씬을 완전히 재생성
-                        .id("scene_\(background.id ?? "")_\(carabiner.id ?? "")_\(keyringDataList.map { "\($0.index)_\($0.bodyImageURL.hashValue)" }.joined(separator: "_"))_\(sceneReloadTrigger.uuidString)")
+                        .id(sceneId(background: background, carabiner: carabiner))
                         
                         VStack {
                             Spacer()
@@ -345,6 +345,19 @@ extension BundleDetailView {
                 "\(item.index)|\(item.bodyImageURL)|\((item.templateId ?? ""))|\(item.soundId)|\(item.particleId)"
             }
             .joined(separator: ";")
+    }
+    
+    private func sceneId(
+        background: Background,
+        carabiner: Carabiner
+    ) -> String {
+        let bgId = background.id ?? ""
+        let cbId = carabiner.id ?? ""
+        let krIds = keyringDataList
+            .map { "\($0.index)_\($0.bodyImageURL.hashValue)" }
+            .joined(separator: "_")
+        
+        return "scene_\(bgId)_\(cbId)_\(krIds)_\(sceneReloadTrigger.uuidString)"
     }
 }
 
