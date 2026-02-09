@@ -95,11 +95,6 @@ struct HomeView: View {
             userManager.startNotificationListener()
         }
         .task {
-            // Workshop 배너 백그라운드 prefetch (메인 뭉치 로드를 블로킹하지 않음)
-            Task(priority: .background) {
-                await WorkshopDataManager.shared.fetchWorkshopBanner()
-            }
-
             // 네트워크 체크
             guard NetworkManager.shared.isConnected else {
                 viewModel.hasNetworkError = true

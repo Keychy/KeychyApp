@@ -29,9 +29,6 @@ class WorkshopDataManager {
 
     var isLoading: Bool = false
     var errorMessage: String? = nil
-    var workshopBannerURL: URL?
-    var workshopThumbnailURL: URL?
-    var workshopThumbnailImage: UIImage? // prefetch한 썸네일 이미지
 
     private init() {}
 
@@ -90,49 +87,6 @@ class WorkshopDataManager {
         sounds = await fetchItems(collection: "Sound")
         updateLastFetched(for: "Sound")
     }
-    
-    /// 워크샵 배너 가져오기
-    func fetchWorkshopBanner() async {
-        guard
-            let snapshot = try? await Firestore.firestore()
-                .collection("WorkshopBanner")
-                .document("default")
-                .getDocument(),
-            let data = snapshot.data()
-        else {
-            return
-        }
-
-        await MainActor.run {
-            // GIF URL
-            if let urlString = data["gif"] as? String,
-               let url = URL(string: urlString) {
-                workshopBannerURL = url
-            }
-
-            // 썸네일 URL
-            if let thumbnailString = data["thumbnail"] as? String,
-               let thumbnailURL = URL(string: thumbnailString) {
-                workshopThumbnailURL = thumbnailURL
-            }
-        }
-
-        // 썸네일 이미지 즉시 로드 (UIImage로 저장)
-        if let thumbnailURL = workshopThumbnailURL {
-            if let response = try? await ImagePipeline.shared.image(for: thumbnailURL) {
-                await MainActor.run {
-                    workshopThumbnailImage = response
-                }
-            }
-        }
-
-        // GIF는 prefetch만 (애니메이션이라 UIImage로 저장 불가)
-        if let gifURL = workshopBannerURL {
-            let prefetcher = ImagePrefetcher()
-            prefetcher.startPrefetching(with: [gifURL])
-        }
-    }
-
 
     /// 캐시를 강제로 무효화하고 다시 가져오기
     func forceRefresh() async {
