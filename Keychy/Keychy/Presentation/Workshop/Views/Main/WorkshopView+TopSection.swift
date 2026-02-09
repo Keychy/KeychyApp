@@ -112,8 +112,11 @@ extension WorkshopView {
             templates: viewModel.recentTemplates,
             isLoading: viewModel.isLoading
         ) { template in
-            // 템플릿 상세 프리뷰로 이동
-            router.push(.workshopPreview(item: template))
+            // 템플릿별 만들기 화면으로 이동
+            if let templateId = template.id,
+               let route = WorkshopRoute.from(string: templateId) {
+                router.push(route)
+            }
         }
     }
 }
