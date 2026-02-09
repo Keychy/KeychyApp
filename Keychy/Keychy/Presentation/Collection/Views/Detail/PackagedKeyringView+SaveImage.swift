@@ -10,55 +10,58 @@ import Photos
 
 extension PackagedKeyringView {
     
-    // MARK: - 현재 페이지만 캡처
+    // MARK: - 현재 페이지만 캡처 (투명 배경)
     @MainActor
     func captureCurrentPage() async -> UIImage? {
         // 현재 페이지에 따라 적절한 뷰 선택
         let targetView: AnyView = currentPage == 0
             ? AnyView(captureablePackagePreviewPage)
             : AnyView(captureableKeyringOnlyPage)
-        
+
         // 화면 크기 가져오기
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
             return nil
         }
         let screenSize = windowScene.screen.bounds.size
-        
-        // 배경 포함한 전체 뷰 구성
-        let captureView = ZStack {
-            Image(.greenBackground)
-                .resizable()
-                .scaledToFill()
+
+        // 투명 배경 + 타겟 뷰 (중앙 정렬)
+        let captureView = ZStack(alignment: .center) {
+            Color.clear
                 .frame(width: screenSize.width, height: screenSize.height)
-            
+
             targetView
-                .frame(width: 240)
+                .frame(width: 240, height: 390)
+                .offset(y: -40)
         }
-        
+
         // UIHostingController로 렌더링
         let controller = UIHostingController(rootView: captureView)
         controller.view.bounds = CGRect(origin: .zero, size: screenSize)
         controller.view.backgroundColor = .clear
-        
-        let renderer = UIGraphicsImageRenderer(size: screenSize)
+
+        // 투명 배경 지원 설정
+        let format = UIGraphicsImageRendererFormat()
+        format.opaque = false
+
+        let renderer = UIGraphicsImageRenderer(size: screenSize, format: format)
         return renderer.image { _ in
             controller.view.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
         }
     }
     
-    // MARK: - 이미지 확대 및 크롭
+    // MARK: - 이미지 확대 및 크롭 (투명 배경 유지)
     func enlargeImage(_ image: UIImage, scale: CGFloat = 1.15) -> UIImage? {
         guard let cgImage = image.cgImage else { return nil }
-        
+
         let originalSize = image.size
-        
+
         // 크롭할 영역 계산 (중앙에서 scale만큼 작게)
         let cropWidth = originalSize.width / scale
         let cropHeight = originalSize.height / scale
-        
+
         let cropX = (originalSize.width - cropWidth) / 2
         let cropY = (originalSize.height - cropHeight) / 2
-        
+
         // CGImage 좌표계에 맞게 변환 (scale 고려)
         let imageScale = image.scale
         let cropRect = CGRect(
@@ -67,14 +70,18 @@ extension PackagedKeyringView {
             width: cropWidth * imageScale,
             height: cropHeight * imageScale
         )
-        
+
         // 크롭
         guard let croppedCGImage = cgImage.cropping(to: cropRect) else {
             return nil
         }
-        
+
+        // 투명 배경 유지 설정
+        let format = UIGraphicsImageRendererFormat()
+        format.opaque = false
+
         // 원본 크기로 다시 렌더링 (확대 효과)
-        let renderer = UIGraphicsImageRenderer(size: originalSize)
+        let renderer = UIGraphicsImageRenderer(size: originalSize, format: format)
         return renderer.image { _ in
             let drawRect = CGRect(origin: .zero, size: originalSize)
             UIImage(cgImage: croppedCGImage, scale: 1.0, orientation: image.imageOrientation)
@@ -178,20 +185,40 @@ extension PackagedKeyringView {
         }
     }
     
-    // MARK: - 이미지 저장
+    // MARK: - 이미지 저장 (PNG 형식으로 투명 배경 유지)
     func saveImageToLibrary(_ image: UIImage, completion: @escaping (Bool) -> Void) {
         requestPhotoLibraryPermission { granted in
             guard granted else {
                 completion(false)
                 return
             }
-            
-            PHPhotoLibrary.shared().performChanges({
-                PHAssetChangeRequest.creationRequestForAsset(from: image)
-            }) { success, error in
-                DispatchQueue.main.async {
-                    completion(success)
+
+            // PNG 데이터로 변환 (투명 배경 유지)
+            guard let pngData = image.pngData() else {
+                completion(false)
+                return
+            }
+
+            // 임시 파일로 저장
+            let tempURL = FileManager.default.temporaryDirectory
+                .appendingPathComponent("\(UUID().uuidString).png")
+
+            do {
+                try pngData.write(to: tempURL)
+
+                PHPhotoLibrary.shared().performChanges({
+                    let request = PHAssetCreationRequest.forAsset()
+                    request.addResource(with: .photo, fileURL: tempURL, options: nil)
+                }) { success, error in
+                    // 임시 파일 삭제
+                    try? FileManager.default.removeItem(at: tempURL)
+
+                    DispatchQueue.main.async {
+                        completion(success)
+                    }
                 }
+            } catch {
+                completion(false)
             }
         }
     }
