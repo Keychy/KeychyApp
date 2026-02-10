@@ -47,6 +47,10 @@
 		389080192ED3F32700D7A49F /* FestivalKeyringDetailView+Sheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389080182ED3F32700D7A49F /* FestivalKeyringDetailView+Sheet.swift */; };
 		3890801B2ED3F3BB00D7A49F /* FestivalKeyringDetailView+Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3890801A2ED3F3BB00D7A49F /* FestivalKeyringDetailView+Alerts.swift */; };
 		389080632ED47F2500D7A49F /* VotePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389080622ED47F2500D7A49F /* VotePopup.swift */; };
+		3896B9632F3B970100220134 /* WishHorse26Preview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3896B9622F3B970100220134 /* WishHorse26Preview.swift */; };
+		3896B9652F3B974500220134 /* WishHorse26VM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3896B9642F3B974500220134 /* WishHorse26VM.swift */; };
+		3896B9672F3B99CB00220134 /* WishHorse26VM+Effect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3896B9662F3B99CB00220134 /* WishHorse26VM+Effect.swift */; };
+		3896B9692F3B9AB800220134 /* WishHorse26VM+Firebase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3896B9682F3B9AB800220134 /* WishHorse26VM+Firebase.swift */; };
 		38A22A7F2EC2238800B4C7C5 /* CollectionKeyringPackageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A22A7E2EC2238800B4C7C5 /* CollectionKeyringPackageView.swift */; };
 		38A22A9D2EC27AC400B4C7C5 /* PackagedKeyringView+SaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A22A9C2EC27AC400B4C7C5 /* PackagedKeyringView+SaveImage.swift */; };
 		38A22A9F2EC28B3D00B4C7C5 /* PackageCompleteView+SaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A22A9E2EC28B3D00B4C7C5 /* PackageCompleteView+SaveImage.swift */; };
@@ -515,6 +519,10 @@
 		389080182ED3F32700D7A49F /* FestivalKeyringDetailView+Sheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FestivalKeyringDetailView+Sheet.swift"; sourceTree = "<group>"; };
 		3890801A2ED3F3BB00D7A49F /* FestivalKeyringDetailView+Alerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FestivalKeyringDetailView+Alerts.swift"; sourceTree = "<group>"; };
 		389080622ED47F2500D7A49F /* VotePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VotePopup.swift; sourceTree = "<group>"; };
+		3896B9622F3B970100220134 /* WishHorse26Preview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishHorse26Preview.swift; sourceTree = "<group>"; };
+		3896B9642F3B974500220134 /* WishHorse26VM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishHorse26VM.swift; sourceTree = "<group>"; };
+		3896B9662F3B99CB00220134 /* WishHorse26VM+Effect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WishHorse26VM+Effect.swift"; sourceTree = "<group>"; };
+		3896B9682F3B9AB800220134 /* WishHorse26VM+Firebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WishHorse26VM+Firebase.swift"; sourceTree = "<group>"; };
 		38A22A7E2EC2238800B4C7C5 /* CollectionKeyringPackageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionKeyringPackageView.swift; sourceTree = "<group>"; };
 		38A22A9C2EC27AC400B4C7C5 /* PackagedKeyringView+SaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PackagedKeyringView+SaveImage.swift"; sourceTree = "<group>"; };
 		38A22A9E2EC28B3D00B4C7C5 /* PackageCompleteView+SaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PackageCompleteView+SaveImage.swift"; sourceTree = "<group>"; };
@@ -1037,6 +1045,33 @@
 			path = Package;
 			sourceTree = "<group>";
 		};
+		3896B95F2F3B960500220134 /* WishHorse26 */ = {
+			isa = PBXGroup;
+			children = (
+				3896B9602F3B96C000220134 /* ViewModels */,
+				3896B9612F3B96D900220134 /* Views */,
+			);
+			path = WishHorse26;
+			sourceTree = "<group>";
+		};
+		3896B9602F3B96C000220134 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				3896B9642F3B974500220134 /* WishHorse26VM.swift */,
+				3896B9662F3B99CB00220134 /* WishHorse26VM+Effect.swift */,
+				3896B9682F3B9AB800220134 /* WishHorse26VM+Firebase.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		3896B9612F3B96D900220134 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				3896B9622F3B970100220134 /* WishHorse26Preview.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		38A596702EAFA8880003D712 /* Intro */ = {
 			isa = PBXGroup;
 			children = (
@@ -1547,6 +1582,7 @@
 				4C47337A2F1FA388005D2376 /* Pixel */,
 				4C4733842F1FA388005D2376 /* Polaroid */,
 				4C47338F2F1FA388005D2376 /* SpeechBubble */,
+				3896B95F2F3B960500220134 /* WishHorse26 */,
 			);
 			path = Templates;
 			sourceTree = "<group>";
@@ -2584,6 +2620,7 @@
 				38A5967A2EAFA94E0003D712 /* IntroView.swift in Sources */,
 				4C004FB52F18D98C00D9063E /* ReviewManager.swift in Sources */,
 				38283A7F2EBD3E8400BE45A5 /* PackageCompleteView.swift in Sources */,
+				3896B9692F3B9AB800220134 /* WishHorse26VM+Firebase.swift in Sources */,
 				4CEC62202EAE08DA0099ECEE /* View+Extension.swift in Sources */,
 				4C4733E52F20FE34005D2376 /* WorkshopRecentTemplate.swift in Sources */,
 				38173D0C2EB8AD8800E36F7E /* CategoryContextMenu.swift in Sources */,
@@ -2702,6 +2739,7 @@
 				4C4733C22F1FA388005D2376 /* PixelVM+Effect.swift in Sources */,
 				4C4733C32F1FA388005D2376 /* CropModels.swift in Sources */,
 				4C4733C42F1FA388005D2376 /* SpeechBubbleVM+Effect.swift in Sources */,
+				3896B9672F3B99CB00220134 /* WishHorse26VM+Effect.swift in Sources */,
 				4C4733C52F1FA388005D2376 /* ClearSketchCropView.swift in Sources */,
 				4C4733C62F1FA388005D2376 /* AudioRecorderManager.swift in Sources */,
 				4C4733C82F1FA388005D2376 /* KeyringInfoInputView.swift in Sources */,
@@ -2725,6 +2763,7 @@
 				4C004FA52F177C4600D9063E /* KeyringVideoGenerator+Rendering.swift in Sources */,
 				4C004FA62F177C4600D9063E /* KeyringVideoGenerator.swift in Sources */,
 				4C004FA72F177C4600D9063E /* BundleVideoGenerator.swift in Sources */,
+				3896B9632F3B970100220134 /* WishHorse26Preview.swift in Sources */,
 				4C004FA82F177C4600D9063E /* KeyringVideoGenerator+Sound.swift in Sources */,
 				4C004FA92F177C4600D9063E /* KeyringVideoGenerator+Particle.swift in Sources */,
 				C67B755F2ECD526A00D6E3FA /* Frame.swift in Sources */,
@@ -2776,6 +2815,7 @@
 				4C004FB32F187ED000D9063E /* KeyringVideoGenerator+Keyring.swift in Sources */,
 				38F832CF2EC914C900D3A248 /* InvenExpandPopup.swift in Sources */,
 				4C3687FA2EBFC0FB00C64E75 /* NotificationManager.swift in Sources */,
+				3896B9652F3B974500220134 /* WishHorse26VM.swift in Sources */,
 				38F832CB2EC9067300D3A248 /* WidgetOnboardingStepView.swift in Sources */,
 				4CEC62752EAE08DF0099ECEE /* HomeView.swift in Sources */,
 				4C6622482EAF9B3A001760B5 /* Haptic.swift in Sources */,
