@@ -12,7 +12,6 @@ struct WishHorse26FramePreviewView: View {
     @Bindable var viewModel: WishHorse26VM
     let onSceneReady: () -> Void
 
-    @FocusState private var isTextFieldFocused: Bool
     @State private var isFrameLoaded: Bool = false
 
     var body: some View {
@@ -21,10 +20,10 @@ struct WishHorse26FramePreviewView: View {
                 // 메인 콘텐츠
                 VStack {
                     ZStack(alignment: .top) {
-                        // 프레임 + 텍스트 영역
+                        // 프레임 + 안장 + 갈기 합성 영역
                         VStack {
                             Spacer()
-                                .frame(height: 95)  // 126 → 95
+                                .frame(height: 95)
 
                             compositionView
                         }
@@ -54,6 +53,21 @@ struct WishHorse26FramePreviewView: View {
             // 일반 SwiftUI View는 즉시 준비 완료
             onSceneReady()
         }
+        .onChange(of: viewModel.selectedFrame) { _, _ in
+            Task {
+                await viewModel.composeHorse()
+            }
+        }
+        .onChange(of: viewModel.selectedSaddle) { _, _ in
+            Task {
+                await viewModel.composeHorse()
+            }
+        }
+        .onChange(of: viewModel.selectedMane) { _, _ in
+            Task {
+                await viewModel.composeHorse()
+            }
+        }
     }
     
     @ViewBuilder
@@ -67,10 +81,28 @@ struct WishHorse26FramePreviewView: View {
                             image
                                 .resizable()
                                 .scaledToFit()
+                            
+                            // 2. 갈기 이미지
+                            if let mane = viewModel.selectedMane {
+                                LazyImage(url: URL(string: mane.imageURL)) { maneState in
+                                    if let maneImage = maneState.image {
+                                        maneImage
+                                            .resizable()
+                                            .scaledToFit()
+                                    }
+                                }
+                            }
 
-                            // 2. 텍스트 입력 필드 (중앙에 오버레이)
-                            //textInputField
-                                .offset(y: frame.textOffsetY ?? 0)
+                            // 2. 안장 이미지
+                            if let saddle = viewModel.selectedSaddle {
+                                LazyImage(url: URL(string: saddle.imageURL)) { saddleState in
+                                    if let saddleImage = saddleState.image {
+                                        saddleImage
+                                            .resizable()
+                                            .scaledToFit()
+                                    }
+                                }
+                            }
                         }
                         .onAppear {
                             isFrameLoaded = true

@@ -31,11 +31,20 @@ class WishHorse26VM: KeyringViewModelProtocol {
     var availableFrames: [Frame] = []
     var selectedFrame: Frame? = nil
     
+    // MARK: - Saddle Data
+    var availableSaddles: [Saddle] = []
+    var selectedSaddle: Saddle? = nil
+    
+    // MARK: - Mane Data
+    var availableManes: [Mane] = []
+    var selectedMane: Mane? = nil
+    var selectedColor: Color = ManeColorType.gray.color
+    
     // MARK: - Body Image
     var bodyImage: UIImage? = nil
     var hookOffsetY: CGFloat = 0.0
-    var isComposingText: Bool = false
-    var isComposing: Bool { isComposingText }
+    var isComposingHorse: Bool = false
+    var isComposing: Bool { isComposingHorse }
     
     // MARK: - Info Data
     var nameText: String = ""
@@ -64,48 +73,62 @@ class WishHorse26VM: KeyringViewModelProtocol {
         self.userManager = userManager
     }
     
-//    // MARK: - Customizing Modes
-//    var availableCustomizingModes: [CustomizingMode] {
-//        [.frame, .effect]
-//    }
-//
-//    // MARK: - View Providers
-//    func sceneView(for mode: CustomizingMode, onSceneReady: @escaping () -> Void) -> AnyView {
-//        switch mode {
-//        case .effect:
-//            return AnyView(KeyringSceneView(viewModel: self, onSceneReady: onSceneReady))
-//        case .frame:
-//            return AnyView(FramePreviewView(viewModel: self, onSceneReady: onSceneReady))
-//        default:
-//            return AnyView(EmptyView())
-//        }
-//    }
-//
-//    func bottomContentView(
-//        for mode: CustomizingMode,
-//        showPurchaseSheet: Binding<Bool>,
-//        cartItems: Binding<[EffectItem]>
-//    ) -> AnyView {
-//        switch mode {
-//        case .effect:
-//            return AnyView(EffectSelectorView(viewModel: self, cartItems: cartItems))
-//        case .frame:
-//            return AnyView(FrameSelectorView(viewModel: self))
-//        default:
-//            return AnyView(EmptyView())
-//        }
-//    }
-//
-//    func bottomViewHeightRatio(for mode: CustomizingMode) -> CGFloat {
-//        switch mode {
-//        case .frame:
-//            return 0.3  // 프레임 모드는 더 낮은 높이
-//        case .effect:
-//            return 0.3  // 이펙트 모드도 같은 높이
-//        default:
-//            return 0.35
-//        }
-//    }
+    // MARK: - View Providers
+    func sceneView(for mode: CustomizingMode, onSceneReady: @escaping () -> Void) -> AnyView {
+        switch mode {
+        case .effect:
+            return AnyView(KeyringSceneView(viewModel: self, onSceneReady: onSceneReady))
+        case .frame:
+            return AnyView(WishHorse26FramePreviewView(viewModel: self, onSceneReady: onSceneReady))
+        default:
+            return AnyView(EmptyView())
+        }
+    }
+
+    func bottomContentView(
+        for mode: CustomizingMode,
+        showPurchaseSheet: Binding<Bool>,
+        cartItems: Binding<[EffectItem]>
+    ) -> AnyView {
+        switch mode {
+        case .effect:
+            return AnyView(EffectSelectorView(viewModel: self, cartItems: cartItems))
+        case .frame:
+            return AnyView(WishHorse26FrameSelectorView(viewModel: self))
+        default:
+            return AnyView(EmptyView())
+        }
+    }
+
+    func bottomViewHeightRatio(for mode: CustomizingMode) -> CGFloat {
+        switch mode {
+        case .frame:
+            return 0.4  // 프레임 모드는 더 낮은 높이
+        case .effect:
+            return 0.3  // 이펙트 모드도 같은 높이
+        default:
+            return 0.35
+        }
+    }
+    
+    // MARK: - Lifecycle Callbacks
+    
+    /// 모드 변경 시 프레임 → 다른 모드로 전환되면 말 합성
+    func onModeChanged(from oldMode: CustomizingMode, to newMode: CustomizingMode) {
+        if oldMode == .frame && newMode != .frame {
+            Task {
+                await composeHorse()
+            }
+        }
+    }
+
+    /// 다음 화면으로 이동하기 전 말 합성
+    func beforeNavigateToNext() {
+        Task {
+            await composeHorse()
+        }
+    }
+    
     
     // MARK: - Reset
     func resetCustomizingData() {
@@ -117,9 +140,14 @@ class WishHorse26VM: KeyringViewModelProtocol {
         downloadingItemIds.removeAll()
         downloadProgress.removeAll()
         selectedFrame = nil
+        selectedSaddle = nil
+        selectedMane = nil
+        selectedColor = ManeColorType.gray.color
         bodyImage = nil
         availableFrames.removeAll()
-        isComposingText = false
+        availableSaddles.removeAll()
+        availableManes.removeAll()
+        isComposingHorse = false
     }
     
     func resetInfoData() {
