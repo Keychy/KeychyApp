@@ -1958,6 +1958,7 @@
 				4C8426632ED375840050B6FE /* ColorPalette.swift */,
 				4CF2A9652F0B8C5800BA9FDA /* PullToRefreshIndicator.swift */,
 				4CF2A9672F0B91F300BA9FDA /* AnimatedGIFView.swift */,
+				C645AE9E2EB1055C004BFE69 /* CategoryTabBar.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1976,7 +1977,6 @@
 				4CEBB16C2EFCFB9C00CF53E2 /* NetworkError */,
 				4CA9C6A52EC9D11600CA546B /* Navigation */,
 				4C65303C2EBA5FF3000F8154 /* Alerts */,
-				C645AE9E2EB1055C004BFE69 /* CategoryTabBar.swift */,
 				4CEC61F82EAE08DA0099ECEE /* View */,
 				4CEC62052EAE08DA0099ECEE /* Effects */,
 			);
