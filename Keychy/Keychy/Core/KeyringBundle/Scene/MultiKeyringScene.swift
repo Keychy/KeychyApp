@@ -186,15 +186,10 @@ class MultiKeyringScene: SKScene {
         }
     }
 
-    /// 카메라 설정 - carabinerScale 적용
+    /// 카메라 설정 (기본 카메라, 스케일 없음)
     private func setupCamera() {
         let cameraNode = SKCameraNode()
         cameraNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
-
-        // carabinerScale 적용 (카메라 scale은 역수)
-        let scale = KeyringScale.bundleKeyringScale(for: carabinerId)
-        cameraNode.setScale(1.0 / scale)
-
         addChild(cameraNode)
         self.camera = cameraNode
     }
@@ -541,7 +536,11 @@ class MultiKeyringScene: SKScene {
                 ringType: currentRingType
             ) : BundleRingComponent.createHamburgerRingNode(image: images.ring, ringType: currentRingType)
         )
-        
+
+        // 뭉치용 키링 스케일 적용 (카라비너는 그대로, 키링만 축소)
+        let bundleScale = KeyringScale.bundleKeyringScale(for: carabinerId)
+        ring.setScale(bundleScale)
+
         // 햄버거 타입일 때 Ring을 카라비너 뒷면과 앞면 사이에 배치
         if carabinerType == .hamburger {
             ring.zPosition = -850  // 카라비너 뒷면(-900)과 앞면(-800) 사이
@@ -577,7 +576,8 @@ class MultiKeyringScene: SKScene {
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
         let chainStartY = ringBottomY + 2
-        let chainSpacing: CGFloat = 22
+        // 체인 간격도 bundleScale에 맞게 조정
+        let chainSpacing: CGFloat = 22 * bundleScale
 
         let chainCount: Int = (currentCarabinerType == .plain ? max(data.chainLength - 1, 1) : data.chainLength)
 
@@ -594,6 +594,9 @@ class MultiKeyringScene: SKScene {
             var chains: [SKSpriteNode] = []
 
             for (_, chainNode) in createdChains.enumerated() {
+                // 뭉치용 키링 스케일 적용 (카라비너는 그대로, 키링만 축소)
+                chainNode.setScale(bundleScale)
+
                 // assembleKeyring 기존 초기 물리 설정 유지
                 chainNode.physicsBody?.isDynamic = false
                 chainNode.physicsBody?.categoryBitMask = categoryBitMask
@@ -657,9 +660,12 @@ class MultiKeyringScene: SKScene {
         let heightRatio = maxSize.height / originalSize.height
         let scale = min(widthRatio, heightRatio, 1.0)
 
+        // 뭉치용 키링 스케일 적용 (카라비너는 그대로, 키링 바디만 축소)
+        let bundleScale = KeyringScale.bundleKeyringScale(for: carabinerId)
+
         let displaySize = CGSize(
-            width: originalSize.width * scale,
-            height: originalSize.height * scale
+            width: originalSize.width * scale * bundleScale,
+            height: originalSize.height * scale * bundleScale
         )
 
         let texture = SKTexture(image: image)
