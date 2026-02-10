@@ -13,6 +13,9 @@ struct WishHorse26FramePreviewView: View {
     let onSceneReady: () -> Void
 
     @State private var isFrameLoaded: Bool = false
+    
+    // 크기 설정
+    private let targetFrameHeight: CGFloat = 269
 
     var body: some View {
         GeometryReader { geometry in
@@ -81,6 +84,7 @@ struct WishHorse26FramePreviewView: View {
                             image
                                 .resizable()
                                 .scaledToFit()
+                                .frame(height: targetFrameHeight)
                             
                             // 2. 갈기 이미지
                             if let mane = viewModel.selectedMane {
@@ -89,6 +93,7 @@ struct WishHorse26FramePreviewView: View {
                                         maneImage
                                             .resizable()
                                             .scaledToFit()
+                                            .frame(height: targetFrameHeight)
                                     }
                                 }
                             }
@@ -100,6 +105,7 @@ struct WishHorse26FramePreviewView: View {
                                         saddleImage
                                             .resizable()
                                             .scaledToFit()
+                                            .frame(height: targetFrameHeight)
                                     }
                                 }
                             }
