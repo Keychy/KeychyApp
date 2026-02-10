@@ -38,7 +38,13 @@ class WishHorse26VM: KeyringViewModelProtocol {
     // MARK: - Mane Data
     var availableManes: [Mane] = []
     var selectedMane: Mane? = nil
-    var selectedColor: Color = ManeColorType.gray.color
+    
+    var selectedManeColor: Color {
+        guard let mane = selectedMane else {
+            return ManeColorType.gray.color
+        }
+        return Color(hex: mane.color)
+    }
     
     // MARK: - Body Image
     var bodyImage: UIImage? = nil
@@ -142,7 +148,6 @@ class WishHorse26VM: KeyringViewModelProtocol {
         selectedFrame = nil
         selectedSaddle = nil
         selectedMane = nil
-        selectedColor = ManeColorType.gray.color
         bodyImage = nil
         availableFrames.removeAll()
         availableSaddles.removeAll()

@@ -172,8 +172,6 @@ struct WishHorse26FrameSelectorView: View {
                     let color = colorType.color
                     
                     Button {
-                        viewModel.selectedColor = color
-                        
                         // Firebase에서 정확히 일치하는 색상의 Mane 찾기
                         if let matchingMane = viewModel.availableManes.first(where: { mane in
                             mane.color.uppercased() == colorType.rawValue.uppercased()
@@ -196,18 +194,18 @@ struct WishHorse26FrameSelectorView: View {
                                     Circle()
                                         .strokeBorder(
                                             Color.white,
-                                            lineWidth: viewModel.selectedColor == color ? 3 : 0
+                                            lineWidth: isColorSelected(colorType) ? 3 : 0
                                         )
                                     
                                     Image(.checkMarkWhite)
                                         .resizable()
                                         .frame(width: 12, height: 12)
-                                        .opacity(viewModel.selectedColor == color ? 1 : 0)
+                                        .opacity(isColorSelected(colorType) ? 1 : 0)
                                 }
 
                             )
                             .shadow(
-                                color: viewModel.selectedColor == color ? Color.black.opacity(0.5) : Color.clear,
+                                color: isColorSelected(colorType) ? Color.black.opacity(0.5) : Color.clear,
                                 radius: 2
                             )
                     }
@@ -216,5 +214,14 @@ struct WishHorse26FrameSelectorView: View {
             .padding(.vertical, 12)
             .padding(.horizontal, 4)
         }
+    }
+    
+    // MARK: - Helper
+    /// 현재 선택된 색상인지 확인 - selectedMane 기반
+    private func isColorSelected(_ colorType: ManeColorType) -> Bool {
+        guard let selectedMane = viewModel.selectedMane else {
+            return false
+        }
+        return selectedMane.color.uppercased() == colorType.rawValue.uppercased()
     }
 }

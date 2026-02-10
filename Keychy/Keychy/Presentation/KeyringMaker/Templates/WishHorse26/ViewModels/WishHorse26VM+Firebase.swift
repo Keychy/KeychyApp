@@ -145,7 +145,6 @@ extension WishHorse26VM {
             // 첫 번째 갈기를 기본 선택
             if let firstMane = availableManes.first {
                 selectedMane = firstMane
-                selectedColor = Color(hex: firstMane.color)
             }
 
         } catch {
