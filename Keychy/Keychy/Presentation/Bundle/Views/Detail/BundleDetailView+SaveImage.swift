@@ -133,6 +133,7 @@ extension BundleDetailView {
             carabinerBackImageURL: carabinerBackURL,
             carabinerFrontImageURL: carabinerFrontURL,
             carabinerType: carabinerType,
+            carabinerId: bundle.selectedCarabiner,
             carabinerX: cb.carabinerX,
             carabinerY: cb.carabinerY,
             carabinerWidth: cb.carabinerWidth
@@ -158,6 +159,7 @@ extension BundleDetailView {
                 carabinerBackImageURL: carabinerBackURL,
                 carabinerFrontImageURL: carabinerFrontURL,
                 carabinerType: carabinerType,
+                carabinerId: bundle.selectedCarabiner,
                 carabinerX: cb.carabinerX,
                 carabinerY: cb.carabinerY,
                 carabinerWidth: cb.carabinerWidth,

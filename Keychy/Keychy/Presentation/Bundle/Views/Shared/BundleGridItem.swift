@@ -219,6 +219,7 @@ extension BundleGridItem {
             carabinerBackImageURL: carabinerBackURL,
             carabinerFrontImageURL: carabinerFrontURL,
             carabinerType: carabinerType,
+            carabinerId: bundle.selectedCarabiner,
             carabinerX: carabiner.carabinerX,
             carabinerY: carabiner.carabinerY,
             carabinerWidth: carabiner.carabinerWidth
@@ -236,6 +237,7 @@ extension BundleGridItem {
             carabinerBackImageURL: carabinerBackURL,
             carabinerFrontImageURL: carabinerFrontURL,
             carabinerType: carabinerType,
+            carabinerId: bundle.selectedCarabiner,
             carabinerX: carabiner.carabinerX,
             carabinerY: carabiner.carabinerY,
             carabinerWidth: carabiner.carabinerWidth,

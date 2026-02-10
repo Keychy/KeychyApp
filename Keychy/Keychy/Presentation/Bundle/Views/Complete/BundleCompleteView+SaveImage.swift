@@ -118,6 +118,7 @@ extension BundleCompleteView {
                 carabinerBackImageURL: carabinerBackURL,
                 carabinerFrontImageURL: carabinerFrontURL,
                 carabinerType: carabinerType,
+                carabinerId: carabiner.id ?? "",
                 carabinerX: carabiner.carabinerX,
                 carabinerY: carabiner.carabinerY,
                 carabinerWidth: carabiner.carabinerWidth
