@@ -23,7 +23,7 @@ enum KeyringScale {
 
     // MARK: - 템플릿별 maxSize
     private static let templateMaxSizes: [String: CGSize] = [
-        "Polaroid": CGSize(width: 667, height: 402),
+        "Polaroid": CGSize(width: 263, height: 321),
         "AcrylicPhoto": CGSize(width: 210, height: 210),
         "ClearSketch": CGSize(width: 210, height: 210),
         "PixelKeyring": CGSize(width: 277, height: 257),
