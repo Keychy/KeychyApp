@@ -15,7 +15,12 @@ struct WishHorse26Preview: View {
     var body: some View {
         TemplatePreviewBody(
             template: viewModel.template,
-            fetchTemplate: { await viewModel.fetchTemplate() },
+            fetchTemplate: {
+                await viewModel.fetchTemplate()
+                await viewModel.fetchFrames()
+                await viewModel.fetchSaddles()
+                await viewModel.fetchManes()
+            },
             onMake: {
                 router.push(.wishHorse26Customizing)
             },
