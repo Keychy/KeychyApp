@@ -23,16 +23,16 @@ enum KeyringScale {
 
     // MARK: - 템플릿별 maxSize
     private static let templateMaxSizes: [String: CGSize] = [
-        "Polaroid": CGSize(width: 263, height: 321),
+        "Polaroid": CGSize(width: 265, height: 324),
         "AcrylicPhoto": CGSize(width: 210, height: 210),
         "ClearSketch": CGSize(width: 210, height: 210),
         "PixelKeyring": CGSize(width: 277, height: 257),
-        "SpeechBubble": CGSize(width: 249, height: 360)
+        "SpeechBubble": CGSize(width: 360, height: 249)
     ]
 
     // MARK: - 템플릿 × 화면별 zoomScale
     private static let templateZoomScales: [String: [Screen: CGFloat]] = [
-        "Polaroid": [.customizing: 1.0, .infoInput: 1.0, .complete: 1.0],
+        "Polaroid": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.7],
         "AcrylicPhoto": [.customizing: 1.0, .infoInput: 1.0, .complete: 1.0],
         "ClearSketch": [.customizing: 1.0, .infoInput: 1.0, .complete: 1.0],
         "PixelKeyring": [.customizing: 1.0, .infoInput: 1.0, .complete: 1.0],
