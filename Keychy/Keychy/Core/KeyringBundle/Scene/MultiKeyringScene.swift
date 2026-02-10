@@ -87,6 +87,7 @@ class MultiKeyringScene: SKScene {
     var carabinerFrontImageURL: String?  // 카라비너 앞면 이미지 (hamburger 타입)
 
     // MARK: - 카라비너 크기 및 위치 정보
+    var carabinerId: String = ""  // 카라비너 ID (bundleKeyringScale용)
     var carabinerX: CGFloat = 0  // 카라비너 중심 X 좌표
     var carabinerY: CGFloat = 0  // 카라비너 중심 Y 좌표
     var carabinerWidth: CGFloat = 0  // 카라비너 너비
@@ -110,6 +111,7 @@ class MultiKeyringScene: SKScene {
         backgroundImageURL: String? = nil,
         carabinerBackImageURL: String? = nil,
         carabinerFrontImageURL: String? = nil,
+        carabinerId: String = "",
         carabinerX: CGFloat = 0,
         carabinerY: CGFloat = 0,
         carabinerWidth: CGFloat = 0
@@ -121,10 +123,11 @@ class MultiKeyringScene: SKScene {
         self.backgroundImageURL = backgroundImageURL
         self.carabinerBackImageURL = carabinerBackImageURL
         self.carabinerFrontImageURL = carabinerFrontImageURL
+        self.carabinerId = carabinerId
         self.carabinerX = carabinerX
         self.carabinerY = carabinerY
         self.carabinerWidth = carabinerWidth
-        
+
         super.init(size: .zero)
     }
     
@@ -170,6 +173,9 @@ class MultiKeyringScene: SKScene {
         // 물리 시뮬레이션을 처음에는 비활성화
         physicsWorld.gravity = CGVector(dx: 0, dy: 0)  // 중력 0으로 설정
 
+        // 카메라 설정 (carabinerScale 적용)
+        setupCamera()
+
         // 씬 사이즈가 아직 0일 수 있으므로 한 프레임 지연
         if size.width == 0 || size.height == 0 {
             DispatchQueue.main.async { [weak self] in
@@ -178,6 +184,19 @@ class MultiKeyringScene: SKScene {
         } else {
             beginLoading()
         }
+    }
+
+    /// 카메라 설정 - carabinerScale 적용
+    private func setupCamera() {
+        let cameraNode = SKCameraNode()
+        cameraNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
+
+        // carabinerScale 적용 (카메라 scale은 역수)
+        let scale = KeyringScale.bundleKeyringScale(for: carabinerId)
+        cameraNode.setScale(1.0 / scale)
+
+        addChild(cameraNode)
+        self.camera = cameraNode
     }
 
     private func beginLoading() {
@@ -590,7 +609,7 @@ class MultiKeyringScene: SKScene {
             // 3. Body 생성
             let body: SKNode
             if let bodyImage = images.body {
-                body = self.createBodyNode(image: bodyImage)
+                body = self.createBodyNode(image: bodyImage, templateId: data.templateId)
             } else {
                 body = self.createBasicBodyNode()
             }
@@ -630,19 +649,18 @@ class MultiKeyringScene: SKScene {
         }
     }
 
-    private func createBodyNode(image: UIImage) -> SKSpriteNode {
-        let maxSize: CGFloat = 200
+    private func createBodyNode(image: UIImage, templateId: String?) -> SKSpriteNode {
+        let maxSize = KeyringScale.maxSize(for: templateId ?? "")
         let originalSize = image.size
-        var displaySize = originalSize
 
-        let maxDimension = max(originalSize.width, originalSize.height)
-        if maxDimension > maxSize {
-            let scale = maxSize / maxDimension
-            displaySize = CGSize(
-                width: originalSize.width * scale,
-                height: originalSize.height * scale
-            )
-        }
+        let widthRatio = maxSize.width / originalSize.width
+        let heightRatio = maxSize.height / originalSize.height
+        let scale = min(widthRatio, heightRatio, 1.0)
+
+        let displaySize = CGSize(
+            width: originalSize.width * scale,
+            height: originalSize.height * scale
+        )
 
         let texture = SKTexture(image: image)
         texture.filteringMode = .linear
