@@ -279,6 +279,7 @@ extension BundleCompleteView {
         ToolbarItem(placement: .topBarLeading) {
             Button {
                 cleanupCachedVideo()
+                TabBarManager.switchTo(.workshop)
                 TabBarManager.show()
                 router.reset()
             } label: {
@@ -314,9 +315,10 @@ extension BundleCompleteView {
 
     private func navigateToInventory() {
         cleanupCachedVideo()
+        CollectionViewModel.shouldStartWithBundleTab = true
+        TabBarManager.switchTo(.collection)
         TabBarManager.show()
         router.reset()
-        router.push(.bundleInventoryView)
     }
 }
 

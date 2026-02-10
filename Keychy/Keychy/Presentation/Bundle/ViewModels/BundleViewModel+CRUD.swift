@@ -66,6 +66,11 @@ extension BundleViewModel {
                     backgroundId: selectedBackground
                 )
 
+                // 메인 뭉치로 생성된 경우 홈 화면 리프레시 필요
+                if isMain {
+                    HomeViewModel.needsRefresh = true
+                }
+
                 // 첫 뭉치 생성 체크 (기본 1개 → 사용자가 만든 첫 뭉치는 2개일 때)
                 let isFirstUserBundle = self.bundles.count == 2
                 ReviewManager.shared.checkFirstBundle(isFirstBundle: isFirstUserBundle)
@@ -213,6 +218,9 @@ extension BundleViewModel {
                 if self.selectedBundle?.documentId == bundle.documentId {
                     self.selectedBundle?.isMain = isMain
                 }
+
+                // 대표 뭉치 변경 시 홈 화면 리프레시 필요
+                HomeViewModel.needsRefresh = true
             }
             completion(true)
         }

@@ -15,7 +15,6 @@ enum WorkshopLayout {
     static let recentTemplateTopSpacing: CGFloat = 116
     static let bundleBannerTopSpacing: CGFloat = 20
     static let mainContentTopSpacing: CGFloat = 43
-    static let gradientHeight: CGFloat = 100
     static let stickyHeaderMinOffset: CGFloat = 120
     static let stickyHeaderMaxOffset: CGFloat = 730
     static let stickyHeaderOffsetAdjust: CGFloat = 20
@@ -62,9 +61,6 @@ struct WorkshopView: View {
 
                     // 스티키 헤더 (카테고리 탭 + 필터)
                     stickyHeaderSection
-
-                    // 상단 그라데이션 블러 오버레이
-                    topGradientOverlay
                 }
                 .background {
                     Image(viewModel.workshopToggle ? .workshopKeyringBGB : .workshopBundleBGB)
@@ -123,9 +119,6 @@ struct WorkshopView: View {
             }
         }
         .withToast(position: .tabbar)
-        .onAppear {
-            TabBarManager.show()
-        }
         .sheet(isPresented: $showTemplateSelectSheet) {
             WorkshopTemplateSelectSheet(
                 isPresented: $showTemplateSelectSheet,

@@ -126,6 +126,13 @@ struct CollectionView: View {
             if !isSearching && !showSearchBar {
                 TabBarManager.show()
             }
+
+            // 다른 화면에서 뭉치 탭으로 이동 요청 시
+            if CollectionViewModel.shouldStartWithBundleTab {
+                collectionViewModel.collectionToggle = false
+                CollectionViewModel.shouldStartWithBundleTab = false
+            }
+
             fetchUserData()
             fetchBundleData()
             
