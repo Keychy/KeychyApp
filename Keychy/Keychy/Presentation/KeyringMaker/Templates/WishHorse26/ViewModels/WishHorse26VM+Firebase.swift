@@ -105,4 +105,51 @@ extension WishHorse26VM {
             errorMessage = "프레임 목록을 불러오는데 실패했습니다."
         }
     }
+    
+    // MARK: - Firebase Saddles 가져오기
+    func fetchSaddles() async {
+        do {
+            let saddlesSnapshot = try await Firestore.firestore()
+                .collection("Template")
+                .document("WishHorse26")
+                .collection("Saddles")
+                .getDocuments()
+
+            availableSaddles = try saddlesSnapshot.documents.compactMap {
+                try $0.data(as: Saddle.self)
+            }
+
+            // 첫 번째 안장을 기본 선택
+            if let firstSaddle = availableSaddles.first {
+                selectedSaddle = firstSaddle
+            }
+
+        } catch {
+            errorMessage = "안장 목록을 불러오는데 실패했습니다."
+        }
+    }
+    
+    // MARK: - Firebase Manes 가져오기
+    func fetchManes() async {
+        do {
+            let manesSnapshot = try await Firestore.firestore()
+                .collection("Template")
+                .document("WishHorse26")
+                .collection("Manes")
+                .getDocuments()
+
+            availableManes = try manesSnapshot.documents.compactMap {
+                try $0.data(as: Mane.self)
+            }
+
+            // 첫 번째 갈기를 기본 선택
+            if let firstMane = availableManes.first {
+                selectedMane = firstMane
+                selectedColor = Color(hex: firstMane.color)
+            }
+
+        } catch {
+            errorMessage = "갈기 목록을 불러오는데 실패했습니다."
+        }
+    }
 }
