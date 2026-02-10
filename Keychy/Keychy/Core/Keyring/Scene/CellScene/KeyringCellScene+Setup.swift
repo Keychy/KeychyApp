@@ -174,9 +174,12 @@ extension KeyringCellScene {
         body.zPosition = -1  // Body는 체인 아래
         containerNode.addChild(body)
 
-        // 4. 조인트 연결
+        // 4. 셀 내부에 키링 auto-fit (일관된 패딩) - 조인트 생성 전에 호출해야 함
+        autoFitKeyringToCell()
+
+        // 5. 조인트 연결 (auto-fit 후에 생성해야 anchor가 올바름)
         connectComponents(ring: ring, chains: chains, body: body)
-        
+
         self.onLoadingComplete?()
     }
     
@@ -282,28 +285,24 @@ extension KeyringCellScene {
         return node
     }
     
-    // MARK: - Mini Body 생성
+    // MARK: - Mini Body 생성 (KeyringScale 사용)
     private func createMiniImageBody(image: UIImage) -> SKSpriteNode {
-        // 크기 제한 (비율 유지)
+        let maxSize = KeyringScale.maxSize(for: templateId ?? "")
         let originalSize = image.size
 
-        // 말풍선 템플릿만 더 큰 maxSize 사용
-        let maxSize: CGFloat = (templateId == "SpeechBubble") ? 400 : 200
-        var displaySize = originalSize
+        let widthRatio = maxSize.width / originalSize.width
+        let heightRatio = maxSize.height / originalSize.height
+        let scale = min(widthRatio, heightRatio, 1.0)
 
-        let maxDimension = max(originalSize.width, originalSize.height)
-        if maxDimension > maxSize {
-            let scale = maxSize / maxDimension
-            displaySize = CGSize(
-                width: originalSize.width * scale,
-                height: originalSize.height * scale
-            )
-        }
-        
+        let displaySize = CGSize(
+            width: originalSize.width * scale,
+            height: originalSize.height * scale
+        )
+
         let texture = SKTexture(image: image)
         texture.filteringMode = .linear
         let spriteNode = SKSpriteNode(texture: texture, size: displaySize)
-        
+
         let physicsBody = SKPhysicsBody(rectangleOf: displaySize)
         physicsBody.mass = 3.0
         physicsBody.friction = 0.5
@@ -311,7 +310,7 @@ extension KeyringCellScene {
         physicsBody.linearDamping = 0.8
         physicsBody.angularDamping = 0.95
         spriteNode.physicsBody = physicsBody
-        
+
         return spriteNode
     }
     
@@ -463,6 +462,52 @@ extension KeyringCellScene {
             bodyPhysics.categoryBitMask = bodyCategory
             bodyPhysics.collisionBitMask = 0  // 아무것과도 충돌하지 않음
         }
+    }
+
+    // MARK: - 셀 내부 Auto-Fit
+    /// 키링 전체를 셀 내부에 일관된 패딩으로 맞춤
+    private func autoFitKeyringToCell() {
+        guard let containerNode = containerNode else { return }
+
+        // 현재 키링 전체 bounds (scene 좌표)
+        let keyringFrame = containerNode.calculateAccumulatedFrame()
+
+        // 유효하지 않은 frame 체크
+        guard keyringFrame.width > 0, keyringFrame.height > 0 else { return }
+
+        // 타겟 영역 (패딩 적용)
+        let padding: CGFloat = 12
+        let targetRect = CGRect(
+            x: padding,
+            y: padding,
+            width: size.width - padding * 2,
+            height: size.height - padding * 2
+        )
+
+        // 피팅 스케일 계산
+        let scaleX = targetRect.width / keyringFrame.width
+        let scaleY = targetRect.height / keyringFrame.height
+        let fitScale = min(scaleX, scaleY)
+
+        // 현재 스케일에 비례하여 조정
+        let newScale = containerNode.xScale * fitScale
+        containerNode.setScale(newScale)
+
+        // 스케일 변경 후 새로운 bounds 계산
+        let newFrame = containerNode.calculateAccumulatedFrame()
+
+        // 타겟 영역 중앙으로 이동
+        let targetCenter = CGPoint(x: targetRect.midX, y: targetRect.midY)
+        let currentCenter = CGPoint(x: newFrame.midX, y: newFrame.midY)
+        let offset = CGPoint(
+            x: targetCenter.x - currentCenter.x,
+            y: targetCenter.y - currentCenter.y
+        )
+
+        containerNode.position = CGPoint(
+            x: containerNode.position.x + offset.x,
+            y: containerNode.position.y + offset.y
+        )
     }
 }
 

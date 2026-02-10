@@ -106,6 +106,7 @@ extension BundleDetailView {
                         y: cb.keyringYPosition[index]
                     ),
                     bodyImageURL: keyringInfo.bodyImage,
+                    templateId: keyringInfo.selectedTemplate ?? "",
                     hookOffsetY: keyringInfo.hookOffsetY,
                     chainLength: keyringInfo.chainLength
                 )
@@ -132,6 +133,7 @@ extension BundleDetailView {
             carabinerBackImageURL: carabinerBackURL,
             carabinerFrontImageURL: carabinerFrontURL,
             carabinerType: carabinerType,
+            carabinerId: bundle.selectedCarabiner,
             carabinerX: cb.carabinerX,
             carabinerY: cb.carabinerY,
             carabinerWidth: cb.carabinerWidth
@@ -157,6 +159,7 @@ extension BundleDetailView {
                 carabinerBackImageURL: carabinerBackURL,
                 carabinerFrontImageURL: carabinerFrontURL,
                 carabinerType: carabinerType,
+                carabinerId: bundle.selectedCarabiner,
                 carabinerX: cb.carabinerX,
                 carabinerY: cb.carabinerY,
                 carabinerWidth: cb.carabinerWidth,

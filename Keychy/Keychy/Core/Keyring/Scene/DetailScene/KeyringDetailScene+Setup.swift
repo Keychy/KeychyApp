@@ -263,27 +263,24 @@ extension KeyringDetailScene {
         return node
     }
     
-    // MARK: - Mini Body 생성
+    // MARK: - Mini Body 생성 (KeyringScale 사용)
     private func createMiniImageBody(image: UIImage) -> SKSpriteNode {
-        // 크기 제한 (비율 유지)
-        // 말풍선 템플릿만 더 큰 maxSize 사용
-        let maxSize: CGFloat = (templateId == "SpeechBubble") ? 450 : 200
+        let maxSize = KeyringScale.maxSize(for: templateId ?? "")
         let originalSize = image.size
-        var displaySize = originalSize
 
-        let maxDimension = max(originalSize.width, originalSize.height)
-        if maxDimension > maxSize {
-            let scale = maxSize / maxDimension
-            displaySize = CGSize(
-                width: originalSize.width * scale,
-                height: originalSize.height * scale
-            )
-        }
-        
+        let widthRatio = maxSize.width / originalSize.width
+        let heightRatio = maxSize.height / originalSize.height
+        let scale = min(widthRatio, heightRatio, 1.0)
+
+        let displaySize = CGSize(
+            width: originalSize.width * scale,
+            height: originalSize.height * scale
+        )
+
         let texture = SKTexture(image: image)
         texture.filteringMode = .linear
         let spriteNode = SKSpriteNode(texture: texture, size: displaySize)
-        
+
         let physicsBody = SKPhysicsBody(rectangleOf: displaySize)
         physicsBody.mass = 2.0
         physicsBody.friction = 0.5
@@ -291,7 +288,7 @@ extension KeyringDetailScene {
         physicsBody.linearDamping = 0.8
         physicsBody.angularDamping = 0.95
         spriteNode.physicsBody = physicsBody
-        
+
         return spriteNode
     }
     

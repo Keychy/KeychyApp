@@ -17,13 +17,15 @@ class MultiKeyringCaptureScene: SKScene {
         let index: Int
         let position: CGPoint  // 절대 좌표 (SwiftUI 좌표계, 왼쪽 위 기준)
         let bodyImageURL: String
+        let templateId: String  // 템플릿 ID (KeyringScale용)
         let hookOffsetY: CGFloat?  // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
         let chainLength: Int  // 체인 길이 (기본값 5)
 
-        init(index: Int, position: CGPoint, bodyImageURL: String, hookOffsetY: CGFloat? = nil, chainLength: Int = 5) {
+        init(index: Int, position: CGPoint, bodyImageURL: String, templateId: String, hookOffsetY: CGFloat? = nil, chainLength: Int = 5) {
             self.index = index
             self.position = position
             self.bodyImageURL = bodyImageURL
+            self.templateId = templateId
             self.hookOffsetY = hookOffsetY
             self.chainLength = chainLength
         }
@@ -40,6 +42,7 @@ class MultiKeyringCaptureScene: SKScene {
     var onLoadingComplete: (() -> Void)?
 
     // MARK: - 카라비너 크기 및 위치 정보
+    var carabinerId: String = ""  // 카라비너 ID (bundleKeyringScale용)
     var carabinerX: CGFloat = 0  // 카라비너 왼쪽 상단 X 좌표
     var carabinerY: CGFloat = 0  // 카라비너 왼쪽 상단 Y 좌표
     var carabinerWidth: CGFloat = 0  // 카라비너 너비
@@ -64,6 +67,7 @@ class MultiKeyringCaptureScene: SKScene {
         backgroundImageURL: String? = nil,  // 배경 이미지 URL (옵션)
         carabinerBackImageURL: String? = nil,  // 카라비너 뒷면 이미지 (hamburger 타입)
         carabinerFrontImageURL: String? = nil,  // 카라비너 앞면 이미지 (hamburger 타입)
+        carabinerId: String = "",  // 카라비너 ID (bundleKeyringScale용)
         carabinerX: CGFloat = 0,
         carabinerY: CGFloat = 0,
         carabinerWidth: CGFloat = 0,
@@ -77,6 +81,7 @@ class MultiKeyringCaptureScene: SKScene {
         self.backgroundImageURL = backgroundImageURL
         self.carabinerBackImageURL = carabinerBackImageURL
         self.carabinerFrontImageURL = carabinerFrontImageURL
+        self.carabinerId = carabinerId
         self.carabinerX = carabinerX
         self.carabinerY = carabinerY
         self.carabinerWidth = carabinerWidth
@@ -293,6 +298,7 @@ class MultiKeyringCaptureScene: SKScene {
                     ring: ring,
                     centerX: spriteKitPosition.x,
                     bodyImageURL: data.bodyImageURL,
+                    templateId: data.templateId,
                     hookOffsetY: data.hookOffsetY,
                     chainLength: data.chainLength,
                     baseZPosition: baseZPosition
@@ -310,6 +316,10 @@ class MultiKeyringCaptureScene: SKScene {
                 self?.checkLoadingComplete()
                 return
             }
+
+            // 뭉치용 키링 스케일 적용 (카라비너는 그대로, 키링만 축소)
+            let bundleScale = KeyringScale.bundleKeyringScale(for: self.carabinerId)
+            ring.setScale(bundleScale)
 
             // 햄버거 타입일 때 Ring을 카라비너 뒷면과 앞면 사이에 배치
             if carabinerType == .hamburger {
@@ -337,6 +347,7 @@ class MultiKeyringCaptureScene: SKScene {
                 ring: ring,
                 centerX: spriteKitPosition.x,
                 bodyImageURL: data.bodyImageURL,
+                templateId: data.templateId,
                 hookOffsetY: data.hookOffsetY,
                 chainLength: data.chainLength,
                 baseZPosition: baseZPosition,
@@ -350,15 +361,20 @@ class MultiKeyringCaptureScene: SKScene {
         ring: SKSpriteNode,
         centerX: CGFloat,
         bodyImageURL: String,
+        templateId: String,
         hookOffsetY: CGFloat?,
         chainLength: Int,
         baseZPosition: CGFloat,
         carabinerType: CarabinerType? = nil
     ) {
+        // 뭉치용 키링 스케일
+        let bundleScale = KeyringScale.bundleKeyringScale(for: carabinerId)
+
         let ringHeight = ring.calculateAccumulatedFrame().height
         let ringBottomY = ring.position.y - ringHeight / 2
         let chainStartY = ringBottomY - 2
-        let chainSpacing: CGFloat = 22
+        // 체인 간격도 bundleScale에 맞게 조정
+        let chainSpacing: CGFloat = 22 * bundleScale
 
         // chainLength를 기본으로 사용하되, 카라비너 타입에 따라 조정
         let chainCount: Int = {
@@ -383,6 +399,9 @@ class MultiKeyringCaptureScene: SKScene {
             guard let self = self else { return }
 
             for chain in chains {
+                // 뭉치용 키링 스케일 적용
+                chain.setScale(bundleScale)
+
                 chain.physicsBody = nil
                 self.addChild(chain)
 
@@ -397,6 +416,7 @@ class MultiKeyringCaptureScene: SKScene {
                 chainStartY: chainStartY,
                 chainSpacing: chainSpacing,
                 bodyImageURL: bodyImageURL,
+                templateId: templateId,
                 hookOffsetY: hookOffsetY,
                 baseZPosition: baseZPosition,
                 carabinerType: carabinerType
@@ -411,15 +431,20 @@ class MultiKeyringCaptureScene: SKScene {
         chainStartY: CGFloat,
         chainSpacing: CGFloat,
         bodyImageURL: String,
+        templateId: String,
         hookOffsetY: CGFloat?,
         baseZPosition: CGFloat,
         carabinerType: CarabinerType? = nil
     ) {
-        KeyringBodyComponent.createNodeForMulti(from: bodyImageURL) { [weak self] body in
+        KeyringBodyComponent.createNode(from: bodyImageURL, templateId: templateId) { [weak self] body in
             guard let self = self, let body = body else {
                 self?.checkLoadingComplete()
                 return
             }
+
+            // 뭉치용 키링 스케일 적용
+            let bundleScale = KeyringScale.bundleKeyringScale(for: self.carabinerId)
+            body.setScale(bundleScale)
 
             let bodyFrame = body.calculateAccumulatedFrame()
             let bodyHalfHeight = bodyFrame.height / 2

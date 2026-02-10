@@ -115,7 +115,7 @@ class KeyringVideoGenerator {
     /// - Returns: 생성된 영상 파일 URL
     func generateVideo<VM: KeyringViewModelProtocol>(
         viewModel: VM,
-        backgroundImage: UIImage? = UIImage(named: "completeBG2"),
+        backgroundImage: UIImage? = nil,
         keyringScale: CGFloat = 3.5
     ) async throws -> URL {
         self.backgroundImage = backgroundImage

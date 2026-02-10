@@ -129,6 +129,7 @@
 		4C2526222F3B290A003CC5AD /* KeyringScene+Swipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2526182F3B290A003CC5AD /* KeyringScene+Swipe.swift */; };
 		4C2526232F3B290A003CC5AD /* KeyringScene+Setup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2526172F3B290A003CC5AD /* KeyringScene+Setup.swift */; };
 		4C2526242F3B290A003CC5AD /* KeyringCellScene+Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C25260F2F3B290A003CC5AD /* KeyringCellScene+Capture.swift */; };
+		4C2526262F3B2BBE003CC5AD /* KeyringScale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2526252F3B2BBE003CC5AD /* KeyringScale.swift */; };
 		4C3687F72EBFA87800C64E75 /* Pretendard-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C3687F62EBFA87800C64E75 /* Pretendard-Medium.ttf */; };
 		4C3687FA2EBFC0FB00C64E75 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3687F82EBFC0FB00C64E75 /* NotificationManager.swift */; };
 		4C3687FC2EC05E6800C64E75 /* AccountAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3687FB2EC05E6800C64E75 /* AccountAlert.swift */; };
@@ -156,8 +157,6 @@
 		4C47339A2F1FA388005D2376 /* AcrylicPhotoEditedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733582F1FA388005D2376 /* AcrylicPhotoEditedView.swift */; };
 		4C47339B2F1FA388005D2376 /* KeyringCustomizingView+Purchase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733442F1FA388005D2376 /* KeyringCustomizingView+Purchase.swift */; };
 		4C47339C2F1FA388005D2376 /* PreviewGuiding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733382F1FA388005D2376 /* PreviewGuiding.swift */; };
-		4C47339D2F1FA388005D2376 /* DrawingCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C47336E2F1FA388005D2376 /* DrawingCanvasView.swift */; };
-		4C47339E2F1FA388005D2376 /* NeonSignVM+Drawing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C47336B2F1FA388005D2376 /* NeonSignVM+Drawing.swift */; };
 		4C47339F2F1FA388005D2376 /* SpeechBubblePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C47338D2F1FA388005D2376 /* SpeechBubblePreview.swift */; };
 		4C4733A02F1FA388005D2376 /* KeyringCustomizingView+PurchaseSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733452F1FA388005D2376 /* KeyringCustomizingView+PurchaseSheet.swift */; };
 		4C4733A12F1FA388005D2376 /* AcrylicPhotoCropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733572F1FA388005D2376 /* AcrylicPhotoCropView.swift */; };
@@ -168,7 +167,6 @@
 		4C4733A62F1FA388005D2376 /* KeyringCompleteView+VideoGen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733412F1FA388005D2376 /* KeyringCompleteView+VideoGen.swift */; };
 		4C4733A72F1FA388005D2376 /* KeyringCompleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C47333E2F1FA388005D2376 /* KeyringCompleteView.swift */; };
 		4C4733A82F1FA388005D2376 /* AcrylicPhotoVM+ImageLoad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733552F1FA388005D2376 /* AcrylicPhotoVM+ImageLoad.swift */; };
-		4C4733A92F1FA388005D2376 /* NeonSignPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733702F1FA388005D2376 /* NeonSignPreview.swift */; };
 		4C4733AA2F1FA388005D2376 /* SpeechBubbleFrameSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C47338C2F1FA388005D2376 /* SpeechBubbleFrameSelectorView.swift */; };
 		4C4733AB2F1FA388005D2376 /* KeyringViewModelProtocol+Reset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C47332F2F1FA388005D2376 /* KeyringViewModelProtocol+Reset.swift */; };
 		4C4733AC2F1FA388005D2376 /* PixelPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733782F1FA388005D2376 /* PixelPreviewView.swift */; };
@@ -198,13 +196,10 @@
 		4C4733C42F1FA388005D2376 /* SpeechBubbleVM+Effect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733872F1FA388005D2376 /* SpeechBubbleVM+Effect.swift */; };
 		4C4733C52F1FA388005D2376 /* ClearSketchCropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733632F1FA388005D2376 /* ClearSketchCropView.swift */; };
 		4C4733C62F1FA388005D2376 /* AudioRecorderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733332F1FA388005D2376 /* AudioRecorderManager.swift */; };
-		4C4733C72F1FA388005D2376 /* DrawingToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C47336F2F1FA388005D2376 /* DrawingToolsView.swift */; };
 		4C4733C82F1FA388005D2376 /* KeyringInfoInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733462F1FA388005D2376 /* KeyringInfoInputView.swift */; };
 		4C4733C92F1FA388005D2376 /* PolaroidVM+Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C47337D2F1FA388005D2376 /* PolaroidVM+Frame.swift */; };
 		4C4733CA2F1FA388005D2376 /* KeyringViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C47332E2F1FA388005D2376 /* KeyringViewModelProtocol.swift */; };
-		4C4733CB2F1FA388005D2376 /* NeonSignVM+Effect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C47336C2F1FA388005D2376 /* NeonSignVM+Effect.swift */; };
 		4C4733CC2F1FA388005D2376 /* SpeechBubbleVM+Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733892F1FA388005D2376 /* SpeechBubbleVM+Frame.swift */; };
-		4C4733CD2F1FA388005D2376 /* NeonSignVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C47336A2F1FA388005D2376 /* NeonSignVM.swift */; };
 		4C4733CE2F1FA388005D2376 /* KeyringCompleteView+SaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733402F1FA388005D2376 /* KeyringCompleteView+SaveImage.swift */; };
 		4C4733CF2F1FA388005D2376 /* ClearSketchVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C47335D2F1FA388005D2376 /* ClearSketchVM.swift */; };
 		4C4733D02F1FA388005D2376 /* RecordingSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733342F1FA388005D2376 /* RecordingSheet.swift */; };
@@ -594,6 +589,7 @@
 		4C2526172F3B290A003CC5AD /* KeyringScene+Setup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringScene+Setup.swift"; sourceTree = "<group>"; };
 		4C2526182F3B290A003CC5AD /* KeyringScene+Swipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringScene+Swipe.swift"; sourceTree = "<group>"; };
 		4C2526192F3B290A003CC5AD /* KeyringScene+Touch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyringScene+Touch.swift"; sourceTree = "<group>"; };
+		4C2526252F3B2BBE003CC5AD /* KeyringScale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringScale.swift; sourceTree = "<group>"; };
 		4C3687F62EBFA87800C64E75 /* Pretendard-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Medium.ttf"; sourceTree = "<group>"; };
 		4C3687F82EBFC0FB00C64E75 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		4C3687FB2EC05E6800C64E75 /* AccountAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountAlert.swift; sourceTree = "<group>"; };
@@ -656,12 +652,6 @@
 		4C4733652F1FA388005D2376 /* ClearSketchDrawingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearSketchDrawingView.swift; sourceTree = "<group>"; };
 		4C4733662F1FA388005D2376 /* ClearSketchGuiding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearSketchGuiding.swift; sourceTree = "<group>"; };
 		4C4733672F1FA388005D2376 /* ClearSketchPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearSketchPreview.swift; sourceTree = "<group>"; };
-		4C47336A2F1FA388005D2376 /* NeonSignVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonSignVM.swift; sourceTree = "<group>"; };
-		4C47336B2F1FA388005D2376 /* NeonSignVM+Drawing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NeonSignVM+Drawing.swift"; sourceTree = "<group>"; };
-		4C47336C2F1FA388005D2376 /* NeonSignVM+Effect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NeonSignVM+Effect.swift"; sourceTree = "<group>"; };
-		4C47336E2F1FA388005D2376 /* DrawingCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingCanvasView.swift; sourceTree = "<group>"; };
-		4C47336F2F1FA388005D2376 /* DrawingToolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingToolsView.swift; sourceTree = "<group>"; };
-		4C4733702F1FA388005D2376 /* NeonSignPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonSignPreview.swift; sourceTree = "<group>"; };
 		4C4733732F1FA388005D2376 /* PixelVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelVM.swift; sourceTree = "<group>"; };
 		4C4733742F1FA388005D2376 /* PixelVM+Effect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PixelVM+Effect.swift"; sourceTree = "<group>"; };
 		4C4733752F1FA388005D2376 /* PixelVM+ImageConversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PixelVM+ImageConversion.swift"; sourceTree = "<group>"; };
@@ -1128,6 +1118,7 @@
 		4C2525EC2F3B27B3003CC5AD /* Scene */ = {
 			isa = PBXGroup;
 			children = (
+				4C2526252F3B2BBE003CC5AD /* KeyringScale.swift */,
 				4C25261A2F3B290A003CC5AD /* KeyringScene */,
 				4C2526142F3B290A003CC5AD /* DetailScene */,
 				4C2526112F3B290A003CC5AD /* CellScene */,
@@ -1459,35 +1450,6 @@
 			path = ClearSketch;
 			sourceTree = "<group>";
 		};
-		4C47336D2F1FA388005D2376 /* ViewModels */ = {
-			isa = PBXGroup;
-			children = (
-				4C47336A2F1FA388005D2376 /* NeonSignVM.swift */,
-				4C47336B2F1FA388005D2376 /* NeonSignVM+Drawing.swift */,
-				4C47336C2F1FA388005D2376 /* NeonSignVM+Effect.swift */,
-			);
-			path = ViewModels;
-			sourceTree = "<group>";
-		};
-		4C4733712F1FA388005D2376 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				4C47336E2F1FA388005D2376 /* DrawingCanvasView.swift */,
-				4C47336F2F1FA388005D2376 /* DrawingToolsView.swift */,
-				4C4733702F1FA388005D2376 /* NeonSignPreview.swift */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		4C4733722F1FA388005D2376 /* NeonSign */ = {
-			isa = PBXGroup;
-			children = (
-				4C47336D2F1FA388005D2376 /* ViewModels */,
-				4C4733712F1FA388005D2376 /* Views */,
-			);
-			path = NeonSign;
-			sourceTree = "<group>";
-		};
 		4C4733762F1FA388005D2376 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
@@ -1582,7 +1544,6 @@
 			children = (
 				4C47335C2F1FA388005D2376 /* AcrylicPhoto */,
 				4C4733692F1FA388005D2376 /* ClearSketch */,
-				4C4733722F1FA388005D2376 /* NeonSign */,
 				4C47337A2F1FA388005D2376 /* Pixel */,
 				4C4733842F1FA388005D2376 /* Polaroid */,
 				4C47338F2F1FA388005D2376 /* SpeechBubble */,
@@ -2700,8 +2661,6 @@
 				4C47339A2F1FA388005D2376 /* AcrylicPhotoEditedView.swift in Sources */,
 				4C47339B2F1FA388005D2376 /* KeyringCustomizingView+Purchase.swift in Sources */,
 				4C47339C2F1FA388005D2376 /* PreviewGuiding.swift in Sources */,
-				4C47339D2F1FA388005D2376 /* DrawingCanvasView.swift in Sources */,
-				4C47339E2F1FA388005D2376 /* NeonSignVM+Drawing.swift in Sources */,
 				4C47339F2F1FA388005D2376 /* SpeechBubblePreview.swift in Sources */,
 				4C4733A02F1FA388005D2376 /* KeyringCustomizingView+PurchaseSheet.swift in Sources */,
 				4C4733A12F1FA388005D2376 /* AcrylicPhotoCropView.swift in Sources */,
@@ -2713,7 +2672,6 @@
 				4C4733A72F1FA388005D2376 /* KeyringCompleteView.swift in Sources */,
 				4C4733A82F1FA388005D2376 /* AcrylicPhotoVM+ImageLoad.swift in Sources */,
 				38489EBD2F290BD000E41FAE /* CopyTooltipView.swift in Sources */,
-				4C4733A92F1FA388005D2376 /* NeonSignPreview.swift in Sources */,
 				4C4733AA2F1FA388005D2376 /* SpeechBubbleFrameSelectorView.swift in Sources */,
 				4C4733AB2F1FA388005D2376 /* KeyringViewModelProtocol+Reset.swift in Sources */,
 				4C4733AC2F1FA388005D2376 /* PixelPreviewView.swift in Sources */,
@@ -2746,13 +2704,10 @@
 				4C4733C42F1FA388005D2376 /* SpeechBubbleVM+Effect.swift in Sources */,
 				4C4733C52F1FA388005D2376 /* ClearSketchCropView.swift in Sources */,
 				4C4733C62F1FA388005D2376 /* AudioRecorderManager.swift in Sources */,
-				4C4733C72F1FA388005D2376 /* DrawingToolsView.swift in Sources */,
 				4C4733C82F1FA388005D2376 /* KeyringInfoInputView.swift in Sources */,
 				4C4733C92F1FA388005D2376 /* PolaroidVM+Frame.swift in Sources */,
 				4C4733CA2F1FA388005D2376 /* KeyringViewModelProtocol.swift in Sources */,
-				4C4733CB2F1FA388005D2376 /* NeonSignVM+Effect.swift in Sources */,
 				4C4733CC2F1FA388005D2376 /* SpeechBubbleVM+Frame.swift in Sources */,
-				4C4733CD2F1FA388005D2376 /* NeonSignVM.swift in Sources */,
 				4C4733CE2F1FA388005D2376 /* KeyringCompleteView+SaveImage.swift in Sources */,
 				4C4733CF2F1FA388005D2376 /* ClearSketchVM.swift in Sources */,
 				4C4733D02F1FA388005D2376 /* RecordingSheet.swift in Sources */,
@@ -2788,6 +2743,7 @@
 				4CC3D36E2EC2801F0009D376 /* WelcomeKeyringViewModel.swift in Sources */,
 				4CC3D36F2EC2801F0009D376 /* IntroViewModel+WelcomeKeyring.swift in Sources */,
 				4C4733F52F225785005D2376 /* WorkshopGridBuilder.swift in Sources */,
+				4C2526262F3B2BBE003CC5AD /* KeyringScale.swift in Sources */,
 				38173D112EB90CCE00E36F7E /* TagInputPopup.swift in Sources */,
 				4CEBB1722EFE66CF00CF53E2 /* ToastManager.swift in Sources */,
 				C6B56F232EC0341B0049F969 /* KeyringImageCache.swift in Sources */,

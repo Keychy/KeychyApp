@@ -75,6 +75,7 @@ struct BundleCreateView<Route: BundleRoute>: View {
                         backgroundImageURL: bg.background.backgroundImage,
                         carabinerBackImageURL: cb.carabiner.backImageURL,
                         carabinerFrontImageURL: cb.carabiner.frontImageURL,
+                        carabinerId: cb.carabiner.id ?? "",
                         carabinerX: cb.carabiner.carabinerX,
                         carabinerY: cb.carabiner.carabinerY,
                         carabinerWidth: cb.carabiner.carabinerWidth,

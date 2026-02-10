@@ -31,12 +31,6 @@ enum WorkshopRoute: Hashable, BundleRoute {
     case acrylicPhotoInfoInput
     case acrylicPhotoComplete
 
-    // MARK: - 네온 사인 템플릿
-    case neonSignPreview
-    case neonSignCustomizing
-    case neonSignInfoInput
-    case neonSignComplete
-
     // MARK: - 폴라로이드 템플릿
     case polaroidPreview
     case polaroidCustomizing
@@ -75,8 +69,6 @@ enum WorkshopRoute: Hashable, BundleRoute {
         switch string {
         case "AcrylicPhoto":
             return .acrylicPhotoPreview
-        case "NeonSign":
-            return .neonSignPreview
         case "Polaroid":
             return .polaroidPreview
         case "ClearSketch":

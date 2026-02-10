@@ -16,7 +16,7 @@ extension KeyringInfoInputView {
     
     /// 씬 스케일 (시트 최대화 시 작게, 최소화 시 크게)
     var sceneScale: CGFloat {
-        isSheetExpanded ? 0.7 : 1.2
+        isSheetExpanded ? 0.6 : 1.0
     }
     
     /// 씬 Y 오프셋 (시트 최대화 시 위로 이동)
