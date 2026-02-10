@@ -192,6 +192,7 @@ extension BundleGridItem {
                     y: carabiner.keyringYPosition[originalIndex]
                 ),
                 bodyImageURL: keyringInfo.bodyImage,
+                templateId: keyringInfo.templateId,
                 hookOffsetY: keyringInfo.hookOffsetY,
                 chainLength: keyringInfo.chainLength
             )
@@ -286,10 +287,11 @@ extension BundleGridItem {
                 return nil
             }
 
+            let templateId = data["selectedTemplate"] as? String ?? ""
             let hookOffsetY = data["hookOffsetY"] as? CGFloat ?? 0.0
             let chainLength = data["chainLength"] as? Int ?? 5
 
-            return KeyringCaptureInfo(id: keyringId, bodyImage: bodyImage, hookOffsetY: hookOffsetY, chainLength: chainLength)
+            return KeyringCaptureInfo(id: keyringId, bodyImage: bodyImage, templateId: templateId, hookOffsetY: hookOffsetY, chainLength: chainLength)
         } catch {
             print("[BundleItem] 키링 정보 로드 실패: \(keyringId) - \(error.localizedDescription)")
             return nil
@@ -301,6 +303,7 @@ extension BundleGridItem {
 struct KeyringCaptureInfo {
     let id: String
     let bodyImage: String
+    let templateId: String
     let hookOffsetY: CGFloat?
     let chainLength: Int
 }

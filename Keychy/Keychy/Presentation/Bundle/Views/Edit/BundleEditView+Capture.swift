@@ -52,6 +52,7 @@ extension BundleEditView {
                 index: item.index,
                 position: item.position,
                 bodyImageURL: item.bodyImageURL,
+                templateId: item.templateId ?? "",
                 hookOffsetY: item.hookOffsetY,
                 chainLength: item.chainLength
             )

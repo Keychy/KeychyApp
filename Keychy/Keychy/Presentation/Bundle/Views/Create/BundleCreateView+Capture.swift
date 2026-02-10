@@ -84,6 +84,7 @@ extension BundleCreateView {
                     y: carabiner.keyringYPosition[index]
                 ),
                 bodyImageURL: keyring.bodyImage,
+                templateId: keyring.selectedTemplate,
                 hookOffsetY: keyring.hookOffsetY,
                 chainLength: keyring.chainLength
             )
