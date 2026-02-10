@@ -119,9 +119,6 @@ struct WorkshopView: View {
             }
         }
         .withToast(position: .tabbar)
-        .onAppear {
-            TabBarManager.show()
-        }
         .sheet(isPresented: $showTemplateSelectSheet) {
             WorkshopTemplateSelectSheet(
                 isPresented: $showTemplateSelectSheet,
