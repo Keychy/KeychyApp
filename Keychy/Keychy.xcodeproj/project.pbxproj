@@ -51,6 +51,8 @@
 		3896B9652F3B974500220134 /* WishHorse26VM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3896B9642F3B974500220134 /* WishHorse26VM.swift */; };
 		3896B9672F3B99CB00220134 /* WishHorse26VM+Effect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3896B9662F3B99CB00220134 /* WishHorse26VM+Effect.swift */; };
 		3896B9692F3B9AB800220134 /* WishHorse26VM+Firebase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3896B9682F3B9AB800220134 /* WishHorse26VM+Firebase.swift */; };
+		3896B96B2F3BA16200220134 /* WishHorse26FramePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3896B96A2F3BA16200220134 /* WishHorse26FramePreviewView.swift */; };
+		3896B96D2F3BA1A700220134 /* WishHorse26FrameSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3896B96C2F3BA1A700220134 /* WishHorse26FrameSelectorView.swift */; };
 		38A22A7F2EC2238800B4C7C5 /* CollectionKeyringPackageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A22A7E2EC2238800B4C7C5 /* CollectionKeyringPackageView.swift */; };
 		38A22A9D2EC27AC400B4C7C5 /* PackagedKeyringView+SaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A22A9C2EC27AC400B4C7C5 /* PackagedKeyringView+SaveImage.swift */; };
 		38A22A9F2EC28B3D00B4C7C5 /* PackageCompleteView+SaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A22A9E2EC28B3D00B4C7C5 /* PackageCompleteView+SaveImage.swift */; };
@@ -523,6 +525,8 @@
 		3896B9642F3B974500220134 /* WishHorse26VM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishHorse26VM.swift; sourceTree = "<group>"; };
 		3896B9662F3B99CB00220134 /* WishHorse26VM+Effect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WishHorse26VM+Effect.swift"; sourceTree = "<group>"; };
 		3896B9682F3B9AB800220134 /* WishHorse26VM+Firebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WishHorse26VM+Firebase.swift"; sourceTree = "<group>"; };
+		3896B96A2F3BA16200220134 /* WishHorse26FramePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishHorse26FramePreviewView.swift; sourceTree = "<group>"; };
+		3896B96C2F3BA1A700220134 /* WishHorse26FrameSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishHorse26FrameSelectorView.swift; sourceTree = "<group>"; };
 		38A22A7E2EC2238800B4C7C5 /* CollectionKeyringPackageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionKeyringPackageView.swift; sourceTree = "<group>"; };
 		38A22A9C2EC27AC400B4C7C5 /* PackagedKeyringView+SaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PackagedKeyringView+SaveImage.swift"; sourceTree = "<group>"; };
 		38A22A9E2EC28B3D00B4C7C5 /* PackageCompleteView+SaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PackageCompleteView+SaveImage.swift"; sourceTree = "<group>"; };
@@ -1067,6 +1071,8 @@
 		3896B9612F3B96D900220134 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				3896B96A2F3BA16200220134 /* WishHorse26FramePreviewView.swift */,
+				3896B96C2F3BA1A700220134 /* WishHorse26FrameSelectorView.swift */,
 				3896B9622F3B970100220134 /* WishHorse26Preview.swift */,
 			);
 			path = Views;
@@ -2802,6 +2808,7 @@
 				4C25260C2F3B27B3003CC5AD /* KeyringSceneView.swift in Sources */,
 				4C4733282F1FA2AB005D2376 /* WorkshopTemplatesView.swift in Sources */,
 				4C47332D2F1FA2AB005D2376 /* WorkshopViewModel.swift in Sources */,
+				3896B96B2F3BA16200220134 /* WishHorse26FramePreviewView.swift in Sources */,
 				4C86A6142F25C0BA0023AA2D /* WorkshopKeyringGridView.swift in Sources */,
 				386B17642ECD142600CCCC23 /* String+Extension.swift in Sources */,
 				4CEBB1652EFBA54200CF53E2 /* RootViewModel.swift in Sources */,
@@ -2848,6 +2855,7 @@
 				38C3C2962EC20B1E003C5DE1 /* PackagedKeyringView.swift in Sources */,
 				38173D0A2EB8AD7900E36F7E /* CategoryTabBarWithLongPress.swift in Sources */,
 				4CEBB1552EFACFA900CF53E2 /* HomeTab.swift in Sources */,
+				3896B96D2F3BA1A700220134 /* WishHorse26FrameSelectorView.swift in Sources */,
 				4CEBB1572EFACFA900CF53E2 /* CollectionTab.swift in Sources */,
 				4CEBB1592EFACFA900CF53E2 /* WorkshopTab.swift in Sources */,
 				38F832CD2EC90DEF00D3A248 /* WidgetOnboardingStepView+Helpers.swift in Sources */,
