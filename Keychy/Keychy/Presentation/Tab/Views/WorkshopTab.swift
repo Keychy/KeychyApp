@@ -17,6 +17,7 @@ struct WorkshopTab: View {
     @State private var clearSketchVM: ClearSketchVM?
     @State private var pixelKeyringVM: PixelVM?
     @State private var speechBubbleVM: SpeechBubbleVM?
+    @State private var wishHorse26VM: WishHorse26VM?
     @State private var workshopViewModel = WorkshopViewModel(userManager: UserManager.shared)
 
     var body: some View {
@@ -185,6 +186,28 @@ struct WorkshopTab: View {
                 viewModel: getSpeechBubbleVM(),
                 navigationTitle: "키링이 완성되었어요!"
             )
+            
+        // MARK: - WishHorse26
+        case .wishHorse26Preview:
+            WishHorse26Preview(router: router, viewModel: getWishHorse26VM())
+        case .wishHorse26Customizing:
+            KeyringCustomizingView(
+                router: router,
+                viewModel: getWishHorse26VM(),
+                nextRoute: .wishHorse26InfoInput
+            )
+        case .wishHorse26InfoInput:
+            KeyringInfoInputView(
+                router: router,
+                viewModel: getWishHorse26VM(),
+                nextRoute: .wishHorse26Complete
+            )
+        case .wishHorse26Complete:
+            KeyringCompleteView(
+                router: router,
+                viewModel: getWishHorse26VM(),
+                navigationTitle: "키링이 완성되었어요!"
+            )
 
         // MARK: - 선물 포장 완료
         case .packageComplete(let keyringDocumentId, let postOfficeId, let templateId, let shareLink):
@@ -255,6 +278,15 @@ struct WorkshopTab: View {
         guard let viewModel = speechBubbleVM else {
             let newViewModel = SpeechBubbleVM()
             speechBubbleVM = newViewModel
+            return newViewModel
+        }
+        return viewModel
+    }
+    
+    private func getWishHorse26VM() -> WishHorse26VM {
+        guard let viewModel = wishHorse26VM else {
+            let newViewModel = WishHorse26VM()
+            wishHorse26VM = newViewModel
             return newViewModel
         }
         return viewModel
