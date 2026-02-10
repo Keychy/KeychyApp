@@ -32,6 +32,9 @@ class CollectionViewModel {
             // 탭 전환해도 정렬 상태는 유지 (각 탭이 독립적으로 정렬방식 유지)
         }
     }
+
+    /// 다른 화면에서 보관함 이동 시 뭉치 탭으로 시작할지 여부
+    static var shouldStartWithBundleTab: Bool = false
     
     // Firestore 문서 ID 매핑: 로컬 Keyring(UUID) -> Firestore 문서 ID(String)
     var keyringDocumentIdByLocalId: [UUID: String] = [:]

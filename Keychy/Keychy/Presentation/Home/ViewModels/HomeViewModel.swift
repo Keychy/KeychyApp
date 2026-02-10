@@ -17,12 +17,15 @@ class HomeViewModel {
 
     /// 씬 준비 완료 여부
     var isSceneReady = false
-    
+
     /// 데이터 로드 완료 여부
     var isDataLoaded = false
 
     /// 마지막으로 로드한 뭉치 ID (뭉치 변경 감지용)
     private var lastLoadedBundleId: String?
+
+    /// 다른 화면에서 키링/뭉치 수정 후 홈 리프레시 필요 여부
+    static var needsRefresh: Bool = false
     
     /// 네트워크 에러 발생 여부
     var hasNetworkError: Bool = false
@@ -40,6 +43,12 @@ class HomeViewModel {
     
     @MainActor
     func loadMainBundle(collectionViewModel: CollectionViewModel, bundleViewModel: BundleViewModel, onBackgroundLoaded: (() -> Void)?) async {
+        // 리프레시 필요 시 캐시 무효화
+        if Self.needsRefresh {
+            Self.needsRefresh = false
+            lastLoadedBundleId = nil
+        }
+
         // 이미 데이터가 로드되었고, 같은 뭉치가 선택된 상태면 스킵 (탭 전환 후 돌아올 때)
         if isDataLoaded,
            let currentBundle = bundleViewModel.selectedBundle,
