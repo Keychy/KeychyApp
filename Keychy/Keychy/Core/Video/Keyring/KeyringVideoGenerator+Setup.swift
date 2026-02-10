@@ -25,6 +25,8 @@ extension KeyringVideoGenerator {
         let scene = KeyringScene(
             ringType: .basic,
             chainType: .basic,
+            templateId: viewModel.templateId,
+            screen: .complete,
             bodyImage: viewModel.bodyImage,
             backgroundColor: .clear,
             hookOffsetY: viewModel.hookOffsetY != 0 ? viewModel.hookOffsetY : nil,

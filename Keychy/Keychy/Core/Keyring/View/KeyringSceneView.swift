@@ -12,6 +12,7 @@ import Lottie
 /// 키링 SpriteKit Scene + 로티재생 ZStack뷰 (Generic)
 struct KeyringSceneView<VM: KeyringViewModelProtocol>: View {
     @Bindable var viewModel: VM
+    var screen: KeyringScale.Screen = .customizing  // 화면 종류 (zoomScale용)
     var backgroundColor: UIColor = .gray50
     var applyWelcomeImpulse: Bool = false  // 씬 준비 완료 시 자동 파티클 효과
     var onSceneReady: (() -> Void)? = nil  // 씬 준비 완료 콜백
@@ -65,6 +66,8 @@ struct KeyringSceneView<VM: KeyringViewModelProtocol>: View {
         let newScene = KeyringScene(
             ringType: .basic,
             chainType: .basic,
+            templateId: viewModel.templateId,
+            screen: screen,
             bodyImage: viewModel.bodyImage,
             backgroundColor: backgroundColor,
             hookOffsetY: viewModel.hookOffsetY != 0 ? viewModel.hookOffsetY : nil,

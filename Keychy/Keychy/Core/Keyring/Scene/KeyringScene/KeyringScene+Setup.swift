@@ -66,13 +66,14 @@ extension KeyringScene {
         if let bodyImage = bodyImage {
             // UIImage인 경우
             KeyringBodyComponent.createNode(
-                from: bodyImage
+                from: bodyImage,
+                templateId: templateId
             ) { [weak self] body in
                 guard let self = self, let body = body else {
                     print("Body 생성 실패")
                     return
                 }
-                
+
                 self.positionAndConnectBody(
                     body: body,
                     ring: ring,
@@ -84,12 +85,15 @@ extension KeyringScene {
             }
         } else if let bodyImageURL = bodyImageURL {
             // URL만 있는 경우
-            KeyringBodyComponent.createNode(from: bodyImageURL) { [weak self] body in
+            KeyringBodyComponent.createNode(
+                from: bodyImageURL,
+                templateId: templateId
+            ) { [weak self] body in
                 guard let self = self, let body = body else {
                     print("Body 생성 실패")
                     return
                 }
-                
+
                 self.positionAndConnectBody(
                     body: body,
                     ring: ring,
@@ -100,7 +104,7 @@ extension KeyringScene {
                 )
             }
         } else {
-            let body = KeyringBodyComponent.createNode(from: .basic)
+            let body = KeyringBodyComponent.createNode(from: .basic, templateId: templateId)
             positionAndConnectBody(
                 body: body,
                 ring: ring,

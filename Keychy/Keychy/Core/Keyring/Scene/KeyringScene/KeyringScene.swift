@@ -18,6 +18,8 @@ class KeyringScene: SKScene {
     // MARK: - Properties
     var bodyImage: UIImage? // UIImage용
     var bodyImageURL: String? // Firebase URL용
+    var templateId: String // 템플릿 ID (KeyringScale용)
+    var screen: KeyringScale.Screen // 화면 종류 (zoomScale용)
     var customSoundURL: URL? // 커스텀 녹음 파일 URL
     var hookOffsetY: CGFloat? // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
     var chainLength: Int = 5 // 체인 링크 개수 (기본값 5)
@@ -57,15 +59,18 @@ class KeyringScene: SKScene {
     init(
         ringType: RingType,
         chainType: ChainType,
+        templateId: String,
+        screen: KeyringScale.Screen = .customizing,
         bodyImage: UIImage? = nil,
         bodyImageURL: String? = nil,
         backgroundColor: UIColor = .gray50,
         hookOffsetY: CGFloat? = nil,
         chainLength: Int = 5
     ) {
-
         self.currentRingType = ringType
         self.currentChainType = chainType
+        self.templateId = templateId
+        self.screen = screen
         self.bodyImageURL = bodyImageURL
         self.customBackgroundColor = backgroundColor
         self.hookOffsetY = hookOffsetY
@@ -79,9 +84,7 @@ class KeyringScene: SKScene {
         super.init(size: .zero)
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
+    required init?(coder aDecoder: NSCoder) { fatalError() }
     
     deinit {
         cleanup()
@@ -147,6 +150,22 @@ class KeyringScene: SKScene {
         backgroundColor = customBackgroundColor
         physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
 
+        // 카메라 설정 (zoomScale 적용)
+        setupCamera()
+
         setupKeyring()
+    }
+
+    /// 카메라 설정 - zoomScale 적용
+    private func setupCamera() {
+        let cameraNode = SKCameraNode()
+        cameraNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
+
+        // zoomScale 적용 (카메라 scale은 역수)
+        let zoom = KeyringScale.zoomScale(for: screen, template: templateId)
+        cameraNode.setScale(1.0 / zoom)
+
+        addChild(cameraNode)
+        self.camera = cameraNode
     }
 }
