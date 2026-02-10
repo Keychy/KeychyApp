@@ -12,7 +12,7 @@ struct WishHorse26FrameSelectorView: View {
     @Bindable var viewModel: WishHorse26VM
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 0) {
             // MARK: - 프레임 섹션
             Text("프레임")
                 .typography(.suit16B)
@@ -29,36 +29,35 @@ struct WishHorse26FrameSelectorView: View {
                 }
                 .padding(.horizontal, 20)
             }
-            .frame(height: 94)
+            .frame(height: 80)
 
             // MARK: - 안장 섹션 (saddle)
             Text("안장")
                 .typography(.suit16B)
                 .foregroundStyle(.black100)
                 .padding(.leading, 20)
-                .padding(.top, 20)
                 .padding(.bottom, 8)
+                .padding(.top, 13)
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
-                    ForEach(viewModel.availableFrames) { frame in
-                        frameCell(frame: frame)
+                    ForEach(viewModel.availableSaddles) { saddle in
+                        saddleCell(saddle: saddle)
                     }
                 }
                 .padding(.horizontal, 20)
             }
-            .frame(height: 94)
+            .frame(height: 60)
             
             // MARK: - 컬러 섹션
-            VStack(alignment: .leading, spacing: 2) {
-                Text("갈기")
-                    .typography(.suit16B)
-                    .foregroundStyle(.black100)
-                    .padding(.leading, 20)
+            Text("갈기")
+                .typography(.suit16B)
+                .foregroundStyle(.black100)
+                .padding(.leading, 20)
+                .padding(.top, 13)
 
-                ManeColorPalette(selectedColor: $viewModel.selectedColor)
-                    .padding(.leading, 16)
-            }
+            maneColorPalette
+                .padding(.leading, 20)
 
             Spacer()
         }
@@ -81,6 +80,9 @@ struct WishHorse26FrameSelectorView: View {
 
         Button {
             viewModel.selectedFrame = frame
+            Task {
+                await viewModel.composeHorse()
+            }
         } label: {
             VStack(spacing: 6) {
                 LazyImage(url: URL(string: frame.thumbnailURL)) { state in
@@ -93,13 +95,13 @@ struct WishHorse26FrameSelectorView: View {
                                 .scaledToFit()
                                 .padding(.vertical, 8)
                         }
-                        .frame(width: 105, height: 105)
+                        .frame(width: 80, height: 80)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
 
                     } else {
                         RoundedRectangle(cornerRadius: 10)
                             .fill(Color.gray100)
-                            .frame(width: 105, height: 105)
+                            .frame(width: 80, height: 80)
                     }
                 }
                 .overlay(
@@ -109,47 +111,78 @@ struct WishHorse26FrameSelectorView: View {
                             lineWidth: 2.5
                         )
                 )
-
-                // 프레임 이름
-                Text(frame.name)
-                    .typography(isSelected ? .notosans12SB : .notosans12M)
-                    .foregroundStyle(isSelected ? .main500 : .black100)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-                    .frame(width: 70)
             }
         }
         .buttonStyle(PlainButtonStyle())
     }
-}
+    
+    // MARK: - Saddle Cell
+    
+    @ViewBuilder
+    private func saddleCell(saddle: Saddle) -> some View {
+        let isSelected = viewModel.selectedSaddle?.id == saddle.id
 
-// 갈기 컬러 팔레트
-struct ManeColorPalette: View {
-    @Binding var selectedColor: Color
+        Button {
+            viewModel.selectedSaddle = saddle
+            Task {
+                await viewModel.composeHorse()
+            }
+        } label: {
+            VStack(spacing: 6) {
+                LazyImage(url: URL(string: saddle.thumbnailURL)) { state in
+                    if let image = state.image {
+                        ZStack {
+                            Color.gray50
 
-    /// 프리셋 색상들
-    private let presetColors: [Color] = [
-        Color(hex: "#810A15"),
-        Color(hex: "#810A15"),
-        Color(hex: "#FF383C"),
-        Color(hex: "#FDF1BC"),
-        Color(hex: "#FFBAE7"),
-        Color(hex: "#C2BCFE")
-    ]
+                            image
+                                .resizable()
+                                .scaledToFit()
+                                .padding(.vertical, 8)
+                        }
+                        .frame(width: 80, height: 59)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
 
-    var body: some View {
+                    } else {
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color.gray100)
+                            .frame(width: 80, height: 59)
+                    }
+                }
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .strokeBorder(
+                            isSelected ? Color.main500 : Color.clear,
+                            lineWidth: 2.5
+                        )
+                )
+            }
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+    
+    // MARK: - Mane Color Palette
+    
+    /// 갈기 컬러 팔레트
+    @ViewBuilder
+    private var maneColorPalette: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 11) {
-                // ColorPicker
-                ColorPicker("", selection: $selectedColor)
-                    .labelsHidden()
-                    .frame(width: 37, height: 37)
-
                 // 프리셋 색상들
-                ForEach(presetColors, id: \.self) { color in
+                ForEach(Array(ManeColorType.allCases.enumerated()), id: \.offset) { index, colorType in
+                    let color = colorType.color
+                    
                     Button {
-                        selectedColor = color
-                        Haptic.impact(style: .light)
+                        viewModel.selectedColor = color
+                        
+                        // Firebase에서 정확히 일치하는 색상의 Mane 찾기
+                        if let matchingMane = viewModel.availableManes.first(where: { mane in
+                            mane.color.uppercased() == colorType.rawValue.uppercased()
+                        }) {
+                            viewModel.selectedMane = matchingMane
+                            Task {
+                                await viewModel.composeHorse()
+                            }
+                        }
                     } label: {
                         Circle()
                             .fill(color)
@@ -159,10 +192,24 @@ struct ManeColorPalette: View {
                                     .strokeBorder(Color.black20, lineWidth: color == .white ? 1 : 0)
                             )
                             .overlay(
-                                Circle()
-                                    .strokeBorder(Color.white, lineWidth: selectedColor == color ? 3 : 0)
+                                ZStack {
+                                    Circle()
+                                        .strokeBorder(
+                                            Color.white,
+                                            lineWidth: viewModel.selectedColor == color ? 3 : 0
+                                        )
+                                    
+                                    Image(.checkMarkWhite)
+                                        .resizable()
+                                        .frame(width: 12, height: 12)
+                                        .opacity(viewModel.selectedColor == color ? 1 : 0)
+                                }
+
                             )
-                            .shadow(color: selectedColor == color ? Color.black.opacity(0.5) : Color.clear, radius: 2)
+                            .shadow(
+                                color: viewModel.selectedColor == color ? Color.black.opacity(0.5) : Color.clear,
+                                radius: 2
+                            )
                     }
                 }
             }
