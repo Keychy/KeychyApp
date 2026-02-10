@@ -185,6 +185,7 @@ struct BundleEditView<Route: BundleRoute>: View {
                 backgroundImageURL: background.background.backgroundImage,
                 carabinerBackImageURL: carabiner.carabiner.backImageURL,
                 carabinerFrontImageURL: carabiner.carabiner.frontImageURL,
+                carabinerId: carabiner.carabiner.id ?? "",
                 carabinerX: carabiner.carabiner.carabinerX,
                 carabinerY: carabiner.carabiner.carabinerY,
                 carabinerWidth: carabiner.carabiner.carabinerWidth,

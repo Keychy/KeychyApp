@@ -26,6 +26,7 @@ struct MultiKeyringSceneView: View {
     let backgroundImageURL: String?
     let carabinerBackImageURL: String?
     let carabinerFrontImageURL: String?
+    let carabinerId: String
     let carabinerX: CGFloat
     let carabinerY: CGFloat
     let carabinerWidth: CGFloat
@@ -49,6 +50,7 @@ struct MultiKeyringSceneView: View {
         backgroundImageURL: String? = nil,
         carabinerBackImageURL: String? = nil,
         carabinerFrontImageURL: String? = nil,
+        carabinerId: String = "",
         carabinerX: CGFloat = 0,
         carabinerY: CGFloat = 0,
         carabinerWidth: CGFloat = 0,
@@ -63,6 +65,7 @@ struct MultiKeyringSceneView: View {
         self.backgroundImageURL = backgroundImageURL
         self.carabinerBackImageURL = carabinerBackImageURL
         self.carabinerFrontImageURL = carabinerFrontImageURL
+        self.carabinerId = carabinerId
         self.carabinerX = carabinerX
         self.carabinerY = carabinerY
         self.carabinerWidth = carabinerWidth
@@ -178,6 +181,7 @@ extension MultiKeyringSceneView {
             backgroundImageURL: nil,
             carabinerBackImageURL: carabinerBackImageURL,
             carabinerFrontImageURL: carabinerFrontImageURL,
+            carabinerId: carabinerId,
             carabinerX: carabinerX,
             carabinerY: carabinerY,
             carabinerWidth: carabinerWidth
