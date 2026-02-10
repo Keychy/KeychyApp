@@ -24,7 +24,7 @@ enum KeyringScale {
     // MARK: - 템플릿별 maxSize
     private static let templateMaxSizes: [String: CGSize] = [
         "Polaroid": CGSize(width: 265, height: 324),
-        "AcrylicPhoto": CGSize(width: 210, height: 210),
+        "AcrylicPhoto": CGSize(width: 360, height: 360),
         "ClearSketch": CGSize(width: 210, height: 210),
         "PixelKeyring": CGSize(width: 277, height: 257),
         "SpeechBubble": CGSize(width: 360, height: 249)
@@ -35,20 +35,20 @@ enum KeyringScale {
         "Polaroid": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.7],
         "AcrylicPhoto": [.customizing: 1.0, .infoInput: 1.0, .complete: 1.0],
         "ClearSketch": [.customizing: 1.0, .infoInput: 1.0, .complete: 1.0],
-        "PixelKeyring": [.customizing: 1.0, .infoInput: 1.0, .complete: 1.0],
-        "SpeechBubble": [.customizing: 1.0, .infoInput: 1.0, .complete: 1.0]
+        "PixelKeyring": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.9],
+        "SpeechBubble": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.9]
     ]
 
     // MARK: - 카라비너별 뭉치 키링 스케일
     private static let carabinerScales: [String: CGFloat] = [
-        "basic": 1.0
+        "basic": 0.65
         // TODO: 추가 카라비너 스케일
     ]
 
     // MARK: - 기본값
     private static let defaultMaxSize = CGSize(width: 210, height: 210)
     private static let defaultZoomScale: CGFloat = 1.0
-    private static let defaultCarabinerScale: CGFloat = 1.0
+    private static let defaultCarabinerScale: CGFloat = 0.65
 
     // MARK: - Public API
 
