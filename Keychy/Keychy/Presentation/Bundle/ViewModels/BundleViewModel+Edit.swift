@@ -176,6 +176,9 @@ extension BundleViewModel {
                 }
 
                 BundleImageCache.shared.delete(for: documentId)
+
+                // 홈 화면 리프레시 필요 플래그 설정
+                HomeViewModel.needsRefresh = true
             }
 
         } catch {
