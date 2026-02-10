@@ -177,6 +177,7 @@ extension KeyringCompleteView {
     private var keyringScene: some View {
         KeyringSceneView(
             viewModel: viewModel,
+            screen: .complete,
             backgroundColor: .clear,
             applyWelcomeImpulse: true,
             onSceneReady: {
