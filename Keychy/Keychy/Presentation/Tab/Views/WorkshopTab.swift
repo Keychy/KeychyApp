@@ -13,7 +13,6 @@ struct WorkshopTab: View {
     @Bindable var collectionViewModel: CollectionViewModel
 
     @State private var acrylicPhotoVM: AcrylicPhotoVM?
-    @State private var neonSignVM: NeonSignVM?
     @State private var polaroidVM: PolaroidVM?
     @State private var clearSketchVM: ClearSketchVM?
     @State private var pixelKeyringVM: PixelVM?
@@ -90,28 +89,6 @@ struct WorkshopTab: View {
             KeyringCompleteView(
                 router: router,
                 viewModel: getAcrylicPhotoVM(),
-                navigationTitle: "키링이 완성되었어요!"
-            )
-
-        // MARK: - NeonSign
-        case .neonSignPreview:
-            NeonSignPreView(router: router, viewModel: getNeonSignVM())
-        case .neonSignCustomizing:
-            KeyringCustomizingView(
-                router: router,
-                viewModel: getNeonSignVM(),
-                nextRoute: .neonSignInfoInput
-            )
-        case .neonSignInfoInput:
-            KeyringInfoInputView(
-                router: router,
-                viewModel: getNeonSignVM(),
-                nextRoute: .neonSignComplete
-            )
-        case .neonSignComplete:
-            KeyringCompleteView(
-                router: router,
-                viewModel: getNeonSignVM(),
                 navigationTitle: "키링이 완성되었어요!"
             )
 
@@ -247,15 +224,6 @@ struct WorkshopTab: View {
         return viewModel
     }
 
-    private func getNeonSignVM() -> NeonSignVM {
-        guard let viewModel = neonSignVM else {
-            let newViewModel = NeonSignVM()
-            neonSignVM = newViewModel
-            return newViewModel
-        }
-        return viewModel
-    }
-
     private func getPolaroidVM() -> PolaroidVM {
         guard let viewModel = polaroidVM else {
             let newViewModel = PolaroidVM()
@@ -297,8 +265,6 @@ struct WorkshopTab: View {
         switch templateId {
         case "AcrylicPhoto":
             return getAcrylicPhotoVM()
-        case "NeonSign":
-            return getNeonSignVM()
         case "Polaroid":
             return getPolaroidVM()
         case "ClearSketch":
@@ -315,10 +281,6 @@ struct WorkshopTab: View {
     // MARK: - ViewModel Reset
     func resetAcrylicPhotoVM() {
         acrylicPhotoVM = nil
-    }
-
-    func resetNeonSignVM() {
-        neonSignVM = nil
     }
 
     func resetPolaroidVM() {
