@@ -49,6 +49,7 @@
 		38818DBA2F3C443B00B0A49C /* DuZzonKuVM+Effect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38818DB92F3C443B00B0A49C /* DuZzonKuVM+Effect.swift */; };
 		38818DBC2F3C444300B0A49C /* DuZzonKuVM+Firebase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38818DBB2F3C444300B0A49C /* DuZzonKuVM+Firebase.swift */; };
 		38818DBE2F3C444C00B0A49C /* DuZzonKuVM+ImageConversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38818DBD2F3C444C00B0A49C /* DuZzonKuVM+ImageConversion.swift */; };
+		38818DC02F3CBE2E00B0A49C /* CheckerBoardRect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38818DBF2F3CBE2E00B0A49C /* CheckerBoardRect.swift */; };
 		388E72942EF341F200AE1F1B /* CollectionViewModel+UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 388E72932EF341F200AE1F1B /* CollectionViewModel+UserData.swift */; };
 		389080172ED3F05D00D7A49F /* FestivalKeyringDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389080162ED3F05D00D7A49F /* FestivalKeyringDetailView.swift */; };
 		389080192ED3F32700D7A49F /* FestivalKeyringDetailView+Sheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389080182ED3F32700D7A49F /* FestivalKeyringDetailView+Sheet.swift */; };
@@ -535,6 +536,7 @@
 		38818DB92F3C443B00B0A49C /* DuZzonKuVM+Effect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DuZzonKuVM+Effect.swift"; sourceTree = "<group>"; };
 		38818DBB2F3C444300B0A49C /* DuZzonKuVM+Firebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DuZzonKuVM+Firebase.swift"; sourceTree = "<group>"; };
 		38818DBD2F3C444C00B0A49C /* DuZzonKuVM+ImageConversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DuZzonKuVM+ImageConversion.swift"; sourceTree = "<group>"; };
+		38818DBF2F3CBE2E00B0A49C /* CheckerBoardRect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckerBoardRect.swift; sourceTree = "<group>"; };
 		388E72932EF341F200AE1F1B /* CollectionViewModel+UserData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+UserData.swift"; sourceTree = "<group>"; };
 		389080162ED3F05D00D7A49F /* FestivalKeyringDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FestivalKeyringDetailView.swift; sourceTree = "<group>"; };
 		389080182ED3F32700D7A49F /* FestivalKeyringDetailView+Sheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FestivalKeyringDetailView+Sheet.swift"; sourceTree = "<group>"; };
@@ -2422,6 +2424,7 @@
 			children = (
 				4CEC61DE2EAE08C00099ECEE /* KeyringTemplate.swift */,
 				C67B755D2ECD526A00D6E3FA /* Frame.swift */,
+				38818DBF2F3CBE2E00B0A49C /* CheckerBoardRect.swift */,
 			);
 			path = Template;
 			sourceTree = "<group>";
@@ -2660,6 +2663,7 @@
 				4C3687FC2EC05E6800C64E75 /* AccountAlert.swift in Sources */,
 				388E72942EF341F200AE1F1B /* CollectionViewModel+UserData.swift in Sources */,
 				4CEBB14D2EFAA52F00CF53E2 /* DeepLinkHandler.swift in Sources */,
+				38818DC02F3CBE2E00B0A49C /* CheckerBoardRect.swift in Sources */,
 				4CEBB14E2EFAA52F00CF53E2 /* DeepLinkManager.swift in Sources */,
 				4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */,
 				4CEC61F12EAE08C40099ECEE /* KeychyApp.swift in Sources */,
