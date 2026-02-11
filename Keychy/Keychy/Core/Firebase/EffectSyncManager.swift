@@ -10,6 +10,7 @@
 import Foundation
 import FirebaseFirestore
 import FirebaseStorage
+import Lottie
 
 @Observable
 class EffectSyncManager {
@@ -169,14 +170,11 @@ class EffectSyncManager {
 
             print("[EffectSync] 구매한 사운드: \(soundEffects.count)개")
 
-            // 병렬 다운로드
+            // 병렬 다운로드 (URL 검증은 downloadSoundIfNeeded 내부에서 처리)
             await withTaskGroup(of: Void.self) { group in
                 for soundId in soundEffects {
-                    // 캐시에 없으면 다운로드
-                    if !isInCache(soundId: soundId) {
-                        group.addTask {
-                            await self.downloadSoundIfNeeded(soundId: soundId)
-                        }
+                    group.addTask {
+                        await self.downloadSoundIfNeeded(soundId: soundId)
                     }
                 }
             }
@@ -202,14 +200,11 @@ class EffectSyncManager {
 
             print("[EffectSync] 구매한 파티클: \(particleEffects.count)개")
 
-            // 병렬 다운로드
+            // 병렬 다운로드 (URL 검증은 downloadParticleIfNeeded 내부에서 처리)
             await withTaskGroup(of: Void.self) { group in
                 for particleId in particleEffects {
-                    // 캐시에 없으면 다운로드
-                    if !isInCache(particleId: particleId) {
-                        group.addTask {
-                            await self.downloadParticleIfNeeded(particleId: particleId)
-                        }
+                    group.addTask {
+                        await self.downloadParticleIfNeeded(particleId: particleId)
                     }
                 }
             }
@@ -218,7 +213,7 @@ class EffectSyncManager {
         }
     }
 
-    /// 사운드 다운로드 (캐시에 없을 때만)
+    /// 사운드 다운로드 (캐시에 없거나 URL이 변경된 경우)
     private func downloadSoundIfNeeded(soundId: String) async {
         // soundId가 URL 형태인지 확인 (커스텀 사운드)
         if soundId.hasPrefix("http://") || soundId.hasPrefix("https://") {
@@ -228,13 +223,6 @@ class EffectSyncManager {
 
         // 번들에 있으면 스킵 (무료 이펙트)
         if isInBundle(soundId: soundId) {
-            print("[EffectSync] 사운드 번들에 있음 (스킵): \(soundId)")
-            return
-        }
-
-        // 캐시에 있으면 스킵
-        guard !isInCache(soundId: soundId) else {
-            print("[EffectSync] 사운드 이미 캐시에 있음: \(soundId)")
             return
         }
 
@@ -249,6 +237,11 @@ class EffectSyncManager {
                   let soundURLString = soundData["soundData"] as? String,
                   let downloadURL = URL(string: soundURLString) else {
                 print("[EffectSync] soundData URL 없음: \(soundId)")
+                return
+            }
+
+            // 캐시 검증: 파일이 존재하고 URL이 일치하면 스킵
+            if isInCache(soundId: soundId) && isCacheValid(id: soundId, currentURL: soundURLString, type: .sound) {
                 return
             }
 
@@ -270,6 +263,9 @@ class EffectSyncManager {
                 try FileManager.default.removeItem(at: localURL)
             }
             try FileManager.default.moveItem(at: tempURL, to: localURL)
+
+            // 캐시 URL 저장
+            saveCacheURL(id: soundId, url: soundURLString, type: .sound)
 
             print("[EffectSync] 사운드 다운로드 완료: \(soundId)")
 
@@ -316,17 +312,10 @@ class EffectSyncManager {
         }
     }
 
-    /// 파티클 다운로드 (캐시에 없을 때만)
+    /// 파티클 다운로드 (캐시에 없거나 URL이 변경된 경우)
     private func downloadParticleIfNeeded(particleId: String) async {
         // 번들에 있으면 스킵 (무료 이펙트)
         if isInBundle(particleId: particleId) {
-            print("[EffectSync] 파티클 번들에 있음 (스킵): \(particleId)")
-            return
-        }
-
-        // 캐시에 있으면 스킵
-        guard !isInCache(particleId: particleId) else {
-            print("[EffectSync] 파티클 이미 캐시에 있음: \(particleId)")
             return
         }
 
@@ -341,6 +330,11 @@ class EffectSyncManager {
                   let particleURLString = particleData["particleData"] as? String,
                   let downloadURL = URL(string: particleURLString) else {
                 print("[EffectSync] particleData URL 없음: \(particleId)")
+                return
+            }
+
+            // 캐시 검증: 파일이 존재하고 URL이 일치하면 스킵
+            if isInCache(particleId: particleId) && isCacheValid(id: particleId, currentURL: particleURLString, type: .particle) {
                 return
             }
 
@@ -362,6 +356,14 @@ class EffectSyncManager {
                 try FileManager.default.removeItem(at: localURL)
             }
             try FileManager.default.moveItem(at: tempURL, to: localURL)
+
+            // 캐시 URL 저장
+            saveCacheURL(id: particleId, url: particleURLString, type: .particle)
+
+            // Lottie 애니메이션 캐시 클리어 (새 파일 로드를 위해)
+            await MainActor.run {
+                LottieAnimationCache.shared?.clearCache()
+            }
 
             print("[EffectSync] 파티클 다운로드 완료: \(particleId)")
 
@@ -394,5 +396,35 @@ class EffectSyncManager {
     /// 파티클이 번들에 있는지 확인 (무료 이펙트)
     private func isInBundle(particleId: String) -> Bool {
         return Bundle.main.path(forResource: particleId, ofType: "json") != nil
+    }
+
+    // MARK: - Cache URL Validation
+
+    private enum ItemType {
+        case sound
+        case particle
+    }
+
+    /// 캐시된 URL을 저장하는 UserDefaults 키
+    private func cacheURLKey(for id: String, type: ItemType) -> String {
+        switch type {
+        case .sound: return "cachedSoundURL_\(id)"
+        case .particle: return "cachedParticleURL_\(id)"
+        }
+    }
+
+    /// 캐시가 유효한지 확인 (파일 존재 + URL 일치)
+    private func isCacheValid(id: String, currentURL: String, type: ItemType) -> Bool {
+        let key = cacheURLKey(for: id, type: type)
+        guard let savedURL = UserDefaults.standard.string(forKey: key) else {
+            return false
+        }
+        return savedURL == currentURL
+    }
+
+    /// 캐시 URL 저장
+    private func saveCacheURL(id: String, url: String, type: ItemType) {
+        let key = cacheURLKey(for: id, type: type)
+        UserDefaults.standard.set(url, forKey: key)
     }
 }

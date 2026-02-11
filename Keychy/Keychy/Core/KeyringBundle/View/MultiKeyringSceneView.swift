@@ -85,11 +85,6 @@ struct MultiKeyringSceneView: View {
                 loadBackgroundImage()
                 setupScene()
             }
-
-            // 키링이 없으면 즉시 준비 완료 콜백 호출
-            if keyringDataList.isEmpty {
-                onAllKeyringsReady?()
-            }
         }
         .onChange(of: backgroundImageURL) { _, _ in
             loadBackgroundImage()

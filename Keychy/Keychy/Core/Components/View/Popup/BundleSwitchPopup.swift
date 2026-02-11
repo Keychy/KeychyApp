@@ -119,7 +119,11 @@ struct BundleSwitchButton: View {
     let onTap: () -> Void
 
     var body: some View {
-        Button(action: onTap) {
+        Button {
+            if isEnabled {
+                onTap()
+            }
+        } label: {
             HStack(spacing: 12) {
                 Text(bundleName)
                     .typography(.nanum24EB)
@@ -139,6 +143,5 @@ struct BundleSwitchButton: View {
             }
         }
         .buttonStyle(.plain)
-        .disabled(!isEnabled)
     }
 }

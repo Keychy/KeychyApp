@@ -27,6 +27,9 @@ extension IntroViewModel {
         // 웰컴 카라비너를 사용자의 carabiners 필드에 추가
         try await addWelcomeCarabinerToUser(uid: uid)
 
+        // Confetti 파티클 캐시 검증 및 다운로드
+        await EffectSyncManager.shared.syncKeyringEffects(soundId: nil, particleId: "Confetti")
+
         Task.detached {
             await self.cacheWelcomeKeyring(
                 keyringId: keyringId,
