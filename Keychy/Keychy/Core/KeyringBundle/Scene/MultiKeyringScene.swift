@@ -86,9 +86,6 @@ class MultiKeyringScene: SKScene {
     var carabinerBackImageURL: String?  // 카라비너 뒷면 이미지 (hamburger 타입)
     var carabinerFrontImageURL: String?  // 카라비너 앞면 이미지 (hamburger 타입)
 
-    // MARK: - 영상 생성용 최적화 플래그
-    var disableShadows: Bool = false  // 그림자 비활성화 (영상 생성 시 성능 최적화)
-
     // MARK: - 카라비너 크기 및 위치 정보
     var carabinerId: String = ""  // 카라비너 ID (bundleKeyringScale용)
     var carabinerX: CGFloat = 0  // 카라비너 중심 X 좌표
@@ -246,8 +243,6 @@ class MultiKeyringScene: SKScene {
     ///   - offsetY: Y축 오프셋 (기본값 -8)
     ///   - blurRadius: Gaussian Blur 강도 (기본값 5.0)
     private func addShadowToNode(_ node: SKSpriteNode, offsetX: CGFloat = 8, offsetY: CGFloat = -8, blurRadius: CGFloat = 5.0) {
-        // 영상 생성 시 그림자 비활성화 (성능 최적화)
-        guard !disableShadows else { return }
         // 원본 노드를 복제해서 그림자로 사용
         guard let shadowNode = node.copy() as? SKSpriteNode else { return }
 
