@@ -9,6 +9,7 @@ import Foundation
 import FirebaseStorage
 import FirebaseFirestore
 import AVFoundation
+import Lottie
 
 /// 이펙트(사운드, 파티클) 다운로드 및 재생을 관리하는 매니저
 @MainActor
@@ -69,6 +70,11 @@ class EffectManager {
         // 이미 다운로드 중이면 무시
         guard !downloadingItemIds.contains(soundId) else { return }
 
+        // 캐시 검증: 파일이 존재하고 URL이 일치하면 다운로드 스킵
+        if isInCache(soundId: soundId) && isCacheValid(id: soundId, currentURL: sound.soundData, type: .sound) {
+            return
+        }
+
         // 다운로드 시작
         downloadingItemIds.insert(soundId)
         downloadProgress[soundId] = 0.0
@@ -124,6 +130,9 @@ class EffectManager {
         // 사운드 프리로드 (재생 준비)
         await SoundEffectComponent.shared.preloadSound(named: soundId)
 
+        // 캐시 URL 저장 (다음 번 검증용)
+        saveCacheURL(id: soundId, url: sound.soundData, type: .sound)
+
         // 다운로드 상태 초기화
         downloadingItemIds.remove(soundId)
         downloadProgress.removeValue(forKey: soundId)
@@ -135,6 +144,11 @@ class EffectManager {
 
         // 이미 다운로드 중이면 무시
         guard !downloadingItemIds.contains(particleId) else { return }
+
+        // 캐시 검증: 파일이 존재하고 URL이 일치하면 다운로드 스킵
+        if isInCache(particleId: particleId) && isCacheValid(id: particleId, currentURL: particle.particleData, type: .particle) {
+            return
+        }
 
         // 다운로드 시작
         downloadingItemIds.insert(particleId)
@@ -187,6 +201,12 @@ class EffectManager {
             try? await Task.sleep(nanoseconds: 100_000_000) // 0.1초
             attempts += 1
         }
+
+        // 캐시 URL 저장 (다음 번 검증용)
+        saveCacheURL(id: particleId, url: particle.particleData, type: .particle)
+
+        // Lottie 애니메이션 캐시 클리어 (새 파일 로드를 위해)
+        LottieAnimationCache.shared?.clearCache()
 
         // 다운로드 상태 초기화
         downloadingItemIds.remove(particleId)
@@ -260,6 +280,31 @@ class EffectManager {
             case .particle: return "particleEffects"
             }
         }
+    }
+
+    // MARK: - Cache URL Validation
+
+    /// 캐시된 URL을 저장하는 UserDefaults 키
+    private func cacheURLKey(for id: String, type: ItemType) -> String {
+        switch type {
+        case .sound: return "cachedSoundURL_\(id)"
+        case .particle: return "cachedParticleURL_\(id)"
+        }
+    }
+
+    /// 캐시가 유효한지 확인 (파일 존재 + URL 일치)
+    private func isCacheValid(id: String, currentURL: String, type: ItemType) -> Bool {
+        let key = cacheURLKey(for: id, type: type)
+        guard let savedURL = UserDefaults.standard.string(forKey: key) else {
+            return false
+        }
+        return savedURL == currentURL
+    }
+
+    /// 캐시 URL 저장
+    private func saveCacheURL(id: String, url: String, type: ItemType) {
+        let key = cacheURLKey(for: id, type: type)
+        UserDefaults.standard.set(url, forKey: key)
     }
 
     /// UserManager의 유저 데이터 새로고침
