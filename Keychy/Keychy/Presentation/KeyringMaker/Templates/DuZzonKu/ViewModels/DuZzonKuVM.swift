@@ -31,26 +31,20 @@ class DuZzonKuVM: KeyringViewModelProtocol {
     var availableFrames: [Frame] = []
     var selectedFrame: Frame? = nil
     
-    // MARK: - Saddle Data
-    var availableSaddles: [Saddle] = []
-    var selectedSaddle: Saddle? = nil
+    // MARK: - Photo Data
+    var selectedPhotoImage: UIImage? = nil
+    var photoImages: [Int: UIImage] = [:] // 인덱스별 사진 저장
     
-    // MARK: - Mane Data
-    var availableManes: [Mane] = []
-    var selectedMane: Mane? = nil
-    
-    var selectedManeColor: Color {
-        guard let mane = selectedMane else {
-            return ManeColorType.gray.color
-        }
-        return Color(hex: mane.color)
-    }
+    // MARK: - Photo Transform State
+    var photoScale: CGFloat = 1.0
+    var photoRotation: Angle = .zero
+    var photoOffset: CGSize = .zero
     
     // MARK: - Body Image
     var bodyImage: UIImage? = nil
     var hookOffsetY: CGFloat = 0.0
-    var isComposingHorse: Bool = false
-    var isComposing: Bool { isComposingHorse }
+    var isComposingPhoto: Bool = false
+    var isComposing: Bool { isComposingPhoto }
     
     // MARK: - Info Data
     var nameText: String = ""
@@ -79,37 +73,60 @@ class DuZzonKuVM: KeyringViewModelProtocol {
         self.userManager = userManager
     }
     
+    // MARK: - Photo Management (여러 개 지원)
+    /// 특정 인덱스의 사진 가져오기
+    func getPhoto(at index: Int) -> UIImage? {
+        return photoImages[index]
+    }
+    
+    /// 특정 인덱스에 사진 저장
+    func setPhoto(_ image: UIImage, at index: Int) {
+        photoImages[index] = image
+        // 첫 번째 사진은 selectedPhotoImage에도 저장 (하위 호환성)
+        if index == 0 {
+            selectedPhotoImage = image
+        }
+    }
+    
+    /// 특정 인덱스의 사진 제거
+    func removePhoto(at index: Int) {
+        photoImages.removeValue(forKey: index)
+        if index == 0 {
+            selectedPhotoImage = nil
+        }
+    }
+    
     // MARK: - View Providers
-//    func sceneView(for mode: CustomizingMode, onSceneReady: @escaping () -> Void) -> AnyView {
-//        switch mode {
-//        case .effect:
-//            return AnyView(KeyringSceneView(viewModel: self, onSceneReady: onSceneReady))
-//        case .frame:
-//            return AnyView(DuZzonKuFramePreviewView(viewModel: self, onSceneReady: onSceneReady))
-//        default:
-//            return AnyView(EmptyView())
-//        }
-//    }
-//
-//    func bottomContentView(
-//        for mode: CustomizingMode,
-//        showPurchaseSheet: Binding<Bool>,
-//        cartItems: Binding<[EffectItem]>
-//    ) -> AnyView {
-//        switch mode {
-//        case .effect:
-//            return AnyView(EffectSelectorView(viewModel: self, cartItems: cartItems))
-//        case .frame:
-//            return AnyView(DuZzonKuFrameSelectorView(viewModel: self))
-//        default:
-//            return AnyView(EmptyView())
-//        }
-//    }
+    func sceneView(for mode: CustomizingMode, onSceneReady: @escaping () -> Void) -> AnyView {
+        switch mode {
+        case .effect:
+            return AnyView(KeyringSceneView(viewModel: self, onSceneReady: onSceneReady))
+        case .frame:
+            return AnyView(DuZzonKuFramePreviewView(viewModel: self, onSceneReady: onSceneReady))
+        default:
+            return AnyView(EmptyView())
+        }
+    }
+
+    func bottomContentView(
+        for mode: CustomizingMode,
+        showPurchaseSheet: Binding<Bool>,
+        cartItems: Binding<[EffectItem]>
+    ) -> AnyView {
+        switch mode {
+        case .effect:
+            return AnyView(EffectSelectorView(viewModel: self, cartItems: cartItems))
+        case .frame:
+            return AnyView(DuZzonKuFrameSelectorView(viewModel: self))
+        default:
+            return AnyView(EmptyView())
+        }
+    }
 
     func bottomViewHeightRatio(for mode: CustomizingMode) -> CGFloat {
         switch mode {
         case .frame:
-            return 0.4  // 프레임 모드는 더 낮은 높이
+            return 0.3  // 프레임 모드는 더 낮은 높이
         case .effect:
             return 0.3  // 이펙트 모드도 같은 높이
         default:
@@ -118,23 +135,21 @@ class DuZzonKuVM: KeyringViewModelProtocol {
     }
     
     // MARK: - Lifecycle Callbacks
-    
-//    /// 모드 변경 시 프레임 → 다른 모드로 전환되면 말 합성
-//    func onModeChanged(from oldMode: CustomizingMode, to newMode: CustomizingMode) {
-//        if oldMode == .frame && newMode != .frame {
-//            Task {
-//                await composeHorse()
-//            }
-//        }
-//    }
-//
-//    /// 다음 화면으로 이동하기 전 말 합성
-//    func beforeNavigateToNext() {
-//        Task {
-//            await composeHorse()
-//        }
-//    }
-//    
+    /// 모드 변경 시 프레임 → 다른 모드로 전환되면 사진과 프레임 합성
+    func onModeChanged(from oldMode: CustomizingMode, to newMode: CustomizingMode) {
+        if oldMode == .frame && newMode != .frame {
+            Task {
+                await composePhotoWithFrame()
+            }
+        }
+    }
+
+    /// 다음 화면으로 이동하기 전 사진과 프레임 합성
+    func beforeNavigateToNext() {
+        Task {
+            await composePhotoWithFrame()
+        }
+    }
     
     // MARK: - Reset
     func resetCustomizingData() {
@@ -146,13 +161,14 @@ class DuZzonKuVM: KeyringViewModelProtocol {
         downloadingItemIds.removeAll()
         downloadProgress.removeAll()
         selectedFrame = nil
-        selectedSaddle = nil
-        selectedMane = nil
+        selectedPhotoImage = nil
+        photoImages.removeAll()
+        photoScale = 1.0
+        photoRotation = .zero
+        photoOffset = .zero
         bodyImage = nil
         availableFrames.removeAll()
-        availableSaddles.removeAll()
-        availableManes.removeAll()
-        isComposingHorse = false
+        isComposingPhoto = false
     }
     
     func resetInfoData() {
