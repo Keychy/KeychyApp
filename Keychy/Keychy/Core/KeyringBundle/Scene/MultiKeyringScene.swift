@@ -8,6 +8,7 @@
 import SwiftUI
 import SpriteKit
 import Combine
+import Lottie
 
 /// 여러 키링을 하나의 씬에 배치하는 Scene
 class MultiKeyringScene: SKScene {
@@ -85,6 +86,7 @@ class MultiKeyringScene: SKScene {
     var backgroundImageURL: String?  // 배경 이미지 URL
     var carabinerBackImageURL: String?  // 카라비너 뒷면 이미지 (hamburger 타입)
     var carabinerFrontImageURL: String?  // 카라비너 앞면 이미지 (hamburger 타입)
+    var carabinerLottieId: String?  // 카라비너 Lottie ID (nil이면 정적 이미지)
 
     // MARK: - 영상 생성용 최적화 플래그
     var disableShadows: Bool = false  // 그림자 비활성화 (영상 생성 시 성능 최적화)
@@ -98,6 +100,11 @@ class MultiKeyringScene: SKScene {
     // MARK: - 카라비너 노드 저장
     private var carabinerBackNode: SKSpriteNode?
     private var carabinerFrontNode: SKSpriteNode?
+
+    // MARK: - 카라비너 Lottie 프리렌더링 텍스처 (비디오 생성에서도 사용)
+    var carabinerBackTextures: [SKTexture]?
+    var carabinerFrontTextures: [SKTexture]?
+    var carabinerLottieFPS: Double = 30
 
     // MARK: - 스와이프 제스처 관련
     var lastTouchLocation: CGPoint?
@@ -117,7 +124,8 @@ class MultiKeyringScene: SKScene {
         carabinerId: String = "",
         carabinerX: CGFloat = 0,
         carabinerY: CGFloat = 0,
-        carabinerWidth: CGFloat = 0
+        carabinerWidth: CGFloat = 0,
+        carabinerLottieId: String? = nil
     ) {
         self.keyringDataList = keyringDataList
         self.currentRingType = ringType
@@ -130,6 +138,7 @@ class MultiKeyringScene: SKScene {
         self.carabinerX = carabinerX
         self.carabinerY = carabinerY
         self.carabinerWidth = carabinerWidth
+        self.carabinerLottieId = carabinerLottieId
 
         super.init(size: .zero)
     }
@@ -159,6 +168,10 @@ class MultiKeyringScene: SKScene {
         carabinerBackReady = false
         carabinerFrontReady = false
         didStartKeyringSetup = false
+
+        // Lottie 프리렌더링 텍스처 해제
+        carabinerBackTextures = nil
+        carabinerFrontTextures = nil
 
         // 모든 물리 조인트 제거
         physicsWorld.removeAllJoints()
@@ -202,12 +215,19 @@ class MultiKeyringScene: SKScene {
             guard let self else { return }
             guard !self.isCleaningUp else { return }
 
-            // 카라비너 이미지 병렬 로드
-            async let backLoaded: Void = self.loadCarabinerBack()
-            async let frontLoaded: Void = self.loadCarabinerFront()
-
-            await backLoaded
-            await frontLoaded
+            if let lottieId = self.carabinerLottieId {
+                // Lottie 카라비너 로드 (프리렌더링 포함)
+                async let backLoaded: Void = self.loadCarabinerBackLottie(id: lottieId)
+                async let frontLoaded: Void = self.loadCarabinerFrontLottie(id: lottieId)
+                await backLoaded
+                await frontLoaded
+            } else {
+                // 정적 이미지 카라비너 로드 (기존)
+                async let backLoaded: Void = self.loadCarabinerBack()
+                async let frontLoaded: Void = self.loadCarabinerFront()
+                await backLoaded
+                await frontLoaded
+            }
 
             // 키링 설정 (카라비너 준비 후)
             await MainActor.run { [weak self] in
@@ -351,6 +371,177 @@ class MultiKeyringScene: SKScene {
             // 카라비너 앞면 노드 저장
             self.carabinerFrontNode = carabinerNode
         }
+    }
+
+    // MARK: - Carabiner Lottie Setup
+
+    /// 카라비너 뒷면 Lottie 로드 및 프리렌더링
+    /// - LottieItemManager 캐시에서 애니메이션 로드 → 전체 프레임을 SKTexture 배열로 프리렌더링
+    /// - SKAction.animate()로 반복 재생하여 SpriteKit 내에서 Lottie 효과 구현
+    private func loadCarabinerBackLottie(id: String) async {
+        await MainActor.run { [weak self] in
+            guard let self, !self.isCleaningUp else {
+                self?.carabinerBackReady = true
+                return
+            }
+
+            // 캐시에서 Lottie 애니메이션 로드
+            guard let animation = LottieItemManager.shared.loadCarabinerBackAnimation(id: id) else {
+                self.carabinerBackReady = true
+                return
+            }
+
+            // 카라비너 크기 계산 (Lottie 원본 비율 유지)
+            let aspectRatio = animation.size.height / animation.size.width
+            let nodeWidth = self.carabinerWidth
+            let nodeHeight = nodeWidth * aspectRatio
+            let renderSize = CGSize(width: nodeWidth, height: nodeHeight)
+
+            // 모든 프레임 프리렌더링 → SKTexture 배열
+            let textures = self.preRenderLottieFrames(animation: animation, size: renderSize)
+            guard !textures.isEmpty else {
+                self.carabinerBackReady = true
+                return
+            }
+
+            // 비디오 생성용 텍스처 저장
+            self.carabinerBackTextures = textures
+            self.carabinerLottieFPS = animation.framerate
+
+            // 첫 프레임으로 노드 생성
+            let carabinerNode = SKSpriteNode(texture: textures[0])
+            carabinerNode.size = CGSize(width: nodeWidth, height: nodeHeight)
+
+            // 위치 계산 (기존 정적 이미지와 동일 로직)
+            let centerX = self.carabinerX + nodeWidth / 2
+            let centerY = self.carabinerY + nodeHeight / 2
+            let spriteKitY = self.size.height - centerY
+            carabinerNode.position = CGPoint(x: centerX, y: spriteKitY)
+            carabinerNode.zPosition = -900
+
+            // 실시간 모드에서만 SKAction 재생 (비디오 모드에서는 수동 텍스처 교체)
+            if !self.disableShadows {
+                let timePerFrame = 1.0 / animation.framerate
+                let animate = SKAction.animate(with: textures, timePerFrame: timePerFrame)
+                carabinerNode.run(SKAction.repeatForever(animate))
+            }
+
+            self.addChild(carabinerNode)
+            self.addShadowToNode(carabinerNode, offsetX: 2, offsetY: -3, blurRadius: 1.0)
+            self.carabinerBackNode = carabinerNode
+            self.carabinerBackReady = true
+        }
+    }
+
+    /// 카라비너 앞면 Lottie 로드 및 프리렌더링 (hamburger 타입 전용)
+    /// - 앞면이 캐시에 없으면 (plain 타입) 바로 ready 처리
+    private func loadCarabinerFrontLottie(id: String) async {
+        await MainActor.run { [weak self] in
+            guard let self, !self.isCleaningUp else {
+                self?.carabinerFrontReady = true
+                return
+            }
+
+            // 캐시에서 앞면 Lottie 로드 (plain 타입은 앞면이 없으므로 nil)
+            guard let animation = LottieItemManager.shared.loadCarabinerFrontAnimation(id: id) else {
+                self.carabinerFrontReady = true
+                return
+            }
+
+            // 카라비너 크기 계산 (뒷면과 동일한 비율)
+            let aspectRatio = animation.size.height / animation.size.width
+            let nodeWidth = self.carabinerWidth
+            let nodeHeight = nodeWidth * aspectRatio
+            let renderSize = CGSize(width: nodeWidth, height: nodeHeight)
+
+            // 모든 프레임 프리렌더링
+            let textures = self.preRenderLottieFrames(animation: animation, size: renderSize)
+            guard !textures.isEmpty else {
+                self.carabinerFrontReady = true
+                return
+            }
+
+            // 비디오 생성용 텍스처 저장
+            self.carabinerFrontTextures = textures
+
+            // 첫 프레임으로 노드 생성
+            let carabinerNode = SKSpriteNode(texture: textures[0])
+            carabinerNode.size = CGSize(width: nodeWidth, height: nodeHeight)
+
+            // 위치 계산
+            let centerX = self.carabinerX + nodeWidth / 2
+            let centerY = self.carabinerY + nodeHeight / 2
+            let spriteKitY = self.size.height - centerY
+            carabinerNode.position = CGPoint(x: centerX, y: spriteKitY)
+            carabinerNode.zPosition = -800  // 뒷면(-900)과 키링들(0~) 사이
+
+            // 실시간 모드에서만 SKAction 재생
+            if !self.disableShadows {
+                let timePerFrame = 1.0 / animation.framerate
+                let animate = SKAction.animate(with: textures, timePerFrame: timePerFrame)
+                carabinerNode.run(SKAction.repeatForever(animate))
+            }
+
+            self.addChild(carabinerNode)
+            self.carabinerFrontNode = carabinerNode
+            self.carabinerFrontReady = true
+        }
+    }
+
+    /// 카라비너 Lottie 텍스처 수동 업데이트 (비디오 생성용)
+    /// - 비디오 렌더링에서는 SKAction이 제대로 동작하지 않으므로, 프레임 인덱스 기반으로 수동 교체
+    /// - videoFPS와 carabinerLottieFPS의 비율로 Lottie 프레임 인덱스를 계산
+    func updateCarabinerLottieTexture(at frameIndex: Int, videoFPS: Double) {
+        guard let backTextures = carabinerBackTextures, !backTextures.isEmpty else { return }
+
+        // 비디오 프레임 → Lottie 프레임 인덱스 매핑 (modulo로 루프 처리)
+        let lottieFrameIndex = Int(Double(frameIndex) * carabinerLottieFPS / videoFPS) % backTextures.count
+        carabinerBackNode?.texture = backTextures[lottieFrameIndex]
+
+        // 앞면 텍스처 교체 (hamburger 타입만)
+        if let frontTextures = carabinerFrontTextures, !frontTextures.isEmpty {
+            let frontIndex = Int(Double(frameIndex) * carabinerLottieFPS / videoFPS) % frontTextures.count
+            carabinerFrontNode?.texture = frontTextures[frontIndex]
+        }
+    }
+
+    /// Lottie 애니메이션의 모든 프레임을 SKTexture 배열로 프리렌더링
+    /// - BundleVideoGenerator+Particle.swift의 preRenderAllFrames() 패턴 재활용
+    /// - SpriteKit은 Lottie를 네이티브 지원하지 않으므로, 각 프레임을 이미지로 렌더링 후 텍스처 변환
+    private func preRenderLottieFrames(
+        animation: LottieAnimation,
+        size: CGSize,
+        scale: CGFloat = 2.0
+    ) -> [SKTexture] {
+        // 렌더링 스케일 지정 (기본 2x, 메모리와 품질의 균형)
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = scale
+
+        // mainThread 렌더링 엔진 사용 (프레임 단위 수동 제어에 필수)
+        let config = LottieConfiguration(renderingEngine: .mainThread)
+        let lottieView = LottieAnimationView(animation: animation, configuration: config)
+        lottieView.frame = CGRect(origin: .zero, size: size)
+        lottieView.contentMode = .scaleAspectFit
+
+        let totalFrames = Int(animation.endFrame - animation.startFrame)
+        var textures: [SKTexture] = []
+        textures.reserveCapacity(totalFrames)
+
+        let imageRenderer = UIGraphicsImageRenderer(bounds: lottieView.bounds, format: format)
+
+        for frameOffset in 0..<totalFrames {
+            let targetFrame = animation.startFrame + CGFloat(frameOffset)
+            lottieView.currentFrame = AnimationFrameTime(targetFrame)
+            lottieView.setNeedsDisplay()
+            lottieView.layer.displayIfNeeded()
+
+            let image = imageRenderer.image { context in
+                lottieView.layer.render(in: context.cgContext)
+            }
+            textures.append(SKTexture(image: image))
+        }
+
+        return textures
     }
 
     // MARK: - Setup

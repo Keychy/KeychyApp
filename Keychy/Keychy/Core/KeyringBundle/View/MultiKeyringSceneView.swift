@@ -24,8 +24,10 @@ struct MultiKeyringSceneView: View {
     let chainType: ChainType
     let backgroundColor: UIColor
     let backgroundImageURL: String?
+    let backgroundLottieId: String?
     let carabinerBackImageURL: String?
     let carabinerFrontImageURL: String?
+    let carabinerLottieId: String?
     let carabinerId: String
     let carabinerX: CGFloat
     let carabinerY: CGFloat
@@ -48,8 +50,10 @@ struct MultiKeyringSceneView: View {
         chainType: ChainType = .basic,
         backgroundColor: UIColor = .clear,
         backgroundImageURL: String? = nil,
+        backgroundLottieId: String? = nil,
         carabinerBackImageURL: String? = nil,
         carabinerFrontImageURL: String? = nil,
+        carabinerLottieId: String? = nil,
         carabinerId: String = "",
         carabinerX: CGFloat = 0,
         carabinerY: CGFloat = 0,
@@ -63,8 +67,10 @@ struct MultiKeyringSceneView: View {
         self.chainType = chainType
         self.backgroundColor = backgroundColor
         self.backgroundImageURL = backgroundImageURL
+        self.backgroundLottieId = backgroundLottieId
         self.carabinerBackImageURL = carabinerBackImageURL
         self.carabinerFrontImageURL = carabinerFrontImageURL
+        self.carabinerLottieId = carabinerLottieId
         self.carabinerId = carabinerId
         self.carabinerX = carabinerX
         self.carabinerY = carabinerY
@@ -105,7 +111,15 @@ extension MultiKeyringSceneView {
     private var backgroundView: some View {
         GeometryReader { geometry in
             Group {
-                if let backgroundImage {
+                if let bgLottieId = backgroundLottieId {
+                    // Lottie 배경
+                    LottieItemView(
+                        assetId: bgLottieId,
+                        directory: "lottie_backgrounds"
+                    )
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                } else if let backgroundImage {
+                    // 정적 이미지 배경 (기존)
                     Image(uiImage: backgroundImage)
                         .resizable()
                         .scaledToFill()
@@ -184,7 +198,8 @@ extension MultiKeyringSceneView {
             carabinerId: carabinerId,
             carabinerX: carabinerX,
             carabinerY: carabinerY,
-            carabinerWidth: carabinerWidth
+            carabinerWidth: carabinerWidth,
+            carabinerLottieId: carabinerLottieId
         )
 
         newScene.size = defaultSceneSize
