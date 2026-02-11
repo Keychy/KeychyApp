@@ -247,6 +247,10 @@ class HomeViewModel {
 
     /// 키링 데이터 변경 감지 시 씬 준비 상태 초기화
     func handleKeyringDataChange() {
+        // 빈 뭉치면 이미 createKeyringDataList에서 isSceneReady = true 설정됨
+        // 다시 false로 리셋하면 무한로딩 발생
+        guard !keyringDataList.isEmpty else { return }
+
         withAnimation(.easeIn(duration: 0.2)) {
             isSceneReady = false
         }
