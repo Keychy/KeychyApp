@@ -12,7 +12,7 @@ struct DuZzonKuFrameSelectorView: View {
     @Bindable var viewModel: DuZzonKuVM
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 8) {
             // MARK: - 프레임 섹션
             Text("프레임")
                 .typography(.suit16B)
@@ -83,7 +83,7 @@ struct DuZzonKuFrameSelectorView: View {
 
                 // 프레임 이름
                 Text(frame.name)
-                    .typography(isSelected ? .notosans12SB : .notosans12M)
+                    .typography(isSelected ? .notosans14SB : .notosans14R)
                     .foregroundStyle(isSelected ? .main500 : .black100)
                     .lineLimit(1)
                     .truncationMode(.tail)
