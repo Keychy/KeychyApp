@@ -66,6 +66,11 @@ class BundleVideoGenerator {
     var keyringDataList: [MultiKeyringScene.KeyringData] = []
     var playingParticles: [Int: ParticlePlaybackInfo] = [:]
 
+    // MARK: - 배경 Lottie (비디오 생성용)
+    var backgroundLottieTextures: [SKTexture]?
+    var backgroundLottieNode: SKSpriteNode?
+    var backgroundLottieFPS: Double = 30
+
     // MARK: - Nested Types
 
     enum VideoError: Error {
@@ -81,8 +86,10 @@ class BundleVideoGenerator {
         keyringDataList: [MultiKeyringScene.KeyringData],
         backgroundImage: UIImage? = nil,
         backgroundImageURL: String? = nil,
+        backgroundLottieId: String? = nil,
         carabinerBackImageURL: String? = nil,
         carabinerFrontImageURL: String? = nil,
+        carabinerLottieId: String? = nil,
         carabinerX: CGFloat = 0,
         carabinerY: CGFloat = 0,
         carabinerWidth: CGFloat = 0,
@@ -110,8 +117,10 @@ class BundleVideoGenerator {
         let scene = createScene(
             keyringDataList: keyringDataList,
             backgroundImageURL: backgroundImageURL,
+            backgroundLottieId: backgroundLottieId,
             carabinerBackImageURL: carabinerBackImageURL,
             carabinerFrontImageURL: carabinerFrontImageURL,
+            carabinerLottieId: carabinerLottieId,
             carabinerX: carabinerX,
             carabinerY: carabinerY,
             carabinerWidth: carabinerWidth,
@@ -172,5 +181,7 @@ class BundleVideoGenerator {
         pixelBufferAdaptor = nil
         playingParticles.removeAll()
         keyringDataList.removeAll()
+        backgroundLottieTextures = nil
+        backgroundLottieNode = nil
     }
 }

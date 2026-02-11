@@ -8,6 +8,7 @@
 import Foundation
 import SpriteKit
 import AVFoundation
+import Lottie
 
 // MARK: - Setup
 
@@ -17,8 +18,10 @@ extension BundleVideoGenerator {
     func createScene(
         keyringDataList: [MultiKeyringScene.KeyringData],
         backgroundImageURL: String?,
+        backgroundLottieId: String? = nil,
         carabinerBackImageURL: String?,
         carabinerFrontImageURL: String?,
+        carabinerLottieId: String? = nil,
         carabinerX: CGFloat,
         carabinerY: CGFloat,
         carabinerWidth: CGFloat,
@@ -57,14 +60,36 @@ extension BundleVideoGenerator {
             carabinerFrontImageURL: carabinerFrontImageURL,
             carabinerX: carabinerX + offsetX,
             carabinerY: carabinerY + offsetY,
-            carabinerWidth: carabinerWidth
+            carabinerWidth: carabinerWidth,
+            carabinerLottieId: carabinerLottieId
         )
         scene.currentCarabinerType = carabinerType
         scene.scaleMode = .aspectFill
         scene.size = CGSize(width: sceneWidth, height: sceneHeight)
         scene.disableShadows = true  // 영상 생성 시 그림자 비활성화 (성능 최적화)
 
-        if let bgImage = backgroundImage {
+        if let bgLottieId = backgroundLottieId,
+           let animation = LottieItemManager.shared.loadBackgroundAnimation(id: bgLottieId) {
+            // Lottie 배경: 모든 프레임을 프리렌더링
+            let config = LottieConfiguration(renderingEngine: .mainThread)
+            let lottieView = LottieAnimationView(animation: animation, configuration: config)
+            lottieView.frame = CGRect(origin: .zero, size: CGSize(width: sceneWidth, height: sceneHeight))
+            lottieView.contentMode = .scaleAspectFill
+
+            let bgTextures = preRenderAllFrames(lottieView: lottieView, animation: animation)
+            if let firstTexture = bgTextures.first {
+                let backgroundNode = SKSpriteNode(texture: firstTexture)
+                backgroundNode.size = CGSize(width: sceneWidth, height: sceneHeight)
+                backgroundNode.position = CGPoint(x: sceneWidth / 2, y: sceneHeight / 2)
+                backgroundNode.zPosition = -1000
+                scene.addChild(backgroundNode)
+
+                self.backgroundLottieTextures = bgTextures
+                self.backgroundLottieNode = backgroundNode
+                self.backgroundLottieFPS = animation.framerate
+            }
+        } else if let bgImage = backgroundImage {
+            // 정적 이미지 배경 (기존)
             let backgroundNode = SKSpriteNode(texture: SKTexture(image: bgImage))
             backgroundNode.size = CGSize(width: sceneWidth, height: sceneHeight)
             backgroundNode.position = CGPoint(x: sceneWidth / 2, y: sceneHeight / 2)

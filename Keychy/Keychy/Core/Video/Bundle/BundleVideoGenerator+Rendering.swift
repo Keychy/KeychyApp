@@ -27,6 +27,8 @@ extension BundleVideoGenerator {
         for frameIndex in 0..<targetFrames {
             triggerSwipeEvents(at: frameIndex, scene: scene)
             updateParticleTextures(at: frameIndex, scene: scene, keyringDataList: keyringDataList)
+            updateBackgroundLottieTexture(at: frameIndex)
+            scene.updateCarabinerLottieTexture(at: frameIndex, videoFPS: Double(fps))
             scene.update(CACurrentMediaTime())
 
             guard let pixelBuffer = createPixelBuffer() else {
@@ -59,6 +61,16 @@ extension BundleVideoGenerator {
                 throw VideoError.renderFailed
             }
         }
+    }
+
+    /// 배경 Lottie 텍스처 수동 업데이트
+    private func updateBackgroundLottieTexture(at frameIndex: Int) {
+        guard let textures = backgroundLottieTextures,
+              !textures.isEmpty,
+              let node = backgroundLottieNode else { return }
+
+        let lottieFrameIndex = Int(Double(frameIndex) * backgroundLottieFPS / Double(fps)) % textures.count
+        node.texture = textures[lottieFrameIndex]
     }
 
     /// 스와이프 이벤트 트리거
