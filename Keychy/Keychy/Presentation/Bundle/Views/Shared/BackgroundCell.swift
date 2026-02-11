@@ -15,24 +15,38 @@ struct BackgroundCell: View {
     var body: some View {
         VStack(spacing: 6) {
             ZStack(alignment: .top) {
-                // 배경 이미지
-                LazyImage(url: URL(string: background.background.backgroundImage)) { state in
-                    if let image = state.image {
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .clipped()
-                    } else if state.isLoading {
-                        LoadingAlert(type: .short30, message: nil)
+                // 배경 이미지 또는 Lottie
+                if background.background.isLottie, let bgId = background.background.id {
+                    LottieItemView(
+                        assetId: bgId,
+                        directory: "lottie_backgrounds"
+                    )
+                    .frame(width: threeSquareGridCellSize, height: threeSquareGridCellSize)
+                    .background(.white100)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .strokeBorder(isSelected ? .main500 : .clear, lineWidth: 2)
+                    )
+                } else {
+                    LazyImage(url: URL(string: background.background.backgroundImage)) { state in
+                        if let image = state.image {
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .clipped()
+                        } else if state.isLoading {
+                            LoadingAlert(type: .short30, message: nil)
+                        }
                     }
+                    .frame(width: threeSquareGridCellSize, height: threeSquareGridCellSize)
+                    .background(.white100)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .strokeBorder(isSelected ? .main500 : .clear, lineWidth: 2)
+                    )
                 }
-                .frame(width: threeSquareGridCellSize, height: threeSquareGridCellSize)
-                .background(.white100)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .strokeBorder(isSelected ? .main500 : .clear, lineWidth: 2)
-                )
                 VStack {
                     HStack {
                         // 유료 아이콘
