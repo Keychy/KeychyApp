@@ -27,7 +27,8 @@ enum KeyringScale {
         "AcrylicPhoto": CGSize(width: 360, height: 360),
         "ClearSketch": CGSize(width: 210, height: 210),
         "PixelKeyring": CGSize(width: 277, height: 257),
-        "SpeechBubble": CGSize(width: 360, height: 249)
+        "SpeechBubble": CGSize(width: 360, height: 249),
+        "WishHorse26": CGSize(width: 269, height: 269)
     ]
 
     // MARK: - 템플릿 × 화면별 zoomScale
@@ -36,7 +37,8 @@ enum KeyringScale {
         "AcrylicPhoto": [.customizing: 1.0, .infoInput: 1.0, .complete: 1.0],
         "ClearSketch": [.customizing: 1.0, .infoInput: 1.0, .complete: 1.0],
         "PixelKeyring": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.9],
-        "SpeechBubble": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.9]
+        "SpeechBubble": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.9],
+        "WishHorse26": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.85]
     ]
 
     // MARK: - 카라비너별 뭉치 키링 스케일
