@@ -90,6 +90,7 @@ extension DuZzonKuVM {
                 .collection("Template")
                 .document("DuZzonKu")
                 .collection("Frames")
+                .order(by: "order", descending: false)
                 .getDocuments()
 
             availableFrames = try framesSnapshot.documents.compactMap {

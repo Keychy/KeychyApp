@@ -150,7 +150,7 @@ struct DuZzonKuFramePreviewView: View {
             // 일반 SwiftUI View는 즉시 준비 완료
             onSceneReady()
         }
-    }/* width 0.46*/
+    }
     
     private var photoGestures: some Gesture {
         // 확대/축소
