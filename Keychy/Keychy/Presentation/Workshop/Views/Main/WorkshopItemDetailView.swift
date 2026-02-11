@@ -185,8 +185,9 @@ extension WorkshopItemDetailView {
                 if let background = item as? Background, background.isLottie, let bgId = background.id {
                     // Lottie 배경
                     LottieItemView(assetId: bgId, directory: "lottie_backgrounds")
-                        .scaledToFill()
-                        .frame(maxWidth: .infinity, maxHeight: getBottomPadding(5) == 0 ? 501 : 380)
+                        .frame(height: getBottomPadding(5) == 0 ? 501 : 380)
+                        .frame(maxWidth: .infinity)
+                        .clipped()
                         .cornerRadius(20)
                         .overlay(
                             RoundedRectangle(cornerRadius: 20)
@@ -195,8 +196,8 @@ extension WorkshopItemDetailView {
                 } else if let carabiner = item as? Carabiner, carabiner.isLottie, let cbId = carabiner.id {
                     // Lottie 카라비너
                     LottieItemView(assetId: cbId, directory: "lottie_carabiners_back", contentMode: .scaleAspectFit)
-                        .scaledToFit()
                         .aspectRatio(1, contentMode: .fit)
+                        .clipped()
                         .cornerRadius(20)
                 } else if item is Background {
                     ItemDetailImage(itemURL: getPreviewURL())

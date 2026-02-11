@@ -176,6 +176,7 @@ extension BundleCreateView {
     var customNavigationBar: some View {
         CustomNavigationBar {
             BackToolbarButton {
+                TabBarManager.show()
                 router.pop()
             }
         } center: {
