@@ -22,7 +22,10 @@ struct Background: Identifiable, Codable, Equatable, Hashable {
 
     /// 배경 이미지 URL (썸네일 공통)
     let backgroundImage: String
-    
+
+    /// 배경 Lottie JSON URL (nil이면 정적 이미지)
+    let backgroundLottie: String?
+
     /// 배경 분류 태그 (ex. ["귀여움", "#키워드"])
     let tags: [String]
     
@@ -40,6 +43,11 @@ struct Background: Identifiable, Codable, Equatable, Hashable {
 
     /// 앱 노출 여부 (false면 앱에서 숨김)
     let isActive: Bool
+
+    /// Lottie 아이템 여부
+    var isLottie: Bool {
+        backgroundLottie != nil && !(backgroundLottie?.isEmpty ?? true)
+    }
 
     /// 무료 배경 여부
     var isFree: Bool {
