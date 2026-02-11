@@ -56,6 +56,20 @@ class CollectionViewModel {
     func loadBackgroundsAndCarabiners() async {
         await dataManager.fetchBackgroundsIfNeeded()
         await dataManager.fetchCarabinersIfNeeded()
+
+        // Lottie 아이템 JSON 프리다운로드
+        let lottieBackgrounds = dataManager.backgrounds.filter { $0.isLottie }
+        let lottieCarabiners = dataManager.carabiners.filter { $0.isLottie }
+        if !lottieBackgrounds.isEmpty || !lottieCarabiners.isEmpty {
+            Task {
+                for bg in lottieBackgrounds {
+                    await LottieItemManager.shared.downloadBackgroundLottie(bg)
+                }
+                for cb in lottieCarabiners {
+                    await LottieItemManager.shared.downloadCarabinerLottie(cb)
+                }
+            }
+        }
     }
 
     /// 네트워크 에러 후 재시도
