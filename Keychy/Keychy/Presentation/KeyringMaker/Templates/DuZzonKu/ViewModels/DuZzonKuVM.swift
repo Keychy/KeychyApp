@@ -68,7 +68,7 @@ class DuZzonKuVM: KeyringViewModelProtocol {
     var errorMessage: String?
     
     // MARK: - Template Info
-    var templateId: String { template?.id ?? "WishHorse26" }
+    var templateId: String { template?.id ?? "DuZzonKu" }
     var chainLength: Int { template?.chainLength ?? 3 }
     
     // MARK: - Customizing Modes
@@ -80,31 +80,31 @@ class DuZzonKuVM: KeyringViewModelProtocol {
     }
     
     // MARK: - View Providers
-    func sceneView(for mode: CustomizingMode, onSceneReady: @escaping () -> Void) -> AnyView {
-        switch mode {
-        case .effect:
-            return AnyView(KeyringSceneView(viewModel: self, onSceneReady: onSceneReady))
-        case .frame:
-            return AnyView(WishHorse26FramePreviewView(viewModel: self, onSceneReady: onSceneReady))
-        default:
-            return AnyView(EmptyView())
-        }
-    }
-
-    func bottomContentView(
-        for mode: CustomizingMode,
-        showPurchaseSheet: Binding<Bool>,
-        cartItems: Binding<[EffectItem]>
-    ) -> AnyView {
-        switch mode {
-        case .effect:
-            return AnyView(EffectSelectorView(viewModel: self, cartItems: cartItems))
-        case .frame:
-            return AnyView(WishHorse26FrameSelectorView(viewModel: self))
-        default:
-            return AnyView(EmptyView())
-        }
-    }
+//    func sceneView(for mode: CustomizingMode, onSceneReady: @escaping () -> Void) -> AnyView {
+//        switch mode {
+//        case .effect:
+//            return AnyView(KeyringSceneView(viewModel: self, onSceneReady: onSceneReady))
+//        case .frame:
+//            return AnyView(DuZzonKuFramePreviewView(viewModel: self, onSceneReady: onSceneReady))
+//        default:
+//            return AnyView(EmptyView())
+//        }
+//    }
+//
+//    func bottomContentView(
+//        for mode: CustomizingMode,
+//        showPurchaseSheet: Binding<Bool>,
+//        cartItems: Binding<[EffectItem]>
+//    ) -> AnyView {
+//        switch mode {
+//        case .effect:
+//            return AnyView(EffectSelectorView(viewModel: self, cartItems: cartItems))
+//        case .frame:
+//            return AnyView(DuZzonKuFrameSelectorView(viewModel: self))
+//        default:
+//            return AnyView(EmptyView())
+//        }
+//    }
 
     func bottomViewHeightRatio(for mode: CustomizingMode) -> CGFloat {
         switch mode {
@@ -119,22 +119,22 @@ class DuZzonKuVM: KeyringViewModelProtocol {
     
     // MARK: - Lifecycle Callbacks
     
-    /// 모드 변경 시 프레임 → 다른 모드로 전환되면 말 합성
-    func onModeChanged(from oldMode: CustomizingMode, to newMode: CustomizingMode) {
-        if oldMode == .frame && newMode != .frame {
-            Task {
-                await composeHorse()
-            }
-        }
-    }
-
-    /// 다음 화면으로 이동하기 전 말 합성
-    func beforeNavigateToNext() {
-        Task {
-            await composeHorse()
-        }
-    }
-    
+//    /// 모드 변경 시 프레임 → 다른 모드로 전환되면 말 합성
+//    func onModeChanged(from oldMode: CustomizingMode, to newMode: CustomizingMode) {
+//        if oldMode == .frame && newMode != .frame {
+//            Task {
+//                await composeHorse()
+//            }
+//        }
+//    }
+//
+//    /// 다음 화면으로 이동하기 전 말 합성
+//    func beforeNavigateToNext() {
+//        Task {
+//            await composeHorse()
+//        }
+//    }
+//    
     
     // MARK: - Reset
     func resetCustomizingData() {
