@@ -339,6 +339,7 @@ struct DuZzonKuFramePreviewView: View {
                 // 사진이 없을 때 딤 오버레이
                 Color.black20
                     .frame(width: photoWidth, height: photoHeight)
+                    .clipShape(clipShape)
             }
             
             // 버튼들
