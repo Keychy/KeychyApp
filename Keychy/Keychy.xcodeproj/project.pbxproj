@@ -141,6 +141,8 @@
 		4C25262B2F3B97D6003CC5AD /* UIViewController+Find.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2526292F3B97D6003CC5AD /* UIViewController+Find.swift */; };
 		4C25262C2F3B97D6003CC5AD /* TabBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2526272F3B97D6003CC5AD /* TabBarManager.swift */; };
 		4C25262D2F3B97D6003CC5AD /* TabBarSwipeObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2526282F3B97D6003CC5AD /* TabBarSwipeObserver.swift */; };
+		4C25262F2F3C95DA003CC5AD /* LottieItemManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C25262E2F3C95DA003CC5AD /* LottieItemManager.swift */; };
+		4C2526312F3C95EA003CC5AD /* LottieItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2526302F3C95EA003CC5AD /* LottieItemView.swift */; };
 		4C3687F72EBFA87800C64E75 /* Pretendard-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C3687F62EBFA87800C64E75 /* Pretendard-Medium.ttf */; };
 		4C3687FA2EBFC0FB00C64E75 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3687F82EBFC0FB00C64E75 /* NotificationManager.swift */; };
 		4C3687FC2EC05E6800C64E75 /* AccountAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3687FB2EC05E6800C64E75 /* AccountAlert.swift */; };
@@ -612,6 +614,8 @@
 		4C2526272F3B97D6003CC5AD /* TabBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarManager.swift; sourceTree = "<group>"; };
 		4C2526282F3B97D6003CC5AD /* TabBarSwipeObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarSwipeObserver.swift; sourceTree = "<group>"; };
 		4C2526292F3B97D6003CC5AD /* UIViewController+Find.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Find.swift"; sourceTree = "<group>"; };
+		4C25262E2F3C95DA003CC5AD /* LottieItemManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieItemManager.swift; sourceTree = "<group>"; };
+		4C2526302F3C95EA003CC5AD /* LottieItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieItemView.swift; sourceTree = "<group>"; };
 		4C3687F62EBFA87800C64E75 /* Pretendard-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Medium.ttf"; sourceTree = "<group>"; };
 		4C3687F82EBFC0FB00C64E75 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		4C3687FB2EC05E6800C64E75 /* AccountAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountAlert.swift; sourceTree = "<group>"; };
@@ -1993,6 +1997,7 @@
 				4CF2A9652F0B8C5800BA9FDA /* PullToRefreshIndicator.swift */,
 				4CF2A9672F0B91F300BA9FDA /* AnimatedGIFView.swift */,
 				C645AE9E2EB1055C004BFE69 /* CategoryTabBar.swift */,
+				4C2526302F3C95EA003CC5AD /* LottieItemView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -2384,6 +2389,7 @@
 		C68931CD2EB7B94B00C5F083 /* FileManagers */ = {
 			isa = PBXGroup;
 			children = (
+				4C25262E2F3C95DA003CC5AD /* LottieItemManager.swift */,
 				C68931CC2EB7B94B00C5F083 /* EffectManager.swift */,
 				AA9123AE2ED4BC490070A9F9 /* LocationManager.swift */,
 				38C3C27D2EC08794003C5DE1 /* PopupManager.swift */,
@@ -2703,6 +2709,7 @@
 				AA2146B72F15E5B60048D40E /* BundleEditView+SelectSheet.swift in Sources */,
 				389080172ED3F05D00D7A49F /* FestivalKeyringDetailView.swift in Sources */,
 				38A22A7F2EC2238800B4C7C5 /* CollectionKeyringPackageView.swift in Sources */,
+				4C2526312F3C95EA003CC5AD /* LottieItemView.swift in Sources */,
 				4CC3D3C82EC8A47E0009D376 /* OutlineText.swift in Sources */,
 				385425C32EB2C35E00A06C02 /* WidgetSettingView.swift in Sources */,
 				4CEC622B2EAE08DA0099ECEE /* Font+Styles.swift in Sources */,
@@ -2905,6 +2912,7 @@
 				4C2525DA2F35B2A7003CC5AD /* BundleSheetFilterBar.swift in Sources */,
 				BC00020F2F35F00200000003 /* BundleSearchBar.swift in Sources */,
 				BC0002102F35F00200000004 /* KeyringEmptyStateView.swift in Sources */,
+				4C25262F2F3C95DA003CC5AD /* LottieItemManager.swift in Sources */,
 				BC0002132F35F00200000006 /* KeyringSelectionContent.swift in Sources */,
 				BC0002152F35F00200000008 /* BundleKeyringCellView.swift in Sources */,
 				3828F5452EC4CC0A00F1B040 /* CollectionViewModel+Filter.swift in Sources */,

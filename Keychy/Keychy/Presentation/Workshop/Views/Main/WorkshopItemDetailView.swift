@@ -182,7 +182,23 @@ extension WorkshopItemDetailView {
 
             // 파티클이 아닌 경우 이미지 표시
             if !(item is Particle) {
-                if item is Background {
+                if let background = item as? Background, background.isLottie, let bgId = background.id {
+                    // Lottie 배경
+                    LottieItemView(assetId: bgId, directory: "lottie_backgrounds")
+                        .scaledToFill()
+                        .frame(maxWidth: .infinity, maxHeight: getBottomPadding(5) == 0 ? 501 : 380)
+                        .cornerRadius(20)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(Color.gray50, lineWidth: 2)
+                        )
+                } else if let carabiner = item as? Carabiner, carabiner.isLottie, let cbId = carabiner.id {
+                    // Lottie 카라비너
+                    LottieItemView(assetId: cbId, directory: "lottie_carabiners_back", contentMode: .scaleAspectFit)
+                        .scaledToFit()
+                        .aspectRatio(1, contentMode: .fit)
+                        .cornerRadius(20)
+                } else if item is Background {
                     ItemDetailImage(itemURL: getPreviewURL())
                         .scaledToFill()
                         .frame(maxWidth: .infinity, maxHeight: getBottomPadding(5) == 0 ? 501 : 380)

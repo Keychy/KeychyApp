@@ -55,6 +55,17 @@ struct WorkshopItemCard<Item: WorkshopItem>: View {
                             }
                     }
                 }
+            } else if let background = item as? Background, background.isLottie, let bgId = background.id {
+                // Lottie 배경
+                LottieItemView(assetId: bgId, directory: "lottie_backgrounds")
+                    .frame(width: twoGridCellWidth, height: itemHeight)
+                    .clipped()
+            } else if let carabiner = item as? Carabiner, carabiner.isLottie, let cbId = carabiner.id {
+                // Lottie 카라비너
+                LottieItemView(assetId: cbId, directory: "lottie_carabiners_back", contentMode: .scaleAspectFit)
+                    .padding(.horizontal, 5)
+                    .frame(width: twoGridCellWidth, height: itemHeight)
+                    .clipped()
             } else {
                 // Sound, Background, Carabiner, 키링 등은 기존처럼 이미지로 처리 (GIF 지원)
                 SimpleAnimatedImage(url: item.thumbnailURL)
