@@ -62,6 +62,7 @@ extension BundleVideoGenerator {
         scene.currentCarabinerType = carabinerType
         scene.scaleMode = .aspectFill
         scene.size = CGSize(width: sceneWidth, height: sceneHeight)
+        scene.disableShadows = true  // 영상 생성 시 그림자 비활성화 (성능 최적화)
 
         if let bgImage = backgroundImage {
             let backgroundNode = SKSpriteNode(texture: SKTexture(image: bgImage))
