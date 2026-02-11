@@ -144,23 +144,39 @@ class StorageManager {
         let bodyImagesPath = "Keyrings/BodyImages/\(uid)"
         let customSoundsPath = "Keyrings/CustomSounds/\(uid)"
 
-        try await deleteFolder(path: bodyImagesPath)
-        try await deleteFolder(path: customSoundsPath)
+        // 두 폴더 병렬 삭제
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            group.addTask { try await self.deleteFolder(path: bodyImagesPath) }
+            group.addTask { try await self.deleteFolder(path: customSoundsPath) }
+            try await group.waitForAll()
+        }
     }
 
-    /// 폴더 삭제 (모든 하위 파일 삭제)
+    /// 폴더 삭제 (모든 하위 파일 병렬 삭제)
     private func deleteFolder(path: String) async throws {
         let storageRef = Storage.storage().reference().child(path)
 
         do {
             let result = try await storageRef.listAll()
 
-            for item in result.items {
-                try await item.delete()
+            // 파일들 병렬 삭제
+            try await withThrowingTaskGroup(of: Void.self) { group in
+                for item in result.items {
+                    group.addTask {
+                        try await item.delete()
+                    }
+                }
+                try await group.waitForAll()
             }
 
-            for prefix in result.prefixes {
-                try await deleteFolder(path: prefix.fullPath)
+            // 하위 폴더들 병렬 삭제
+            try await withThrowingTaskGroup(of: Void.self) { group in
+                for prefix in result.prefixes {
+                    group.addTask {
+                        try await self.deleteFolder(path: prefix.fullPath)
+                    }
+                }
+                try await group.waitForAll()
             }
 
             print("Storage 폴더 삭제 완료: \(path)")
