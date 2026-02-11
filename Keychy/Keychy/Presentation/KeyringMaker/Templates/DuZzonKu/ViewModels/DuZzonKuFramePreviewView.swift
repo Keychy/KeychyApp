@@ -49,7 +49,7 @@ struct DuZzonKuFramePreviewView: View {
                         // 프레임 + 안장 + 갈기 합성 영역
                         VStack {
                             Spacer()
-                                .frame(height: 95)
+                                .frame(height: 135)
 
                             compositionView
                         }
@@ -59,7 +59,7 @@ struct DuZzonKuFramePreviewView: View {
                             .resizable()
                             .scaledToFit()
                             .frame(width: 90)
-                            .offset(y: -31)
+                            .offset(y: 4)
                     }
 
                     Spacer()
