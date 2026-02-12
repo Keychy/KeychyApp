@@ -58,7 +58,7 @@ extension DuZzonKuVM {
         let renderer = UIGraphicsImageRenderer(size: targetFrameSize)
         
         let composedImage = renderer.image { context in
-            // 전체 context를 x축으로 4포인트 이동
+            // 전체 context를 x축으로 2포인트 이동
             context.cgContext.translateBy(x: 2, y: 0)
             
             // 1. 각 체커보드 영역에 체커보드 + 사진 그리기
@@ -122,7 +122,7 @@ extension DuZzonKuVM {
                     let centerY = drawRect.midY
                     
                     context.cgContext.translateBy(x: centerX, y: centerY)
-                    context.cgContext.translateBy(x: photoOffset.width + 2, y: photoOffset.height)
+                    context.cgContext.translateBy(x: photoOffset.width, y: photoOffset.height)
                     context.cgContext.rotate(by: CGFloat(photoRotation.radians))
                     context.cgContext.scaleBy(x: photoScale, y: photoScale)
                     
