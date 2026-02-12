@@ -253,17 +253,12 @@ extension HomeView {
             showBundleSwitchPopup = false
         }
 
-        // 로딩 시작
-        viewModel.isSceneReady = false
-
-        // 선택된 뭉치로 변경 후 로드
-        Task {
-            await viewModel.switchBundle(
-                to: bundle,
-                collectionViewModel: collectionViewModel,
-                bundleViewModel: bundleViewModel
-            )
-        }
+        // 뭉치 전환 요청 (이전 전환 진행 중이면 자동 취소)
+        viewModel.requestBundleSwitch(
+            to: bundle,
+            collectionViewModel: collectionViewModel,
+            bundleViewModel: bundleViewModel
+        )
     }
 }
 

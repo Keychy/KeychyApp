@@ -106,6 +106,10 @@ struct MultiKeyringSceneView: View {
             setupScene()
         }
         .onDisappear {
+            // .id() 변경으로 뷰가 교체될 때 이전 씬의 비동기 콜백 무효화
+            // (비로티 카라비너 이미지 로드가 뒤늦게 완료되어 콜백이 누출되는 것 방지)
+            scene?.onSetupComplete = nil
+
             if cleanupOnDisappear {
                 cleanupScene()
             }
