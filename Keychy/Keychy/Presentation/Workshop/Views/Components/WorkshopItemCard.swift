@@ -193,26 +193,29 @@ struct WorkshopPriceOverlay<Item: WorkshopItem>: View {
                     
                     if isOwned {
                         // 보유
-                        Text("보유")
-                            .typography(.suit13M)
-                            .foregroundStyle(.white100)
-                            .padding(.vertical, 4)
-                            .padding(.horizontal, 10)
-                            .background(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .fill(.black60)
-                            )
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(.black60)
+                                .frame(width: 48, height: 24)
+                            
+                            Text("보유")
+                                .typography(.suit14M)
+                                .foregroundStyle(.white100)
+                        }
+
                     } else {
                         // 미보유: 가격 표시
-                        Text("\(price)")
-                            .typography(.nanum16EB)
-                            .foregroundStyle(.white100)
-                            .padding(.vertical, 4)
-                            .padding(.horizontal, 10)
-                            .background(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .fill(.mainOpacity80)
-                            )
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(.mainOpacity80)
+                                .frame(width: 48,height: 24)
+                            
+                            Text("\(price)")
+                                .typography(.nanum15EB25)
+                                .foregroundStyle(.white100)
+                                .padding(.top, 1)
+                        }
+
                     }
                 }
                 .padding(10)
