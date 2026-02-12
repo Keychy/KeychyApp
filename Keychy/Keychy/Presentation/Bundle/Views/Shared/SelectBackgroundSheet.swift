@@ -60,17 +60,19 @@ struct SelectBackgroundSheet: View {
         // 그리드만 (필터바는 DraggableSheet header로 이동)
         LazyVGrid(columns: gridColumns, spacing: 20) {
             ForEach(filteredAndSortedBackgrounds) { bg in
-                BackgroundCell(background: bg, isSelected: (bg == selectedBG))
-                    .onTapGesture {
-                        onBackgroundTap(bg)
+                Button {
+                    onBackgroundTap(bg)
 
-                        // 무료이고, 유저가 보유x인 경우에만 바로 추가
-                        if !bg.isOwned && bg.background.isFree {
-                            Task {
-                                await viewModel.addBackgroundToUser(backgroundName: bg.background.backgroundName, userManager: UserManager.shared)
-                            }
+                    // 무료이고, 유저가 보유x인 경우에만 바로 추가
+                    if !bg.isOwned && bg.background.isFree {
+                        Task {
+                            await viewModel.addBackgroundToUser(backgroundName: bg.background.backgroundName, userManager: UserManager.shared)
                         }
                     }
+                } label: {
+                    BackgroundCell(background: bg, isSelected: (bg == selectedBG), useThumbnail: true)
+                }
+                .buttonStyle(.plain)
             }
         }
         .padding(.horizontal, 20)

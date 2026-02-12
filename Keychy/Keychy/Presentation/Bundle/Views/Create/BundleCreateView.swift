@@ -82,15 +82,9 @@ struct BundleCreateView<Route: BundleRoute>: View {
                         carabinerY: cb.carabiner.carabinerY,
                         carabinerWidth: cb.carabiner.carabinerWidth,
                         currentCarabinerType: cb.carabiner.type,
-                        onBackgroundLoaded: {
-                            // 키링이 없으면 배경 로드 시 바로 준비 완료
-                            if selectedKeyrings.isEmpty {
-                                withAnimation(.easeOut(duration: 0.3)) {
-                                    isSceneReady = true
-                                }
-                            }
-                        },
                         onAllKeyringsReady: {
+                            // onSetupComplete에서 호출됨
+                            // (카라비너 Lottie 프리렌더링 + 키링 로드 + 물리 활성화 후)
                             withAnimation(.easeOut(duration: 0.3)) {
                                 isSceneReady = true
                             }
@@ -109,6 +103,13 @@ struct BundleCreateView<Route: BundleRoute>: View {
 
                 customNavigationBar
                     .blur(radius: showPurchaseSuccessAlert || isCapturing ? 10 : 0)
+            }
+
+            // Lottie 씬 로딩 중 (시트 포함 전체 차단)
+            if !isSceneReady {
+                Color.black20
+                    .ignoresSafeArea()
+                LoadingAlert(type: .longWithKeychy, message: "아이템을 불러오고 있어요")
             }
 
             // 캡처 중 로딩
