@@ -197,7 +197,7 @@ extension UIImage {
 
         // 6. 광택(Gradient) 생성
         let gradient = CIFilter(name: "CIConstantColorGenerator", parameters: [
-            kCIInputColorKey: CIColor(red: 1, green: 1, blue: 1, alpha: 0.05)
+            kCIInputColorKey: CIColor(red: 1, green: 1, blue: 1, alpha: 0.025)
         ])?.outputImage ?? CIImage.empty()
         let maskedGradient = gradient.applyingFilter("CIBlendWithAlphaMask", parameters: [kCIInputMaskImageKey: alphaOnly])
 
