@@ -60,7 +60,7 @@ protocol WorkshopItem: Identifiable, Decodable {
     var downloadCount: Int { get }
     var useCount: Int { get }
     var createdAt: Date { get }
-    var isLottie: Bool { get } // 로티 여부 (기본값 false)
+    var isLottie: Bool { get } // 로티 여부
 }
 
 // MARK: - Extensions
