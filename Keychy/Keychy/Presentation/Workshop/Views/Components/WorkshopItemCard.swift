@@ -66,6 +66,15 @@ struct WorkshopItemCard<Item: WorkshopItem>: View {
                     .padding(.horizontal, 5)
                     .frame(width: twoGridCellWidth, height: itemHeight)
                     .clipped()
+            } else if let template = item as? KeyringTemplate, template.previewImages.count > 1 {
+                // 슬라이드 이미지가 있는 키링 템플릿
+                TemplateImageSlideshow(
+                    imageURLs: template.previewImages,
+                    localFirstImageName: "preview_\(template.id ?? "")"
+                )
+                    .padding(.vertical, 10)
+                    .clipped()
+                    .frame(width: twoGridCellWidth, height: itemHeight)
             } else {
                 // Sound, Background, Carabiner, 키링 등은 기존처럼 이미지로 처리 (GIF 지원)
                 SimpleAnimatedImage(url: item.thumbnailURL)

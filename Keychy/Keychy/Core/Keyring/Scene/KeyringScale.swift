@@ -45,8 +45,11 @@ enum KeyringScale {
 
     // MARK: - 카라비너별 뭉치 키링 스케일
     private static let carabinerScales: [String: CGFloat] = [
-        "basic": 0.65
-        // TODO: 추가 카라비너 스케일
+        "CarouselOrgel": 0.5,
+        "HeartPepero": 0.6,
+        "HeartPlanet": 0.6,
+        "MeltingWhiteChoco": 0.7,
+        "UfoCat": 0.5,
     ]
 
     // MARK: - 기본값

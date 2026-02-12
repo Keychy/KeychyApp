@@ -11,7 +11,7 @@ import FirebaseFirestore
 /// Firebase Firestore에서 가져오는 키링 템플릿 모델
 /// - Collection: templates/{templateId}
 /// - 사용자별 구매/소유 상태는 별도로 관리 (users/{userId}/purchasedTemplates)
-struct KeyringTemplate: Identifiable, Codable, Equatable, Hashable {
+struct KeyringTemplate: Identifiable, Equatable, Hashable {
     /// Document ID
     @DocumentID var id: String?
 
@@ -30,6 +30,11 @@ struct KeyringTemplate: Identifiable, Codable, Equatable, Hashable {
 
     /// 프리뷰 URL -----> 만들기 preview에 띄울 이미지
     let previewURL: String
+
+    /// 프리뷰 슬라이드 이미지 URL 배열 (최대 5장)
+    /// - Firestore에 [String] 배열로 저장
+    /// - 비어있으면 기존 thumbnailURL/previewURL로 fallback
+    let previewImages: [String]
 
     /// 가이드 이미지 URL -----> 만들기 시작 전 가이드 화면에 띄울 이미지
     let guidingImageURL: String
@@ -60,12 +65,46 @@ struct KeyringTemplate: Identifiable, Codable, Equatable, Hashable {
     /// - 양수: 바디 중심에서 위로 이동 (구멍이 더 위에 있음)
     /// - 음수: 바디 중심에서 아래로 이동 (구멍이 더 아래에 있음)
     let hookOffsetY: CGFloat?
-    
+
     let chainLength: Int?
 
     /// 무료 템플릿 여부
     var isFree: Bool {
         return price == nil || price == 0
+    }
+}
+
+// MARK: - Codable (previewImages fallback 처리)
+extension KeyringTemplate: Codable {
+    enum CodingKeys: String, CodingKey {
+        case id, templateName, description, interactions
+        case thumbnailURL, previewURL, previewImages
+        case guidingImageURL, guidingText, tags, price
+        case downloadCount, useCount, createdAt, isActive
+        case hookOffsetY, chainLength
+    }
+
+    /// Firestore에 previewImages 필드가 없는 기존 문서도 안전하게 디코딩
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        _id = try container.decode(DocumentID<String>.self, forKey: .id)
+        templateName = try container.decode(String.self, forKey: .templateName)
+        description = try container.decode(String.self, forKey: .description)
+        interactions = try container.decode([String].self, forKey: .interactions)
+        thumbnailURL = try container.decode(String.self, forKey: .thumbnailURL)
+        previewURL = try container.decode(String.self, forKey: .previewURL)
+        // 기존 문서에 필드 없으면 빈 배열로 fallback
+        previewImages = (try? container.decode([String].self, forKey: .previewImages)) ?? []
+        guidingImageURL = try container.decode(String.self, forKey: .guidingImageURL)
+        guidingText = try container.decode(String.self, forKey: .guidingText)
+        tags = try container.decode([String].self, forKey: .tags)
+        price = try container.decodeIfPresent(Int.self, forKey: .price)
+        downloadCount = try container.decode(Int.self, forKey: .downloadCount)
+        useCount = try container.decode(Int.self, forKey: .useCount)
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+        isActive = try container.decode(Bool.self, forKey: .isActive)
+        hookOffsetY = try container.decodeIfPresent(CGFloat.self, forKey: .hookOffsetY)
+        chainLength = try container.decodeIfPresent(Int.self, forKey: .chainLength)
     }
 }
 
@@ -79,6 +118,7 @@ extension KeyringTemplate {
             interactions: ["tap", "swing"],
             thumbnailURL: "",
             previewURL: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FacrylicPreview.png?alt=media&token=cc1e53cf-9de2-4a32-a50f-f02339999f24",
+            previewImages: [],
             guidingImageURL: "https://firebasestorage.googleapis.com/v0/b/keychy-f6011.firebasestorage.app/o/Templates%2FacrylicPhoto%2FguidingImage.png?alt=media&token=example",
             guidingText: "인물 사진을 선택해주세요\n배경이 제거된 키링을 만들 수 있습니다",
             tags: ["이미지형"],

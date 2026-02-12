@@ -165,11 +165,23 @@ struct WorkshopTemplateSelectSheet: View {
             VStack(spacing: 8) {
                 // 썸네일 + 가격 오버레이 (공방 스타일)
                 ZStack(alignment: .top) {
-                    SimpleAnimatedImage(url: template.thumbnailURL)
-                        .aspectRatio(contentMode: .fit)
-                        .padding(.vertical, 10)
-                        .clipped()
-                        .frame(width: 105, height: 140.61)
+                    if template.previewImages.count > 1 {
+                        // 슬라이드 이미지
+                        TemplateImageSlideshow(
+                            imageURLs: template.previewImages,
+                            localFirstImageName: "preview_\(template.id ?? "")"
+                        )
+                            .padding(.vertical, 10)
+                            .clipped()
+                            .frame(width: 105, height: 140.61)
+                    } else {
+                        // fallback: 기존 단일 이미지
+                        SimpleAnimatedImage(url: template.thumbnailURL)
+                            .aspectRatio(contentMode: .fit)
+                            .padding(.vertical, 10)
+                            .clipped()
+                            .frame(width: 105, height: 140.61)
+                    }
 
                     // 유료/보유 오버레이
                     VStack {

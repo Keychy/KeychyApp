@@ -181,11 +181,22 @@ extension TemplatePreviewBody {
     private var templatePreview: some View {
         VStack {
             Spacer()
-            
+
             if let template {
-                ItemDetailImage(itemURL: template.previewURL)
-                    .scaledToFit()
-                    .frame(width: 386, height: 386)
+                if template.previewImages.count > 1 {
+                    // 슬라이드 이미지
+                    TemplateImageSlideshow(
+                        imageURLs: template.previewImages,
+                        localFirstImageName: "preview_\(template.id ?? "")"
+                    )
+                        .scaledToFit()
+                        .frame(width: 386, height: 386)
+                } else {
+                    // fallback: 기존 단일 프리뷰 이미지
+                    ItemDetailImage(itemURL: template.previewURL)
+                        .scaledToFit()
+                        .frame(width: 386, height: 386)
+                }
             } else {
                 LoadingAlert(type: .short40, message: nil)
             }
