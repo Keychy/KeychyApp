@@ -30,9 +30,17 @@ struct WorkshopItemCard<Item: WorkshopItem>: View {
                 // 썸네일 이미지
                 thumbnailImage
 
-                // 아이템 이름
-                Text(item.name)
-                    .typography(.suit14SB18)
+                HStack(spacing: 4) {
+                    if item.isLottie {
+                        Image(.lottieIcon)
+                            .resizable()
+                            .frame(width: 15, height: 15)
+                    }
+                    
+                    // 아이템 이름
+                    Text(item.name)
+                        .typography(.notosans14M)
+                }
             }
         }
         .buttonStyle(.plain)
@@ -175,7 +183,14 @@ struct WorkshopPriceOverlay<Item: WorkshopItem>: View {
             // 유료: 오른쪽 상단에 가격 또는 보유 표시
             VStack {
                 HStack {
+                    if price != 0 {
+                        Image(.myCoinMini)
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                    }
+                    
                     Spacer()
+                    
                     if isOwned {
                         // 보유
                         Text("보유")
@@ -193,9 +208,7 @@ struct WorkshopPriceOverlay<Item: WorkshopItem>: View {
                             .typography(.nanum16EB)
                             .foregroundStyle(.white100)
                             .padding(.vertical, 4)
-                            .padding(.horizontal, 8)
-                            .padding(.top, 3)
-                            .padding(.leading, -1)
+                            .padding(.horizontal, 10)
                             .background(
                                 RoundedRectangle(cornerRadius: 20)
                                     .fill(.mainOpacity80)

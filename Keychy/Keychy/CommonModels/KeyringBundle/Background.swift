@@ -29,6 +29,9 @@ struct Background: Identifiable, Codable, Equatable, Hashable {
     /// 배경 분류 태그 (ex. ["귀여움", "#키워드"])
     let tags: [String]
     
+    /// 추천 조합
+    let recommendedCombinations: String?
+    
     /// 구매 시 필요한 코인 (0이면 무료)
     let price: Int
     
