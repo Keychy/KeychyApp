@@ -36,10 +36,10 @@ extension KeyringVideoGenerator {
         scene.size = CGSize(width: sceneWidth, height: sceneHeight)
         scene.bind(to: viewModel)
 
-        // 배경 이미지 추가
+        // 배경 이미지 추가 (scene보다 여유 있게 배치)
         if let bgImage = backgroundImage {
             let backgroundNode = SKSpriteNode(texture: SKTexture(image: bgImage))
-            backgroundNode.size = CGSize(width: sceneWidth, height: sceneHeight)
+            backgroundNode.size = CGSize(width: sceneWidth * 1.5, height: sceneHeight * 1.5)
             backgroundNode.position = CGPoint(x: sceneWidth / 2, y: sceneHeight / 2)
             backgroundNode.zPosition = -1000
             scene.addChild(backgroundNode)
