@@ -35,10 +35,36 @@ class DuZzonKuVM: KeyringViewModelProtocol {
     var selectedPhotoImage: UIImage? = nil
     var photoImages: [Int: UIImage] = [:] // 인덱스별 사진 저장
     
-    // MARK: - Photo Transform State
-    var photoScale: CGFloat = 1.0
-    var photoRotation: Angle = .zero
-    var photoOffset: CGSize = .zero
+    // MARK: - Photo Transform State (인덱스별)
+    var photoScales: [Int: CGFloat] = [:]
+    var photoRotations: [Int: Angle] = [:]
+    var photoOffsets: [Int: CGSize] = [:]
+    
+    // 특정 인덱스의 변환 값 가져오기 (기본값 반환)
+    func getPhotoScale(at index: Int) -> CGFloat {
+        return photoScales[index] ?? 1.0
+    }
+    
+    func getPhotoRotation(at index: Int) -> Angle {
+        return photoRotations[index] ?? .zero
+    }
+    
+    func getPhotoOffset(at index: Int) -> CGSize {
+        return photoOffsets[index] ?? .zero
+    }
+    
+    // 특정 인덱스의 변환 값 설정
+    func setPhotoScale(_ scale: CGFloat, at index: Int) {
+        photoScales[index] = scale
+    }
+    
+    func setPhotoRotation(_ rotation: Angle, at index: Int) {
+        photoRotations[index] = rotation
+    }
+    
+    func setPhotoOffset(_ offset: CGSize, at index: Int) {
+        photoOffsets[index] = offset
+    }
     
     // MARK: - Body Image
     var bodyImage: UIImage? = nil
@@ -91,6 +117,11 @@ class DuZzonKuVM: KeyringViewModelProtocol {
     /// 특정 인덱스의 사진 제거
     func removePhoto(at index: Int) {
         photoImages.removeValue(forKey: index)
+        // 변환 값도 제거
+        photoScales.removeValue(forKey: index)
+        photoRotations.removeValue(forKey: index)
+        photoOffsets.removeValue(forKey: index)
+        
         if index == 0 {
             selectedPhotoImage = nil
         }
@@ -163,9 +194,9 @@ class DuZzonKuVM: KeyringViewModelProtocol {
         selectedFrame = nil
         selectedPhotoImage = nil
         photoImages.removeAll()
-        photoScale = 1.0
-        photoRotation = .zero
-        photoOffset = .zero
+        photoScales.removeAll()
+        photoRotations.removeAll()
+        photoOffsets.removeAll()
         bodyImage = nil
         availableFrames.removeAll()
         isComposingPhoto = false

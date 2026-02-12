@@ -32,10 +32,10 @@ struct DuZzonKuFramePreviewView: View {
         case photoLibrary
     }
     
-    // 제스처 임시 값
-    @State private var currentScale: CGFloat = 1.0
-    @State private var currentRotation: Angle = .zero
-    @State private var currentOffset: CGSize = .zero
+    // 제스처 임시 값 (인덱스별로 저장)
+    @State private var currentScales: [Int: CGFloat] = [:]
+    @State private var currentRotations: [Int: Angle] = [:]
+    @State private var currentOffsets: [Int: CGSize] = [:]
     
     // 크기 설정
     private let targetFrameHeight: CGFloat = 376
@@ -84,17 +84,17 @@ struct DuZzonKuFramePreviewView: View {
                 // 현재 편집 중인 영역에 사진 저장
                 if let index = editingRectIndex {
                     viewModel.setPhoto(image, at: index)
+                    // 새 사진 선택 시 해당 인덱스의 변환 초기화
+                    viewModel.setPhotoScale(1.0, at: index)
+                    viewModel.setPhotoRotation(.zero, at: index)
+                    viewModel.setPhotoOffset(.zero, at: index)
+                    currentScales[index] = 1.0
+                    currentRotations[index] = .zero
+                    currentOffsets[index] = .zero
                 } else {
                     viewModel.selectedPhotoImage = image
                 }
                 
-                // 새 사진 선택 시 변환 초기화
-                viewModel.photoScale = 1.0
-                viewModel.photoRotation = .zero
-                viewModel.photoOffset = .zero
-                currentScale = 1.0
-                currentRotation = .zero
-                currentOffset = .zero
                 showEditButton = false
                 editingRectIndex = nil
             }
@@ -130,17 +130,17 @@ struct DuZzonKuFramePreviewView: View {
                     // 현재 편집 중인 영역에 사진 저장
                     if let index = editingRectIndex {
                         viewModel.setPhoto(uiImage, at: index)
+                        // 새 사진 선택 시 해당 인덱스의 변환 초기화
+                        viewModel.setPhotoScale(1.0, at: index)
+                        viewModel.setPhotoRotation(.zero, at: index)
+                        viewModel.setPhotoOffset(.zero, at: index)
+                        currentScales[index] = 1.0
+                        currentRotations[index] = .zero
+                        currentOffsets[index] = .zero
                     } else {
                         viewModel.selectedPhotoImage = uiImage
                     }
                     
-                    // 새 사진 선택 시 변환 초기화
-                    viewModel.photoScale = 1.0
-                    viewModel.photoRotation = .zero
-                    viewModel.photoOffset = .zero
-                    currentScale = 1.0
-                    currentRotation = .zero
-                    currentOffset = .zero
                     showEditButton = false
                     editingRectIndex = nil
                 }
@@ -152,19 +152,20 @@ struct DuZzonKuFramePreviewView: View {
         }
     }
     
-    private var photoGestures: some Gesture {
+    private func photoGestures(for index: Int) -> some Gesture {
         // 확대/축소
         let magnificationGesture = MagnificationGesture(minimumScaleDelta: 0.0)
             .onChanged { value in
                 Task { @MainActor in
-                    currentScale = value
+                    currentScales[index] = value
                 }
             }
             .onEnded { value in
                 Task { @MainActor in
-                    let newScale = viewModel.photoScale * value
-                    viewModel.photoScale = min(max(newScale, 0.5), 3.0)
-                    currentScale = 1.0
+                    let currentScale = viewModel.getPhotoScale(at: index)
+                    let newScale = currentScale * value
+                    viewModel.setPhotoScale(min(max(newScale, 0.5), 3.0), at: index)
+                    currentScales[index] = 1.0
                 }
             }
         
@@ -172,13 +173,14 @@ struct DuZzonKuFramePreviewView: View {
         let rotationGesture = RotationGesture(minimumAngleDelta: .zero)
             .onChanged { value in
                 Task { @MainActor in
-                    currentRotation = value
+                    currentRotations[index] = value
                 }
             }
             .onEnded { value in
                 Task { @MainActor in
-                    viewModel.photoRotation += value
-                    currentRotation = .zero
+                    let currentRotation = viewModel.getPhotoRotation(at: index)
+                    viewModel.setPhotoRotation(currentRotation + value, at: index)
+                    currentRotations[index] = .zero
                 }
             }
         
@@ -186,7 +188,7 @@ struct DuZzonKuFramePreviewView: View {
         let dragGesture = DragGesture(minimumDistance: 10)
             .onChanged { value in
                 Task { @MainActor in
-                    currentOffset = CGSize(
+                    currentOffsets[index] = CGSize(
                         width: value.translation.width,
                         height: value.translation.height
                     )
@@ -194,11 +196,15 @@ struct DuZzonKuFramePreviewView: View {
             }
             .onEnded { value in
                 Task { @MainActor in
-                    viewModel.photoOffset = CGSize(
-                        width: viewModel.photoOffset.width + value.translation.width,
-                        height: viewModel.photoOffset.height + value.translation.height
+                    let currentOffset = viewModel.getPhotoOffset(at: index)
+                    viewModel.setPhotoOffset(
+                        CGSize(
+                            width: currentOffset.width + value.translation.width,
+                            height: currentOffset.height + value.translation.height
+                        ),
+                        at: index
                     )
-                    currentOffset = .zero
+                    currentOffsets[index] = .zero
                 }
             }
         
@@ -207,19 +213,26 @@ struct DuZzonKuFramePreviewView: View {
             .simultaneously(with: dragGesture)
     }
     
-    private var finalScale: CGFloat {
-        let calculatedScale = viewModel.photoScale * currentScale
+    // 특정 인덱스의 최종 변환 값 계산
+    private func finalScale(for index: Int) -> CGFloat {
+        let baseScale = viewModel.getPhotoScale(at: index)
+        let currentScale = currentScales[index] ?? 1.0
+        let calculatedScale = baseScale * currentScale
         return min(max(calculatedScale, 0.5), 3.0)
     }
     
-    private var finalRotation: Angle {
-        viewModel.photoRotation + currentRotation
+    private func finalRotation(for index: Int) -> Angle {
+        let baseRotation = viewModel.getPhotoRotation(at: index)
+        let currentRotation = currentRotations[index] ?? .zero
+        return baseRotation + currentRotation
     }
     
-    private var finalOffset: CGSize {
-        CGSize(
-            width: viewModel.photoOffset.width + currentOffset.width,
-            height: viewModel.photoOffset.height + currentOffset.height
+    private func finalOffset(for index: Int) -> CGSize {
+        let baseOffset = viewModel.getPhotoOffset(at: index)
+        let currentOffset = currentOffsets[index] ?? .zero
+        return CGSize(
+            width: baseOffset.width + currentOffset.width,
+            height: baseOffset.height + currentOffset.height
         )
     }
     
@@ -311,9 +324,9 @@ struct DuZzonKuFramePreviewView: View {
                         .resizable()
                         .scaledToFill()
                         .frame(width: photoWidth, height: photoHeight)
-                        .scaleEffect(finalScale)
-                        .rotationEffect(finalRotation)
-                        .offset(finalOffset)
+                        .scaleEffect(finalScale(for: index))
+                        .rotationEffect(finalRotation(for: index))
+                        .offset(finalOffset(for: index))
                         .clipShape(clipShape)
                     
                     // 수정 버튼 표시 시 딤 처리
@@ -324,7 +337,7 @@ struct DuZzonKuFramePreviewView: View {
                 .frame(width: photoWidth, height: photoHeight)
                 .clipShape(clipShape)
                 .contentShape(clipShape)
-                .gesture(photoGestures)
+                .gesture(photoGestures(for: index))
                 .onTapGesture {
                     withAnimation(.easeInOut(duration: 0.2)) {
                         if editingRectIndex == index {

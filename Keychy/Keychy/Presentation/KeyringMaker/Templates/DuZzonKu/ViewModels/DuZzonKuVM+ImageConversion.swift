@@ -107,9 +107,11 @@ extension DuZzonKuVM {
                         )
                     }
                     
-                    // 사진 변환 적용 (확대/축소, 회전, 이동)
-                    // 현재는 모든 사진에 동일한 변환 적용
-                    // 필요시 인덱스별로 다른 변환 저장 가능
+                    // 해당 인덱스의 변환 적용
+                    let photoScale = getPhotoScale(at: index)
+                    let photoRotation = getPhotoRotation(at: index)
+                    let photoOffset = getPhotoOffset(at: index)
+                    
                     let centerX = drawRect.midX
                     let centerY = drawRect.midY
                     
@@ -127,10 +129,10 @@ extension DuZzonKuVM {
                     photo.draw(in: centeredRect)
                     context.cgContext.restoreGState()
                 }
-                
-                // 2. 프레임 이미지
-                originalFrameImage.draw(in: CGRect(origin: .zero, size: targetFrameSize))
             }
+            
+            // 2. 프레임 이미지
+            originalFrameImage.draw(in: CGRect(origin: .zero, size: targetFrameSize))
         }
         
         bodyImage = composedImage
