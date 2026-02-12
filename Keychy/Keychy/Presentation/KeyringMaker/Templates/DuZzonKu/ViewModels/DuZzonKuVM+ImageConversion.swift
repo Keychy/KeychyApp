@@ -79,7 +79,11 @@ extension DuZzonKuVM {
                 // 1-2. 해당 인덱스의 사진 그리기
                 if let photo = getPhoto(at: index) {
                     context.cgContext.saveGState()
-                    context.cgContext.addRect(photoRect)
+                    
+                    // cornerRadius 적용하여 클리핑
+                    let cornerRadius = rect.cornerRadius ?? 0
+                    let path = UIBezierPath(roundedRect: photoRect, cornerRadius: cornerRadius)
+                    context.cgContext.addPath(path.cgPath)
                     context.cgContext.clip()
                     
                     // 사진을 영역에 맞게 scaledToFill로 그리기
