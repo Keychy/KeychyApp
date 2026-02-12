@@ -329,6 +329,8 @@ extension CoinChargeView {
         } label: {
             HStack(spacing: 5) {
                 Image(.myCoinMini)
+                    .resizable()
+                    .frame(width: 22, height: 22)
 
                 Text("\(selectedItem?.price ?? 0)")
                     .typography(.nanum18EB12)

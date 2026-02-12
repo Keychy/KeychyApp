@@ -174,7 +174,14 @@ struct WorkshopPriceOverlay<Item: WorkshopItem>: View {
             // 유료: 오른쪽 상단에 가격 또는 보유 표시
             VStack {
                 HStack {
+                    if price != 0 {
+                        Image(.myCoinMini)
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                    }
+                    
                     Spacer()
+                    
                     if isOwned {
                         // 보유
                         Text("보유")
