@@ -11,16 +11,12 @@ import NukeUI
 struct BackgroundCell: View {
     let background: BackgroundViewData
     let isSelected: Bool
-    
+    var useThumbnail: Bool = false
+
     var body: some View {
         VStack(spacing: 6) {
             ZStack(alignment: .top) {
-                // 배경 이미지 또는 Lottie
-                if background.background.isLottie, let bgId = background.background.id {
-                    LottieItemView(
-                        assetId: bgId,
-                        directory: "lottie_backgrounds"
-                    )
+                cellImageContent
                     .frame(width: threeSquareGridCellSize, height: threeSquareGridCellSize)
                     .background(.white100)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -28,25 +24,6 @@ struct BackgroundCell: View {
                         RoundedRectangle(cornerRadius: 10)
                             .strokeBorder(isSelected ? .main500 : .clear, lineWidth: 2)
                     )
-                } else {
-                    LazyImage(url: URL(string: background.background.backgroundImage)) { state in
-                        if let image = state.image {
-                            image
-                                .resizable()
-                                .scaledToFill()
-                                .clipped()
-                        } else if state.isLoading {
-                            LoadingAlert(type: .short30, message: nil)
-                        }
-                    }
-                    .frame(width: threeSquareGridCellSize, height: threeSquareGridCellSize)
-                    .background(.white100)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .strokeBorder(isSelected ? .main500 : .clear, lineWidth: 2)
-                    )
-                }
                 VStack {
                     HStack {
                         // 유료 아이콘
@@ -98,5 +75,27 @@ struct BackgroundCell: View {
                 .foregroundStyle(isSelected ? .main500 : .black100)
         }
         .contentShape(Rectangle())
+    }
+
+    /// Lottie / 정적 이미지 분기 (공통 모디파이어는 호출처에서 적용)
+    @ViewBuilder
+    private var cellImageContent: some View {
+        if background.background.isLottie && !useThumbnail, let bgId = background.background.id {
+            LottieItemView(
+                assetId: bgId,
+                directory: "lottie_backgrounds"
+            )
+        } else {
+            LazyImage(url: URL(string: background.background.backgroundImage)) { state in
+                if let image = state.image {
+                    image
+                        .resizable()
+                        .scaledToFill()
+                        .clipped()
+                } else if state.isLoading {
+                    LoadingAlert(type: .short30, message: nil)
+                }
+            }
+        }
     }
 }
