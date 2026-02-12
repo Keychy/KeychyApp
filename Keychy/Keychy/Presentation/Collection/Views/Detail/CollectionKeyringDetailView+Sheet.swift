@@ -112,6 +112,11 @@ extension CollectionKeyringDetailView {
                 .typography(.notosans13M)
                 .foregroundColor(.mainOpacity70)
             
+            Text("·")
+                .typography(.notosans13M)
+                .foregroundColor(.mainOpacity70)
+                .padding(.horizontal, 2)
+            
             if let receivedAt = keyring.receivedAt {
                 Text(formattedReceiveDate(date: receivedAt))
                     .typography(.notosans13M)
