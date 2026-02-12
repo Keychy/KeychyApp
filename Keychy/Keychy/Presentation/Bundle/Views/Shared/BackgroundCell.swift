@@ -44,23 +44,28 @@ struct BackgroundCell: View {
                             Spacer()
                             if background.isOwned {
                                 // 유료 + 보유
-                                Text("보유")
-                                    .typography(.suit12M)
-                                    .foregroundStyle(.white100)
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 1.5)
-                                    .background(.black60)
-                                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .fill(.black60)
+                                        .frame(width: 38, height: 20)
+                                    
+                                    Text("보유")
+                                        .typography(.suit12M)
+                                        .foregroundStyle(.white100)
+                                }
+                                
                             } else {
                                 // 유료 + 미보유: 가격 표시
-                                Text("\(background.background.price)")
-                                    .typography(.nanum13EB)
-                                    .foregroundStyle(.white100)
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2.25)
-                                    .padding(.top, 2)
-                                    .background(.mainOpacity80)
-                                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .fill(.mainOpacity80)
+                                        .frame(width: 38,height: 20)
+                                    
+                                    Text("\(background.background.price)")
+                                        .typography(.nanum13EB)
+                                        .foregroundStyle(.white100)
+                                        .padding(.top, 1)
+                                }
                             }
                         }
                         Spacer()
