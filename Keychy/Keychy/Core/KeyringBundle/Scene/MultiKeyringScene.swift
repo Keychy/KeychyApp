@@ -829,7 +829,7 @@ class MultiKeyringScene: SKScene {
         let spriteNode = SKSpriteNode(texture: texture, size: displaySize)
 
         let physicsBody = SKPhysicsBody(rectangleOf: displaySize)
-        physicsBody.mass = 2.0
+        physicsBody.mass = 1.5
         physicsBody.friction = 0.5
         physicsBody.restitution = 0.2
         physicsBody.linearDamping = 0.8
@@ -852,7 +852,7 @@ class MultiKeyringScene: SKScene {
         node.lineWidth = 1.0
 
         let physicsBody = SKPhysicsBody(circleOfRadius: radius - 2)
-        physicsBody.mass = 2.0
+        physicsBody.mass = 1.5
         physicsBody.friction = 0.5
         physicsBody.restitution = 0.2
         physicsBody.linearDamping = 0.8
@@ -1028,6 +1028,7 @@ class MultiKeyringScene: SKScene {
             guard !isCleaningUp else { return }
             physicsWorld.add(limitJoint)
 
+            bodyPhysics.mass = 1.5
             bodyPhysics.linearDamping = 0.5
             bodyPhysics.angularDamping = 0.5
 
@@ -1083,16 +1084,16 @@ class MultiKeyringScene: SKScene {
                     } else {
                         // 나머지 체인들: 자유롭게 움직임
                         chain.physicsBody?.isDynamic = true
-                        chain.physicsBody?.linearDamping = 0.5  // 매우 낮은 감쇠로 자유로운 움직임
-                        chain.physicsBody?.angularDamping = 0.5
+                        chain.physicsBody?.linearDamping = 1.5
+                        chain.physicsBody?.angularDamping = 1.5
                     }
                 }
             } else {
                 // Hamburger 타입: 모든 체인 활성화
                 for chain in chains {
                     chain.physicsBody?.isDynamic = true
-                    chain.physicsBody?.linearDamping = 0.5
-                    chain.physicsBody?.angularDamping = 0.5
+                    chain.physicsBody?.linearDamping = 1.5
+                    chain.physicsBody?.angularDamping = 1.5
                 }
             }
         }
@@ -1100,8 +1101,8 @@ class MultiKeyringScene: SKScene {
         // 모든 바디의 물리 활성화
         for (_, body) in bodyNodes {
             body.physicsBody?.isDynamic = true
-            body.physicsBody?.linearDamping = 0.5
-            body.physicsBody?.angularDamping = 0.5
+            body.physicsBody?.linearDamping = 1.5
+            body.physicsBody?.angularDamping = 1.5
         }
 
         // Setup 완료 콜백 호출
@@ -1254,25 +1255,14 @@ class MultiKeyringScene: SKScene {
                     dy: velocity.dy * 0.3
                 )
 
-                // Plain 타입일 때는 Ring과 체인이 모두 찰랑거림
+                // Plain 타입일 때는 Ring에도 약한 힘 적용
                 if let carabinerType = currentCarabinerType, carabinerType == .plain {
-                    // Ring도 체인처럼 부드럽게 힘 적용
                     if let ring = ringNodes[index] {
                         ring.physicsBody?.applyImpulse(CGVector(dx: force.dx * 0.4, dy: force.dy * 0.4))
                     }
-
-                    // 모든 체인에도 힘 적용
-                    for chain in chains {
-                        chain.physicsBody?.applyImpulse(force)
-                    }
-                } else {
-                    // Hamburger 타입: 모든 체인에 힘 적용
-                    for chain in chains {
-                        chain.physicsBody?.applyImpulse(force)
-                    }
                 }
 
-                // Body에도 힘 적용
+                // Body에만 힘 적용 (체인은 조인트를 통해 자연스럽게 따라감)
                 body.physicsBody?.applyImpulse(force)
             }
         }
