@@ -13,37 +13,51 @@ struct LottieView: UIViewRepresentable {
     let loopMode: LottieLoopMode
     let speed: CGFloat
 
-    private let animationView = LottieAnimationView()
+    // MARK: - Coordinator
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
 
+    class Coordinator {
+        var animationView: LottieAnimationView?
+    }
+
+    // MARK: - UIViewRepresentable
     func makeUIView(context: Context) -> UIView {
-        let view = UIView(frame: .zero)
+        let container = UIView(frame: .zero)
 
-        // particleId로 캐시 → Bundle 순서로 파일 찾기
+        let animationView = LottieAnimationView()
+        context.coordinator.animationView = animationView
+
         if let animation = findParticleAnimation(particleId: name) {
             animationView.animation = animation
             animationView.contentMode = .scaleAspectFit
             animationView.loopMode = loopMode
             animationView.animationSpeed = speed
             animationView.play()
-        } else {
-            // 파티클을 찾을 수 없을 때
-            print("[LottieView] 파티클 찾을 수 없음: \(name)")
         }
 
-        view.addSubview(animationView)
+        container.addSubview(animationView)
         animationView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            animationView.widthAnchor.constraint(equalTo: view.widthAnchor),
-            animationView.heightAnchor.constraint(equalTo: view.heightAnchor)
+            animationView.widthAnchor.constraint(equalTo: container.widthAnchor),
+            animationView.heightAnchor.constraint(equalTo: container.heightAnchor)
         ])
-        return view
+        return container
     }
 
     func updateUIView(_ uiView: UIView, context: Context) {}
 
-    /// 파티클 애니메이션 파일 찾기 (캐시 → Bundle 순서)
+    /// 뷰 제거 시 애니메이션 정지 + 메모리 해제
+    static func dismantleUIView(_ uiView: UIView, coordinator: Coordinator) {
+        coordinator.animationView?.stop()
+        coordinator.animationView?.animation = nil
+        coordinator.animationView?.removeFromSuperview()
+        coordinator.animationView = nil
+    }
+
+    // MARK: - Private
     private func findParticleAnimation(particleId: String) -> LottieAnimation? {
-        // 1. 로컬 캐시에서 찾기
         let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
         let cachedURL = cacheDirectory.appendingPathComponent("particles/\(particleId).json")
 
@@ -51,7 +65,6 @@ struct LottieView: UIViewRepresentable {
             return LottieAnimation.filepath(cachedURL.path)
         }
 
-        // 2. Bundle에서 찾기 (기본 무료 파티클)
         if let animation = LottieAnimation.named(particleId) {
             return animation
         }

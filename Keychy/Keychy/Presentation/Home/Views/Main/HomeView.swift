@@ -44,16 +44,20 @@ struct HomeView: View {
                 // 블러 영역
                 ZStack(alignment: .top) {
                     if let bundle = bundleViewModel.selectedBundle,
-                       let carabiner = bundleViewModel.resolveCarabiner(from: bundle.selectedCarabiner),
+                       let carabiner = bundleViewModel.selectedCarabiner,
                        let background = bundleViewModel.selectedBackground {
+                        // 현재 세대를 캡처하여 이전 씬의 콜백과 구분
+                        let currentGeneration = viewModel.sceneGeneration
                         MultiKeyringSceneView(
                             keyringDataList: viewModel.keyringDataList,
                             ringType: .basic,
                             chainType: .basic,
                             backgroundColor: .clear,
                             backgroundImageURL: background.backgroundImage,
+                            backgroundLottieId: background.isLottie ? background.id : nil,
                             carabinerBackImageURL: carabiner.backImageURL,
                             carabinerFrontImageURL: carabiner.frontImageURL,
+                            carabinerLottieId: carabiner.isLottie ? carabiner.id : nil,
                             carabinerId: carabiner.id ?? "",
                             carabinerX: carabiner.carabinerX,
                             carabinerY: carabiner.carabinerY,
@@ -61,7 +65,7 @@ struct HomeView: View {
                             currentCarabinerType: carabiner.type,
                             onBackgroundLoaded: onBackgroundLoaded,
                             onAllKeyringsReady: {
-                                viewModel.handleAllKeyringsReady()
+                                viewModel.handleAllKeyringsReady(generation: currentGeneration)
                             }
                         )
                         .ignoresSafeArea()
@@ -247,17 +251,12 @@ extension HomeView {
             showBundleSwitchPopup = false
         }
 
-        // 로딩 시작
-        viewModel.isSceneReady = false
-
-        // 선택된 뭉치로 변경 후 로드
-        Task {
-            await viewModel.switchBundle(
-                to: bundle,
-                collectionViewModel: collectionViewModel,
-                bundleViewModel: bundleViewModel
-            )
-        }
+        // 뭉치 전환 요청 (이전 전환 진행 중이면 자동 취소)
+        viewModel.requestBundleSwitch(
+            to: bundle,
+            collectionViewModel: collectionViewModel,
+            bundleViewModel: bundleViewModel
+        )
     }
 }
 

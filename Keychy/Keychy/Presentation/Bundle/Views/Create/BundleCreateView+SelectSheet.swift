@@ -93,6 +93,7 @@ extension BundleCreateView {
                 viewModel: bundleVM,
                 selectedCarabiner: bundleVM.newSelectedCarabiner,
                 onCarabinerTap: { carabiner in
+                    if carabiner.carabiner.isLottie { isSceneReady = false }
                     bundleVM.newSelectedCarabiner = carabiner
                 }
             )

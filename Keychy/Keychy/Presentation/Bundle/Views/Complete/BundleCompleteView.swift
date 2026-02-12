@@ -93,13 +93,16 @@ extension BundleCompleteView {
                 chainType: .basic,
                 backgroundColor: .clear,
                 backgroundImageURL: background.backgroundImage,
+                backgroundLottieId: background.isLottie ? background.id : nil,
                 carabinerBackImageURL: carabiner.backImageURL,
                 carabinerFrontImageURL: carabiner.frontImageURL,
+                carabinerLottieId: carabiner.isLottie ? carabiner.id : nil,
                 carabinerId: carabiner.id ?? "",
                 carabinerX: carabiner.carabinerX,
                 carabinerY: carabiner.carabinerY,
                 carabinerWidth: carabiner.carabinerWidth,
                 currentCarabinerType: carabiner.type,
+                cleanupOnDisappear: true,
                 onAllKeyringsReady: {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         withAnimation(.easeOut(duration: 0.3)) {
