@@ -24,20 +24,23 @@ struct MultiKeyringSceneView: View {
     let chainType: ChainType
     let backgroundColor: UIColor
     let backgroundImageURL: String?
+    let backgroundLottieId: String?
     let carabinerBackImageURL: String?
     let carabinerFrontImageURL: String?
+    let carabinerLottieId: String?
     let carabinerId: String
     let carabinerX: CGFloat
     let carabinerY: CGFloat
     let carabinerWidth: CGFloat
     let currentCarabinerType: CarabinerType
+    let cleanupOnDisappear: Bool
     let onBackgroundLoaded: (() -> Void)?
     let onAllKeyringsReady: (() -> Void)?
 
     @State private var scene: MultiKeyringScene?
     @State private var particleEffects: [ParticleEffect] = []
     @State private var backgroundImage: UIImage?
-    @State private var visibleKeyringCount = 0
+    @State private var carabinerLottieAspectRatio: CGFloat = 1.0
 
     // 기본 화면 크기 (iPhone 16 Pro 기준)
     private let defaultSceneSize = CGSize(width: 402, height: 874)
@@ -48,13 +51,16 @@ struct MultiKeyringSceneView: View {
         chainType: ChainType = .basic,
         backgroundColor: UIColor = .clear,
         backgroundImageURL: String? = nil,
+        backgroundLottieId: String? = nil,
         carabinerBackImageURL: String? = nil,
         carabinerFrontImageURL: String? = nil,
+        carabinerLottieId: String? = nil,
         carabinerId: String = "",
         carabinerX: CGFloat = 0,
         carabinerY: CGFloat = 0,
         carabinerWidth: CGFloat = 0,
         currentCarabinerType: CarabinerType,
+        cleanupOnDisappear: Bool = false,
         onBackgroundLoaded: (() -> Void)? = nil,
         onAllKeyringsReady: (() -> Void)? = nil
     ) {
@@ -63,13 +69,16 @@ struct MultiKeyringSceneView: View {
         self.chainType = chainType
         self.backgroundColor = backgroundColor
         self.backgroundImageURL = backgroundImageURL
+        self.backgroundLottieId = backgroundLottieId
         self.carabinerBackImageURL = carabinerBackImageURL
         self.carabinerFrontImageURL = carabinerFrontImageURL
+        self.carabinerLottieId = carabinerLottieId
         self.carabinerId = carabinerId
         self.carabinerX = carabinerX
         self.carabinerY = carabinerY
         self.carabinerWidth = carabinerWidth
         self.currentCarabinerType = currentCarabinerType
+        self.cleanupOnDisappear = cleanupOnDisappear
         self.onBackgroundLoaded = onBackgroundLoaded
         self.onAllKeyringsReady = onAllKeyringsReady
     }
@@ -77,12 +86,15 @@ struct MultiKeyringSceneView: View {
     var body: some View {
         ZStack {
             backgroundView
+            carabinerBackLottieOverlay   // 카라비너 뒷면 Lottie (SpriteKit 씬 뒤)
             sceneView
+            carabinerFrontLottieOverlay  // 카라비너 앞면 Lottie (hamburger만, 씬 앞)
             particleEffectsView
         }
         .onAppear {
             if scene == nil {
                 loadBackgroundImage()
+                loadCarabinerLottieAspectRatio()
                 setupScene()
             }
         }
@@ -90,11 +102,16 @@ struct MultiKeyringSceneView: View {
             loadBackgroundImage()
         }
         .onChange(of: currentCarabinerType) { _, _ in
+            loadCarabinerLottieAspectRatio()
             setupScene()
         }
-        .onChange(of: visibleKeyringCount) { _, count in
-            if count == keyringDataList.count {
-                onAllKeyringsReady?()
+        .onDisappear {
+            // .id() 변경으로 뷰가 교체될 때 이전 씬의 비동기 콜백 무효화
+            // (비로티 카라비너 이미지 로드가 뒤늦게 완료되어 콜백이 누출되는 것 방지)
+            scene?.onSetupComplete = nil
+
+            if cleanupOnDisappear {
+                cleanupScene()
             }
         }
     }
@@ -105,7 +122,16 @@ extension MultiKeyringSceneView {
     private var backgroundView: some View {
         GeometryReader { geometry in
             Group {
-                if let backgroundImage {
+                if let bgLottieId = backgroundLottieId {
+                    // Lottie 배경
+                    LottieItemView(
+                        assetId: bgLottieId,
+                        directory: "lottie_backgrounds"
+                    )
+                    .id(bgLottieId)
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                } else if let backgroundImage {
+                    // 정적 이미지 배경 (기존)
                     Image(uiImage: backgroundImage)
                         .resizable()
                         .scaledToFill()
@@ -146,6 +172,78 @@ extension MultiKeyringSceneView {
         }
     }
 
+    // MARK: - 카라비너 Lottie 오버레이 (실시간 모드 전용)
+
+    /// 카라비너 뒷면 Lottie 오버레이 (plain + hamburger 공통)
+    private var carabinerBackLottieOverlay: some View {
+        Group {
+            if let lottieId = carabinerLottieId {
+                GeometryReader { geometry in
+                    let metrics = carabinerScreenMetrics(
+                        geometry: geometry, aspectRatio: carabinerLottieAspectRatio
+                    )
+                    LottieItemView(
+                        assetId: lottieId,
+                        directory: "lottie_carabiners_back"
+                    )
+                    .frame(width: metrics.width, height: metrics.height)
+                    .position(x: metrics.centerX, y: metrics.centerY)
+                    .shadow(color: .black.opacity(0.25), radius: 1.0, x: 2, y: 3)
+                }
+                .allowsHitTesting(false)
+            }
+        }
+    }
+
+    /// 카라비너 앞면 Lottie 오버레이 (hamburger 타입만)
+    private var carabinerFrontLottieOverlay: some View {
+        Group {
+            if let lottieId = carabinerLottieId,
+               currentCarabinerType == .hamburger {
+                GeometryReader { geometry in
+                    let metrics = carabinerScreenMetrics(
+                        geometry: geometry, aspectRatio: carabinerLottieAspectRatio
+                    )
+                    LottieItemView(
+                        assetId: lottieId,
+                        directory: "lottie_carabiners_front"
+                    )
+                    .frame(width: metrics.width, height: metrics.height)
+                    .position(x: metrics.centerX, y: metrics.centerY)
+                }
+                .allowsHitTesting(false)
+            }
+        }
+    }
+
+    /// 씬 좌표(402×874) → 화면 좌표 변환 (aspectFill 스케일링 고려)
+    private func carabinerScreenMetrics(
+        geometry: GeometryProxy, aspectRatio: CGFloat
+    ) -> (width: CGFloat, height: CGFloat, centerX: CGFloat, centerY: CGFloat) {
+        let sceneW = defaultSceneSize.width
+        let sceneH = defaultSceneSize.height
+        // aspectFill: 화면을 꽉 채우도록 스케일 (초과분은 클리핑)
+        let scale = max(geometry.size.width / sceneW, geometry.size.height / sceneH)
+        let dx = (geometry.size.width - sceneW * scale) / 2
+        let dy = (geometry.size.height - sceneH * scale) / 2
+
+        let cbWidth = carabinerWidth * scale
+        let cbHeight = carabinerWidth * aspectRatio * scale
+        let cbCenterX = dx + (carabinerX + carabinerWidth / 2) * scale
+        let cbCenterY = dy + (carabinerY + carabinerWidth * aspectRatio / 2) * scale
+
+        return (cbWidth, cbHeight, cbCenterX, cbCenterY)
+    }
+
+    /// 캐시된 Lottie JSON에서 종횡비만 파싱 (렌더링 없음, 즉시 완료)
+    private func loadCarabinerLottieAspectRatio() {
+        guard let lottieId = carabinerLottieId else { return }
+        let cacheDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        let path = cacheDir.appendingPathComponent("lottie_carabiners_back/\(lottieId).json")
+        if let animation = LottieAnimation.filepath(path.path) {
+            carabinerLottieAspectRatio = animation.size.height / animation.size.width
+        }
+    }
 
     /// 배경 이미지 로드
     private func loadBackgroundImage() {
@@ -171,8 +269,6 @@ extension MultiKeyringSceneView {
             cleanupScene()
         }
 
-        visibleKeyringCount = 0
-
         let newScene = MultiKeyringScene(
             keyringDataList: keyringDataList,
             ringType: ringType,
@@ -184,15 +280,16 @@ extension MultiKeyringSceneView {
             carabinerId: carabinerId,
             carabinerX: carabinerX,
             carabinerY: carabinerY,
-            carabinerWidth: carabinerWidth
+            carabinerWidth: carabinerWidth,
+            carabinerLottieId: carabinerLottieId
         )
 
         newScene.size = defaultSceneSize
         newScene.scaleMode = .aspectFill
         newScene.currentCarabinerType = currentCarabinerType
         newScene.onPlayParticleEffect = handleParticleEffect
-        newScene.onKeyringVisualReady = {
-            visibleKeyringCount += 1
+        newScene.onSetupComplete = {
+            onAllKeyringsReady?()
         }
         scene = newScene
     }

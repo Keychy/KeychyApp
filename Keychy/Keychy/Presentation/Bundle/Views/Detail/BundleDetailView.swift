@@ -73,13 +73,16 @@ struct BundleDetailView<Route: BundleRoute>: View {
                             chainType: .basic,
                             backgroundColor: .clear,
                             backgroundImageURL: background.backgroundImage,
+                            backgroundLottieId: background.isLottie ? background.id : nil,
                             carabinerBackImageURL: carabiner.backImageURL,
                             carabinerFrontImageURL: carabiner.frontImageURL,
+                            carabinerLottieId: carabiner.isLottie ? carabiner.id : nil,
                             carabinerId: carabiner.id ?? "",
                             carabinerX: carabiner.carabinerX,
                             carabinerY: carabiner.carabinerY,
                             carabinerWidth: carabiner.carabinerWidth,
                             currentCarabinerType: carabiner.type,
+                            cleanupOnDisappear: true,
                             onAllKeyringsReady: {
                                 // 기존 딜레이 작업 취소
                                 readyDelayTask?.cancel()

@@ -80,8 +80,8 @@ extension BundleVideoGenerator {
         )
     }
 
-    /// Lottie 애니메이션의 모든 프레임을 SKTexture로 프리렌더링
-    private func preRenderAllFrames(lottieView: LottieAnimationView, animation: LottieAnimation) -> [SKTexture] {
+    /// Lottie 애니메이션의 모든 프레임을 SKTexture로 프리렌더링 (배경/카라비너에서도 공용 사용)
+    func preRenderAllFrames(lottieView: LottieAnimationView, animation: LottieAnimation) -> [SKTexture] {
         let totalFrames = Int(animation.endFrame - animation.startFrame)
         var textures: [SKTexture] = []
         textures.reserveCapacity(totalFrames)

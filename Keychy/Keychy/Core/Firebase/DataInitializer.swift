@@ -32,12 +32,64 @@ func initializeDatas() async {
 // MARK: - Background Initialization
 func initializeBackgrounds() async {
     let backgrounds: [[String: Any]] = [
+        // MARK: 정적 배경 1
         [
-            "id": "ExampleBackground",
-            "backgroundName": "예시 배경",
-            "description": "새로운 배경 설명을 입력하세요",
-            "backgroundImage": "https://firebasestorage.googleapis.com/...",
-            "tags": ["태그1", "태그2"],
+            "id": "CheckHeart",
+            "backgroundName": "체크 하트",
+            "description": "체크 패턴 위에 하트가 그려진 배경이에요.",
+            "backgroundImage": "https://placeholder.com/bg.png",
+            "tags": ["배경"],
+            "price": 0,
+            "downloadCount": 0,
+            "useCount": 0,
+            "isActive": false
+        ],
+        // MARK: 정적 배경 2
+        [
+            "id": "PinkRibbon",
+            "backgroundName": "핑크 리본",
+            "description": "핑크색 리본이 그려진 배경이에요.",
+            "backgroundImage": "https://placeholder.com/bg.png",
+            "tags": ["배경"],
+            "price": 0,
+            "downloadCount": 0,
+            "useCount": 0,
+            "isActive": false
+        ],
+        // MARK: Lottie 배경 1
+        [
+            "id": "StarlightSky",
+            "backgroundName": "별빛 하늘",
+            "description": "별빛이 반짝이며 움직이는 하늘 배경이에요.",
+            "backgroundImage": "https://placeholder.com/bg.png",
+            "backgroundLottie": "gs://keychy-f6011.firebasestorage.app/Backgrounds/REPLACE_ME/background.json",
+            "tags": ["배경"],
+            "price": 0,
+            "downloadCount": 0,
+            "useCount": 0,
+            "isActive": false
+        ],
+        // MARK: Lottie 배경 2
+        [
+            "id": "AuroraSpace",
+            "backgroundName": "오로라 우주",
+            "description": "빛이 일렁이는 움직이는 우주 배경이에요.",
+            "backgroundImage": "https://placeholder.com/bg.png",
+            "backgroundLottie": "gs://keychy-f6011.firebasestorage.app/Backgrounds/REPLACE_ME/background.json",
+            "tags": ["배경"],
+            "price": 0,
+            "downloadCount": 0,
+            "useCount": 0,
+            "isActive": false
+        ],
+        // MARK: Lottie 배경 3
+        [
+            "id": "CloudBalloonSky",
+            "backgroundName": "구름 풍선 하늘",
+            "description": "구름 위로 풍선이 떠오르는 움직이는 배경이에요.",
+            "backgroundImage": "https://placeholder.com/bg.png",
+            "backgroundLottie": "gs://keychy-f6011.firebasestorage.app/Backgrounds/REPLACE_ME/background.json",
+            "tags": ["배경"],
             "price": 0,
             "downloadCount": 0,
             "useCount": 0,
@@ -70,22 +122,102 @@ func initializeBackgrounds() async {
 // MARK: - Carabiner Initialization
 func initializeCarabiners() async {
     let carabiners: [[String: Any]] = [
+        // MARK: Lottie 카라비너 1 (plain)
         [
-            "id": "ExampleCarabiner",
-            "carabinerName": "예시 카라비너",
-            "carabinerImage": ["https://firebasestorage.googleapis.com/..."],
-            "carabinerType": "plain",  // "plain" 또는 "hamburger"
-            "description": "새로운 카라비너 설명을 입력하세요",
-            "maxKeyringCount": 5,
-            "tags": ["태그1", "태그2"],
+            "id": "CarouselOrgel",
+            "carabinerName": "회전목마 오르골",
+            "carabinerImage": ["https://placeholder.com/cb.png"],
+            "carabinerLottie": ["gs://keychy-f6011.firebasestorage.app/Carabiners/REPLACE_ME/Carabiner0.json"],
+            "carabinerType": "plain",
+            "description": "은은한 빛과 함께 오르골 사운드가 담긴 회전목마 카라비너예요.",
+            "maxKeyringCount": 3,
+            "tags": ["카라비너"],
             "price": 0,
             "downloadCount": 0,
             "useCount": 0,
             "carabinerX": 0.0,
             "carabinerY": 0.0,
             "carabinerWidth": 100.0,
-            "keyringXPosition": [0.5, 0.3, 0.7, 0.4, 0.6],
-            "keyringYPosition": [0.3, 0.4, 0.4, 0.5, 0.5],
+            "keyringXPosition": [0.5, 0.3, 0.7],
+            "keyringYPosition": [0.3, 0.4, 0.4],
+            "isActive": false
+        ],
+        // MARK: Lottie 카라비너 2 (plain)
+        [
+            "id": "UfoCat",
+            "carabinerName": "UFO 냥",
+            "carabinerImage": ["https://placeholder.com/cb.png"],
+            "carabinerLottie": ["gs://keychy-f6011.firebasestorage.app/Carabiners/REPLACE_ME/Carabiner0.json"],
+            "carabinerType": "plain",
+            "description": "고양이 외계인이 UFO에 탑승한 카라비너예요.\n귀여운 움직임도 함께^. .^₎⟆",
+            "maxKeyringCount": 3,
+            "tags": ["카라비너"],
+            "price": 0,
+            "downloadCount": 0,
+            "useCount": 0,
+            "carabinerX": 0.0,
+            "carabinerY": 0.0,
+            "carabinerWidth": 100.0,
+            "keyringXPosition": [0.5, 0.3, 0.7],
+            "keyringYPosition": [0.3, 0.4, 0.4],
+            "isActive": false
+        ],
+        // MARK: Lottie 카라비너 3 (plain)
+        [
+            "id": "HeartPlanet",
+            "carabinerName": "하트 행성",
+            "carabinerImage": ["https://placeholder.com/cb.png"],
+            "carabinerLottie": ["gs://keychy-f6011.firebasestorage.app/Carabiners/REPLACE_ME/Carabiner0.json"],
+            "carabinerType": "plain",
+            "description": "행성 주변을 하트 위성이 공전하고 있는 카라비너예요.",
+            "maxKeyringCount": 3,
+            "tags": ["카라비너"],
+            "price": 0,
+            "downloadCount": 0,
+            "useCount": 0,
+            "carabinerX": 0.0,
+            "carabinerY": 0.0,
+            "carabinerWidth": 100.0,
+            "keyringXPosition": [0.5, 0.3, 0.7],
+            "keyringYPosition": [0.3, 0.4, 0.4],
+            "isActive": false
+        ],
+        // MARK: 정적 카라비너 1 (hamburger)
+        [
+            "id": "HeartPepero",
+            "carabinerName": "하트 빼빼로",
+            "carabinerImage": ["https://placeholder.com/cb_thumb.png", "https://placeholder.com/cb_back.png", "https://placeholder.com/cb_front.png"],
+            "carabinerType": "hamburger",
+            "description": "하트모양 빼빼로 카라비너예요.\n빼빼로 위에 있는 별에 키링을 걸 수 있어요.",
+            "maxKeyringCount": 3,
+            "tags": ["카라비너"],
+            "price": 0,
+            "downloadCount": 0,
+            "useCount": 0,
+            "carabinerX": 0.0,
+            "carabinerY": 0.0,
+            "carabinerWidth": 100.0,
+            "keyringXPosition": [0.5, 0.3, 0.7],
+            "keyringYPosition": [0.3, 0.4, 0.4],
+            "isActive": false
+        ],
+        // MARK: 정적 카라비너 2 (plain)
+        [
+            "id": "MeltingWhiteChoco",
+            "carabinerName": "멜팅 화이트 초코",
+            "carabinerImage": ["https://placeholder.com/cb.png"],
+            "carabinerType": "plain",
+            "description": "초콜릿이 녹아 달콤하게 흘러내리며 스프링클이 톡톡 뿌려진 카라비너예요.",
+            "maxKeyringCount": 3,
+            "tags": ["카라비너"],
+            "price": 0,
+            "downloadCount": 0,
+            "useCount": 0,
+            "carabinerX": 0.0,
+            "carabinerY": 0.0,
+            "carabinerWidth": 100.0,
+            "keyringXPosition": [0.5, 0.3, 0.7],
+            "keyringYPosition": [0.3, 0.4, 0.4],
             "isActive": false
         ]
     ]
