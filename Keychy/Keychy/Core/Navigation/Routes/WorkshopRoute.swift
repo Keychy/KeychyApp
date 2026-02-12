@@ -63,6 +63,12 @@ enum WorkshopRoute: Hashable, BundleRoute {
     case wishHorse26Customizing
     case wishHorse26InfoInput
     case wishHorse26Complete
+    
+    // MARK: - 두쫀쿠 키링 템플릿
+    case duZzonKuPreview
+    case duZzonKuCustomizing
+    case duZzonKuInfoInput
+    case duZzonKuComplete
 
     // MARK: - 선물 포장 완료
     case packageComplete(keyringDocumentId: String, postOfficeId: String, templateId: String, shareLink: String)
@@ -85,6 +91,8 @@ enum WorkshopRoute: Hashable, BundleRoute {
             return .speechBubblePreview
         case "WishHorse26":
             return .wishHorse26Preview
+        case "DuZzonKu":
+            return .duZzonKuPreview
         default:
             return nil
         }

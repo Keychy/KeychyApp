@@ -42,6 +42,14 @@
 		386B17522ECCDFBA00CCCC23 /* KeyringCollectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 386B17512ECCDFBA00CCCC23 /* KeyringCollectView.swift */; };
 		386B17542ECCE8EC00CCCC23 /* CollectionViewModel+Distribution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 386B17532ECCE8EC00CCCC23 /* CollectionViewModel+Distribution.swift */; };
 		386B17642ECD142600CCCC23 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 386B17632ECD142600CCCC23 /* String+Extension.swift */; };
+		38818DB22F3C43CF00B0A49C /* DuZzonKuVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38818DB12F3C43CF00B0A49C /* DuZzonKuVM.swift */; };
+		38818DB42F3C43DC00B0A49C /* DuZzonKuPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38818DB32F3C43DC00B0A49C /* DuZzonKuPreview.swift */; };
+		38818DB62F3C43F000B0A49C /* DuZzonKuFramePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38818DB52F3C43F000B0A49C /* DuZzonKuFramePreviewView.swift */; };
+		38818DB82F3C442B00B0A49C /* DuZzonKuFrameSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38818DB72F3C442B00B0A49C /* DuZzonKuFrameSelectorView.swift */; };
+		38818DBA2F3C443B00B0A49C /* DuZzonKuVM+Effect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38818DB92F3C443B00B0A49C /* DuZzonKuVM+Effect.swift */; };
+		38818DBC2F3C444300B0A49C /* DuZzonKuVM+Firebase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38818DBB2F3C444300B0A49C /* DuZzonKuVM+Firebase.swift */; };
+		38818DBE2F3C444C00B0A49C /* DuZzonKuVM+ImageConversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38818DBD2F3C444C00B0A49C /* DuZzonKuVM+ImageConversion.swift */; };
+		38818DC02F3CBE2E00B0A49C /* CheckerBoardRect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38818DBF2F3CBE2E00B0A49C /* CheckerBoardRect.swift */; };
 		388E72942EF341F200AE1F1B /* CollectionViewModel+UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 388E72932EF341F200AE1F1B /* CollectionViewModel+UserData.swift */; };
 		389080172ED3F05D00D7A49F /* FestivalKeyringDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389080162ED3F05D00D7A49F /* FestivalKeyringDetailView.swift */; };
 		389080192ED3F32700D7A49F /* FestivalKeyringDetailView+Sheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 389080182ED3F32700D7A49F /* FestivalKeyringDetailView+Sheet.swift */; };
@@ -521,6 +529,14 @@
 		386B17512ECCDFBA00CCCC23 /* KeyringCollectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringCollectView.swift; sourceTree = "<group>"; };
 		386B17532ECCE8EC00CCCC23 /* CollectionViewModel+Distribution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Distribution.swift"; sourceTree = "<group>"; };
 		386B17632ECD142600CCCC23 /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
+		38818DB12F3C43CF00B0A49C /* DuZzonKuVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuZzonKuVM.swift; sourceTree = "<group>"; };
+		38818DB32F3C43DC00B0A49C /* DuZzonKuPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DuZzonKuPreview.swift; path = Keychy/Presentation/KeyringMaker/Templates/DuZzonKu/ViewModels/DuZzonKuPreview.swift; sourceTree = SOURCE_ROOT; };
+		38818DB52F3C43F000B0A49C /* DuZzonKuFramePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DuZzonKuFramePreviewView.swift; path = Keychy/Presentation/KeyringMaker/Templates/DuZzonKu/ViewModels/DuZzonKuFramePreviewView.swift; sourceTree = SOURCE_ROOT; };
+		38818DB72F3C442B00B0A49C /* DuZzonKuFrameSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuZzonKuFrameSelectorView.swift; sourceTree = "<group>"; };
+		38818DB92F3C443B00B0A49C /* DuZzonKuVM+Effect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DuZzonKuVM+Effect.swift"; sourceTree = "<group>"; };
+		38818DBB2F3C444300B0A49C /* DuZzonKuVM+Firebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DuZzonKuVM+Firebase.swift"; sourceTree = "<group>"; };
+		38818DBD2F3C444C00B0A49C /* DuZzonKuVM+ImageConversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DuZzonKuVM+ImageConversion.swift"; sourceTree = "<group>"; };
+		38818DBF2F3CBE2E00B0A49C /* CheckerBoardRect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckerBoardRect.swift; sourceTree = "<group>"; };
 		388E72932EF341F200AE1F1B /* CollectionViewModel+UserData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+UserData.swift"; sourceTree = "<group>"; };
 		389080162ED3F05D00D7A49F /* FestivalKeyringDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FestivalKeyringDetailView.swift; sourceTree = "<group>"; };
 		389080182ED3F32700D7A49F /* FestivalKeyringDetailView+Sheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FestivalKeyringDetailView+Sheet.swift"; sourceTree = "<group>"; };
@@ -1008,6 +1024,36 @@
 				C6B56F0A2EBC43AC0049F969 /* StoreProduct.swift */,
 			);
 			path = Store;
+			sourceTree = "<group>";
+		};
+		38818DAE2F3C42AF00B0A49C /* DuZzonKu */ = {
+			isa = PBXGroup;
+			children = (
+				38818DB02F3C43B500B0A49C /* ViewModels */,
+				38818DAF2F3C43B000B0A49C /* Views */,
+			);
+			path = DuZzonKu;
+			sourceTree = "<group>";
+		};
+		38818DAF2F3C43B000B0A49C /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				38818DB52F3C43F000B0A49C /* DuZzonKuFramePreviewView.swift */,
+				38818DB72F3C442B00B0A49C /* DuZzonKuFrameSelectorView.swift */,
+				38818DB32F3C43DC00B0A49C /* DuZzonKuPreview.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		38818DB02F3C43B500B0A49C /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				38818DB12F3C43CF00B0A49C /* DuZzonKuVM.swift */,
+				38818DB92F3C443B00B0A49C /* DuZzonKuVM+Effect.swift */,
+				38818DBB2F3C444300B0A49C /* DuZzonKuVM+Firebase.swift */,
+				38818DBD2F3C444C00B0A49C /* DuZzonKuVM+ImageConversion.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		388E72952EF34DA200AE1F1B /* Detail */ = {
@@ -1620,6 +1666,7 @@
 				4C4733842F1FA388005D2376 /* Polaroid */,
 				4C47338F2F1FA388005D2376 /* SpeechBubble */,
 				3896B95F2F3B960500220134 /* WishHorse26 */,
+				38818DAE2F3C42AF00B0A49C /* DuZzonKu */,
 			);
 			path = Templates;
 			sourceTree = "<group>";
@@ -2377,6 +2424,7 @@
 			children = (
 				4CEC61DE2EAE08C00099ECEE /* KeyringTemplate.swift */,
 				C67B755D2ECD526A00D6E3FA /* Frame.swift */,
+				38818DBF2F3CBE2E00B0A49C /* CheckerBoardRect.swift */,
 			);
 			path = Template;
 			sourceTree = "<group>";
@@ -2615,6 +2663,7 @@
 				4C3687FC2EC05E6800C64E75 /* AccountAlert.swift in Sources */,
 				388E72942EF341F200AE1F1B /* CollectionViewModel+UserData.swift in Sources */,
 				4CEBB14D2EFAA52F00CF53E2 /* DeepLinkHandler.swift in Sources */,
+				38818DC02F3CBE2E00B0A49C /* CheckerBoardRect.swift in Sources */,
 				4CEBB14E2EFAA52F00CF53E2 /* DeepLinkManager.swift in Sources */,
 				4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */,
 				4CEC61F12EAE08C40099ECEE /* KeychyApp.swift in Sources */,
@@ -2668,6 +2717,7 @@
 				4CC8D0252EF11CD200317467 /* HomeViewModel.swift in Sources */,
 				C68931CE2EB7B94B00C5F083 /* EffectManager.swift in Sources */,
 				C6B56F202EBF72130049F969 /* ItemPurchaseManager.swift in Sources */,
+				38818DBC2F3C444300B0A49C /* DuZzonKuVM+Firebase.swift in Sources */,
 				38C3C28C2EC1E4B4003C5DE1 /* CollectionKeyringDetailView+Alerts.swift in Sources */,
 				4CAF11AB2EBF6058004CB08C /* CollectionKeyringDetailView+SaveImage.swift in Sources */,
 				4CA9C6A82EC9DB5300CA546B /* View+SafeAreaBottom.swift in Sources */,
@@ -2680,6 +2730,7 @@
 				3828F5492EC4CCE400F1B040 /* CollectionView+SearchMode.swift in Sources */,
 				AA9B2E8B2EB001B70004D31C /* Carabiner.swift in Sources */,
 				AA6298582EC457DF001576C0 /* CarabinerPopup.swift in Sources */,
+				38818DB22F3C43CF00B0A49C /* DuZzonKuVM.swift in Sources */,
 				AAA4467C2EC64C9900080AB1 /* SelectBackgroundSheet.swift in Sources */,
 				38C3C2842EC0D081003C5DE1 /* LinkCopiedPopup.swift in Sources */,
 				C6C35F3E2ED2AB71009642F4 /* ZoomableScrollView.swift in Sources */,
@@ -2697,6 +2748,7 @@
 				4CA9C6A62EC9D11600CA546B /* CustomNavigationBar.swift in Sources */,
 				382800D32EC0628D005F1332 /* CollectionViewModel+Package.swift in Sources */,
 				38C3C28E2EC1F56B003C5DE1 /* CollectionKeyringDetailView+Sheet.swift in Sources */,
+				38818DBA2F3C443B00B0A49C /* DuZzonKuVM+Effect.swift in Sources */,
 				4C6530462EBA80DA000F8154 /* PurchaseFailAlert.swift in Sources */,
 				C6B56F602EC08BCF0049F969 /* WidgetKeyring.swift in Sources */,
 				4CEC622A2EAE08DA0099ECEE /* Font+Custom.swift in Sources */,
@@ -2770,6 +2822,7 @@
 				4C4733BC2F1FA388005D2376 /* PixelVM+ImageConversion.swift in Sources */,
 				4C4733BD2F1FA388005D2376 /* AcrylicPhotoGuiding.swift in Sources */,
 				4C4733BE2F1FA388005D2376 /* PolaroidVM+Effect.swift in Sources */,
+				38818DB42F3C43DC00B0A49C /* DuZzonKuPreview.swift in Sources */,
 				4C4733BF2F1FA388005D2376 /* PolaroidVM.swift in Sources */,
 				4C4733C02F1FA388005D2376 /* ClearSketchPreview.swift in Sources */,
 				3896B9702F3BB2D600220134 /* Saddle.swift in Sources */,
@@ -2830,6 +2883,7 @@
 				4C4733232F1FA2AB005D2376 /* WorkshopView.swift in Sources */,
 				4C4733272F1FA2AB005D2376 /* WorkshopBundleBanner.swift in Sources */,
 				4C2525FB2F3B27B3003CC5AD /* MultiKeyringScene.swift in Sources */,
+				38818DB62F3C43F000B0A49C /* DuZzonKuFramePreviewView.swift in Sources */,
 				4C2525FC2F3B27B3003CC5AD /* MultiKeyringSceneView.swift in Sources */,
 				4C2525FF2F3B27B3003CC5AD /* MultiKeyringCaptureScene+Capture.swift in Sources */,
 				4C2526002F3B27B3003CC5AD /* MultiKeyringCaptureScene.swift in Sources */,
@@ -2897,6 +2951,7 @@
 				38F832CD2EC90DEF00D3A248 /* WidgetOnboardingStepView+Helpers.swift in Sources */,
 				38A22A9D2EC27AC400B4C7C5 /* PackagedKeyringView+SaveImage.swift in Sources */,
 				3861024A2F1129FA0045C529 /* KeyringCacheManager.swift in Sources */,
+				38818DBE2F3C444C00B0A49C /* DuZzonKuVM+ImageConversion.swift in Sources */,
 				AABA4DAC2ED2D4C700A7D062 /* cardPagerView.swift in Sources */,
 				AA9115082EB126A60026E9BC /* CarabinerCell.swift in Sources */,
 				38283A832EBF554E00BE45A5 /* KeyringReceiveView.swift in Sources */,
@@ -2915,6 +2970,7 @@
 				AA91150A2EB1B7930026E9BC /* AddKeyringButton.swift in Sources */,
 				C645AEA32EB1B8FC004BFE69 /* DataInitializer.swift in Sources */,
 				4CA9C6F72ECBA45200CA546B /* KeychyNotification.swift in Sources */,
+				38818DB82F3C442B00B0A49C /* DuZzonKuFrameSelectorView.swift in Sources */,
 				4CF2A9682F0B91F300BA9FDA /* AnimatedGIFView.swift in Sources */,
 				4C86A61D2F29E1FE0023AA2D /* PurchaseHistoryVIewModel.swift in Sources */,
 				4CC8D01F2EF0447100317467 /* ChangeNameViewModel.swift in Sources */,

@@ -51,7 +51,6 @@ struct WishHorse26FramePreviewView: View {
                 }
             }
         }
-        .dismissKeyboardOnTap()
         .onAppear {
             // 일반 SwiftUI View는 즉시 준비 완료
             onSceneReady()

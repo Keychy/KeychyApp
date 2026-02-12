@@ -18,6 +18,7 @@ struct WorkshopTab: View {
     @State private var pixelKeyringVM: PixelVM?
     @State private var speechBubbleVM: SpeechBubbleVM?
     @State private var wishHorse26VM: WishHorse26VM?
+    @State private var duZzonKuVM: DuZzonKuVM?
     @State private var workshopViewModel = WorkshopViewModel(userManager: UserManager.shared)
 
     var body: some View {
@@ -208,6 +209,28 @@ struct WorkshopTab: View {
                 viewModel: getWishHorse26VM(),
                 navigationTitle: "키링이 완성되었어요!"
             )
+            
+        // MARK: - DuZzonKu
+        case .duZzonKuPreview:
+            DuZzonKuPreview(router: router, viewModel: getDuZzonKuVM())
+        case .duZzonKuCustomizing:
+            KeyringCustomizingView(
+                router: router,
+                viewModel: getDuZzonKuVM(),
+                nextRoute: .duZzonKuInfoInput
+            )
+        case .duZzonKuInfoInput:
+            KeyringInfoInputView(
+                router: router,
+                viewModel: getDuZzonKuVM(),
+                nextRoute: .duZzonKuComplete
+            )
+        case .duZzonKuComplete:
+            KeyringCompleteView(
+                router: router,
+                viewModel: getDuZzonKuVM(),
+                navigationTitle: "키링이 완성되었어요!"
+            )
 
         // MARK: - 선물 포장 완료
         case .packageComplete(let keyringDocumentId, let postOfficeId, let templateId, let shareLink):
@@ -291,6 +314,15 @@ struct WorkshopTab: View {
         }
         return viewModel
     }
+    
+    private func getDuZzonKuVM() -> DuZzonKuVM {
+        guard let viewModel = duZzonKuVM else {
+            let newViewModel = DuZzonKuVM()
+            duZzonKuVM = newViewModel
+            return newViewModel
+        }
+        return viewModel
+    }
 
     // MARK: - ViewModel by TemplateId
     private func getViewModelForTemplate(_ templateId: String) -> any KeyringViewModelProtocol {
@@ -305,6 +337,8 @@ struct WorkshopTab: View {
             return getPixelKeyringVM()
         case "SpeechBubble":
             return getSpeechBubbleVM()
+        case "DuZzonKu":
+            return getDuZzonKuVM()
         default:
             return getPolaroidVM()
         }
