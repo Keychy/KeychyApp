@@ -86,7 +86,7 @@ extension BundleCreateView {
             // 미리 선택된 배경이 없으면 "퍼플키치"를 기본으로 선택
             if bundleVM.newSelectedBackground == nil {
                 bundleVM.newSelectedBackground = bundleVM.backgroundViewData.first { bg in
-                    bg.background.backgroundName == "퍼플키치"
+                    bg.background.backgroundName == "퍼플 키치"
                 } ?? bundleVM.backgroundViewData.first
             }
         }
