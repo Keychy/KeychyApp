@@ -30,9 +30,17 @@ struct WorkshopItemCard<Item: WorkshopItem>: View {
                 // 썸네일 이미지
                 thumbnailImage
 
-                // 아이템 이름
-                Text(item.name)
-                    .typography(.suit14SB18)
+                HStack(spacing: 4) {
+                    if item.isLottie {
+                        Image(.lottieIcon)
+                            .resizable()
+                            .frame(width: 15, height: 15)
+                    }
+                    
+                    // 아이템 이름
+                    Text(item.name)
+                        .typography(.notosans14M)
+                }
             }
         }
         .buttonStyle(.plain)
