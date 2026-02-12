@@ -143,9 +143,17 @@ extension KeyringInfoInputView {
 extension KeyringInfoInputView {
     var textMemoView: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("메모")
-                .typography(.suit16B)
-                .foregroundStyle(.black100)
+            HStack(spacing: 3) {
+                Text("메모")
+                    .typography(.suit16B)
+                    .foregroundStyle(.black100)
+                
+                if viewModel.templateId == "WishHorse26" {
+                    Text("(필수)")
+                        .typography(.suit16B)
+                        .foregroundStyle(.black100)
+                }
+            }
 
             ZStack(alignment: .topLeading) {
                 TextEditor(text: $viewModel.memoText)
@@ -169,18 +177,34 @@ extension KeyringInfoInputView {
                     }
 
                 if viewModel.memoText.isEmpty {
-                    Text("메모(선택)")
-                        .typography(.notosans15M)
-                        .foregroundColor(.gray300)
-                        .padding(.top, 18)
-                        .padding(.leading, 17)
-                        .allowsHitTesting(false)
+                    HStack(spacing: 2) {
+                        Text("메모")
+                            .typography(.notosans15M)
+                            .foregroundColor(.gray200)
+                        
+                        if viewModel.templateId != "WishHorse26" {
+                            Text("(선택)")
+                                .typography(.notosans15M)
+                                .foregroundColor(.gray200)
+                        }
+                    }
+                    .padding(.top, 18)
+                    .padding(.leading, 17)
+                    .allowsHitTesting(false)
                 }
             }
             .background(
                 RoundedRectangle(cornerRadius: 12)
                     .fill(.gray50)
             )
+            
+            // WishHorse26 전용 안내 문구
+            if viewModel.templateId == "WishHorse26" {
+                Text("[2026년을 말해봐 키링]에 작성한 메모는 수정이 불가해요.\n메모는 2027년 1월 1일에 자동으로 활성화되어 확인할 수 있어요.")
+                    .typography(.suit13M)
+                    .foregroundColor(.main500)
+                    .multilineTextAlignment(.leading)
+            }
         }
     }
 }

@@ -16,6 +16,15 @@ struct WishHorse26FramePreviewView: View {
     
     // 크기 설정
     private let targetFrameHeight: CGFloat = 269
+    
+    // MARK: - 프레임 타입에 따른 변환 여부
+    private var shouldApplyTransform: Bool {
+        guard let frame = viewModel.selectedFrame else {
+            return false
+        }
+        // type이 "A"인 경우 변환 적용
+        return frame.type == "A"
+    }
 
     var body: some View {
         GeometryReader { geometry in
@@ -26,7 +35,7 @@ struct WishHorse26FramePreviewView: View {
                         // 프레임 + 안장 + 갈기 합성 영역
                         VStack {
                             Spacer()
-                                .frame(height: 95)
+                                .frame(height: 115)
 
                             compositionView
                         }
@@ -36,7 +45,7 @@ struct WishHorse26FramePreviewView: View {
                             .resizable()
                             .scaledToFit()
                             .frame(width: 90)
-                            .offset(y: -31)
+                            .offset(y: 5)
                     }
 
                     Spacer()
@@ -109,6 +118,12 @@ struct WishHorse26FramePreviewView: View {
                                 }
                             }
                         }
+                        // MARK: - type "A"일 때만 변환 적용
+                        .rotationEffect(.degrees(shouldApplyTransform ? 20 : 0))
+                        .offset(
+                            x: shouldApplyTransform ? 15.39 : -0.1,
+                            y: shouldApplyTransform ? 37.34 : 0
+                        )
                         .onAppear {
                             isFrameLoaded = true
                         }

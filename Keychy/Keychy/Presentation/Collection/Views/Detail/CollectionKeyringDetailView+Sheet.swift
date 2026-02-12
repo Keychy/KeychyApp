@@ -21,7 +21,7 @@ extension CollectionKeyringDetailView {
                     basicInfo
                     
                     // 메모 있으면
-                    if let memo = keyring.memo, !memo.isEmpty {
+                    if keyring.selectedTemplate == "WishHorse26" || (keyring.memo != nil && !keyring.memo!.isEmpty) {
                         memoSection
                     }
                     
@@ -112,6 +112,11 @@ extension CollectionKeyringDetailView {
                 .typography(.notosans13M)
                 .foregroundColor(.mainOpacity70)
             
+            Text("·")
+                .typography(.notosans13M)
+                .foregroundColor(.mainOpacity70)
+                .padding(.horizontal, 2)
+            
             if let receivedAt = keyring.receivedAt {
                 Text(formattedReceiveDate(date: receivedAt))
                     .typography(.notosans13M)
@@ -122,15 +127,32 @@ extension CollectionKeyringDetailView {
     }
     
     private var basicInfo: some View {
-        VStack(spacing: 0) {
-            if keyring.senderId != nil && keyring.receivedAt != nil {
+        let hasReceiveInfo = keyring.senderId != nil && keyring.receivedAt != nil
+        let isWishHorse = keyring.selectedTemplate == "WishHorse26"
+        
+        return VStack(spacing: 2) {
+            if hasReceiveInfo {
                 receiveInfo
+                    .padding(.top, 10)
+            }
+            
+            // WishHorse 템플릿일 때 배너 이미지 표시
+            if isWishHorse {
+                Image(.wishHorseBanner)
                     .padding(.top, 10)
             }
             
             Text(keyring.name)
                 .typography(.notosans24M)
-                .padding(.top, (keyring.senderId != nil && keyring.receivedAt != nil) ? 10 : 30)
+                .padding(.top, {
+                    if isWishHorse {
+                        return 2
+                    } else if hasReceiveInfo {
+                        return 10
+                    } else {
+                        return 20
+                    }
+                }())
             
             Text(formattedDate(date: keyring.createdAt))
                 .typography(.suit14M)
@@ -144,10 +166,33 @@ extension CollectionKeyringDetailView {
     
     private var memoSection: some View {
         ZStack {
-            MemoView(memo: keyring.memo ?? "", sheetDetent: $sheetDetent)
+            // WishHorse 템플릿일 때 특별 메시지 표시
+            if keyring.selectedTemplate == "WishHorse26" {
+                LockedMemoView()
+            } else {
+                MemoView(memo: keyring.memo ?? "", sheetDetent: $sheetDetent)
+            }
         }
         .padding(.top, 15)
         
+    }
+    
+    // WishHorse 템플릿용 잠긴 메모 뷰
+    private struct LockedMemoView: View {
+        var body: some View {
+            Text("작성된 메모는 2027년 1월 1일에 확인할 수 있어요.")
+                .typography(.notosans14R)
+                .foregroundColor(.gray400)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .frame(minHeight: 60)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(.gray100, lineWidth: 1)
+                )
+        }
     }
     
     private struct MemoView: View {
