@@ -66,21 +66,21 @@ extension ProfileSetupCompleteView {
     }
 
     private func preloadResources() async {
-        await preloadConfettiParticle()
+        await preloadParticle()
         isLoadingResources = false
         closeLoadingIfReady()
     }
 
-    private func preloadConfettiParticle() async {
+    private func preloadParticle() async {
         await withCheckedContinuation { continuation in
             Task.detached(priority: .userInitiated) {
                 let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-                let cachedURL = cacheDirectory.appendingPathComponent("particles/Confetti.json")
+                let cachedURL = cacheDirectory.appendingPathComponent("particles/PurpleSparkle.json")
 
                 if FileManager.default.fileExists(atPath: cachedURL.path) {
                     _ = LottieAnimation.filepath(cachedURL.path)
                 } else {
-                    _ = LottieAnimation.named("Confetti")
+                    _ = LottieAnimation.named("PurpleSparkle")
                 }
 
                 continuation.resume()

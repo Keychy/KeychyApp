@@ -39,7 +39,7 @@ class WelcomeKeyringViewModel: KeyringViewModelProtocol {
     var downloadProgress: [String: Double] = [:]
 
     var soundId: String = "none"
-    var particleId: String = "Confetti"
+    var particleId: String = "PurpleSparkle"
     var effectSubject = PassthroughSubject<(soundId: String, particleId: String, type: KeyringUpdateType), Never>()
 
     var savedKeyringDocumentId: String?
