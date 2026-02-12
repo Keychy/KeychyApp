@@ -55,7 +55,6 @@ class HomeViewModel {
     
     @MainActor
     func loadMainBundle(collectionViewModel: CollectionViewModel, bundleViewModel: BundleViewModel, onBackgroundLoaded: (() -> Void)?) async {
-        print("🔵 [loadMainBundle] 시작 - isSceneReady=\(isSceneReady), isDataLoaded=\(isDataLoaded)")
 
         // 리프레시 필요 시 캐시 무효화
         if Self.needsRefresh {
@@ -67,30 +66,24 @@ class HomeViewModel {
         if isDataLoaded,
            let currentBundle = bundleViewModel.selectedBundle,
            lastLoadedBundleId == currentBundle.documentId {
-            print("🔵 [loadMainBundle] 캐시 히트 - 스킵")
             return
         }
 
         let uid = UserManager.shared.userUID
         guard !uid.isEmpty else {
-            print("🔴 [loadMainBundle] uid 비어있음 → isSceneReady = true")
             isSceneReady = true
             return
         }
 
         // 1. 배경 및 카라비너 데이터 로드
-        print("🔵 [loadMainBundle] 1. 배경/카라비너 로드 시작")
         await collectionViewModel.loadBackgroundsAndCarabiners()
-        print("🔵 [loadMainBundle] 1. 완료 - backgrounds=\(bundleViewModel.backgrounds.count), carabiners=\(bundleViewModel.carabiners.count)")
 
         // 2. 번들 목록 로드
-        print("🔵 [loadMainBundle] 2. 번들 로드 시작")
         await withCheckedContinuation { continuation in
             bundleViewModel.fetchAllBundles(uid: uid) { _ in
                 continuation.resume()
             }
         }
-        print("🔵 [loadMainBundle] 2. 완료 - bundles=\(bundleViewModel.sortedBundles.count)")
 
         // 3. 메인 뭉치 찾기 (아직 selectedBundle에 설정하지 않음 — 배치 업데이트를 위해)
         var bundle: KeyringBundle
@@ -99,13 +92,10 @@ class HomeViewModel {
         } else if let firstBundle = bundleViewModel.sortedBundles.first {
             bundle = firstBundle
         } else {
-            print("🔴 [loadMainBundle] 번들 0개 → isSceneReady = true")
             isSceneReady = true
             onBackgroundLoaded?()
             return
         }
-        print("🔵 [loadMainBundle] 3. 선택된 번들: \(bundle.name), keyrings=\(bundle.keyrings.count), selectedCarabiner=\(bundle.selectedCarabiner)")
-
         // 4. 배경 resolve (로컬 변수에만 저장)
         var resolvedBackground = bundleViewModel.resolveBackground(from: bundle.selectedBackground)
 
@@ -123,26 +113,19 @@ class HomeViewModel {
                 }
             }
         }
-        print("🔵 [loadMainBundle] 4. 배경 resolve: \(resolvedBackground?.id ?? "nil")")
-
         // 5. 카라비너 resolve (로컬 변수에만 저장)
         var resolvedCarabiner = bundleViewModel.resolveCarabiner(from: bundle.selectedCarabiner)
-        print("🔵 [loadMainBundle] 5. 카라비너 resolve: \(resolvedCarabiner?.id ?? "nil") (원본 ID=\(bundle.selectedCarabiner))")
         if resolvedCarabiner == nil, let fallback = bundleViewModel.carabiners.first {
             resolvedCarabiner = fallback
-            print("🟡 [loadMainBundle] 카라비너 fallback 적용: \(fallback.id ?? "nil")")
         }
 
         guard let carabiner = resolvedCarabiner else {
-            print("🔴 [loadMainBundle] 카라비너 없음 (fallback도 실패) → isSceneReady = true")
             isSceneReady = true
             return
         }
 
         // 6. 키링 데이터 생성 (아직 UI 상태 변경 없음)
-        print("🔵 [loadMainBundle] 6. keyringDataList 생성 시작")
         let newKeyringDataList = await createKeyringDataList(bundle: bundle, carabiner: carabiner)
-        print("🔵 [loadMainBundle] 6. 완료 - keyringDataList=\(newKeyringDataList.count)")
 
         // 7. 모든 상태를 한 번에 업데이트 (SwiftUI body 재평가 최소화)
         // switchBundle과 동일한 배치 업데이트 패턴
@@ -154,7 +137,6 @@ class HomeViewModel {
         // 데이터 로드 완료 표시
         lastLoadedBundleId = bundle.documentId
         isDataLoaded = true
-        print("🟢 [loadMainBundle] 완료 - isSceneReady=\(isSceneReady), isDataLoaded=\(isDataLoaded), sceneGeneration=\(sceneGeneration)")
     }
 
     /// 뭉치의 키링들을 MultiKeyringScene.KeyringData 배열로 변환
@@ -289,11 +271,9 @@ class HomeViewModel {
 
     /// 키링 데이터 변경 감지 시 씬 준비 상태 초기화
     func handleKeyringDataChange() {
-        print("🟠 [handleKeyringDataChange] 호출 - keyringDataList=\(keyringDataList.count), isSceneReady=\(isSceneReady)")
         // 빈 뭉치면 이미 createKeyringDataList에서 isSceneReady = true 설정됨
         // 다시 false로 리셋하면 무한로딩 발생
         guard !keyringDataList.isEmpty else {
-            print("🟠 [handleKeyringDataChange] 빈 리스트 → 스킵 (isSceneReady 유지)")
             lastSceneKeyringSignature = ""
             return
         }
@@ -302,16 +282,12 @@ class HomeViewModel {
         // 씬이 재생성되지 않으면 onSetupComplete 콜백이 안 오므로
         // isSceneReady = false로 바꾸면 무한로딩 발생
         let newSignature = keyringDataList.map(\.bodyImageURL).joined(separator: ",")
-        guard newSignature != lastSceneKeyringSignature else {
-            print("🟠 [handleKeyringDataChange] 같은 키링 URL → .id() 변경 없음 → 스킵")
-            return
-        }
+        guard newSignature != lastSceneKeyringSignature else { return }
         lastSceneKeyringSignature = newSignature
 
         // 이전 씬의 준비 완료 Task 취소
         sceneReadyTask?.cancel()
         sceneReadyTask = nil
-        print("🟠 [handleKeyringDataChange] 씬 재생성 필요 → isSceneReady → false")
 
         withAnimation(.easeIn(duration: 0.2)) {
             isSceneReady = false
@@ -321,28 +297,17 @@ class HomeViewModel {
     /// 모든 키링 준비 완료되면 0.5초 대기 후 로딩을 삭제함
     /// - Parameter generation: 이 콜백을 생성한 씬의 세대 번호
     func handleAllKeyringsReady(generation: Int) {
-        print("🟣 [handleAllKeyringsReady] 호출 - generation=\(generation), sceneGeneration=\(sceneGeneration)")
         // 이전 씬의 콜백이면 무시 (세대가 다르면 이미 새 씬이 생성된 것)
-        guard generation == sceneGeneration else {
-            print("🔴 [handleAllKeyringsReady] 세대 불일치! generation=\(generation) != sceneGeneration=\(sceneGeneration) → 무시")
-            return
-        }
+        guard generation == sceneGeneration else { return }
 
         sceneReadyTask?.cancel()
 
         sceneReadyTask = Task { [weak self] in
             try? await Task.sleep(for: .seconds(0.5))
-            guard !Task.isCancelled else {
-                print("🔴 [handleAllKeyringsReady] Task 취소됨")
-                return
-            }
+            guard !Task.isCancelled else { return }
 
             await MainActor.run { [weak self] in
-                guard let self, generation == self.sceneGeneration else {
-                    print("🔴 [handleAllKeyringsReady] sleep 후 세대 불일치 → 무시")
-                    return
-                }
-                print("🟢 [handleAllKeyringsReady] isSceneReady → true (generation=\(generation))")
+                guard let self, generation == self.sceneGeneration else { return }
                 withAnimation(.easeOut(duration: 0.3)) {
                     self.isSceneReady = true
                 }

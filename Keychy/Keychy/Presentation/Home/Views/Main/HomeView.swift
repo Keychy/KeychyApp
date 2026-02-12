@@ -48,7 +48,6 @@ struct HomeView: View {
                        let background = bundleViewModel.selectedBackground {
                         // 현재 세대를 캡처하여 이전 씬의 콜백과 구분
                         let currentGeneration = viewModel.sceneGeneration
-                        let _ = print("🔷 [HomeView body] 씬 생성 - bundle=\(bundle.name), carabiner=\(carabiner.id ?? "nil"), bg=\(background.id ?? "nil"), gen=\(currentGeneration), keyrings=\(viewModel.keyringDataList.count)")
                         MultiKeyringSceneView(
                             keyringDataList: viewModel.keyringDataList,
                             ringType: .basic,
@@ -75,7 +74,6 @@ struct HomeView: View {
                         .id("\(bundle.documentId ?? "")_\(background.id ?? "")_\(carabiner.id ?? "")_\(viewModel.keyringDataList.map(\.bodyImageURL).joined(separator: ","))")
                     } else {
                         // 데이터 로딩 중
-                        let _ = print("🔴 [HomeView body] 씬 미생성 - bundle=\(bundleViewModel.selectedBundle?.name ?? "nil"), carabiner=\(bundleViewModel.selectedCarabiner?.id ?? "nil"), bg=\(bundleViewModel.selectedBackground?.id ?? "nil")")
                         Color.clear.ignoresSafeArea()
                     }
 
