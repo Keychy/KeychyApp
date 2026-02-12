@@ -102,6 +102,7 @@ extension BundleCompleteView {
                 carabinerY: carabiner.carabinerY,
                 carabinerWidth: carabiner.carabinerWidth,
                 currentCarabinerType: carabiner.type,
+                cleanupOnDisappear: true,
                 onAllKeyringsReady: {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         withAnimation(.easeOut(duration: 0.3)) {

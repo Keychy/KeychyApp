@@ -82,6 +82,7 @@ struct BundleCreateView<Route: BundleRoute>: View {
                         carabinerY: cb.carabiner.carabinerY,
                         carabinerWidth: cb.carabiner.carabinerWidth,
                         currentCarabinerType: cb.carabiner.type,
+                        cleanupOnDisappear: true,
                         onAllKeyringsReady: {
                             // onSetupComplete에서 호출됨
                             // (카라비너 Lottie 프리렌더링 + 키링 로드 + 물리 활성화 후)
@@ -90,7 +91,7 @@ struct BundleCreateView<Route: BundleRoute>: View {
                             }
                         }
                     )
-                    .id("scene_\(bg.background.id ?? "bg")_\(cb.carabiner.id ?? "cb")_\(selectedKeyrings.count)_\(sceneRefreshId.uuidString)")
+                    .id("scene_\(cb.carabiner.id ?? "cb")_\(selectedKeyrings.count)_\(sceneRefreshId.uuidString)")
 
                     // 키링 추가 + 버튼들
                     keyringButtons(carabiner: cb.carabiner)

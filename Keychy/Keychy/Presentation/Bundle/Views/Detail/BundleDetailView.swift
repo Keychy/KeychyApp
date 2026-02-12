@@ -82,6 +82,7 @@ struct BundleDetailView<Route: BundleRoute>: View {
                             carabinerY: carabiner.carabinerY,
                             carabinerWidth: carabiner.carabinerWidth,
                             currentCarabinerType: carabiner.type,
+                            cleanupOnDisappear: true,
                             onAllKeyringsReady: {
                                 // 기존 딜레이 작업 취소
                                 readyDelayTask?.cancel()

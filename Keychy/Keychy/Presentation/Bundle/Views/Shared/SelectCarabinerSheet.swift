@@ -69,7 +69,7 @@ struct SelectCarabinerSheet: View {
                         }
                     }
                 } label: {
-                    CarabinerCell(carabiner: cb, isSelected: (selectedCarabiner == cb), useThumbnail: true)
+                    CarabinerCell(carabiner: cb, isSelected: (selectedCarabiner == cb))
                 }
                 .buttonStyle(.plain)
             }

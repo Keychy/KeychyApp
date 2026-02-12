@@ -192,6 +192,7 @@ struct BundleEditView<Route: BundleRoute>: View {
                 carabinerY: carabiner.carabiner.carabinerY,
                 carabinerWidth: carabiner.carabiner.carabinerWidth,
                 currentCarabinerType: carabiner.carabiner.type,
+                cleanupOnDisappear: true,
                 onAllKeyringsReady: {
                     withAnimation(.easeOut(duration: 0.3)) {
                         isSceneReady = true
@@ -200,7 +201,7 @@ struct BundleEditView<Route: BundleRoute>: View {
             )
             .ignoresSafeArea()
             .animation(.easeInOut(duration: 0.3), value: isSceneReady)
-            .id("scene_\(background.background.id ?? "bg")_\(carabiner.carabiner.id ?? "cb")_\(keyringDataList.count)_\(sceneRefreshId.uuidString)")
+            .id("scene_\(carabiner.carabiner.id ?? "cb")_\(keyringDataList.count)_\(sceneRefreshId.uuidString)")
             
             // 키링 추가 버튼들
             GeometryReader { geometry in

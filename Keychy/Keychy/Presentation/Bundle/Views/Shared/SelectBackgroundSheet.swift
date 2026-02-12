@@ -70,7 +70,7 @@ struct SelectBackgroundSheet: View {
                         }
                     }
                 } label: {
-                    BackgroundCell(background: bg, isSelected: (bg == selectedBG), useThumbnail: true)
+                    BackgroundCell(background: bg, isSelected: (bg == selectedBG))
                 }
                 .buttonStyle(.plain)
             }
