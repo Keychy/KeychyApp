@@ -58,6 +58,8 @@ extension DuZzonKuVM {
         let renderer = UIGraphicsImageRenderer(size: targetFrameSize)
         
         let composedImage = renderer.image { context in
+            // 전체 context를 x축으로 2포인트 이동
+            context.cgContext.translateBy(x: 2, y: 0)
             
             // 1. 각 체커보드 영역에 체커보드 + 사진 그리기
             for (index, rect) in checkerBoardRects.enumerated() {
@@ -79,7 +81,11 @@ extension DuZzonKuVM {
                 // 1-2. 해당 인덱스의 사진 그리기
                 if let photo = getPhoto(at: index) {
                     context.cgContext.saveGState()
-                    context.cgContext.addRect(photoRect)
+                    
+                    // cornerRadius 적용하여 클리핑
+                    let cornerRadius = rect.cornerRadius ?? 0
+                    let path = UIBezierPath(roundedRect: photoRect, cornerRadius: cornerRadius)
+                    context.cgContext.addPath(path.cgPath)
                     context.cgContext.clip()
                     
                     // 사진을 영역에 맞게 scaledToFill로 그리기
@@ -107,9 +113,11 @@ extension DuZzonKuVM {
                         )
                     }
                     
-                    // 사진 변환 적용 (확대/축소, 회전, 이동)
-                    // 현재는 모든 사진에 동일한 변환 적용
-                    // 필요시 인덱스별로 다른 변환 저장 가능
+                    // 해당 인덱스의 변환 적용
+                    let photoScale = getPhotoScale(at: index)
+                    let photoRotation = getPhotoRotation(at: index)
+                    let photoOffset = getPhotoOffset(at: index)
+                    
                     let centerX = drawRect.midX
                     let centerY = drawRect.midY
                     
@@ -127,10 +135,10 @@ extension DuZzonKuVM {
                     photo.draw(in: centeredRect)
                     context.cgContext.restoreGState()
                 }
-                
-                // 2. 프레임 이미지
-                originalFrameImage.draw(in: CGRect(origin: .zero, size: targetFrameSize))
             }
+            
+            // 2. 프레임 이미지
+            originalFrameImage.draw(in: CGRect(origin: .zero, size: targetFrameSize))
         }
         
         bodyImage = composedImage
