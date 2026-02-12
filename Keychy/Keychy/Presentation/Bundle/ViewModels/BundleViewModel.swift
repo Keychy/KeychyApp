@@ -65,6 +65,15 @@ class BundleViewModel {
 
     var selectedBundle: KeyringBundle?
 
+    /// 메인 뭉치로 selected* 상태 복원 (상세/완성 화면에서 나갈 때 호출)
+    /// 홈 화면이 공유 bundleVM을 참조하므로, 다른 화면에서 변경된 상태를 정리
+    func restoreMainBundle() {
+        guard let mainBundle = sortedBundles.first(where: { $0.isMain }) ?? sortedBundles.first else { return }
+        selectedBundle = mainBundle
+        selectedBackground = resolveBackground(from: mainBundle.selectedBackground)
+        selectedCarabiner = resolveCarabiner(from: mainBundle.selectedCarabiner)
+    }
+
     // MARK: - 사용자 데이터
 
     var bundles: [KeyringBundle] = []

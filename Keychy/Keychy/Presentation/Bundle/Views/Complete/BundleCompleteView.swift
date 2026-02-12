@@ -282,6 +282,7 @@ extension BundleCompleteView {
         ToolbarItem(placement: .topBarLeading) {
             Button {
                 cleanupCachedVideo()
+                bundleVM.restoreMainBundle()
                 TabBarManager.switchTo(.workshop)
                 TabBarManager.show()
                 router.reset()
@@ -318,6 +319,7 @@ extension BundleCompleteView {
 
     private func navigateToInventory() {
         cleanupCachedVideo()
+        bundleVM.restoreMainBundle()
         CollectionViewModel.shouldStartWithBundleTab = true
         TabBarManager.switchTo(.collection)
         TabBarManager.show()
