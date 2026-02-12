@@ -278,6 +278,7 @@ struct DuZzonKuFramePreviewView: View {
                 .onDisappear {
                     isFrameLoaded = false
                 }
+                .offset(x: 2)
                 .onAppear {
                     print("checkerBoardRects:", frame.checkerBoardRects ?? [])
                 }
