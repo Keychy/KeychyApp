@@ -157,6 +157,9 @@ class BundleVideoGenerator {
         // AVAssetWriter 설정
         try setupVideoWriter()
 
+        // Scene 초기 업데이트 (물리 타이밍 리셋)
+        scene.update(0)
+
         // 프레임별 렌더링
         try await renderFrames()
 

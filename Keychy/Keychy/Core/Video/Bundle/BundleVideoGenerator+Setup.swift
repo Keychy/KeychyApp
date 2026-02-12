@@ -70,24 +70,25 @@ extension BundleVideoGenerator {
 
         if let bgLottieId = backgroundLottieId,
            let animation = LottieItemManager.shared.loadBackgroundAnimation(id: bgLottieId) {
-            // Lottie 배경: 모든 프레임을 프리렌더링
+            // Lottie 배경: 첫 프레임만 정적 렌더링 (메모리 절약)
             let config = LottieConfiguration(renderingEngine: .mainThread)
             let lottieView = LottieAnimationView(animation: animation, configuration: config)
             lottieView.frame = CGRect(origin: .zero, size: CGSize(width: sceneWidth, height: sceneHeight))
             lottieView.contentMode = .scaleAspectFill
+            lottieView.currentFrame = AnimationFrameTime(animation.startFrame)
+            lottieView.setNeedsDisplay()
+            lottieView.layer.displayIfNeeded()
 
-            let bgTextures = preRenderAllFrames(lottieView: lottieView, animation: animation)
-            if let firstTexture = bgTextures.first {
-                let backgroundNode = SKSpriteNode(texture: firstTexture)
-                backgroundNode.size = CGSize(width: sceneWidth, height: sceneHeight)
-                backgroundNode.position = CGPoint(x: sceneWidth / 2, y: sceneHeight / 2)
-                backgroundNode.zPosition = -1000
-                scene.addChild(backgroundNode)
-
-                self.backgroundLottieTextures = bgTextures
-                self.backgroundLottieNode = backgroundNode
-                self.backgroundLottieFPS = animation.framerate
+            let renderer = UIGraphicsImageRenderer(bounds: lottieView.bounds)
+            let image = renderer.image { context in
+                lottieView.layer.render(in: context.cgContext)
             }
+
+            let backgroundNode = SKSpriteNode(texture: SKTexture(image: image))
+            backgroundNode.size = CGSize(width: sceneWidth, height: sceneHeight)
+            backgroundNode.position = CGPoint(x: sceneWidth / 2, y: sceneHeight / 2)
+            backgroundNode.zPosition = -1000
+            scene.addChild(backgroundNode)
         } else if let bgImage = backgroundImage {
             // 정적 이미지 배경 (기존)
             let backgroundNode = SKSpriteNode(texture: SKTexture(image: bgImage))
