@@ -167,8 +167,8 @@ class LottieItemManager {
         // 캐시 URL 저장 (다음 검증용)
         saveCacheURL(id: id, url: remoteURL, type: type)
 
-        // Lottie 애니메이션 캐시 클리어 (새 파일 로드를 위해)
-        LottieAnimationCache.shared?.clearCache()
+        // 해당 에셋의 인메모리 캐시만 무효화 (전체 캐시 삭제 X)
+        LottieItemView.invalidateCache(assetId: id, directory: type.rawValue)
 
         downloadingItemIds.remove(downloadKey)
         downloadProgress.removeValue(forKey: downloadKey)
