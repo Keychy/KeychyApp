@@ -145,7 +145,7 @@ struct EffectSelectorView<VM: KeyringViewModelProtocol>: View {
     /// 파티클 이펙트 선택 버튼 그룹
     private var particleEffectSelector: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("흔들기 효과")
+            Text("스와이프 효과")
                 .typography(.suit16B)
                 .foregroundStyle(.black100)
                 .padding(.leading, 20)
