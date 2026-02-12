@@ -392,6 +392,12 @@ extension BundleDetailView {
                     bundleVM.lastCarabinerIdForDetail = ""
                     bundleVM.lastBackgroundIdForDetail = ""
                     router.pop()
+
+                    // pop 애니메이션 완료 후 메인 뭉치로 복원
+                    Task { @MainActor in
+                        try? await Task.sleep(for: .milliseconds(350))
+                        bundleVM.restoreMainBundle()
+                    }
                 }
                 
                 Spacer()
