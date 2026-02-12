@@ -9,17 +9,20 @@ import Foundation
 import SpriteKit
 import Lottie
 
-// MARK: - Particle Effects
+// MARK: - Particle Effects (실시간 렌더링)
 
 extension BundleVideoGenerator {
 
     /// 파티클 재생 정보
-    /// 시작 시점에 모든 프레임을 프리렌더링하여 재생 중에는 캐시된 텍스처만 사용
+    /// 프리렌더링 대신 LottieAnimationView를 유지하며 매 프레임 실시간 렌더링
     struct ParticlePlaybackInfo {
-        let displaySprite: SKSpriteNode     // 화면에 표시되는 스프라이트
-        let startedAtFrame: Int             // 파티클 시작 프레임
-        let particleId: String              // 파티클 ID
-        let preRenderedTextures: [SKTexture] // 프리렌더링된 텍스처 배열
+        let displaySprite: SKSpriteNode
+        let startedAtFrame: Int
+        let particleId: String
+        let lottieView: LottieAnimationView
+        let animation: LottieAnimation
+        let imageRenderer: UIGraphicsImageRenderer
+        let totalFrames: Int
     }
 
     /// 파티클 업데이트
@@ -42,7 +45,7 @@ extension BundleVideoGenerator {
         particleIndicesToRemove.forEach { playingParticles.removeValue(forKey: $0) }
     }
 
-    /// 파티클 시작 (모든 프레임을 프리렌더링)
+    /// 파티클 시작 (LottieView만 생성, 프리렌더링 없음)
     private func startParticle(for keyringIndex: Int, particleId: String, at frameIndex: Int, scene: MultiKeyringScene) {
         guard let animation = findParticleAnimation(particleId: particleId) else {
             return
@@ -55,8 +58,12 @@ extension BundleVideoGenerator {
         lottieView.contentMode = .scaleAspectFit
         lottieView.backgroundBehavior = .pauseAndRestore
 
-        // 모든 프레임을 프리렌더링
-        let textures = preRenderAllFrames(lottieView: lottieView, animation: animation)
+        // 레이아웃 초기화
+        lottieView.setNeedsLayout()
+        lottieView.layoutIfNeeded()
+
+        // UIGraphicsImageRenderer 1회 생성 (파티클 수명 동안 재사용)
+        let imageRenderer = UIGraphicsImageRenderer(bounds: lottieView.bounds)
 
         // 스프라이트 생성
         let sprite = SKSpriteNode()
@@ -65,62 +72,46 @@ extension BundleVideoGenerator {
         sprite.zPosition = 100
         sprite.alpha = 1.0
 
-        // 첫 프레임 텍스처 설정
-        if let firstTexture = textures.first {
-            sprite.texture = firstTexture
-        }
-
         scene.addChild(sprite)
+
+        let totalFrames = Int(animation.endFrame - animation.startFrame)
 
         playingParticles[keyringIndex] = ParticlePlaybackInfo(
             displaySprite: sprite,
             startedAtFrame: frameIndex,
             particleId: particleId,
-            preRenderedTextures: textures
+            lottieView: lottieView,
+            animation: animation,
+            imageRenderer: imageRenderer,
+            totalFrames: totalFrames
         )
     }
 
-    /// Lottie 애니메이션의 모든 프레임을 SKTexture로 프리렌더링 (배경/카라비너에서도 공용 사용)
-    func preRenderAllFrames(lottieView: LottieAnimationView, animation: LottieAnimation) -> [SKTexture] {
-        let totalFrames = Int(animation.endFrame - animation.startFrame)
-        var textures: [SKTexture] = []
-        textures.reserveCapacity(totalFrames)
-
-        // UIGraphicsImageRenderer를 한 번만 생성 (재사용)
-        let imageRenderer = UIGraphicsImageRenderer(bounds: lottieView.bounds)
-
-        for frameOffset in 0..<totalFrames {
-            let targetFrame = animation.startFrame + CGFloat(frameOffset)
-            lottieView.currentFrame = AnimationFrameTime(targetFrame)
-            lottieView.setNeedsDisplay()
-            lottieView.layer.displayIfNeeded()
-
-            let image = imageRenderer.image { context in
-                lottieView.layer.render(in: context.cgContext)
-            }
-            textures.append(SKTexture(image: image))
-        }
-
-        return textures
-    }
-
-    /// 파티클 렌더링 (프리렌더링된 텍스처 사용)
+    /// 파티클 실시간 렌더링 (매 프레임 Lottie → SKTexture 변환)
     private func updateActiveParticle(for keyringIndex: Int, at frameIndex: Int, scene: MultiKeyringScene) -> Bool {
         guard let particleInfo = playingParticles[keyringIndex] else {
             return false
         }
 
-        let sprite = particleInfo.displaySprite
         let offset = frameIndex - particleInfo.startedAtFrame
 
         // 애니메이션 종료 체크
-        if offset >= particleInfo.preRenderedTextures.count {
-            sprite.removeFromParent()
+        if offset >= particleInfo.totalFrames {
+            particleInfo.displaySprite.removeFromParent()
             return true
         }
 
-        // 프리렌더링된 텍스처 사용 (매우 빠름)
-        sprite.texture = particleInfo.preRenderedTextures[offset]
+        // Lottie 프레임 설정 + 렌더링
+        let targetFrame = particleInfo.animation.startFrame + CGFloat(offset)
+        particleInfo.lottieView.currentFrame = AnimationFrameTime(targetFrame)
+        particleInfo.lottieView.setNeedsDisplay()
+        particleInfo.lottieView.layer.displayIfNeeded()
+
+        // Core Graphics로 이미지 캡처 → SKTexture 변환
+        let image = particleInfo.imageRenderer.image { context in
+            particleInfo.lottieView.layer.render(in: context.cgContext)
+        }
+        particleInfo.displaySprite.texture = SKTexture(image: image)
 
         return false
     }

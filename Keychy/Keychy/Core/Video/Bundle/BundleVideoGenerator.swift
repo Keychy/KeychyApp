@@ -56,6 +56,7 @@ class BundleVideoGenerator {
     var renderer: SKRenderer?
     var metalDevice: MTLDevice?
     var commandQueue: MTLCommandQueue?
+    var textureCache: CVMetalTextureCache?
 
     var videoWriter: AVAssetWriter?
     var writerInput: AVAssetWriterInput?
@@ -111,6 +112,14 @@ class BundleVideoGenerator {
             throw VideoError.setupFailed
         }
         self.commandQueue = commandQueue
+
+        // Metal Texture Cache 생성 (1회만, 프레임 간 재사용)
+        var cache: CVMetalTextureCache?
+        CVMetalTextureCacheCreate(kCFAllocatorDefault, nil, device, nil, &cache)
+        guard let textureCache = cache else {
+            throw VideoError.setupFailed
+        }
+        self.textureCache = textureCache
 
         // MultiKeyringScene 생성 및 Setup 대기
         var isSceneReady = false
@@ -177,6 +186,7 @@ class BundleVideoGenerator {
     private func cleanup() {
         scene = nil
         renderer = nil
+        textureCache = nil
         metalDevice = nil
         commandQueue = nil
         videoWriter = nil
