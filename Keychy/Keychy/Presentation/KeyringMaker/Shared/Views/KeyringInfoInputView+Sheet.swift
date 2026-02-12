@@ -180,12 +180,12 @@ extension KeyringInfoInputView {
                     HStack(spacing: 2) {
                         Text("메모")
                             .typography(.notosans15M)
-                            .foregroundColor(.gray300)
+                            .foregroundColor(.gray200)
                         
                         if viewModel.templateId != "WishHorse26" {
                             Text("(선택)")
                                 .typography(.notosans15M)
-                                .foregroundColor(.gray300)
+                                .foregroundColor(.gray200)
                         }
                     }
                     .padding(.top, 18)
