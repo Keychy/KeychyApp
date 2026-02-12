@@ -106,10 +106,6 @@ struct MultiKeyringSceneView: View {
             setupScene()
         }
         .onDisappear {
-            // 이전 씬의 완료 콜백 무효화 (.id() 변경으로 뷰가 재생성될 때
-            // 이전 씬의 비동기 로딩이 뒤늦게 완료되어 콜백이 발동하는 것을 방지)
-            scene?.onSetupComplete = nil
-
             if cleanupOnDisappear {
                 cleanupScene()
             }
