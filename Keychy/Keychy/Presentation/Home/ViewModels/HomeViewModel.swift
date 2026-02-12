@@ -24,6 +24,12 @@ class HomeViewModel {
     /// 마지막으로 로드한 뭉치 ID (뭉치 변경 감지용)
     private var lastLoadedBundleId: String?
 
+    /// 씬 준비 완료 대기 Task (새 로딩 시작 시 취소용)
+    private var sceneReadyTask: Task<Void, Never>?
+
+    /// 씬 세대 카운터 (이전 씬의 콜백이 현재 씬에 영향주지 않도록 구분)
+    private(set) var sceneGeneration = 0
+
     /// 다른 화면에서 키링/뭉치 수정 후 홈 리프레시 필요 여부
     static var needsRefresh: Bool = false
     
@@ -251,18 +257,30 @@ class HomeViewModel {
         // 다시 false로 리셋하면 무한로딩 발생
         guard !keyringDataList.isEmpty else { return }
 
+        // 이전 씬의 준비 완료 Task 취소 + 세대 증가 (이전 씬 콜백 무효화)
+        sceneReadyTask?.cancel()
+        sceneReadyTask = nil
+        sceneGeneration += 1
+
         withAnimation(.easeIn(duration: 0.2)) {
             isSceneReady = false
         }
     }
 
     /// 모든 키링 준비 완료되면 0.5초 대기 후 로딩을 삭제함
-    func handleAllKeyringsReady() {
-        Task { [weak self] in
+    /// - Parameter generation: 이 콜백을 생성한 씬의 세대 번호
+    func handleAllKeyringsReady(generation: Int) {
+        // 이전 씬의 콜백이면 무시 (세대가 다르면 이미 새 씬이 생성된 것)
+        guard generation == sceneGeneration else { return }
+
+        sceneReadyTask?.cancel()
+
+        sceneReadyTask = Task { [weak self] in
             try? await Task.sleep(for: .seconds(0.5))
+            guard !Task.isCancelled else { return }
 
             await MainActor.run { [weak self] in
-                guard let self else { return }
+                guard let self, generation == self.sceneGeneration else { return }
                 withAnimation(.easeOut(duration: 0.3)) {
                     self.isSceneReady = true
                 }
