@@ -80,10 +80,17 @@ extension ItemDetailInfoSection {
     }
 
     private var itemName: some View {
-        Text(item.name)
-            .typography(.suit24B)
-            .lineLimit(nil)
-            .fixedSize(horizontal: false, vertical: true)
+        HStack(spacing: 7) {
+            if item.isLottie {
+                Image(.lottieIcon)
+            }
+            
+            Text(item.name)
+                .typography(.suit24B)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+
     }
 
     private var itemDescription: some View {
