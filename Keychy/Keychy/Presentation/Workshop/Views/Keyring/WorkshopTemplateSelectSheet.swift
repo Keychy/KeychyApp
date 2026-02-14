@@ -192,7 +192,7 @@ struct WorkshopTemplateSelectSheet: View {
 
                             Spacer()
 
-                            // 보유 뱃지 (오른쪽 상단) - 보유 또는 무료일 때
+                            // 보유 뱃지 (오른쪽 상단) - 유료 + 보유일 때만
                             Text("보유")
                                 .typography(.suit13M)
                                 .foregroundStyle(.white100)
@@ -202,7 +202,7 @@ struct WorkshopTemplateSelectSheet: View {
                                     RoundedRectangle(cornerRadius: 20)
                                         .fill(.black60)
                                 )
-                                .opacity(isOwned || template.isFree ? 1 : 0)
+                                .opacity(isOwned && !template.isFree ? 1 : 0)
                         }
                         .padding(.top, 6)
                         .padding(.horizontal, 7)
