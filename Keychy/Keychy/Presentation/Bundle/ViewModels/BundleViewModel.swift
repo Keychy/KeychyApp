@@ -60,6 +60,7 @@ class BundleViewModel {
     // MARK: - 뭉치 캡쳐 이미지
 
     var bundleCapturedImage: Data?
+    var bundleWidgetImage: Data?
 
     // MARK: - 현재 선택된 뭉치
 

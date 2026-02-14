@@ -223,7 +223,8 @@ extension BundleNameInputView {
                 // Firebase 저장 성공 후 ViewModel의 이미지를 캐시에 저장
                 bundleVM.saveBundleImageToCache(
                     bundleId: bundleId,
-                    bundleName: bundleNameToSave
+                    bundleName: bundleNameToSave,
+                    widgetImageData: bundleVM.bundleWidgetImage
                 )
 
                 isUploading = false
