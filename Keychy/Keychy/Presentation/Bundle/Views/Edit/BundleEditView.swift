@@ -25,6 +25,7 @@ struct BundleEditView<Route: BundleRoute>: View {
     @State var isCapturing: Bool = false
     
     // MARK: - Sheet
+    @Namespace var sheetButtonNamespace
     @State var showItemSheet: Bool = false
     @State var isBackgroundMode: Bool = true  // true: 배경, false: 카라비너
     @State var showPurchaseSheet = false
@@ -52,7 +53,8 @@ struct BundleEditView<Route: BundleRoute>: View {
     ]
     
     // 시트 높이 (화면의 약 43%에 해당)
-    @State var sheetHeight: CGFloat = 360
+    // 시트 높이 (DraggableSheet.onAppear에서 mediumHeight로 갱신됨)
+    @State var sheetHeight: CGFloat = UIScreen.main.bounds.height * 0.4
     @State var purchasesSuccessScale: CGFloat = 0.3
     @State var purchaseFailScale: CGFloat = 0.3
     let sheetHeightRatio: CGFloat = 0.43
@@ -171,6 +173,9 @@ struct BundleEditView<Route: BundleRoute>: View {
             // navigationBar
             customNavigationBar
         }
+        .onTapGesture {
+            if showItemSheet { showItemSheet = false }
+        }
     }
     
     // MARK: - 키링 편집 씬 뷰
@@ -228,8 +233,18 @@ struct BundleEditView<Route: BundleRoute>: View {
                         isSelected: selectedPosition == index,
                         action: {
                             selectedPosition = index
-                            withAnimation(.easeInOut) {
-                                showSelectKeyringSheet = true
+                            if showItemSheet {
+                                // 배경/카라비너 시트 닫기 → 닫힌 후 키링 시트 표시
+                                showItemSheet = false
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    withAnimation(.easeInOut) {
+                                        showSelectKeyringSheet = true
+                                    }
+                                }
+                            } else {
+                                withAnimation(.easeInOut) {
+                                    showSelectKeyringSheet = true
+                                }
                             }
                         }
                     )

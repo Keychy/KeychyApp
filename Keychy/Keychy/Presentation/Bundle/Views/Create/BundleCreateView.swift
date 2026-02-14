@@ -24,12 +24,13 @@ struct BundleCreateView<Route: BundleRoute>: View {
     @Bindable var bundleVM: BundleViewModel
 
     // 시트 활성화 상태
+    @Namespace var sheetButtonNamespace
     @State var showItemSheet: Bool = false
     @State var isBackgroundMode: Bool = true  // true: 배경, false: 카라비너
     @State var showKeyringSheet: Bool = false
 
-    // 시트 높이
-    @State var sheetHeight: CGFloat = 360
+    // 시트 높이 (DraggableSheet.onAppear에서 mediumHeight로 갱신됨)
+    @State var sheetHeight: CGFloat = UIScreen.main.bounds.height * 0.4
 
     // 키링 선택 상태
     @State var selectedKeyrings: [Int: Keyring] = [:]
@@ -97,6 +98,9 @@ struct BundleCreateView<Route: BundleRoute>: View {
                     keyringButtons(carabiner: cb.carabiner)
                 }
                 .blur(radius: showPurchaseSuccessAlert || isCapturing ? 10 : 0)
+                .onTapGesture {
+                    if showItemSheet { showItemSheet = false }
+                }
 
                 // 하단 셀렉터 + 시트
                 sheetContent

@@ -201,7 +201,7 @@ extension TemplatePreviewBody {
                 LoadingAlert(type: .short40, message: nil)
             }
         }
-        .frame(maxHeight: 500)
+        .frame(maxWidth: .infinity, maxHeight: 500)
     }
 
     /// 템플릿 정보 섹션
