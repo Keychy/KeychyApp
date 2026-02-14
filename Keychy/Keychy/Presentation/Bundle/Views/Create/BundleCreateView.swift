@@ -97,6 +97,9 @@ struct BundleCreateView<Route: BundleRoute>: View {
                     keyringButtons(carabiner: cb.carabiner)
                 }
                 .blur(radius: showPurchaseSuccessAlert || isCapturing ? 10 : 0)
+                .onTapGesture {
+                    if showItemSheet { showItemSheet = false }
+                }
 
                 // 하단 셀렉터 + 시트
                 sheetContent

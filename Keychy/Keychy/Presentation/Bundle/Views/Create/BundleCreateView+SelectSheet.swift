@@ -29,7 +29,15 @@ extension BundleCreateView {
                     isSelected: selectedPosition == index,
                     action: {
                         selectedPosition = index
-                        showKeyringSheet = true
+                        if showItemSheet {
+                            // 배경/카라비너 시트 닫기 → 닫힌 후 키링 시트 표시
+                            showItemSheet = false
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                showKeyringSheet = true
+                            }
+                        } else {
+                            showKeyringSheet = true
+                        }
                     }
                 )
                 .position(x: viewX, y: viewY)

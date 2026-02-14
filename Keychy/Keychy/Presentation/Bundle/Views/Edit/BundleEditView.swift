@@ -171,6 +171,9 @@ struct BundleEditView<Route: BundleRoute>: View {
             // navigationBar
             customNavigationBar
         }
+        .onTapGesture {
+            if showItemSheet { showItemSheet = false }
+        }
     }
     
     // MARK: - 키링 편집 씬 뷰
@@ -228,8 +231,18 @@ struct BundleEditView<Route: BundleRoute>: View {
                         isSelected: selectedPosition == index,
                         action: {
                             selectedPosition = index
-                            withAnimation(.easeInOut) {
-                                showSelectKeyringSheet = true
+                            if showItemSheet {
+                                // 배경/카라비너 시트 닫기 → 닫힌 후 키링 시트 표시
+                                showItemSheet = false
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    withAnimation(.easeInOut) {
+                                        showSelectKeyringSheet = true
+                                    }
+                                }
+                            } else {
+                                withAnimation(.easeInOut) {
+                                    showSelectKeyringSheet = true
+                                }
                             }
                         }
                     )
