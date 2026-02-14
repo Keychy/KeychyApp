@@ -12,41 +12,45 @@ extension BundleEditView {
         ZStack(alignment: .bottom) {
             Color.clear
 
-            if showItemSheet {
-                // 시트가 있을 때: 셀렉터 + 시트가 함께 움직임
-                VStack(spacing: 0) {
-                    BundleSheetToggleButtons(
-                        showItemSheet: $showItemSheet,
-                        isBackgroundMode: $isBackgroundMode
-                    )
-                    .padding(.bottom, 10)
-
-                    DraggableSheet(
-                        sheetHeight: $sheetHeight,
-                        header: BundleSheetFilterBar(viewModel: bundleVM),
-                        content: itemSheetContent,
-                        onDismiss: {
-                            showItemSheet = false
-                        }
-                    )
+            // 시트 레이어 (항상 존재, 오프셋으로 숨김 → 즉시 반응)
+            DraggableSheet(
+                sheetHeight: $sheetHeight,
+                header: BundleSheetFilterBar(viewModel: bundleVM),
+                content: itemSheetContent,
+                onDismiss: {
+                    showItemSheet = false
                 }
-                .transition(.move(edge: .bottom))
-            } else {
-                // 시트가 없을 때: 셀렉터만 하단에 고정
+            )
+            .offset(y: showItemSheet ? 0 : sheetHeight)
+            .allowsHitTesting(showItemSheet)
+
+            // 버튼 레이어 (matchedGeometryEffect로 위치만 보간)
+            if showItemSheet {
                 BundleSheetToggleButtons(
                     showItemSheet: $showItemSheet,
                     isBackgroundMode: $isBackgroundMode
                 )
+                .matchedGeometryEffect(id: "toggleButtons", in: sheetButtonNamespace)
+                .padding(.bottom, sheetHeight + 10)
+            } else {
+                BundleSheetToggleButtons(
+                    showItemSheet: $showItemSheet,
+                    isBackgroundMode: $isBackgroundMode
+                )
+                .matchedGeometryEffect(id: "toggleButtons", in: sheetButtonNamespace)
                 .padding(.bottom, 50)
-                .transition(.identity)
             }
         }
-        .animation(.easeInOut(duration: 0.25), value: showItemSheet)
+        .animation(.easeOut(duration: 0.2), value: showItemSheet)
+        .onChange(of: showItemSheet) { _, isShowing in
+            if isShowing {
+                sheetHeight = UIScreen.main.bounds.height * 0.4
+            }
+        }
     }
 
-    @ViewBuilder
     private var itemSheetContent: some View {
-        if isBackgroundMode {
+        ZStack(alignment: .top) {
             SelectBackgroundSheet(
                 viewModel: bundleVM,
                 selectedBG: bundleVM.newSelectedBackground,
@@ -54,7 +58,9 @@ extension BundleEditView {
                     bundleVM.newSelectedBackground = bg
                 }
             )
-        } else {
+            .opacity(isBackgroundMode ? 1 : 0)
+            .allowsHitTesting(isBackgroundMode)
+
             SelectCarabinerSheet(
                 viewModel: bundleVM,
                 selectedCarabiner: bundleVM.newSelectedCarabiner,
@@ -63,6 +69,8 @@ extension BundleEditView {
                     showChangeCarabinerAlert = true
                 }
             )
+            .opacity(isBackgroundMode ? 0 : 1)
+            .allowsHitTesting(!isBackgroundMode)
         }
     }
     
