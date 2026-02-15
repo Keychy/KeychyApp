@@ -10,9 +10,8 @@
 // 유틸리티 메서드
 // - resolveBackground/Carabiner: ID → 모델 변환
 // - makeBackgroundId/CarabinerId/KeyringsId: 구성 ID 생성
-// - addBackgroundToUser/addCarabinerToUser: 사용자 아이템 추가
 
-import FirebaseFirestore
+import Foundation
 
 extension BundleViewModel {
 
@@ -47,65 +46,4 @@ extension BundleViewModel {
             .joined(separator: ";")
     }
 
-    // MARK: - 사용자 아이템 추가
-
-    /// User의 backgrounds 배열에 새 배경 추가
-    func addBackgroundToUser(backgroundName: String, userManager: UserManager) async -> Bool {
-        guard let userId = userManager.currentUser?.id else {
-            print("사용자 ID를 가져올 수 없습니다")
-            return false
-        }
-
-        let db = FirebaseFirestore.Firestore.firestore()
-        let userRef = db.collection("User").document(userId)
-
-        do {
-            try await userRef.updateData([
-                "backgrounds": FirebaseFirestore.FieldValue.arrayUnion([backgroundName])
-            ])
-
-            await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
-                userManager.loadUserInfo(uid: userId) { _ in
-                    continuation.resume()
-                }
-            }
-
-            print("User backgrounds 업데이트 완료: \(backgroundName)")
-            return true
-
-        } catch {
-            print("User backgrounds 업데이트 에러: \(error.localizedDescription)")
-            return false
-        }
-    }
-
-    /// User의 카라비너에 새 카라비너 추가
-    func addCarabinerToUser(carabinerName: String, userManager: UserManager) async -> Bool {
-        guard let userId = userManager.currentUser?.id else {
-            print("사용자 ID를 가져올 수 없습니다")
-            return false
-        }
-
-        let db = FirebaseFirestore.Firestore.firestore()
-        let userRef = db.collection("User").document(userId)
-
-        do {
-            try await userRef.updateData([
-                "carabiners": FirebaseFirestore.FieldValue.arrayUnion([carabinerName])
-            ])
-
-            await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
-                userManager.loadUserInfo(uid: userId) { _ in
-                    continuation.resume()
-                }
-            }
-
-            print("User carabiners 업데이트 완료: \(carabinerName)")
-            return true
-
-        } catch {
-            print("User carabiners 업데이트 에러: \(error.localizedDescription)")
-            return false
-        }
-    }
 }

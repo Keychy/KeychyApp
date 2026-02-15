@@ -161,7 +161,7 @@ struct WorkshopTemplatesView: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 124)
 
-            Text("템플릿이 없어요")
+            Text("구매한 템플릿이 없어요")
                 .typography(.suit15R)
                 .padding(.leading, 10)
         }

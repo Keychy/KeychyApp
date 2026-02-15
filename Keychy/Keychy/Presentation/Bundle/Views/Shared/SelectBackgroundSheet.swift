@@ -62,13 +62,6 @@ struct SelectBackgroundSheet: View {
             ForEach(filteredAndSortedBackgrounds) { bg in
                 Button {
                     onBackgroundTap(bg)
-
-                    // 무료이고, 유저가 보유x인 경우에만 바로 추가
-                    if !bg.isOwned && bg.background.isFree {
-                        Task {
-                            await viewModel.addBackgroundToUser(backgroundName: bg.background.backgroundName, userManager: UserManager.shared)
-                        }
-                    }
                 } label: {
                     BackgroundCell(background: bg, isSelected: (bg == selectedBG))
                 }

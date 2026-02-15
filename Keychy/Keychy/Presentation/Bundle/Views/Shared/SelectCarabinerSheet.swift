@@ -62,12 +62,6 @@ struct SelectCarabinerSheet: View {
             ForEach(filteredAndSortedCarabiners) { cb in
                 Button {
                     onCarabinerTap(cb)
-
-                    if !cb.isOwned && cb.carabiner.isFree {
-                        Task {
-                            await viewModel.addCarabinerToUser(carabinerName: cb.carabiner.carabinerName, userManager: UserManager.shared)
-                        }
-                    }
                 } label: {
                     CarabinerCell(carabiner: cb, isSelected: (selectedCarabiner == cb))
                 }
