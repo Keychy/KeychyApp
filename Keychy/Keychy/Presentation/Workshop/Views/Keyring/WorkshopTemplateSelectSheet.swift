@@ -233,7 +233,7 @@ struct WorkshopTemplateSelectSheet: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 100)
-            Text("템플릿이 없어요")
+            Text("구매한 템플릿이 없어요")
                 .typography(.suit15R)
                 .foregroundStyle(.gray400)
         }
