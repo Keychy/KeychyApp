@@ -11,7 +11,6 @@ enum WorkshopRoute: Hashable, BundleRoute {
     // MARK: - 공방 마켓플레이스
     case workshopPreview(item: AnyHashable)
     case coinCharge
-    case myItems
     case workshopTemplates
 
     // MARK: - 번들 만들기

@@ -52,10 +52,6 @@ struct WorkshopTab: View {
                 WorkshopItemDetailView(router: router, viewModel: workshopViewModel, item: sound)
             }
 
-        // MARK: - 내 창고뷰
-        case .myItems:
-            WorkshopMyItemsView(router: router)
-
         // MARK: - 템플릿 목록뷰
         case .workshopTemplates:
             WorkshopTemplatesView(router: router)
