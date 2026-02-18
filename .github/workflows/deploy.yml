@@ -85,15 +85,20 @@ jobs:
           echo -n "$PROVISIONING_PROFILE_WIDGET" | base64 --decode \
             -o ~/Library/MobileDevice/Provisioning\ Profiles/KeychyApp_Widget_Distribution.mobileprovision
 
-      # 6. Fastlane 배포 실행
+      # 6. SPM 패키지 해석 (빌드 전 미리 다운로드)
+      - name: Resolve Swift packages
+        run: xcodebuild -resolvePackageDependencies -scheme Keychy -clonedSourcePackagesDirPath SourcePackages
+
+      # 7. Fastlane 배포 실행
       - name: Deploy via Fastlane
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
+          FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 30
         run: bundle exec fastlane ${{ steps.lane.outputs.lane }}
 
-      # 7. 정리 (실패해도 항상 실행)
+      # 8. 정리 (실패해도 항상 실행)
       - name: Clean up keychain
         if: always()
         run: |
