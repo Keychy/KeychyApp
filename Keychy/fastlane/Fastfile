@@ -17,6 +17,28 @@ platform :ios do
         key_filepath: "fastlane/AuthKey_7X4FZ564SR.p8"
       )
     end
+
+    # CI에서는 프로젝트 서명 설정을 Distribution으로 변경
+    if ENV["CI"]
+      update_code_signing_settings(
+        use_automatic_signing: false,
+        path: "Keychy.xcodeproj",
+        team_id: "BUKGH5MWAT",
+        profile_name: "KeychyApp Distribution",
+        code_sign_identity: "Apple Distribution",
+        targets: ["Keychy"],
+        build_configurations: ["Release"]
+      )
+      update_code_signing_settings(
+        use_automatic_signing: false,
+        path: "Keychy.xcodeproj",
+        team_id: "BUKGH5MWAT",
+        profile_name: "KeychyApp Widget Distribution",
+        code_sign_identity: "Apple Distribution",
+        targets: ["WidgetKeychyExtension"],
+        build_configurations: ["Release"]
+      )
+    end
   end
 
   # TestFlight 업로드
