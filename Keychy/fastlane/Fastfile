@@ -2,13 +2,21 @@ default_platform(:ios)
 
 platform :ios do
 
-  # App Store Connect API Key 설정 (모든 lane에서 공유)
+  # App Store Connect API Key 설정 (로컬/CI 양쪽 지원)
   before_all do
-    app_store_connect_api_key(
-      key_id: "7X4FZ564SR",
-      issuer_id: "c5d0448a-84ed-476a-a74a-d4cc0cc84bd3",
-      key_filepath: "fastlane/AuthKey_7X4FZ564SR.p8"
-    )
+    if ENV["CI"]
+      app_store_connect_api_key(
+        key_id: ENV["ASC_KEY_ID"],
+        issuer_id: ENV["ASC_ISSUER_ID"],
+        key_content: ENV["ASC_KEY_CONTENT"]
+      )
+    else
+      app_store_connect_api_key(
+        key_id: "7X4FZ564SR",
+        issuer_id: "c5d0448a-84ed-476a-a74a-d4cc0cc84bd3",
+        key_filepath: "fastlane/AuthKey_7X4FZ564SR.p8"
+      )
+    end
   end
 
   # TestFlight 업로드
