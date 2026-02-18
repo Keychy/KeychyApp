@@ -85,7 +85,15 @@ jobs:
           echo -n "$PROVISIONING_PROFILE_WIDGET" | base64 --decode \
             -o ~/Library/MobileDevice/Provisioning\ Profiles/KeychyApp_Widget_Distribution.mobileprovision
 
-      # 6. SPM 패키지 해석 (빌드 전 미리 다운로드)
+      # 6. gitignore된 설정 파일 복원
+      - name: Restore GoogleService-Info.plist
+        env:
+          GOOGLE_SERVICE_INFO_PLIST: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST }}
+        run: |
+          echo -n "$GOOGLE_SERVICE_INFO_PLIST" | base64 --decode \
+            -o Keychy/GoogleService-Info.plist
+
+      # 7. SPM 패키지 해석 (빌드 전 미리 다운로드)
       - name: Resolve Swift packages
         run: xcodebuild -resolvePackageDependencies -scheme Keychy -clonedSourcePackagesDirPath SourcePackages
 
