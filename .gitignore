@@ -45,7 +45,7 @@ playground.xcworkspace
 Keychy/Keychy/Info.plist
 Keychy/Keychy/GoogleService-Info.plist
 
-## APNs Key (보안)
+## APNs Key (fastlane 등)
 *.p8
 
 # Swift Package Manager
