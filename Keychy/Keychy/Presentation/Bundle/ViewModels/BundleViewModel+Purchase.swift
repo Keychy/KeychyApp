@@ -79,7 +79,7 @@ extension BundleViewModel {
             }
         }
 
-        isPurchasing = false
+        // 성공 시 isPurchasing은 호출자가 refreshData() 완료 후 해제
         return .success
     }
 }
