@@ -50,7 +50,9 @@ extension BundleCreateView {
             .padding(.horizontal, 20)
             .padding(.bottom, 30)
 
-            // 내 보유 재화와 총 가격
+            Spacer()
+
+            // 내 보유 재화와 총 가격 (하단 고정)
             HStack(spacing: 6) {
                 Text("내 보유 : ")
                     .typography(.suit15M25)
@@ -62,13 +64,10 @@ extension BundleCreateView {
             }
             purchaseButton
                 .padding(.horizontal, 33.2)
-                .padding(.bottom, 40)
                 .adaptiveBottomPadding()
         }
-        .background(
-            UnevenRoundedRectangle(topLeadingRadius: 38, topTrailingRadius: 38)
-                .fill(.white100)
-        )
+        .background(.white100)
+        .presentationDetents([.fraction(0.43)])
     }
 
     // 구매 버튼
@@ -111,6 +110,8 @@ extension BundleCreateView {
             await refreshData()
 
             await MainActor.run {
+                bundleVM.isPurchasing = false
+
                 // ViewModel 상태 동기화
                 if let bg = bundleVM.newSelectedBackground {
                     bundleVM.selectedBackground = bg.background
@@ -120,6 +121,12 @@ extension BundleCreateView {
                 }
 
                 showPurchaseSheet = false
+            }
+
+            // 시트 닫히는 애니메이션 대기
+            try? await Task.sleep(for: .seconds(0.3))
+
+            await MainActor.run {
                 showPurchaseSuccessAlert = true
                 purchasesSuccessScale = 0.3
                 withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
