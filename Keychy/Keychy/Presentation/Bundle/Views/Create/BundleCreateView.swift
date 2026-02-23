@@ -128,22 +128,6 @@ struct BundleCreateView<Route: BundleRoute>: View {
             alertContent
                 .position(x: screenWidth / 2, y: screenHeight / 2)
 
-            // 구매 시트 오버레이
-            ZStack {
-                Color.black20
-                    .ignoresSafeArea()
-                    .zIndex(10)
-                VStack {
-                    Spacer()
-                    purchaseSheetView
-                }
-                .zIndex(100)
-                .ignoresSafeArea()
-                .transition(.move(edge: .bottom))
-                .animation(.easeInOut(duration: 0.3), value: showPurchaseSheet)
-            }
-            .opacity(showPurchaseSheet ? 1 : 0)
-            .blur(radius: showPurchaseSuccessAlert ? 10 : 0)
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden()
@@ -159,6 +143,9 @@ struct BundleCreateView<Route: BundleRoute>: View {
         }
         .onDisappear {
             bundleVM.resetEditState()
+        }
+        .sheet(isPresented: $showPurchaseSheet) {
+            purchaseSheetView
         }
         .sheet(isPresented: $showKeyringSheet) {
             keyringSheetContent
