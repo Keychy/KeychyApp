@@ -57,18 +57,14 @@ class CollectionViewModel {
         await dataManager.fetchBackgroundsIfNeeded()
         await dataManager.fetchCarabinersIfNeeded()
 
-        // Lottie 아이템 JSON 프리다운로드
+        // Lottie 아이템 JSON 프리다운로드 (뷰 렌더링 전 완료 보장)
         let lottieBackgrounds = dataManager.backgrounds.filter { $0.isLottie }
         let lottieCarabiners = dataManager.carabiners.filter { $0.isLottie }
-        if !lottieBackgrounds.isEmpty || !lottieCarabiners.isEmpty {
-            Task {
-                for bg in lottieBackgrounds {
-                    await LottieItemManager.shared.downloadBackgroundLottie(bg)
-                }
-                for cb in lottieCarabiners {
-                    await LottieItemManager.shared.downloadCarabinerLottie(cb)
-                }
-            }
+        for bg in lottieBackgrounds {
+            await LottieItemManager.shared.downloadBackgroundLottie(bg)
+        }
+        for cb in lottieCarabiners {
+            await LottieItemManager.shared.downloadCarabinerLottie(cb)
         }
     }
 
