@@ -65,7 +65,7 @@ class MultiKeyringScene: SKScene {
     private var totalKeyringsToLoad = 0  // 로드해야 할 총 키링 수
     private var loadedKeyringsCount = 0  // 완료(성공/실패)된 키링 수
     private var loadedKeyringsSuccessCount = 0  // 성공적으로 로드된 키링 수
-    private var isPhysicsEnabled = false  // 물리 엔진 활성화 여부
+    private(set) var isPhysicsEnabled = false  // 물리 엔진 활성화 여부
 
     // MARK: - 카라비너 로드 상태
     private var carabinerBackReady = false

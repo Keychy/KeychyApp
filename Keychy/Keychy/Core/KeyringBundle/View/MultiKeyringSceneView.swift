@@ -96,6 +96,9 @@ struct MultiKeyringSceneView: View {
                 loadBackgroundImage()
                 loadCarabinerLottieAspectRatio()
                 setupScene()
+            } else {
+                // 탭 전환 복귀 시: onDisappear에서 nil 처리된 콜백 복원
+                restoreCallbacksIfNeeded()
             }
         }
         .onChange(of: backgroundImageURL) { _, _ in
@@ -259,6 +262,24 @@ extension MultiKeyringSceneView {
                     // 배경 이미지 로드 완료 콜백 호출
                     onBackgroundLoaded?()
                 }
+            }
+        }
+    }
+
+    /// 탭 전환 복귀 시 onDisappear에서 nil 처리된 콜백 복원
+    /// onDisappear에서 scene?.onSetupComplete = nil로 설정되므로,
+    /// 탭 복귀 시 씬이 아직 로딩 중이면 콜백을 재설정하고
+    /// 이미 완료됐으면 즉시 콜백을 호출
+    private func restoreCallbacksIfNeeded() {
+        guard let scene else { return }
+
+        if scene.isPhysicsEnabled {
+            // 씬 로딩이 이미 완료된 상태 → 직접 콜백 호출
+            onAllKeyringsReady?()
+        } else {
+            // 씬이 아직 로딩 중 → 콜백 재설정
+            scene.onSetupComplete = {
+                onAllKeyringsReady?()
             }
         }
     }
