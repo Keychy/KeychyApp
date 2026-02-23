@@ -165,11 +165,23 @@ struct WorkshopTemplateSelectSheet: View {
             VStack(spacing: 8) {
                 // 썸네일 + 가격 오버레이 (공방 스타일)
                 ZStack(alignment: .top) {
-                    SimpleAnimatedImage(url: template.thumbnailURL)
-                        .aspectRatio(contentMode: .fit)
-                        .padding(.vertical, 10)
-                        .clipped()
-                        .frame(width: 105, height: 140.61)
+                    if template.previewImages.count > 1 {
+                        // 슬라이드 이미지
+                        TemplateImageSlideshow(
+                            imageURLs: template.previewImages,
+                            localFirstImageName: "preview_\(template.id ?? "")"
+                        )
+                            .padding(.vertical, 10)
+                            .clipped()
+                            .frame(width: 105, height: 140.61)
+                    } else {
+                        // fallback: 기존 단일 이미지
+                        SimpleAnimatedImage(url: template.thumbnailURL)
+                            .aspectRatio(contentMode: .fit)
+                            .padding(.vertical, 10)
+                            .clipped()
+                            .frame(width: 105, height: 140.61)
+                    }
 
                     // 유료/보유 오버레이
                     VStack {
@@ -180,7 +192,7 @@ struct WorkshopTemplateSelectSheet: View {
 
                             Spacer()
 
-                            // 보유 뱃지 (오른쪽 상단) - 보유 또는 무료일 때
+                            // 보유 뱃지 (오른쪽 상단) - 유료 + 보유일 때만
                             Text("보유")
                                 .typography(.suit13M)
                                 .foregroundStyle(.white100)
@@ -190,7 +202,7 @@ struct WorkshopTemplateSelectSheet: View {
                                     RoundedRectangle(cornerRadius: 20)
                                         .fill(.black60)
                                 )
-                                .opacity(isOwned || template.isFree ? 1 : 0)
+                                .opacity(isOwned && !template.isFree ? 1 : 0)
                         }
                         .padding(.top, 6)
                         .padding(.horizontal, 7)
@@ -221,7 +233,7 @@ struct WorkshopTemplateSelectSheet: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 100)
-            Text("템플릿이 없어요")
+            Text("구매한 템플릿이 없어요")
                 .typography(.suit15R)
                 .foregroundStyle(.gray400)
         }

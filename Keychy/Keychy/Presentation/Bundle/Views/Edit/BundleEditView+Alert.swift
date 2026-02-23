@@ -41,7 +41,10 @@ extension BundleEditView {
                                 bundleVM.selectedKeyrings.removeAll()
                                 bundleVM.keyringOrder.removeAll()
                                 
-                                // 3) 새 카라비너 적용
+                                // 3) 새 카라비너 적용 (Lottie면 로딩 표시)
+                                if selectCarabiner?.carabiner.isLottie == true {
+                                    isSceneReady = false
+                                }
                                 bundleVM.newSelectedCarabiner = selectCarabiner
                                 
                                 // 4) 빈 상태를 씬/리스트에 반영

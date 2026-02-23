@@ -60,9 +60,14 @@ protocol WorkshopItem: Identifiable, Decodable {
     var downloadCount: Int { get }
     var useCount: Int { get }
     var createdAt: Date { get }
+    var isLottie: Bool { get } // 로티 여부
 }
 
 // MARK: - Extensions
+// 모든 아이템 기본적으로 isLottie false
+extension WorkshopItem {
+    var isLottie: Bool { false }
+}
 
 extension KeyringTemplate: WorkshopItem {
     var name: String { templateName }
@@ -263,10 +268,28 @@ class WorkshopViewModel {
             await dataManager.fetchBackgroundsIfNeeded()
             extractAvailableTags()
             loadedCategories.insert("배경")
+            // Lottie 배경 JSON 프리다운로드
+            let lottieBackgrounds = backgrounds.filter { $0.isLottie }
+            if !lottieBackgrounds.isEmpty {
+                Task {
+                    for bg in lottieBackgrounds {
+                        await LottieItemManager.shared.downloadBackgroundLottie(bg)
+                    }
+                }
+            }
         case "카라비너":
             await dataManager.fetchCarabinersIfNeeded()
             extractAvailableTags()
             loadedCategories.insert("카라비너")
+            // Lottie 카라비너 JSON 프리다운로드
+            let lottieCarabiners = carabiners.filter { $0.isLottie }
+            if !lottieCarabiners.isEmpty {
+                Task {
+                    for cb in lottieCarabiners {
+                        await LottieItemManager.shared.downloadCarabinerLottie(cb)
+                    }
+                }
+            }
         default:
             break
         }
@@ -314,6 +337,20 @@ class WorkshopViewModel {
 
         // 정렬 적용
         applySorting()
+
+        // Lottie 아이템 JSON 프리다운로드
+        let lottieBackgrounds = backgrounds.filter { $0.isLottie }
+        let lottieCarabiners = carabiners.filter { $0.isLottie }
+        if !lottieBackgrounds.isEmpty || !lottieCarabiners.isEmpty {
+            Task {
+                for bg in lottieBackgrounds {
+                    await LottieItemManager.shared.downloadBackgroundLottie(bg)
+                }
+                for cb in lottieCarabiners {
+                    await LottieItemManager.shared.downloadCarabinerLottie(cb)
+                }
+            }
+        }
     }
 
     /// 네트워크 에러 후 재시도

@@ -19,6 +19,9 @@ struct KeychyApp: App {
     init() {
         // 네트워크 모니터링 시작
         NetworkManager.shared.startMonitoring()
+
+        // 키링 캐시 스케일 버전 체크 (KeyringScale 적용으로 인한 재캡처)
+        KeyringImageCache.shared.invalidateCacheIfScaleVersionChanged()
     }
     
     // MARK: - Body

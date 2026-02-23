@@ -1,0 +1,113 @@
+name: Deploy
+
+on:
+  # 브랜치 기반 자동 배포
+  push:
+    branches:
+      - testflight    # TestFlight 자동 배포
+      - release       # App Store 자동 배포
+
+  # 수동 실행 (lane 선택 가능)
+  workflow_dispatch:
+    inputs:
+      lane:
+        description: '배포 대상'
+        required: true
+        type: choice
+        options:
+          - testflight
+          - appstore
+
+jobs:
+  deploy:
+    runs-on: macos-26
+
+    # 기본 작업 디렉토리
+    defaults:
+      run:
+        working-directory: Keychy
+
+    steps:
+      # 1. 코드 체크아웃
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. 배포 lane 결정 (브랜치 자동 / 수동 선택)
+      - name: Determine deploy lane
+        id: lane
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "lane=${{ github.event.inputs.lane }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref_name }}" = "release" ]; then
+            echo "lane=appstore" >> $GITHUB_OUTPUT
+          else
+            echo "lane=testflight" >> $GITHUB_OUTPUT
+          fi
+
+      # 3. Ruby 설정 (Fastlane이 Ruby 기반)
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+          working-directory: Keychy
+
+      # 4. 임시 키체인 생성 & 인증서 설치
+      - name: Install signing certificate
+        env:
+          DISTRIBUTION_CERT_BASE64: ${{ secrets.DISTRIBUTION_CERT_BASE64 }}
+          DISTRIBUTION_CERT_PASSWORD: ${{ secrets.DISTRIBUTION_CERT_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          CERT_PATH=$RUNNER_TEMP/certificate.p12
+          echo -n "$DISTRIBUTION_CERT_BASE64" | base64 --decode -o $CERT_PATH
+
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+          security import $CERT_PATH -P "$DISTRIBUTION_CERT_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+
+      # 5. 프로비저닝 프로필 설치
+      - name: Install provisioning profiles
+        env:
+          PROVISIONING_PROFILE_APP: ${{ secrets.PROVISIONING_PROFILE_APP }}
+          PROVISIONING_PROFILE_WIDGET: ${{ secrets.PROVISIONING_PROFILE_WIDGET }}
+        run: |
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+
+          echo -n "$PROVISIONING_PROFILE_APP" | base64 --decode \
+            -o ~/Library/MobileDevice/Provisioning\ Profiles/KeychyApp_Distribution.mobileprovision
+
+          echo -n "$PROVISIONING_PROFILE_WIDGET" | base64 --decode \
+            -o ~/Library/MobileDevice/Provisioning\ Profiles/KeychyApp_Widget_Distribution.mobileprovision
+
+      # 6. gitignore된 설정 파일 복원
+      - name: Restore GoogleService-Info.plist
+        env:
+          GOOGLE_SERVICE_INFO_PLIST: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST }}
+        run: |
+          echo -n "$GOOGLE_SERVICE_INFO_PLIST" | base64 --decode \
+            -o Keychy/GoogleService-Info.plist
+
+      # 7. SPM 패키지 해석 (빌드 전 미리 다운로드)
+      - name: Resolve Swift packages
+        run: xcodebuild -resolvePackageDependencies -scheme Keychy -clonedSourcePackagesDirPath SourcePackages
+
+      # 7. Fastlane 배포 실행
+      - name: Deploy via Fastlane
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
+          FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 30
+        run: bundle exec fastlane ${{ steps.lane.outputs.lane }}
+
+      # 8. 정리 (실패해도 항상 실행)
+      - name: Clean up keychain
+        if: always()
+        run: |
+          security delete-keychain $RUNNER_TEMP/app-signing.keychain-db || true

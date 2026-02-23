@@ -16,12 +16,27 @@ extension KeyringInfoInputView {
     
     /// 씬 스케일 (시트 최대화 시 작게, 최소화 시 크게)
     var sceneScale: CGFloat {
-        isSheetExpanded ? 0.7 : 1.2
+        isSheetExpanded ? 0.6 : 1.0
     }
     
     /// 씬 Y 오프셋 (시트 최대화 시 위로 이동)
     var sceneYOffset: CGFloat {
         isSheetExpanded ? -120 : 0
+    }
+    
+    /// 다음 버튼 활성화 조건
+    var isNextButtonEnabled: Bool {
+        // 이름이 비어있거나 욕설이 포함되어 있으면 비활성화
+        guard !viewModel.nameText.isEmpty && !hasProfanity else {
+            return false
+        }
+        
+        // WishHorse26 템플릿일 때는 메모도 필수
+        if viewModel.templateId == "WishHorse26" {
+            return !viewModel.memoText.isEmpty
+        }
+        
+        return true
     }
 }
 
@@ -72,12 +87,12 @@ extension KeyringInfoInputView {
             } label: {
                 Text("다음")
                     .typography(.suit17B)
-                    .foregroundStyle(viewModel.nameText.isEmpty || hasProfanity ? .gray300 : .main500)
+                    .foregroundStyle(isNextButtonEnabled ? .main500 : .gray300)
                     .padding(5)
             }
             .buttonStyle(.glassProminent)
-            .tint(viewModel.nameText.isEmpty || hasProfanity ? .clear : .white100)
-            .allowsHitTesting(!viewModel.nameText.isEmpty && !isSavingToFirebase && !hasProfanity)
+            .tint(isNextButtonEnabled ? .white100 : .clear)
+            .allowsHitTesting(isNextButtonEnabled && !isSavingToFirebase)
         }
     }
 }

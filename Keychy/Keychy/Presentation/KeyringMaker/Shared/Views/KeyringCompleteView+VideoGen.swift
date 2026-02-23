@@ -18,7 +18,10 @@ extension KeyringCompleteView {
 
         do {
             // 영상 생성
-            let videoURL = try await videoGenerator.generateVideo(viewModel: viewModel)
+            let videoURL = try await videoGenerator.generateVideo(
+                viewModel: viewModel,
+                backgroundImage: UIImage(resource: .whiteBackground)
+            )
 
             // 사진 앨범 저장
             try await saveVideoToPhotoLibrary(url: videoURL)
@@ -52,7 +55,10 @@ extension KeyringCompleteView {
         isGeneratingVideo = true
 
         do {
-            let videoURL = try await videoGenerator.generateVideo(viewModel: viewModel)
+            let videoURL = try await videoGenerator.generateVideo(
+                viewModel: viewModel,
+                backgroundImage: UIImage(resource: .whiteBackground)
+            )
             await MainActor.run {
                 cachedVideoURL = videoURL
                 isGeneratingVideo = false

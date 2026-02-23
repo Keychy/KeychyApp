@@ -19,7 +19,10 @@ extension CollectionKeyringDetailView {
 
         do {
             // 영상 생성
-            let videoURL = try await videoGenerator.generateVideo(keyring: keyring)
+            let videoURL = try await videoGenerator.generateVideo(
+                keyring: keyring,
+                backgroundImage: UIImage(resource: .whiteBackground)
+            )
 
             // 포토 라이브러리에 저장
             try await PHPhotoLibrary.shared().performChanges {
@@ -54,7 +57,10 @@ extension CollectionKeyringDetailView {
         }
 
         do {
-            let videoURL = try await videoGenerator.generateVideo(keyring: keyring)
+            let videoURL = try await videoGenerator.generateVideo(
+                keyring: keyring,
+                backgroundImage: UIImage(resource: .whiteBackground)
+            )
             await MainActor.run {
                 cachedVideoURL = videoURL
                 isGeneratingVideo = false

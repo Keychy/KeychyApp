@@ -30,9 +30,17 @@ struct WorkshopItemCard<Item: WorkshopItem>: View {
                 // 썸네일 이미지
                 thumbnailImage
 
-                // 아이템 이름
-                Text(item.name)
-                    .typography(.suit14SB18)
+                HStack(spacing: 4) {
+                    if item.isLottie {
+                        Image(.lottieIcon)
+                            .resizable()
+                            .frame(width: 15, height: 15)
+                    }
+                    
+                    // 아이템 이름
+                    Text(item.name)
+                        .typography(.notosans14M)
+                }
             }
         }
         .buttonStyle(.plain)
@@ -55,6 +63,26 @@ struct WorkshopItemCard<Item: WorkshopItem>: View {
                             }
                     }
                 }
+            } else if let background = item as? Background, background.isLottie, let bgId = background.id {
+                // Lottie 배경
+                LottieItemView(assetId: bgId, directory: "lottie_backgrounds")
+                    .frame(width: twoGridCellWidth, height: itemHeight)
+                    .clipped()
+            } else if let carabiner = item as? Carabiner, carabiner.isLottie, let cbId = carabiner.id {
+                // Lottie 카라비너
+                LottieItemView(assetId: cbId, directory: "lottie_carabiners_back", contentMode: .scaleAspectFit)
+                    .padding(.horizontal, 5)
+                    .frame(width: twoGridCellWidth, height: itemHeight)
+                    .clipped()
+            } else if let template = item as? KeyringTemplate, template.previewImages.count > 1 {
+                // 슬라이드 이미지가 있는 키링 템플릿
+                TemplateImageSlideshow(
+                    imageURLs: template.previewImages,
+                    localFirstImageName: "preview_\(template.id ?? "")"
+                )
+                    .padding(.vertical, 10)
+                    .clipped()
+                    .frame(width: twoGridCellWidth, height: itemHeight)
             } else {
                 // Sound, Background, Carabiner, 키링 등은 기존처럼 이미지로 처리 (GIF 지원)
                 SimpleAnimatedImage(url: item.thumbnailURL)
@@ -155,31 +183,39 @@ struct WorkshopPriceOverlay<Item: WorkshopItem>: View {
             // 유료: 오른쪽 상단에 가격 또는 보유 표시
             VStack {
                 HStack {
+                    if price != 0 {
+                        Image(.myCoinMini)
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                    }
+                    
                     Spacer()
+                    
                     if isOwned {
                         // 보유
-                        Text("보유")
-                            .typography(.suit13M)
-                            .foregroundStyle(.white100)
-                            .padding(.vertical, 4)
-                            .padding(.horizontal, 10)
-                            .background(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .fill(.black60)
-                            )
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(.black60)
+                                .frame(width: 48, height: 24)
+                            
+                            Text("보유")
+                                .typography(.suit14M)
+                                .foregroundStyle(.white100)
+                        }
+
                     } else {
                         // 미보유: 가격 표시
-                        Text("\(price)")
-                            .typography(.nanum16EB)
-                            .foregroundStyle(.white100)
-                            .padding(.vertical, 4)
-                            .padding(.horizontal, 8)
-                            .padding(.top, 3)
-                            .padding(.leading, -1)
-                            .background(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .fill(.mainOpacity80)
-                            )
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(.mainOpacity80)
+                                .frame(width: 48,height: 24)
+                            
+                            Text("\(price)")
+                                .typography(.nanum15EB25)
+                                .foregroundStyle(.white100)
+                                .padding(.top, 1)
+                        }
+
                     }
                 }
                 .padding(10)

@@ -86,26 +86,6 @@ extension WorkshopView {
         )
     }
 
-    /// 상단 그라데이션 오버레이
-    var topGradientOverlay: some View {
-        VStack {
-            LinearGradient(
-                colors: [
-                    Color.white.opacity(0.8),
-                    Color.white.opacity(0.6),
-                    Color.white.opacity(0.3),
-                    Color.clear
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .frame(height: WorkshopLayout.gradientHeight)
-            .ignoresSafeArea(edges: .top)
-            Spacer()
-        }
-        .allowsHitTesting(false)
-    }
-    
     /// 최근 사용 템플릿 섹션
     var recentTemplateSection: some View {
         WorkshopRecentTemplate(

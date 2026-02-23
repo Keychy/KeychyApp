@@ -13,11 +13,12 @@ struct WorkshopTab: View {
     @Bindable var collectionViewModel: CollectionViewModel
 
     @State private var acrylicPhotoVM: AcrylicPhotoVM?
-    @State private var neonSignVM: NeonSignVM?
     @State private var polaroidVM: PolaroidVM?
     @State private var clearSketchVM: ClearSketchVM?
     @State private var pixelKeyringVM: PixelVM?
     @State private var speechBubbleVM: SpeechBubbleVM?
+    @State private var wishHorse26VM: WishHorse26VM?
+    @State private var duZzonKuVM: DuZzonKuVM?
     @State private var workshopViewModel = WorkshopViewModel(userManager: UserManager.shared)
 
     var body: some View {
@@ -50,10 +51,6 @@ struct WorkshopTab: View {
             } else if let sound = item.base as? Sound {
                 WorkshopItemDetailView(router: router, viewModel: workshopViewModel, item: sound)
             }
-
-        // MARK: - 내 창고뷰
-        case .myItems:
-            WorkshopMyItemsView(router: router)
 
         // MARK: - 템플릿 목록뷰
         case .workshopTemplates:
@@ -90,28 +87,6 @@ struct WorkshopTab: View {
             KeyringCompleteView(
                 router: router,
                 viewModel: getAcrylicPhotoVM(),
-                navigationTitle: "키링이 완성되었어요!"
-            )
-
-        // MARK: - NeonSign
-        case .neonSignPreview:
-            NeonSignPreView(router: router, viewModel: getNeonSignVM())
-        case .neonSignCustomizing:
-            KeyringCustomizingView(
-                router: router,
-                viewModel: getNeonSignVM(),
-                nextRoute: .neonSignInfoInput
-            )
-        case .neonSignInfoInput:
-            KeyringInfoInputView(
-                router: router,
-                viewModel: getNeonSignVM(),
-                nextRoute: .neonSignComplete
-            )
-        case .neonSignComplete:
-            KeyringCompleteView(
-                router: router,
-                viewModel: getNeonSignVM(),
                 navigationTitle: "키링이 완성되었어요!"
             )
 
@@ -208,6 +183,50 @@ struct WorkshopTab: View {
                 viewModel: getSpeechBubbleVM(),
                 navigationTitle: "키링이 완성되었어요!"
             )
+            
+        // MARK: - WishHorse26
+        case .wishHorse26Preview:
+            WishHorse26Preview(router: router, viewModel: getWishHorse26VM())
+        case .wishHorse26Customizing:
+            KeyringCustomizingView(
+                router: router,
+                viewModel: getWishHorse26VM(),
+                nextRoute: .wishHorse26InfoInput
+            )
+        case .wishHorse26InfoInput:
+            KeyringInfoInputView(
+                router: router,
+                viewModel: getWishHorse26VM(),
+                nextRoute: .wishHorse26Complete
+            )
+        case .wishHorse26Complete:
+            KeyringCompleteView(
+                router: router,
+                viewModel: getWishHorse26VM(),
+                navigationTitle: "키링이 완성되었어요!"
+            )
+            
+        // MARK: - DuZzonKu
+        case .duZzonKuPreview:
+            DuZzonKuPreview(router: router, viewModel: getDuZzonKuVM())
+        case .duZzonKuCustomizing:
+            KeyringCustomizingView(
+                router: router,
+                viewModel: getDuZzonKuVM(),
+                nextRoute: .duZzonKuInfoInput
+            )
+        case .duZzonKuInfoInput:
+            KeyringInfoInputView(
+                router: router,
+                viewModel: getDuZzonKuVM(),
+                nextRoute: .duZzonKuComplete
+            )
+        case .duZzonKuComplete:
+            KeyringCompleteView(
+                router: router,
+                viewModel: getDuZzonKuVM(),
+                navigationTitle: "키링이 완성되었어요!"
+            )
 
         // MARK: - 선물 포장 완료
         case .packageComplete(let keyringDocumentId, let postOfficeId, let templateId, let shareLink):
@@ -242,15 +261,6 @@ struct WorkshopTab: View {
         guard let viewModel = acrylicPhotoVM else {
             let newViewModel = AcrylicPhotoVM()
             acrylicPhotoVM = newViewModel
-            return newViewModel
-        }
-        return viewModel
-    }
-
-    private func getNeonSignVM() -> NeonSignVM {
-        guard let viewModel = neonSignVM else {
-            let newViewModel = NeonSignVM()
-            neonSignVM = newViewModel
             return newViewModel
         }
         return viewModel
@@ -291,14 +301,30 @@ struct WorkshopTab: View {
         }
         return viewModel
     }
+    
+    private func getWishHorse26VM() -> WishHorse26VM {
+        guard let viewModel = wishHorse26VM else {
+            let newViewModel = WishHorse26VM()
+            wishHorse26VM = newViewModel
+            return newViewModel
+        }
+        return viewModel
+    }
+    
+    private func getDuZzonKuVM() -> DuZzonKuVM {
+        guard let viewModel = duZzonKuVM else {
+            let newViewModel = DuZzonKuVM()
+            duZzonKuVM = newViewModel
+            return newViewModel
+        }
+        return viewModel
+    }
 
     // MARK: - ViewModel by TemplateId
     private func getViewModelForTemplate(_ templateId: String) -> any KeyringViewModelProtocol {
         switch templateId {
         case "AcrylicPhoto":
             return getAcrylicPhotoVM()
-        case "NeonSign":
-            return getNeonSignVM()
         case "Polaroid":
             return getPolaroidVM()
         case "ClearSketch":
@@ -307,6 +333,8 @@ struct WorkshopTab: View {
             return getPixelKeyringVM()
         case "SpeechBubble":
             return getSpeechBubbleVM()
+        case "DuZzonKu":
+            return getDuZzonKuVM()
         default:
             return getPolaroidVM()
         }
@@ -315,10 +343,6 @@ struct WorkshopTab: View {
     // MARK: - ViewModel Reset
     func resetAcrylicPhotoVM() {
         acrylicPhotoVM = nil
-    }
-
-    func resetNeonSignVM() {
-        neonSignVM = nil
     }
 
     func resetPolaroidVM() {

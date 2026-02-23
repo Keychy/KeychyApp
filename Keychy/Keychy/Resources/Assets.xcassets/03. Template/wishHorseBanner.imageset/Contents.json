@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "wishHorseBanner.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

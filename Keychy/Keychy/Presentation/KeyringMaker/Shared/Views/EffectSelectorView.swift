@@ -145,7 +145,7 @@ struct EffectSelectorView<VM: KeyringViewModelProtocol>: View {
     /// 파티클 이펙트 선택 버튼 그룹
     private var particleEffectSelector: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("흔들기 효과")
+            Text("스와이프 효과")
                 .typography(.suit16B)
                 .foregroundStyle(.black100)
                 .padding(.leading, 20)
@@ -222,40 +222,23 @@ struct EffectSelectorView<VM: KeyringViewModelProtocol>: View {
                         // 장바구니에서 사운드 타입 제거 (무료로 교체)
                         cartItems.removeAll { $0.type == .sound }
                     }
-                    // 케이스 2: 구매 + 캐시 있음 → 바로 사용
-                    else if isOwned && isInCache {
-                        viewModel.updateSound(sound)
-                        // 장바구니에서 사운드 타입 제거 (보유템으로 교체)
-                        cartItems.removeAll { $0.type == .sound }
-                    }
-                    // 케이스 3: 구매 + 캐시 없음 → 재다운로드
-                    else if isOwned && !isInCache {
+                    // 케이스 2: 구매 → 캐시 검증 후 사용/재다운로드
+                    else if isOwned {
                         Task {
                             await viewModel.downloadSound(sound)
                         }
                         // 장바구니에서 사운드 타입 제거 (보유템으로 교체)
                         cartItems.removeAll { $0.type == .sound }
                     }
-                    // 케이스 4: 미구매 + 무료 + 캐시 있음 → 바로 사용
-                    else if !isOwned && sound.isFree && isInCache {
-                        viewModel.updateSound(sound)
-                        // 장바구니에서 사운드 타입 제거 (무료로 교체)
-                        cartItems.removeAll { $0.type == .sound }
-                    }
-                    // 케이스 5: 미구매 + 무료 + 캐시 없음 → 다운로드
-                    else if !isOwned && sound.isFree && !isInCache {
+                    // 케이스 3: 미구매 + 무료 → 캐시 검증 후 사용/재다운로드
+                    else if !isOwned && sound.isFree {
                         Task {
                             await viewModel.downloadSound(sound)
                         }
                         // 장바구니에서 사운드 타입 제거 (무료로 교체)
                         cartItems.removeAll { $0.type == .sound }
                     }
-                    // 케이스 6: 미구매 + 유료 + 캐시 있음 → 다운로드 + 장바구니 추가
-                    else if !isOwned && !sound.isFree && isInCache {
-                        viewModel.updateSound(sound)
-                        addSoundToCart(sound)
-                    }
-                    // 케이스 7: 미구매 + 유료 + 캐시 없음 → 다운로드 + 장바구니 추가
+                    // 케이스 4: 미구매 + 유료 → 캐시 검증 후 다운로드 + 장바구니 추가
                     else {
                         Task {
                             await viewModel.downloadSound(sound)
@@ -370,40 +353,23 @@ struct EffectSelectorView<VM: KeyringViewModelProtocol>: View {
                         // 장바구니에서 파티클 타입 제거 (무료로 교체)
                         cartItems.removeAll { $0.type == .particle }
                     }
-                    // 케이스 2: 구매 + 캐시 있음 → 바로 사용
-                    else if isOwned && isInCache {
-                        viewModel.updateParticle(particle)
-                        // 장바구니에서 파티클 타입 제거 (보유템으로 교체)
-                        cartItems.removeAll { $0.type == .particle }
-                    }
-                    // 케이스 3: 구매 + 캐시 없음 → 재다운로드
-                    else if isOwned && !isInCache {
+                    // 케이스 2: 구매 → 캐시 검증 후 사용/재다운로드
+                    else if isOwned {
                         Task {
                             await viewModel.downloadParticle(particle)
                         }
                         // 장바구니에서 파티클 타입 제거 (보유템으로 교체)
                         cartItems.removeAll { $0.type == .particle }
                     }
-                    // 케이스 4: 미구매 + 무료 + 캐시 있음 → 바로 사용
-                    else if !isOwned && particle.isFree && isInCache {
-                        viewModel.updateParticle(particle)
-                        // 장바구니에서 파티클 타입 제거 (무료로 교체)
-                        cartItems.removeAll { $0.type == .particle }
-                    }
-                    // 케이스 5: 미구매 + 무료 + 캐시 없음 → 다운로드
-                    else if !isOwned && particle.isFree && !isInCache {
+                    // 케이스 3: 미구매 + 무료 → 캐시 검증 후 사용/재다운로드
+                    else if !isOwned && particle.isFree {
                         Task {
                             await viewModel.downloadParticle(particle)
                         }
                         // 장바구니에서 파티클 타입 제거 (무료로 교체)
                         cartItems.removeAll { $0.type == .particle }
                     }
-                    // 케이스 6: 미구매 + 유료 + 캐시 있음 → 다운로드 + 장바구니 추가
-                    else if !isOwned && !particle.isFree && isInCache {
-                        viewModel.updateParticle(particle)
-                        addParticleToCart(particle)
-                    }
-                    // 케이스 7: 미구매 + 유료 + 캐시 없음 → 다운로드 + 장바구니 추가
+                    // 케이스 4: 미구매 + 유료 → 캐시 검증 후 다운로드 + 장바구니 추가
                     else {
                         Task {
                             await viewModel.downloadParticle(particle)

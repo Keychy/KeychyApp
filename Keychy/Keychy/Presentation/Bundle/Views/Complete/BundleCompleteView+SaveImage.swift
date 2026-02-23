@@ -91,6 +91,7 @@ extension BundleCompleteView {
                             y: carabiner.keyringYPosition[index]
                         ),
                         bodyImageURL: keyring.bodyImage,
+                        templateId: keyring.selectedTemplate,
                         hookOffsetY: keyring.hookOffsetY,
                         chainLength: keyring.chainLength
                     )
@@ -110,13 +111,14 @@ extension BundleCompleteView {
                 carabinerFrontURL = nil
             }
 
-            // 배경 포함 캡쳐
+            // 투명 배경으로 캡쳐
             guard let fullImageData = await MultiKeyringCaptureScene.captureBundleImage(
                 keyringDataList: captureKeyringDataList,
-                backgroundImageURL: background.backgroundImage,
+                backgroundImageURL: nil,
                 carabinerBackImageURL: carabinerBackURL,
                 carabinerFrontImageURL: carabinerFrontURL,
                 carabinerType: carabinerType,
+                carabinerId: carabiner.id ?? "",
                 carabinerX: carabiner.carabinerX,
                 carabinerY: carabiner.carabinerY,
                 carabinerWidth: carabiner.carabinerWidth

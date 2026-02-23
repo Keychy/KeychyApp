@@ -9,18 +9,20 @@ import Foundation
 import SpriteKit
 import Lottie
 
-// MARK: - Particle Effects
+// MARK: - Particle Effects (실시간 렌더링)
 
 extension BundleVideoGenerator {
 
     /// 파티클 재생 정보
-    /// 현재 재생 중인 파티클을 렌더링하기 위해 필요한 모든 정보를 담고 있음
+    /// 프리렌더링 대신 LottieAnimationView를 유지하며 매 프레임 실시간 렌더링
     struct ParticlePlaybackInfo {
-        let displaySprite: SKSpriteNode           // 화면에 표시되는 스프라이트
-        let startedAtFrame: Int                   // 파티클 시작 프레임
-        let particleId: String                    // 파티클 ID
-        let lottieRenderer: LottieAnimationView   // Lottie → 이미지 변환 렌더러
-        let animationData: LottieAnimation        // Lottie 메타데이터 (총 프레임 수 등)
+        let displaySprite: SKSpriteNode
+        let startedAtFrame: Int
+        let particleId: String
+        let lottieView: LottieAnimationView
+        let animation: LottieAnimation
+        let imageRenderer: UIGraphicsImageRenderer
+        let totalFrames: Int
     }
 
     /// 파티클 업데이트
@@ -43,18 +45,27 @@ extension BundleVideoGenerator {
         particleIndicesToRemove.forEach { playingParticles.removeValue(forKey: $0) }
     }
 
-    /// 파티클 시작
+    /// 파티클 시작 (LottieView만 생성, 프리렌더링 없음)
     private func startParticle(for keyringIndex: Int, particleId: String, at frameIndex: Int, scene: MultiKeyringScene) {
         guard let animation = findParticleAnimation(particleId: particleId) else {
             return
         }
 
+        // Lottie 뷰 설정
         let config = LottieConfiguration(renderingEngine: .mainThread)
         let lottieView = LottieAnimationView(animation: animation, configuration: config)
         lottieView.frame = CGRect(origin: .zero, size: CGSize(width: scene.size.width, height: scene.size.height))
         lottieView.contentMode = .scaleAspectFit
         lottieView.backgroundBehavior = .pauseAndRestore
 
+        // 레이아웃 초기화
+        lottieView.setNeedsLayout()
+        lottieView.layoutIfNeeded()
+
+        // UIGraphicsImageRenderer 1회 생성 (파티클 수명 동안 재사용)
+        let imageRenderer = UIGraphicsImageRenderer(bounds: lottieView.bounds)
+
+        // 스프라이트 생성
         let sprite = SKSpriteNode()
         sprite.size = CGSize(width: scene.size.width, height: scene.size.height)
         sprite.position = CGPoint(x: scene.size.width / 2, y: scene.size.height / 2)
@@ -63,40 +74,44 @@ extension BundleVideoGenerator {
 
         scene.addChild(sprite)
 
+        let totalFrames = Int(animation.endFrame - animation.startFrame)
+
         playingParticles[keyringIndex] = ParticlePlaybackInfo(
             displaySprite: sprite,
             startedAtFrame: frameIndex,
             particleId: particleId,
-            lottieRenderer: lottieView,
-            animationData: animation
+            lottieView: lottieView,
+            animation: animation,
+            imageRenderer: imageRenderer,
+            totalFrames: totalFrames
         )
     }
 
-    /// 파티클 렌더링
+    /// 파티클 실시간 렌더링 (매 프레임 Lottie → SKTexture 변환)
     private func updateActiveParticle(for keyringIndex: Int, at frameIndex: Int, scene: MultiKeyringScene) -> Bool {
         guard let particleInfo = playingParticles[keyringIndex] else {
             return false
         }
 
-        let sprite = particleInfo.displaySprite
         let offset = frameIndex - particleInfo.startedAtFrame
-        let targetFrame = particleInfo.animationData.startFrame + CGFloat(offset)
 
-        if targetFrame >= particleInfo.animationData.endFrame {
-            sprite.removeFromParent()
+        // 애니메이션 종료 체크
+        if offset >= particleInfo.totalFrames {
+            particleInfo.displaySprite.removeFromParent()
             return true
         }
 
-        particleInfo.lottieRenderer.currentFrame = AnimationFrameTime(targetFrame)
-        particleInfo.lottieRenderer.setNeedsDisplay()
-        particleInfo.lottieRenderer.layer.displayIfNeeded()
+        // Lottie 프레임 설정 + 렌더링
+        let targetFrame = particleInfo.animation.startFrame + CGFloat(offset)
+        particleInfo.lottieView.currentFrame = AnimationFrameTime(targetFrame)
+        particleInfo.lottieView.setNeedsDisplay()
+        particleInfo.lottieView.layer.displayIfNeeded()
 
-        let imageRenderer = UIGraphicsImageRenderer(bounds: particleInfo.lottieRenderer.bounds)
-        let image = imageRenderer.image { context in
-            particleInfo.lottieRenderer.layer.render(in: context.cgContext)
+        // Core Graphics로 이미지 캡처 → SKTexture 변환
+        let image = particleInfo.imageRenderer.image { context in
+            particleInfo.lottieView.layer.render(in: context.cgContext)
         }
-
-        sprite.texture = SKTexture(image: image)
+        particleInfo.displaySprite.texture = SKTexture(image: image)
 
         return false
     }

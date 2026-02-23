@@ -56,6 +56,7 @@ class BundleVideoGenerator {
     var renderer: SKRenderer?
     var metalDevice: MTLDevice?
     var commandQueue: MTLCommandQueue?
+    var textureCache: CVMetalTextureCache?
 
     var videoWriter: AVAssetWriter?
     var writerInput: AVAssetWriterInput?
@@ -65,6 +66,11 @@ class BundleVideoGenerator {
     var bundleScale: CGFloat = 2.5
     var keyringDataList: [MultiKeyringScene.KeyringData] = []
     var playingParticles: [Int: ParticlePlaybackInfo] = [:]
+
+    // MARK: - 배경 Lottie (비디오 생성용)
+    var backgroundLottieTextures: [SKTexture]?
+    var backgroundLottieNode: SKSpriteNode?
+    var backgroundLottieFPS: Double = 30
 
     // MARK: - Nested Types
 
@@ -81,8 +87,10 @@ class BundleVideoGenerator {
         keyringDataList: [MultiKeyringScene.KeyringData],
         backgroundImage: UIImage? = nil,
         backgroundImageURL: String? = nil,
+        backgroundLottieId: String? = nil,
         carabinerBackImageURL: String? = nil,
         carabinerFrontImageURL: String? = nil,
+        carabinerLottieId: String? = nil,
         carabinerX: CGFloat = 0,
         carabinerY: CGFloat = 0,
         carabinerWidth: CGFloat = 0,
@@ -105,13 +113,23 @@ class BundleVideoGenerator {
         }
         self.commandQueue = commandQueue
 
+        // Metal Texture Cache 생성 (1회만, 프레임 간 재사용)
+        var cache: CVMetalTextureCache?
+        CVMetalTextureCacheCreate(kCFAllocatorDefault, nil, device, nil, &cache)
+        guard let textureCache = cache else {
+            throw VideoError.setupFailed
+        }
+        self.textureCache = textureCache
+
         // MultiKeyringScene 생성 및 Setup 대기
         var isSceneReady = false
         let scene = createScene(
             keyringDataList: keyringDataList,
             backgroundImageURL: backgroundImageURL,
+            backgroundLottieId: backgroundLottieId,
             carabinerBackImageURL: carabinerBackImageURL,
             carabinerFrontImageURL: carabinerFrontImageURL,
+            carabinerLottieId: carabinerLottieId,
             carabinerX: carabinerX,
             carabinerY: carabinerY,
             carabinerWidth: carabinerWidth,
@@ -148,6 +166,9 @@ class BundleVideoGenerator {
         // AVAssetWriter 설정
         try setupVideoWriter()
 
+        // Scene 초기 업데이트 (물리 타이밍 리셋)
+        scene.update(0)
+
         // 프레임별 렌더링
         try await renderFrames()
 
@@ -165,6 +186,7 @@ class BundleVideoGenerator {
     private func cleanup() {
         scene = nil
         renderer = nil
+        textureCache = nil
         metalDevice = nil
         commandQueue = nil
         videoWriter = nil
@@ -172,5 +194,7 @@ class BundleVideoGenerator {
         pixelBufferAdaptor = nil
         playingParticles.removeAll()
         keyringDataList.removeAll()
+        backgroundLottieTextures = nil
+        backgroundLottieNode = nil
     }
 }

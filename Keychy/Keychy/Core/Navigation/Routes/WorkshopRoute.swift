@@ -11,7 +11,6 @@ enum WorkshopRoute: Hashable, BundleRoute {
     // MARK: - 공방 마켓플레이스
     case workshopPreview(item: AnyHashable)
     case coinCharge
-    case myItems
     case workshopTemplates
 
     // MARK: - 번들 만들기
@@ -30,12 +29,6 @@ enum WorkshopRoute: Hashable, BundleRoute {
     case acrylicPhotoCustomizing
     case acrylicPhotoInfoInput
     case acrylicPhotoComplete
-
-    // MARK: - 네온 사인 템플릿
-    case neonSignPreview
-    case neonSignCustomizing
-    case neonSignInfoInput
-    case neonSignComplete
 
     // MARK: - 폴라로이드 템플릿
     case polaroidPreview
@@ -63,6 +56,18 @@ enum WorkshopRoute: Hashable, BundleRoute {
     case speechBubbleCustomizing
     case speechBubbleInfoInput
     case speechBubbleComplete
+    
+    // MARK: - 2026을 말해봐 키링 템플릿
+    case wishHorse26Preview
+    case wishHorse26Customizing
+    case wishHorse26InfoInput
+    case wishHorse26Complete
+    
+    // MARK: - 두쫀쿠 키링 템플릿
+    case duZzonKuPreview
+    case duZzonKuCustomizing
+    case duZzonKuInfoInput
+    case duZzonKuComplete
 
     // MARK: - 선물 포장 완료
     case packageComplete(keyringDocumentId: String, postOfficeId: String, templateId: String, shareLink: String)
@@ -75,8 +80,6 @@ enum WorkshopRoute: Hashable, BundleRoute {
         switch string {
         case "AcrylicPhoto":
             return .acrylicPhotoPreview
-        case "NeonSign":
-            return .neonSignPreview
         case "Polaroid":
             return .polaroidPreview
         case "ClearSketch":
@@ -85,6 +88,10 @@ enum WorkshopRoute: Hashable, BundleRoute {
             return .pixelPreview
         case "SpeechBubble":
             return .speechBubblePreview
+        case "WishHorse26":
+            return .wishHorse26Preview
+        case "DuZzonKu":
+            return .duZzonKuPreview
         default:
             return nil
         }

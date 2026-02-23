@@ -1,0 +1,437 @@
+//
+//  KeyringDetailScene+Setup.swift
+//  Keychy
+//
+//  Created by Jini on 10/31/25.
+//
+
+import SwiftUI
+import SpriteKit
+
+// MARK: - Setup & Assembly
+extension KeyringDetailScene {
+    
+    // MARK: - 키링 전체 조립
+    func setupKeyring() {
+        // 모든 이미지를 먼저 다운로드
+        if let cached = cachedImages {
+            // 캐시된 이미지로 즉시 조립
+            assembleKeyring(with: cached)
+        } else {
+            // 처음에만 다운로드
+            downloadAllImages { [weak self] result in
+                guard let self = self else { return }
+                
+                switch result {
+                case .success(let images):
+                    self.cachedImages = images
+                    self.assembleKeyring(with: images)
+                    
+                case .failure(let error):
+                    print("이미지 다운로드 실패: \(error)")
+                    self.assembleFallbackKeyring()
+                }
+            }
+        }
+    }
+    
+    // MARK: - 모든 이미지 다운로드
+    private func downloadAllImages(completion: @escaping (Result<KeyringImages, Error>) -> Void) {
+        Task {
+            do {
+                // Ring 이미지 다운로드
+                let ringImage = try await StorageManager.shared.getImage(path: currentRingType.imageURL)
+                
+                // Chain 이미지들 다운로드 (병렬)
+                let chainLinks = currentChainType.createChainLinks(length: self.chainLength)
+                let chainImages = try await withThrowingTaskGroup(of: (Int, UIImage).self) { group in
+                    var images: [Int: UIImage] = [:]
+                    
+                    for (index, link) in chainLinks.enumerated() {
+                        group.addTask {
+                            let image = try await StorageManager.shared.getImage(path: link.imageURL)
+                            return (index, image)
+                        }
+                    }
+                    
+                    for try await (index, image) in group {
+                        images[index] = image
+                    }
+                    
+                    return images
+                }
+                
+                // Body 이미지 다운
+                var processedBodyImage: UIImage?
+                if let bodyImageURL = self.bodyImage {
+                    // 1. 이미지 다운로드
+                    let downloadedImage = try await StorageManager.shared.getImage(path: bodyImageURL)
+                    
+                    // 2. 이미지 처리 (메인 스레드가 아닌 백그라운드에서 실행)
+                    processedBodyImage = await Task.detached(priority: .userInitiated) {
+                        // orientation 정규화
+                        let fixedImage = await downloadedImage.fixedOrientation()
+                        
+                        return fixedImage
+                    }.value
+                }
+                
+                await MainActor.run {
+                    let images = KeyringImages(
+                        ring: ringImage,
+                        chains: chainImages,
+                        chainLinks: chainLinks,
+                        body: processedBodyImage
+                    )
+                    completion(.success(images))
+                }
+                
+            } catch {
+                await MainActor.run {
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+    
+    // MARK: - 키링 조립 (이미지 다운로드 완료 후)
+    private func assembleKeyring(with images: KeyringImages) {
+        
+        let centerX = size.width / 2
+        let topY = size.height * 0.77
+
+        // 1. Ring 생성
+        let ring = createRingNode(image: images.ring)
+        ring.position = CGPoint(x: centerX, y: topY)
+        ring.physicsBody?.isDynamic = false
+        addChild(ring)
+        self.ringNode = ring
+        
+        // 2. Chain 생성
+        let ringHeight = ring.calculateAccumulatedFrame().height
+        let ringBottomY = ring.position.y - ringHeight / 2
+        let chainStartY = ringBottomY - 2
+        let chainSpacing: CGFloat = 22
+        
+        var chains: [SKSpriteNode] = []
+        for (index, chainImage) in images.chains.sorted(by: { $0.key < $1.key }) {
+            let link = images.chainLinks[index]
+            let yPosition = chainStartY - CGFloat(index) * chainSpacing
+            
+            let chainNode = createChainLinkNode(
+                image: chainImage,
+                link: link,
+                position: CGPoint(x: centerX, y: yPosition),
+                index: index
+            )
+            
+            addChild(chainNode)
+            chains.append(chainNode)
+        }
+        self.chainNodes = chains
+        
+        // 3. Body 생성
+        var body: SKNode
+        if let bodyImage = images.body {
+            body = createMiniImageBody(image: bodyImage)
+        } else {
+            body = createBasicBody()
+        }
+        
+        // Body 위치 계산
+        let bodyFrame = body.calculateAccumulatedFrame()
+        let bodyHalfHeight = bodyFrame.height / 2
+
+        let lastChainY = chainStartY - CGFloat(max(chains.count - 1, 0)) * chainSpacing
+        let lastLinkHeight: CGFloat = chains.last.map { $0.calculateAccumulatedFrame().height } ?? chainSpacing
+        let lastChainBottomY = lastChainY - lastLinkHeight / 2
+
+        // hookOffsetY를 사용한 정확한 연결 지점 계산
+        // hookOffsetYRatio: 원본 이미지(아크릴 효과 전) 높이 대비 구멍 위치 비율 (0.0 ~ 1.0)
+        //                   0.0 = 이미지 상단, 1.0 = 이미지 하단
+        // actualHookOffsetY: Scene의 실제 body 크기에 맞게 변환된 픽셀 값
+        let hookOffsetYRatio = hookOffsetY ?? 0.0
+        let actualHookOffsetY = hookOffsetYRatio * bodyFrame.height
+
+        // Body 중심 Y 계산: 체인 끝에서 body 절반만큼 내리고, 구멍 위치만큼 올림
+        let bodyCenterY = lastChainBottomY - bodyHalfHeight + actualHookOffsetY + 4 // 4는 조절값
+
+        body.position = CGPoint(x: centerX, y: bodyCenterY)
+        body.zPosition = -1  // Body는 체인 아래
+        addChild(body)
+        self.bodyNode = body
+        
+        // 4. 조인트 연결
+        connectComponents(ring: ring, chains: chains, body: body)
+        
+        self.isReady = true
+        
+        self.onLoadingComplete?()
+    }
+    
+    // MARK: - Fallback 키링 조립 (다운로드 실패 시)
+    private func assembleFallbackKeyring() {
+        // Fallback시 기본 키링 생성
+        
+        let centerX: CGFloat = 0
+        let topY = originalSize.height * 0.68 - (originalSize.height / 2)
+        
+        // 기본 Ring (회색 원)
+        let ring = SKShapeNode(circleOfRadius: 40)
+        ring.fillColor = .clear
+        ring.strokeColor = .white
+        ring.lineWidth = 8
+        ring.position = CGPoint(x: centerX, y: topY)
+        
+        let ringPhysics = SKPhysicsBody(circleOfRadius: 40)
+        ringPhysics.isDynamic = false
+        ring.physicsBody = ringPhysics
+        addChild(ring)
+        
+        // 기본 Body만 추가
+        let body = createBasicBody()
+        body.position = CGPoint(x: centerX, y: topY - 200)
+        addChild(body)
+        
+        self.isReady = true
+        
+        self.onLoadingComplete?()
+    }
+    
+    // MARK: - Ring 노드 생성
+    private func createRingNode(image: UIImage) -> SKSpriteNode {
+        let ringSize = currentRingType.size
+        let outerRadius = ringSize / 2
+        let innerRadius = outerRadius * 0.84
+        let thickness = outerRadius - innerRadius
+        
+        let texture = SKTexture(image: image)
+        let node = SKSpriteNode(texture: texture)
+        node.size = CGSize(width: ringSize, height: ringSize)
+        
+        // 물리 바디 (도넛 형태)
+        let segments = 32
+        var bodies: [SKPhysicsBody] = []
+        
+        for i in 0..<segments {
+            let angle = (CGFloat(i) / CGFloat(segments)) * .pi * 2
+            let avgRadius = (outerRadius + innerRadius) / 2
+            let x = cos(angle) * avgRadius
+            let y = sin(angle) * avgRadius
+            
+            let segmentBody = SKPhysicsBody(
+                circleOfRadius: thickness / 2,
+                center: CGPoint(x: x, y: y)
+            )
+            bodies.append(segmentBody)
+        }
+        
+        let physicsBody = SKPhysicsBody(bodies: bodies)
+        physicsBody.mass = 0.5
+        physicsBody.friction = 0.4
+        physicsBody.restitution = 0.3
+        physicsBody.linearDamping = 0.5
+        physicsBody.angularDamping = 0.8
+        node.physicsBody = physicsBody
+        
+        return node
+    }
+    
+    // MARK: - Chain 노드 생성
+    private func createChainLinkNode(
+        image: UIImage,
+        link: ChainType.ChainLink,
+        position: CGPoint,
+        index: Int
+    ) -> SKSpriteNode {
+        let texture = SKTexture(image: image)
+        let node = SKSpriteNode(texture: texture)
+        node.size = link.size
+        node.position = position
+        node.zPosition = (index % 2 == 0) ? 1 : 0
+        
+        let physicsBody = SKPhysicsBody(
+            rectangleOf: CGSize(width: link.width - 4, height: link.height - 4)
+        )
+        physicsBody.mass = 1.5
+        physicsBody.friction = 0.3
+        physicsBody.restitution = 0.4
+        physicsBody.linearDamping = 0.3
+        physicsBody.angularDamping = 0.5
+        node.physicsBody = physicsBody
+        
+        return node
+    }
+    
+    // MARK: - Mini Body 생성 (KeyringScale 사용)
+    private func createMiniImageBody(image: UIImage) -> SKSpriteNode {
+        let maxSize = KeyringScale.maxSize(for: templateId ?? "")
+        let originalSize = image.size
+
+        let widthRatio = maxSize.width / originalSize.width
+        let heightRatio = maxSize.height / originalSize.height
+        let scale = min(widthRatio, heightRatio, 1.0)
+
+        let displaySize = CGSize(
+            width: originalSize.width * scale,
+            height: originalSize.height * scale
+        )
+
+        let texture = SKTexture(image: image)
+        texture.filteringMode = .linear
+        let spriteNode = SKSpriteNode(texture: texture, size: displaySize)
+
+        let physicsBody = SKPhysicsBody(rectangleOf: displaySize)
+        physicsBody.mass = 2.0
+        physicsBody.friction = 0.5
+        physicsBody.restitution = 0.2
+        physicsBody.linearDamping = 0.8
+        physicsBody.angularDamping = 0.95
+        spriteNode.physicsBody = physicsBody
+
+        return spriteNode
+    }
+    
+    // MARK: - 기본 Body 생성
+    private func createBasicBody() -> SKShapeNode {
+        let radius: CGFloat = 40
+        let path = CGPath(
+            ellipseIn: CGRect(x: -radius, y: -radius, width: radius * 2, height: radius * 2),
+            transform: nil
+        )
+        
+        let node = SKShapeNode(path: path)
+        node.fillColor = .white
+        node.strokeColor = UIColor(white: 0.8, alpha: 0.4)
+        node.lineWidth = 1.0
+        
+        let physicsBody = SKPhysicsBody(circleOfRadius: radius - 2)
+        physicsBody.mass = 2.0
+        physicsBody.friction = 0.5
+        physicsBody.restitution = 0.2
+        physicsBody.linearDamping = 0.8
+        physicsBody.angularDamping = 0.95
+        node.physicsBody = physicsBody
+        
+        return node
+    }
+    
+    private func connectComponents(ring: SKSpriteNode, chains: [SKSpriteNode], body: SKNode) {
+        // Physics 카테고리 정의
+        let chainCategory: UInt32 = 0x1 << 0  // 1
+        let bodyCategory: UInt32 = 0x1 << 1   // 2
+
+        var previousNode: SKNode = ring
+
+        // Ring과 첫 번째 Chain 연결
+        if let firstChain = chains.first {
+            let anchorY = previousNode.position.y
+            
+            let joint = SKPhysicsJointPin.joint(
+                withBodyA: ring.physicsBody!,
+                bodyB: firstChain.physicsBody!,
+                anchor: CGPoint(
+                    x: (ring.position.x + firstChain.position.x) / 2,
+                    y: anchorY
+                )
+            )
+            joint.shouldEnableLimits = false
+            joint.frictionTorque = 0.1
+            physicsWorld.add(joint)
+            
+            let distance = hypot(
+                firstChain.position.x - ring.position.x,
+                firstChain.position.y - ring.position.y
+            )
+            let limitJoint = SKPhysicsJointLimit.joint(
+                withBodyA: ring.physicsBody!,
+                bodyB: firstChain.physicsBody!,
+                anchorA: CGPoint.zero,
+                anchorB: CGPoint.zero
+            )
+            limitJoint.maxLength = distance * 1.05
+            physicsWorld.add(limitJoint)
+            
+            firstChain.physicsBody?.linearDamping = 0.5
+            firstChain.physicsBody?.angularDamping = 0.5
+
+            // Physics 카테고리 설정 (체인끼리만 충돌)
+            firstChain.physicsBody?.categoryBitMask = chainCategory
+            firstChain.physicsBody?.collisionBitMask = chainCategory
+
+            previousNode = firstChain
+        }
+        
+        // Chain 링크들 연결
+        for i in 1..<chains.count {
+            let current = chains[i]
+            if let previous = previousNode.physicsBody {
+                let joint = SKPhysicsJointPin.joint(
+                    withBodyA: previous,
+                    bodyB: current.physicsBody!,
+                    anchor: CGPoint(
+                        x: (previousNode.position.x + current.position.x) / 2,
+                        y: (previousNode.position.y + current.position.y) / 2
+                    )
+                )
+                joint.shouldEnableLimits = false
+                joint.frictionTorque = 0.1
+                physicsWorld.add(joint)
+                
+                let distance = hypot(
+                    current.position.x - previousNode.position.x,
+                    current.position.y - previousNode.position.y
+                )
+                let limitJoint = SKPhysicsJointLimit.joint(
+                    withBodyA: previous,
+                    bodyB: current.physicsBody!,
+                    anchorA: CGPoint.zero,
+                    anchorB: CGPoint.zero
+                )
+                limitJoint.maxLength = distance * 1.05
+                physicsWorld.add(limitJoint)
+                
+                current.physicsBody?.linearDamping = 0.05
+                current.physicsBody?.angularDamping = 0.05
+
+                // Physics 카테고리 설정 (체인끼리만 충돌)
+                current.physicsBody?.categoryBitMask = chainCategory
+                current.physicsBody?.collisionBitMask = chainCategory
+            }
+            previousNode = current
+        }
+        
+        // 마지막 Chain과 Body 연결
+        if let lastChain = chains.last, let bodyPhysics = body.physicsBody {
+            let joint = SKPhysicsJointFixed.joint(
+                withBodyA: lastChain.physicsBody!,
+                bodyB: bodyPhysics,
+                anchor: CGPoint(
+                    x: lastChain.position.x,
+                    y: lastChain.position.y
+                )
+            )
+            physicsWorld.add(joint)
+            
+            let distance = hypot(
+                body.position.x - lastChain.position.x,
+                body.position.y - lastChain.position.y
+            )
+            let limitJoint = SKPhysicsJointLimit.joint(
+                withBodyA: lastChain.physicsBody!,
+                bodyB: bodyPhysics,
+                anchorA: CGPoint.zero,
+                anchorB: CGPoint.zero
+            )
+            limitJoint.maxLength = distance * 1.05
+            physicsWorld.add(limitJoint)
+            
+            bodyPhysics.linearDamping = 0.5
+            bodyPhysics.angularDamping = 0.5
+
+            // Physics 카테고리 설정 (Body는 아무것과도 충돌하지 않음, Joint로만 연결)
+            bodyPhysics.categoryBitMask = bodyCategory
+            bodyPhysics.collisionBitMask = 0  // 아무것과도 충돌하지 않음
+        }
+    }
+}

@@ -91,7 +91,7 @@ private struct RecentTemplateCard: View {
     var body: some View {
         Button(action: onTap) {
             ZStack {
-                LazyImage(url: URL(string: template.thumbnailURL)) { state in
+                LazyImage(url: URL(string: template.previewImages.first ?? template.thumbnailURL)) { state in
                     if let image = state.image {
                         image
                             .resizable()

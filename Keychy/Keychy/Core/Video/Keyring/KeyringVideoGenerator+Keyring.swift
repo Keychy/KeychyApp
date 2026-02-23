@@ -21,7 +21,7 @@ extension KeyringVideoGenerator {
     /// - Returns: 생성된 영상 파일 URL
     func generateVideo(
         keyring: Keyring,
-        backgroundImage: UIImage? = UIImage(named: "completeBG2"),
+        backgroundImage: UIImage? = nil,
         keyringScale: CGFloat = 3.5
     ) async throws -> URL {
         // 이미지를 비동기로 먼저 다운로드 (메인스레드 블로킹 방지)

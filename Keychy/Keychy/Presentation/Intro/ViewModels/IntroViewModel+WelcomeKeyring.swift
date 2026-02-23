@@ -24,8 +24,8 @@ extension IntroViewModel {
 
         try await addKeyringToUser(uid: uid, keyringId: keyringId)
 
-        // 웰컴 카라비너를 사용자의 carabiners 필드에 추가
-        try await addWelcomeCarabinerToUser(uid: uid)
+        // PurpleSparkle 파티클 캐시 검증 및 다운로드
+        await EffectSyncManager.shared.syncKeyringEffects(soundId: nil, particleId: "PurpleSparkle")
 
         Task.detached {
             await self.cacheWelcomeKeyring(
@@ -52,7 +52,7 @@ extension IntroViewModel {
             name: name,
             bodyImage: bodyImageURL,
             soundId: "none",  // 사운드 없음
-            particleId: "Confetti",
+            particleId: "PurpleSparkle",
             memo: """
             ╭ ◜◝ ͡ ◜◝ ͡ ◜◝ ͡ ◜◝ ͡ ◜◝ ╮
              키치 앱 재밌게 사용해주세요♡
@@ -87,14 +87,6 @@ extension IntroViewModel {
             .collection("User")
             .document(uid)
             .updateData(["keyrings": FieldValue.arrayUnion([keyringId])])
-    }
-
-    // MARK: - User carabiners 배열에 웰컴 카라비너 추가
-    private func addWelcomeCarabinerToUser(uid: String) async throws {
-        try await Firestore.firestore()
-            .collection("User")
-            .document(uid)
-            .updateData(["carabiners": FieldValue.arrayUnion(["WelcomeKeychy"])])
     }
 
     // MARK: - 위젯용 캐싱 (KeyringCompleteView 로직 재사용)

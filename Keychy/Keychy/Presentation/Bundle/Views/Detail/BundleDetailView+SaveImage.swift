@@ -106,6 +106,7 @@ extension BundleDetailView {
                         y: cb.keyringYPosition[index]
                     ),
                     bodyImageURL: keyringInfo.bodyImage,
+                    templateId: keyringInfo.selectedTemplate ?? "",
                     hookOffsetY: keyringInfo.hookOffsetY,
                     chainLength: keyringInfo.chainLength
                 )
@@ -125,13 +126,14 @@ extension BundleDetailView {
             carabinerFrontURL = nil
         }
         
-        // 1. 배경 포함 캡쳐 (앱용)
+        // 1. 투명 배경으로 캡쳐 (앨범 저장용)
         guard let fullImageData = await MultiKeyringCaptureScene.captureBundleImage(
             keyringDataList: keyringDataList,
-            backgroundImageURL: bg.backgroundImage,
+            backgroundImageURL: nil,
             carabinerBackImageURL: carabinerBackURL,
             carabinerFrontImageURL: carabinerFrontURL,
             carabinerType: carabinerType,
+            carabinerId: bundle.selectedCarabiner,
             carabinerX: cb.carabinerX,
             carabinerY: cb.carabinerY,
             carabinerWidth: cb.carabinerWidth
@@ -157,6 +159,7 @@ extension BundleDetailView {
                 carabinerBackImageURL: carabinerBackURL,
                 carabinerFrontImageURL: carabinerFrontURL,
                 carabinerType: carabinerType,
+                carabinerId: bundle.selectedCarabiner,
                 carabinerX: cb.carabinerX,
                 carabinerY: cb.carabinerY,
                 carabinerWidth: cb.carabinerWidth,

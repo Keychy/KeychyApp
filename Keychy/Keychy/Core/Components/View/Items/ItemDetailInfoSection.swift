@@ -20,7 +20,7 @@ struct ItemDetailInfoSection: View {
                     Image(.myCoinMini)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 21)
+                        .frame(width: 27)
                 }
 
                 /// 이펙트 타입 표시 (사운드/파티클)
@@ -36,10 +36,17 @@ struct ItemDetailInfoSection: View {
 
             /// item 이름
             itemName
-                .padding(.bottom, 12)
+                .padding(.bottom, 8)
             
             /// item 설명
             itemDescription
+                .padding(.bottom, hasRecommendedCombinations ? 8 : 10)
+            
+            /// 추천 조합 (있을 경우에만 표시)
+            if hasRecommendedCombinations {
+                recommendedCombinations
+                    .padding(.bottom, 10)
+            }
         }
     }
 
@@ -48,6 +55,16 @@ struct ItemDetailInfoSection: View {
 
 // MARK: - Components
 extension ItemDetailInfoSection {
+    /// 추천 조합 존재 여부
+    private var hasRecommendedCombinations: Bool {
+        if let background = item as? Background {
+            return background.recommendedCombinations != nil && !(background.recommendedCombinations?.isEmpty ?? true)
+        } else if let carabiner = item as? Carabiner {
+            return carabiner.recommendedCombinations != nil && !(carabiner.recommendedCombinations?.isEmpty ?? true)
+        }
+        return false
+    }
+    
     /// 이펙트 타입 태그 (사운드/파티클)
     private var effectTypeTag: EffectFilterType? {
         if item is Sound {
@@ -80,10 +97,17 @@ extension ItemDetailInfoSection {
     }
 
     private var itemName: some View {
-        Text(item.name)
-            .typography(.suit24B)
-            .lineLimit(nil)
-            .fixedSize(horizontal: false, vertical: true)
+        HStack(spacing: 7) {
+            if item.isLottie {
+                Image(.lottieIcon)
+            }
+            
+            Text(item.name)
+                .typography(.suit24B)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+
     }
 
     private var itemDescription: some View {
@@ -92,6 +116,34 @@ extension ItemDetailInfoSection {
             .foregroundStyle(.gray500)
             .lineLimit(nil)
             .fixedSize(horizontal: false, vertical: true)
+    }
+    
+    private var recommendedCombinations: some View {
+        HStack(spacing: 5) {
+            Text("추천 조합")
+                .typography(.suit12M)
+                .foregroundStyle(.main500)
+                .padding(.horizontal, 4)
+                .padding(.vertical, 1)
+                .background(.mainOpacity15)
+                .fixedSize()
+            
+            if let background = item as? Background,
+                let combinations = background.recommendedCombinations {
+                Text(combinations)
+                    .typography(.suit12M)
+                    .foregroundStyle(.black30)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+            } else if let carabiner = item as? Carabiner,
+                        let combinations = carabiner.recommendedCombinations {
+                Text(combinations)
+                    .typography(.suit12M)
+                    .foregroundStyle(.black30)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
     }
 }
 

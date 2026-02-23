@@ -27,17 +27,17 @@ struct SpeechBubbleFramePreviewView: View {
                         // 프레임 + 텍스트 영역
                         VStack {
                             Spacer()
-                                .frame(height: 95)  // 126 → 95
+                                .frame(height: 119)  // 126 → 95
 
                             compositionView
                         }
 
                         // frameChain 이미지 (위에 겹침)
-                        Image(.frameChain)
+                        Image(.frameChain2)
                             .resizable()
                             .scaledToFit()
                             .frame(width: 90)
-                            .offset(y: -31)
+                            .offset(y: -40)
                     }
 
                     Spacer()

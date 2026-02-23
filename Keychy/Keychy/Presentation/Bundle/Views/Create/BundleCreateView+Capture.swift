@@ -84,6 +84,7 @@ extension BundleCreateView {
                     y: carabiner.keyringYPosition[index]
                 ),
                 bodyImageURL: keyring.bodyImage,
+                templateId: keyring.selectedTemplate,
                 hookOffsetY: keyring.hookOffsetY,
                 chainLength: keyring.chainLength
             )
@@ -103,13 +104,14 @@ extension BundleCreateView {
             carabinerFrontURL = nil
         }
 
-        // 씬 캡처
+        // 1. 배경 포함 캡처 (앱용)
         if let pngData = await MultiKeyringCaptureScene.captureBundleImage(
             keyringDataList: keyringDataList,
             backgroundImageURL: background.backgroundImage,
             carabinerBackImageURL: carabinerBackURL,
             carabinerFrontImageURL: carabinerFrontURL,
             carabinerType: carabinerType,
+            carabinerId: carabiner.id ?? "",
             carabinerX: carabiner.carabinerX,
             carabinerY: carabiner.carabinerY,
             carabinerWidth: carabiner.carabinerWidth
@@ -117,6 +119,23 @@ extension BundleCreateView {
             await MainActor.run {
                 bundleVM.bundleCapturedImage = pngData
             }
+        }
+
+        // 2. 배경 없이 캡처 (위젯용 - 투명 여백 제거)
+        let widgetData = await MultiKeyringCaptureScene.captureBundleImage(
+            keyringDataList: keyringDataList,
+            backgroundImageURL: nil,
+            carabinerBackImageURL: carabinerBackURL,
+            carabinerFrontImageURL: carabinerFrontURL,
+            carabinerType: carabinerType,
+            carabinerId: carabiner.id ?? "",
+            carabinerX: carabiner.carabinerX,
+            carabinerY: carabiner.carabinerY,
+            carabinerWidth: carabiner.carabinerWidth,
+            trimTransparentEdges: true
+        )
+        await MainActor.run {
+            bundleVM.bundleWidgetImage = widgetData
         }
 
         // 캡처 완료 후 다음 화면으로 이동

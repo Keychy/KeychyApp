@@ -51,6 +51,11 @@ struct KeyringEditView: View {
         return keyring.isEditable && keyring.authorId == currentUserId
     }
     
+    // WishHorse 템플릿일 때는 이름과 메모 수정 불가
+    private var canEditName: Bool {
+        return canEdit && keyring.selectedTemplate != "WishHorse26"
+    }
+    
     enum Field: Hashable {
         case name
         case memo
@@ -239,7 +244,7 @@ extension KeyringEditView {
         VStack(spacing: 25) {
             nameInputField
             
-            if canEdit || !(keyring.memo?.isEmpty ?? true) {
+            if canEdit || !(keyring.memo?.isEmpty ?? true) || keyring.selectedTemplate == "WishHorse26" {
                 memoInputField
             }
         }
@@ -261,8 +266,13 @@ extension KeyringEditView {
                     .tint(.main500)
                     .submitLabel(.done)
                     .focused($focusedField, equals: .name)
-                    .disabled(!canEdit)
+                    .disabled(!canEditName)
                     .onChange(of: editedName) { newValue in
+                        // WishHorse 템플릿일 때는 수정 불가
+                        if keyring.selectedTemplate == "WishHorse26" {
+                            return
+                        }
+                        
                         // 글자수 제한만 적용 (특수문자 허용)
                         var sanitized = newValue
 
@@ -301,20 +311,20 @@ extension KeyringEditView {
                     .buttonStyle(PlainButtonStyle())
                     .padding(.trailing, 16)
                     .padding(.leading, 8)
-                    .opacity(canEdit ? 1 : 0)
+                    .opacity(canEditName ? 1 : 0)
                 }
             }
             .frame(height: 52)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(canEdit ? .gray50 : .white100)
+                    .fill(canEditName ? .gray50 : .white100)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(canEdit ? .clear : .gray100, lineWidth: 1)
+                    .stroke(canEditName ? .clear : .gray100, lineWidth: 1)
             )
             .onTapGesture {
-                if canEdit {
+                if canEditName {
                     focusedField = .name
                 }
             }
@@ -334,53 +344,65 @@ extension KeyringEditView {
                 .typography(.suit16B)
             
             ZStack(alignment: .topLeading) {
-                // Placeholder
-                if editedMemo.isEmpty {
-                    Text("메모를 입력해주세요")
-                        .typography(.notosans16R25)
-                        .foregroundColor(.gray300)
-                        .padding(.horizontal, 19)
-                        .padding(.vertical, 18)
-                        .allowsHitTesting(false)
-                }
-                
-                if canEdit {
-                    // 편집 가능
-                    TextEditor(text: $editedMemo)
-                        .typography(.notosans16R25)
-                        .foregroundColor(.black100)
-                        .scrollContentBackground(.hidden)
-                        .background(Color.clear)
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 10)
+                // WishHorse 템플릿일 때 특별 메시지 표시
+                if keyring.selectedTemplate == "WishHorse26" {
+                    Text("작성된 메모는 2027년 1월 1일에 확인할 수 있어요.".byCharWrapping)
+                        .typography(.notosans14R)
+                        .foregroundColor(.gray400)
+                        .frame(maxWidth: .infinity, alignment: .center)
                         .scrollIndicators(.hidden)
-                        .focused($focusedField, equals: .memo)
-                        .tint(.main500)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 14)
                 } else {
-                    // 편집 불가 : 스크롤만 가능
-                    ScrollView {
-                        Text(editedMemo.byCharWrapping)
+                    // 일반 메모 입력 UI
+                    // Placeholder
+                    if editedMemo.isEmpty {
+                        Text("메모를 입력해주세요")
+                            .typography(.notosans16R25)
+                            .foregroundColor(.gray300)
+                            .padding(.horizontal, 19)
+                            .padding(.vertical, 18)
+                            .allowsHitTesting(false)
+                    }
+                    
+                    if canEdit {
+                        // 편집 가능
+                        TextEditor(text: $editedMemo)
                             .typography(.notosans16R25)
                             .foregroundColor(.black100)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .scrollContentBackground(.hidden)
+                            .background(Color.clear)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 10)
+                            .scrollIndicators(.hidden)
+                            .focused($focusedField, equals: .memo)
+                            .tint(.main500)
+                    } else {
+                        // 편집 불가 : 스크롤만 가능
+                        ScrollView {
+                            Text(editedMemo.byCharWrapping)
+                                .typography(.notosans16R25)
+                                .foregroundColor(.black100)
+                                .frame(maxWidth: .infinity, alignment: .leading)
 
+                        }
+                        .scrollIndicators(.hidden)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 14)
                     }
-                    .scrollIndicators(.hidden)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 14)
                 }
             }
-            .frame(height: 140)
+            .frame(height: (keyring.selectedTemplate == "WishHorse26") ? 60 : 140)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(canEdit ? .gray50 : .white100)
+                    .fill(keyring.selectedTemplate == "WishHorse26" ? .white100 : (canEdit ? .gray50 : .white100))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(canEdit ? .clear : .gray100, lineWidth: 1)
+                    .stroke(keyring.selectedTemplate == "WishHorse26" ? .gray100 : (canEdit ? .clear : .gray100), lineWidth: 1)
             )
             .onTapGesture {
-                if canEdit {
+                if canEdit && keyring.selectedTemplate != "WishHorse26" {
                     focusedField = .memo
                 }
             }

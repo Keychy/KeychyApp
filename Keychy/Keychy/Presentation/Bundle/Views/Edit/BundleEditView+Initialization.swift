@@ -7,15 +7,26 @@
 
 import SwiftUI
 import FirebaseFirestore
+import Nuke
 
 extension BundleEditView {
     func initializeData() async {
         resetSceneState()
-        
+
         await loadUserKeyring()
-        
+
         await loadBackgroundAndCarabiner()
-        
+
+        // 시트 이미지 프리페칭 (백그라운드에서 Nuke 캐시에 미리 로드)
+        prefetchSheetImages()
+    }
+
+    /// 배경/카라비너 썸네일을 Nuke 캐시에 미리 로드
+    private func prefetchSheetImages() {
+        let bgURLs = bundleVM.backgroundViewData.compactMap { URL(string: $0.background.backgroundImage) }
+        let cbURLs = bundleVM.carabinerViewData.compactMap { URL(string: $0.carabiner.carabinerImage[0]) }
+        let prefetcher = ImagePrefetcher()
+        prefetcher.startPrefetching(with: bgURLs + cbURLs)
     }
     
     func resetSceneState() {

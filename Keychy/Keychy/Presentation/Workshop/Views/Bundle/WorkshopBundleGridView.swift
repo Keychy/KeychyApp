@@ -66,7 +66,7 @@ struct WorkshopBundleGridView: View {
                 isOwnedCheck: viewModel.isCarabinerOwned,
                 router: router,
                 viewModel: viewModel,
-                emptyView: emptyContentView
+                emptyView: emptyContentView(message: "구매한 카라비너가 없어요")
             )
         case "배경":
             WorkshopGridBuilder.itemGridView(
@@ -74,10 +74,10 @@ struct WorkshopBundleGridView: View {
                 isOwnedCheck: viewModel.isBackgroundOwned,
                 router: router,
                 viewModel: viewModel,
-                emptyView: emptyContentView
+                emptyView: emptyContentView(message: "구매한 배경이 없어요")
             )
         default:
-            emptyContentView
+            emptyContentView(message: "준비중이에요")
         }
     }
 
@@ -92,14 +92,14 @@ struct WorkshopBundleGridView: View {
     }
 
     /// 빈 콘텐츠 뷰
-    private var emptyContentView: some View {
+    private func emptyContentView(message: String) -> some View {
         VStack(spacing: 12) {
             Image(.emptyViewIcon)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 90)
 
-            Text("준비중이에요")
+            Text(message)
                 .typography(.suit14SB18)
                 .foregroundColor(.gray500)
         }

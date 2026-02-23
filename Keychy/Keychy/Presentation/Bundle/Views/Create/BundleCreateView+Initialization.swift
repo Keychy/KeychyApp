@@ -6,14 +6,24 @@
 //
 
 import SwiftUI
+import Nuke
 
 // MARK: - 데이터 초기화
 extension BundleCreateView {
 
     /// 초기 데이터 로딩
     func initializeData() async {
-        // 사용자가 소유한 배경과 카라비너 데이터를 가져옴
         await loadUserOwnedItems()
+        // 시트 이미지 프리페칭 (백그라운드에서 Nuke 캐시에 미리 로드)
+        prefetchSheetImages()
+    }
+
+    /// 배경/카라비너 썸네일을 Nuke 캐시에 미리 로드
+    private func prefetchSheetImages() {
+        let bgURLs = bundleVM.backgroundViewData.compactMap { URL(string: $0.background.backgroundImage) }
+        let cbURLs = bundleVM.carabinerViewData.compactMap { URL(string: $0.carabiner.carabinerImage[0]) }
+        let prefetcher = ImagePrefetcher()
+        prefetcher.startPrefetching(with: bgURLs + cbURLs)
     }
 
     /// 화면이 다시 나타날 때 데이터 새로고침
@@ -86,7 +96,7 @@ extension BundleCreateView {
             // 미리 선택된 배경이 없으면 "퍼플키치"를 기본으로 선택
             if bundleVM.newSelectedBackground == nil {
                 bundleVM.newSelectedBackground = bundleVM.backgroundViewData.first { bg in
-                    bg.background.backgroundName == "퍼플키치"
+                    bg.background.backgroundName == "퍼플 키치"
                 } ?? bundleVM.backgroundViewData.first
             }
         }

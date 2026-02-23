@@ -44,7 +44,7 @@ struct WidgetKeychy: Widget {
                 .containerBackground(.clear, for: .widget)
         }
         .configurationDisplayName("Keychy 위젯")
-        .description("위젯에 표시될 키링 또는 뭉치를 골라주세요")
+        .description("위젯에 표시할 유형을 선택한 후, 항목을 골라주세요.")
         .contentMarginsDisabled()
         .supportedFamilies([.systemSmall, .systemLarge])
     }
@@ -57,25 +57,26 @@ struct KeyringWidgetEntryView: View {
     @Environment(\.widgetFamily) var widgetFamily
 
     var body: some View {
-        // 뭉치가 선택된 경우 뭉치 표시
-        if let bundle = entry.configuration.selectedBundle,
-           let uiImage = loadBundleImage(bundleId: bundle.id) {
-            Image(uiImage: uiImage)
-                .resizable()
-                .scaledToFit()
-                .scaleEffect(0.85)  // 뭉치 약간 작게
-        }
-        // 키링이 선택된 경우 키링 표시
-        else if let keyring = entry.configuration.selectedKeyring,
-           let uiImage = loadKeyringImage(keyringId: keyring.id) {
-            Image(uiImage: uiImage)
-                .resizable()
-                .scaledToFit()
-                // 키링 기본 크기
-        }
-        // 아무것도 선택되지 않은 경우 placeholder
-        else {
-            placeholderView
+        switch entry.configuration.displayType {
+        case .keyring:
+            if let keyring = entry.configuration.selectedKeyring,
+               let uiImage = loadKeyringImage(keyringId: keyring.id) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFit()
+            } else {
+                placeholderView
+            }
+        case .bundle:
+            if let bundle = entry.configuration.selectedBundle,
+               let uiImage = loadBundleImage(bundleId: bundle.id) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFit()
+                    .scaleEffect(0.85)
+            } else {
+                placeholderView
+            }
         }
     }
 

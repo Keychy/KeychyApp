@@ -67,6 +67,12 @@ extension BundleViewModel {
                 BackgroundViewData(background: bg, isOwned: ownedIds.contains(bg.id ?? ""))
             }
 
+            // Lottie 배경 JSON 다운로드 (뷰 렌더링 전 완료 보장)
+            let lottieBackgrounds = items.filter { $0.isLottie }
+            for bg in lottieBackgrounds {
+                await LottieItemManager.shared.downloadBackgroundLottie(bg)
+            }
+
             await MainActor.run {
                 self.backgroundViewData = decorated
                 self.isLoading = false
@@ -86,6 +92,12 @@ extension BundleViewModel {
             let ownedIds = UserManager.shared.currentUser?.carabiners ?? []
             let decorated = items.map { cb in
                 CarabinerViewData(carabiner: cb, isOwned: ownedIds.contains(cb.id ?? ""))
+            }
+
+            // Lottie 카라비너 JSON 다운로드 (뷰 렌더링 전 완료 보장)
+            let lottieCarabiners = items.filter { $0.isLottie }
+            for cb in lottieCarabiners {
+                await LottieItemManager.shared.downloadCarabinerLottie(cb)
             }
 
             await MainActor.run {

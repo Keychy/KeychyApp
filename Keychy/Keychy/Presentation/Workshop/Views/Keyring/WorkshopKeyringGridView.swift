@@ -87,7 +87,7 @@ struct WorkshopKeyringGridView: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 90)
 
-            Text("준비중이에요")
+            Text("구매한 템플릿이 없어요")
                 .typography(.suit14SB18)
                 .foregroundColor(.gray500)
         }

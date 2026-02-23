@@ -1,0 +1,171 @@
+//
+//  KeyringScene.swift
+//  KeytschPrototype
+//
+//  Created by Jini on 10/16/25.
+//
+
+import SwiftUI
+import SpriteKit
+import Combine
+import Lottie
+
+class KeyringScene: SKScene {
+    // MARK: - SwiftUI로 콜백 전달용
+    var onPlayParticleEffect: ((String) -> Void)?
+    var onSetupComplete: (() -> Void)?  // Setup 완료 콜백
+
+    // MARK: - Properties
+    var bodyImage: UIImage? // UIImage용
+    var bodyImageURL: String? // Firebase URL용
+    var templateId: String // 템플릿 ID (KeyringScale용)
+    var screen: KeyringScale.Screen // 화면 종류 (zoomScale용)
+    var customSoundURL: URL? // 커스텀 녹음 파일 URL
+    var hookOffsetY: CGFloat? // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
+    var chainLength: Int = 5 // 체인 링크 개수 (기본값 5)
+    var cancellables = Set<AnyCancellable>()
+    var currentSoundId: String = "none"
+    var currentParticleId: String = "none"
+
+    // MARK: - 선택된 타입들
+    var currentRingType: RingType = .basic
+    var currentChainType: ChainType = .basic
+    var currentBodyType: BodyType = .basic
+
+    // MARK: - 구성 요소들
+    var ringNode: SKSpriteNode?
+    var chainNodes: [SKSpriteNode] = []
+    var bodyNode: SKNode?
+
+    // MARK: - 스와이프 제스처 관련
+    var lastTouchLocation: CGPoint?
+    var lastTouchTime: TimeInterval = 0
+    var swipeStartLocation: CGPoint?
+
+    // MARK: - 이펙트 쓰로틀링
+    /// 쓰로틀링(Throttling)은 일정 시간 간격으로 실행 횟수를 제한하는 기법. 이라고 합니다.
+    /// 마지막 실행 시간을 기록해두고, 일정 시간이 지나야만 다시 실행할 수 있게!
+    /// 과도한 함수 호출을 방지합니다.
+    /// ---> 흔들기를 과도하게 했을때, 파티클이 중앙에서 안퍼지고 모여있는게 매우 부자연스러워보여서 추가함.
+    var lastParticleTime: TimeInterval = 0
+
+    // MARK: - 씬 정리 상태
+    var isCleaningUp = false
+
+    // MARK: - 배경색 설정
+    var customBackgroundColor: UIColor = .gray50
+
+    // MARK: - Init / Deinit
+    init(
+        ringType: RingType,
+        chainType: ChainType,
+        templateId: String,
+        screen: KeyringScale.Screen = .customizing,
+        bodyImage: UIImage? = nil,
+        bodyImageURL: String? = nil,
+        backgroundColor: UIColor = .gray50,
+        hookOffsetY: CGFloat? = nil,
+        chainLength: Int = 5
+    ) {
+        self.currentRingType = ringType
+        self.currentChainType = chainType
+        self.templateId = templateId
+        self.screen = screen
+        self.bodyImageURL = bodyImageURL
+        self.customBackgroundColor = backgroundColor
+        self.hookOffsetY = hookOffsetY
+        self.chainLength = chainLength
+
+        if let image = bodyImage {
+            self.bodyImage = image.fixedOrientation()
+        } else {
+            self.bodyImage = nil
+        }
+        super.init(size: .zero)
+    }
+
+    required init?(coder aDecoder: NSCoder) { fatalError() }
+    
+    deinit {
+        cleanup()
+    }
+
+    /// 씬 정리 (메모리 해제 전 호출)
+    func cleanup() {
+        guard !isCleaningUp else { return }
+        isCleaningUp = true
+
+        // 콜백 무효화
+        onPlayParticleEffect = nil
+        onSetupComplete = nil
+
+        // Combine 구독 취소
+        cancellables.removeAll()
+
+        // 모든 물리 조인트 제거
+        physicsWorld.removeAllJoints()
+
+        // 모든 액션 제거
+        removeAllActions()
+
+        // 모든 자식 노드 제거
+        removeAllChildren()
+
+        // 노드 참조 제거
+        ringNode = nil
+        chainNodes.removeAll()
+        bodyNode = nil
+    }
+    
+    // MARK: - ViewModel 바인딩 (Generic)
+    func bind<VM: KeyringViewModelProtocol>(to viewModel: VM) {
+        // 커스텀 사운드 URL 전달
+        self.customSoundURL = viewModel.customSoundURL
+
+        // 초기값 설정 (effectSubject 이벤트 없이도 currentSoundId/currentParticleId 설정)
+        self.currentSoundId = viewModel.soundId
+        self.currentParticleId = viewModel.particleId
+
+        viewModel.effectSubject
+            .sink { [weak self] (soundId, particleId, type) in
+                guard let self = self else { return }
+                self.currentSoundId = soundId
+                self.currentParticleId = particleId
+
+                // 커스텀 사운드 URL 업데이트 (effectSubject가 발생할 때마다)
+                self.customSoundURL = viewModel.customSoundURL
+
+                switch type {
+                case .sound:
+                    self.applySoundEffect(soundId: soundId)
+                case .particle:
+                    self.applyParticleEffect(particleId: particleId)
+                }
+            }
+            .store(in: &cancellables)
+    }
+
+    // MARK: - Scene Lifecycle
+    override func didMove(to view: SKView) {
+        backgroundColor = customBackgroundColor
+        physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
+
+        // 카메라 설정 (zoomScale 적용)
+        setupCamera()
+
+        setupKeyring()
+    }
+
+    /// 카메라 설정 - zoomScale 적용
+    private func setupCamera() {
+        let cameraNode = SKCameraNode()
+        cameraNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
+
+        // zoomScale 적용 (카메라 scale은 역수)
+        let zoom = KeyringScale.zoomScale(for: screen, template: templateId)
+        cameraNode.setScale(1.0 / zoom)
+
+        addChild(cameraNode)
+        self.camera = cameraNode
+    }
+}

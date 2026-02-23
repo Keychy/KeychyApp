@@ -11,33 +11,20 @@ import NukeUI
 struct CarabinerCell: View {
     var carabiner: CarabinerViewData
     var isSelected: Bool
+    var useThumbnail: Bool = false
 
     var body: some View {
         VStack(spacing: 6) {
             ZStack(alignment: .topLeading) {
-                // 카라비너 이미지
-                LazyImage(url: URL(string: carabiner.carabiner.carabinerImage[0])) { state in
-                    if let image = state.image {
-                        image
-                            .resizable()
-                            .scaledToFit()
-                            .clipped()
-                    } else if state.isLoading {
-                        LoadingAlert(type: .short30, message: nil)
-                    } else {
-                        Color.clear
-                            .aspectRatio(1, contentMode: .fit)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                    }
-                }
-                .padding(3.55)
-                .frame(width: threeSquareGridCellSize, height: threeSquareGridCellSize)
-                .background(.white100)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .strokeBorder(isSelected ? .mainOpacity80 : .clear, lineWidth: 1.8)
-                )
+                cellImageContent
+                    .padding(3.55)
+                    .frame(width: threeSquareGridCellSize, height: threeSquareGridCellSize)
+                    .background(.white100)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .strokeBorder(isSelected ? .mainOpacity80 : .clear, lineWidth: 1.8)
+                    )
                 
                 // 유료 재화 표시
                 VStack {
@@ -59,23 +46,27 @@ struct CarabinerCell: View {
                             Spacer()
                             if carabiner.isOwned {
                                 // 유료 + 보유
-                                Text("보유")
-                                    .typography(.suit12M)
-                                    .foregroundStyle(.white100)
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 1.5)
-                                    .background(.black60)
-                                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .fill(.black60)
+                                        .frame(width: 38, height: 20)
+                                    
+                                    Text("보유")
+                                        .typography(.suit12M)
+                                        .foregroundStyle(.white100)
+                                }
                             } else {
                                 // 유료 + 미보유: 가격 표시
-                                Text("\(carabiner.carabiner.price)")
-                                    .typography(.nanum13EB)
-                                    .foregroundStyle(.white100)
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 4.25)
-                                    .padding(.top, 2)
-                                    .background(.mainOpacity80)
-                                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .fill(.mainOpacity80)
+                                        .frame(width: 38,height: 20)
+                                    
+                                    Text("\(carabiner.carabiner.price)")
+                                        .typography(.nanum13EB)
+                                        .foregroundStyle(.white100)
+                                        .padding(.top, 1)
+                                }
                             }
                         }
                         Spacer()
@@ -90,5 +81,32 @@ struct CarabinerCell: View {
                 .foregroundStyle(isSelected ? .main500 : .black100)
         }
         .contentShape(Rectangle())
+    }
+
+    /// Lottie / 정적 이미지 분기 (공통 모디파이어는 호출처에서 적용)
+    @ViewBuilder
+    private var cellImageContent: some View {
+        if carabiner.carabiner.isLottie && !useThumbnail, let carabinerId = carabiner.carabiner.id {
+            LottieItemView(
+                assetId: carabinerId,
+                directory: "lottie_carabiners_back",
+                contentMode: .scaleAspectFit
+            )
+        } else {
+            LazyImage(url: URL(string: carabiner.carabiner.carabinerImage[0])) { state in
+                if let image = state.image {
+                    image
+                        .resizable()
+                        .scaledToFit()
+                        .clipped()
+                } else if state.isLoading {
+                    LoadingAlert(type: .short30, message: nil)
+                } else {
+                    Color.clear
+                        .aspectRatio(1, contentMode: .fit)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                }
+            }
+        }
     }
 }

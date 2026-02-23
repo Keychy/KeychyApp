@@ -32,6 +32,9 @@ class CollectionViewModel {
             // 탭 전환해도 정렬 상태는 유지 (각 탭이 독립적으로 정렬방식 유지)
         }
     }
+
+    /// 다른 화면에서 보관함 이동 시 뭉치 탭으로 시작할지 여부
+    static var shouldStartWithBundleTab: Bool = false
     
     // Firestore 문서 ID 매핑: 로컬 Keyring(UUID) -> Firestore 문서 ID(String)
     var keyringDocumentIdByLocalId: [UUID: String] = [:]
@@ -53,6 +56,16 @@ class CollectionViewModel {
     func loadBackgroundsAndCarabiners() async {
         await dataManager.fetchBackgroundsIfNeeded()
         await dataManager.fetchCarabinersIfNeeded()
+
+        // Lottie 아이템 JSON 프리다운로드 (뷰 렌더링 전 완료 보장)
+        let lottieBackgrounds = dataManager.backgrounds.filter { $0.isLottie }
+        let lottieCarabiners = dataManager.carabiners.filter { $0.isLottie }
+        for bg in lottieBackgrounds {
+            await LottieItemManager.shared.downloadBackgroundLottie(bg)
+        }
+        for cb in lottieCarabiners {
+            await LottieItemManager.shared.downloadCarabinerLottie(cb)
+        }
     }
 
     /// 네트워크 에러 후 재시도

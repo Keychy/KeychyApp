@@ -402,4 +402,28 @@ class KeyringImageCache {
 
         UserDefaults.standard.set(currentMigrationVersion, forKey: migrationVersionKey)
     }
+
+    // MARK: - 캐시 스케일 버전 관리
+
+    /// 캐시 스케일 버전 (KeyringScale 적용으로 인해 증가)
+    /// - v1: 기존 하드코딩 210x210
+    /// - v2: KeyringScale 템플릿별 maxSize 적용
+    private let currentScaleVersion = 2
+    private let scaleVersionKey = "keyringCacheScaleVersion"
+
+    /// 캐시 스케일 버전이 변경되었으면 전체 캐시 삭제
+    /// - 앱 시작 시 호출
+    /// - 새 KeyringScale 로직으로 재캡처 유도
+    func invalidateCacheIfScaleVersionChanged() {
+        let savedVersion = UserDefaults.standard.integer(forKey: scaleVersionKey)
+
+        guard savedVersion < currentScaleVersion else { return }
+
+        print("[KeyringCache] 스케일 버전 변경 감지: v\(savedVersion) → v\(currentScaleVersion)")
+        print("[KeyringCache] 캐시 전체 삭제 후 재캡처 예정")
+
+        clearAll()
+
+        UserDefaults.standard.set(currentScaleVersion, forKey: scaleVersionKey)
+    }
 }

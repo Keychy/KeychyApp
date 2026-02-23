@@ -64,6 +64,8 @@ struct InvenExpandPopup: View {
                 Button(action: onConfirm) {
                     HStack(spacing: 4) {
                         Image(.myCoinMini)
+                            .resizable()
+                            .frame(width: 22, height: 22)
                         
                         Text("\(price)")
                             .typography(.nanum18EB)

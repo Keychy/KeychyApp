@@ -39,7 +39,7 @@ class WelcomeKeyringViewModel: KeyringViewModelProtocol {
     var downloadProgress: [String: Double] = [:]
 
     var soundId: String = "none"
-    var particleId: String = "Confetti"
+    var particleId: String = "PurpleSparkle"
     var effectSubject = PassthroughSubject<(soundId: String, particleId: String, type: KeyringUpdateType), Never>()
 
     var savedKeyringDocumentId: String?
@@ -58,13 +58,21 @@ class WelcomeKeyringViewModel: KeyringViewModelProtocol {
     func fetchEffects() async {}
 
     func isOwned(soundId: String) -> Bool { false }
-    func isOwned(particleId: String) -> Bool { particleId == "Confetti" }
+    func isOwned(particleId: String) -> Bool { false }
 
-    func isInBundle(soundId: String) -> Bool { false }
-    func isInBundle(particleId: String) -> Bool { particleId == "Confetti" }
+    func isInBundle(soundId: String) -> Bool {
+        EffectManager.shared.isInBundle(soundId: soundId)
+    }
+    func isInBundle(particleId: String) -> Bool {
+        EffectManager.shared.isInBundle(particleId: particleId)
+    }
 
-    func isInCache(soundId: String) -> Bool { false }
-    func isInCache(particleId: String) -> Bool { particleId == "Confetti" }
+    func isInCache(soundId: String) -> Bool {
+        EffectManager.shared.isInCache(soundId: soundId)
+    }
+    func isInCache(particleId: String) -> Bool {
+        EffectManager.shared.isInCache(particleId: particleId)
+    }
 
     func downloadSound(_ sound: Sound) async {}
     func downloadParticle(_ particle: Particle) async {}
