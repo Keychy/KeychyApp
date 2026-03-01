@@ -16,7 +16,7 @@ class AppUpdateManager {
     var showUpdateAlert = false
     var appStoreURL = ""
 
-    private let appStoreID = "6738383686"
+    private let appStoreID = "6754951347"
 
     /// 앱 업데이트 체크
     func checkForUpdate() async {
