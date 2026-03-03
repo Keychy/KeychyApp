@@ -134,17 +134,7 @@ extension IntroViewModel {
                 // PNG 캡처 및 저장
                 if let pngData = await scene.captureToPNG() {
                     KeyringImageCache.shared.save(pngData: pngData, for: keyringId, type: .thumbnail)
-                    KeyringImageCache.shared.syncKeyring(
-                        id: keyringId,
-                        name: nickname,
-                        imageData: pngData,
-                        createdAt: Date()
-                    )
-                    print("[WelcomeKeyring] 위젯 캐싱 완료: \(keyringId)")
-                } else {
-                    print("[WelcomeKeyring] 위젯 캐싱 실패: \(keyringId)")
                 }
-
                 continuation.resume()
             }
         }
