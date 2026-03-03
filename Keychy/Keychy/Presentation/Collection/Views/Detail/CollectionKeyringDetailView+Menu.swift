@@ -42,7 +42,11 @@ extension CollectionKeyringDetailView {
                 },
                 onWidget: {
                     goToWidgetOnboarding()
-                }
+                },
+                onWidgetAdd: {
+                    handleWidgetToggle()
+                },
+                isWidgetAdded: KeyringImageCache.shared.isAddedToWidget(id: keyring.documentId ?? "")
             )
             .zIndex(50)
         }
@@ -94,6 +98,25 @@ extension CollectionKeyringDetailView {
         
         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
             router.push(.widgetSettingView)
+        }
+    }
+    
+    // MARK: - 위젯 추가/제거
+    private func handleWidgetToggle() {
+        guard let documentId = keyring.documentId else { return }
+        
+        showMenu = false
+        
+        if KeyringImageCache.shared.isAddedToWidget(id: documentId) {
+            KeyringImageCache.shared.removeFromWidget(id: documentId)
+        } else {
+            guard let imageData = KeyringImageCache.shared.load(for: documentId, type: .thumbnail) else { return }
+            KeyringImageCache.shared.addToKeyringWidget(
+                id: documentId,
+                name: keyring.name,
+                imageData: imageData,
+                createdAt: keyring.createdAt
+            )
         }
     }
 
