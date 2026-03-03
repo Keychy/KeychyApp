@@ -17,8 +17,8 @@ struct KeyringMenu: View {
     let onWidgetAdd: () -> Void
     let isWidgetAdded: Bool
     
-    private let menuWidth: CGFloat = 218
-    private let menuHeight: CGFloat = 271
+    private let menuWidth: CGFloat = 225
+    private let menuHeight: CGFloat = 271.25
     
     @State private var isAppearing = false
     @State private var showCopyTooltip = false
@@ -31,7 +31,7 @@ struct KeyringMenu: View {
                 menuContent
                     .position(
                         x: geometry.size.width - menuWidth / 2 - 16,
-                        y: position.maxY + 8 + menuHeight / 2
+                        y: position.maxY + 16 + menuHeight / 2
                     )
                 
                 // 툴팁 말풍선
@@ -181,16 +181,16 @@ struct KeyringMenu: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             
-            // 위젯에 추가/제거 버튼 (새로 추가)
+            // 위젯에 추가/제거 버튼
             Button(action: onWidgetAdd) {
                 HStack(spacing: 8) {
                     Image(.pinButtonGray600)
                         .resizable()
                         .frame(width: 26, height: 26)
-                    
-                    Text("위젯에 추가")
+
+                    Text("위젯 목록에 추가")
                         .typography(.suit16M)
-                    
+
                     Text("추가됨")
                         .typography(.suit11M)
                         .foregroundStyle(.main500)
@@ -201,8 +201,6 @@ struct KeyringMenu: View {
                                 .fill(.black10)
                         )
                         .opacity(isWidgetAdded ? 1 : 0)
-                    
-                    Spacer()
                 }
                 .padding(.vertical, 10)
                 .padding(.horizontal, 10)
