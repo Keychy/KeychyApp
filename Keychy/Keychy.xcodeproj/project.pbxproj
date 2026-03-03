@@ -249,6 +249,7 @@
 		4C4734042F22615D005D2376 /* WorkshopSkeletonBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733FE2F22615D005D2376 /* WorkshopSkeletonBox.swift */; };
 		4C4734052F22615D005D2376 /* WorkshopSortSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733FF2F22615D005D2376 /* WorkshopSortSheet.swift */; };
 		4C4734072F226B81005D2376 /* WorkshopMakeMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4734062F226B81005D2376 /* WorkshopMakeMenu.swift */; };
+		4C5D0B1C2F56A8D200242703 /* WidgetPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5D0B1B2F56A8D200242703 /* WidgetPopup.swift */; };
 		4C65303B2EBA5FA0000F8154 /* CheckmarkAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */; };
 		4C65303E2EBA6042000F8154 /* ImageSaveAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */; };
 		4C6530442EBA8077000F8154 /* PurchaseSuccessAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6530432EBA8077000F8154 /* PurchaseSuccessAlert.swift */; };
@@ -730,6 +731,7 @@
 		4C4733FE2F22615D005D2376 /* WorkshopSkeletonBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopSkeletonBox.swift; sourceTree = "<group>"; };
 		4C4733FF2F22615D005D2376 /* WorkshopSortSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopSortSheet.swift; sourceTree = "<group>"; };
 		4C4734062F226B81005D2376 /* WorkshopMakeMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopMakeMenu.swift; sourceTree = "<group>"; };
+		4C5D0B1B2F56A8D200242703 /* WidgetPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetPopup.swift; sourceTree = "<group>"; };
 		4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckmarkAlert.swift; sourceTree = "<group>"; };
 		4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSaveAlert.swift; sourceTree = "<group>"; };
 		4C6530432EBA8077000F8154 /* PurchaseSuccessAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseSuccessAlert.swift; sourceTree = "<group>"; };
@@ -979,6 +981,7 @@
 		38173D0D2EB902FD00E36F7E /* Popup */ = {
 			isa = PBXGroup;
 			children = (
+				4C5D0B1B2F56A8D200242703 /* WidgetPopup.swift */,
 				AA0000012F17000100000001 /* BundleSwitchPopup.swift */,
 				38173D0E2EB9083900E36F7E /* DeletePopup.swift */,
 				38173D102EB90CCE00E36F7E /* TagInputPopup.swift */,
@@ -2989,6 +2992,7 @@
 				C6C35F3A2ED2A3C2009642F4 /* FestivalViewModel.swift in Sources */,
 				AAEB46AF2EC1D648002B13E5 /* BundleNameEditView.swift in Sources */,
 				AA9B2E892EB001AA0004D31C /* Background.swift in Sources */,
+				4C5D0B1C2F56A8D200242703 /* WidgetPopup.swift in Sources */,
 				C6C35F3C2ED2A7BD009642F4 /* Showcase25BoardView.swift in Sources */,
 				38D17A512EBBF88C00F52A88 /* CollectionViewModel+Edit.swift in Sources */,
 				C6B5707F2EC206CD0049F969 /* BundleImageCache.swift in Sources */,

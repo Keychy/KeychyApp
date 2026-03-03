@@ -42,7 +42,11 @@ extension CollectionKeyringDetailView {
                 },
                 onWidget: {
                     goToWidgetOnboarding()
-                }
+                },
+                onWidgetAdd: {
+                    handleWidgetToggle()
+                },
+                isWidgetAdded: KeyringImageCache.shared.isAddedToWidget(id: keyring.documentId ?? "")
             )
             .zIndex(50)
         }
@@ -94,6 +98,48 @@ extension CollectionKeyringDetailView {
         
         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
             router.push(.widgetSettingView)
+        }
+    }
+    
+    // MARK: - 위젯 추가/제거
+    private func handleWidgetToggle() {
+        guard let documentId = keyring.documentId else { return }
+
+        showMenu = false
+
+        if KeyringImageCache.shared.isAddedToWidget(id: documentId) {
+            // 이미 추가됨 → 삭제 확인 팝업
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                showWidgetRemoveAlert = true
+            }
+        } else {
+            // 추가
+            guard let imageData = KeyringImageCache.shared.load(for: documentId, type: .thumbnail) else { return }
+            KeyringImageCache.shared.addToKeyringWidget(
+                id: documentId,
+                name: keyring.name,
+                imageData: imageData,
+                createdAt: keyring.createdAt
+            )
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                showWidgetAddedToast = true
+            }
+        }
+    }
+
+    func handleWidgetRemoveConfirm() {
+        guard let documentId = keyring.documentId else { return }
+
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+            showWidgetRemoveAlert = false
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+            KeyringImageCache.shared.removeFromWidget(id: documentId)
+
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                showWidgetRemovedToast = true
+            }
         }
     }
 

@@ -443,15 +443,6 @@ extension CollectionViewModel {
                    !pngData.isEmpty,
                    UIImage(data: pngData) != nil {
                     KeyringImageCache.shared.save(pngData: pngData, for: keyringID, type: .thumbnail)
-                    
-                    if !keyring.isPackaged && !keyring.isPublished {
-                        KeyringImageCache.shared.syncKeyring(
-                            id: keyringID,
-                            name: keyring.name,
-                            imageData: pngData,
-                            createdAt: keyring.createdAt
-                        )
-                    }
                 }
 
                 continuation.resume()

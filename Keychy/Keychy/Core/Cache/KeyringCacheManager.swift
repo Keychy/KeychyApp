@@ -220,15 +220,6 @@ class KeyringCacheManager {
                     
                     KeyringImageCache.shared.save(pngData: pngData, for: keyringID, type: .thumbnail)
                     
-                    if !keyring.isPackaged && !keyring.isPublished {
-                        KeyringImageCache.shared.syncKeyring(
-                            id: keyringID,
-                            name: keyring.name,
-                            imageData: pngData,
-                            createdAt: keyring.createdAt
-                        )
-                    }
-                    
                     await self.clearFailureRecord(keyringID: keyringID)
                     print("[Cache] 성공: \(keyring.name)")
                 } else {
