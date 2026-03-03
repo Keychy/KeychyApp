@@ -34,6 +34,18 @@ extension CollectionKeyringDetailView {
         if isGeneratingVideo {
             videoGeneratingAlert
         }
+
+        if showWidgetAddedToast {
+            widgetAddedToast
+        }
+
+        if showWidgetRemoveAlert {
+            widgetRemoveOverlay
+        }
+
+        if showWidgetRemovedToast {
+            widgetRemovedToast
+        }
     }
     
     // MARK: - Delete Alerts
@@ -343,6 +355,41 @@ extension CollectionKeyringDetailView {
             message: "영상이 저장되었어요!",
             isPresented: $showVideoSaved
         )
+            .zIndex(101)
+    }
+
+    // MARK: - Widget Added Toast
+    private var widgetAddedToast: some View {
+        WidgetAddedToast(isPresented: $showWidgetAddedToast)
+            .zIndex(101)
+    }
+
+    // MARK: - Widget Remove Overlay
+    private var widgetRemoveOverlay: some View {
+        ZStack {
+            Color.black20
+                .ignoresSafeArea()
+                .zIndex(99)
+
+            WidgetRemovePopup(
+                onCancel: {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        showWidgetRemoveAlert = false
+                    }
+                },
+                onConfirm: {
+                    handleWidgetRemoveConfirm()
+                }
+            )
+            .transition(.scale.combined(with: .opacity))
+            .zIndex(100)
+        }
+    }
+
+    // MARK: - Widget Removed Toast
+    private var widgetRemovedToast: some View {
+        WidgetRemovedToast(isPresented: $showWidgetRemovedToast)
+            .transition(.scale.combined(with: .opacity))
             .zIndex(101)
     }
 

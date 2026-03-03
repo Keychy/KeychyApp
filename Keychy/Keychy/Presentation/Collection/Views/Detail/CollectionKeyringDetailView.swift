@@ -48,6 +48,11 @@ struct CollectionKeyringDetailView: View {
     @State var showShareSheet: Bool = false
     @State var pendingShareAction: Bool = false  // 시트 닫힌 후 공유 실행 대기
 
+    // 위젯 추가/제거 관련
+    @State var showWidgetAddedToast: Bool = false
+    @State var showWidgetRemoveAlert: Bool = false
+    @State var showWidgetRemovedToast: Bool = false
+
     // 포장 관련
     @State var postOfficeId: String = ""
 
