@@ -14,9 +14,11 @@ struct KeyringMenu: View {
     let onCopy: () -> Void
     let onDelete: () -> Void
     let onWidget: () -> Void
+    let onWidgetAdd: () -> Void
+    let isWidgetAdded: Bool
     
     private let menuWidth: CGFloat = 200
-    private let menuHeight: CGFloat = 218
+    private let menuHeight: CGFloat = 268
     
     @State private var isAppearing = false
     @State private var showCopyTooltip = false
@@ -158,7 +160,7 @@ struct KeyringMenu: View {
                 .padding(.horizontal, 10)
                 .frame(height: 1)
             
-            // 위젯 버튼
+            // 위젯 튜토리얼 버튼
             Button(action: onWidget) {
                 HStack(spacing: 8) {
                     Image(.widget)
@@ -167,7 +169,7 @@ struct KeyringMenu: View {
                         .frame(width: 24, height: 24)
                         .foregroundColor(.gray600)
                     
-                    Text("위젯 설정")
+                    Text("위젯 튜토리얼")
                         .typography(.suit16M)
                         .foregroundColor(.gray600)
                     
@@ -178,6 +180,31 @@ struct KeyringMenu: View {
                 .contentShape(Rectangle())
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+            
+            // 위젯에 추가/제거 버튼 (새로 추가)
+            Button(action: onWidgetAdd) {
+                HStack(spacing: 8) {
+                    Image(.pinButton)
+                    
+                    Text("위젯에 추가")
+                        .typography(.suit16M)
+                    
+                    Text("추가됨")
+                        .opacity(isWidgetAdded ? 1 : 0)
+                        .foregroundStyle(.main500)
+                        .padding(.vertical, 2)
+                        .padding(.horizontal, 4)
+                        .background(.black10)
+                    
+                    Spacer()
+                }
+                .padding(.vertical, 10)
+                .padding(.horizontal, 10)
+                .contentShape(Rectangle())
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            
+            
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 20)
