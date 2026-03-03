@@ -22,6 +22,9 @@ struct KeychyApp: App {
 
         // 키링 캐시 스케일 버전 체크 (KeyringScale 적용으로 인한 재캡처)
         KeyringImageCache.shared.invalidateCacheIfScaleVersionChanged()
+
+        // 위젯 자동 등록 → 수동 등록 전환 마이그레이션
+        KeyringImageCache.shared.migrateToManualWidgetSelectionIfNeeded()
     }
     
     // MARK: - Body

@@ -379,8 +379,6 @@ class KeyringImageCache {
         keyrings.removeAll { $0.id == id }
         saveWidgetKeyrings(keyrings)
         
-        print("✅ [KeyringCache] 키링 완전 삭제: \(id)")
-        
         // 3. 위젯 타임라인 새로고침
         reloadWidgets()
     }
@@ -396,10 +394,7 @@ class KeyringImageCache {
         do {
             let data = try Data(contentsOf: fileURL)
             return data
-        } catch {
-            print("❌ [KeyringCache] 이미지 로드 실패: \(imagePath) - \(error.localizedDescription)")
-            return nil
-        }
+        } catch { return nil }
     }
     
     // MARK: - 위젯 업데이트
@@ -448,6 +443,39 @@ class KeyringImageCache {
         UserDefaults.standard.set(currentMigrationVersion, forKey: migrationVersionKey)
     }
     
+    // MARK: - 위젯 수동 선택 마이그레이션
+
+    private let manualWidgetMigrationKey = "didMigrateToManualWidgetSelection"
+
+    /// 위젯 자동 등록 → 수동 등록 전환 마이그레이션 (1회만 실행)
+    /// - 기존에 자동으로 추가되었던 위젯 데이터를 전부 삭제
+    /// - 이후 사용자가 "위젯에 추가" 버튼으로 직접 추가해야 함
+    func migrateToManualWidgetSelectionIfNeeded() {
+        guard !UserDefaults.standard.bool(forKey: manualWidgetMigrationKey) else { return }
+
+        clearAllWidgetData()
+
+        UserDefaults.standard.set(true, forKey: manualWidgetMigrationKey)
+    }
+
+    /// 위젯 관련 데이터 전체 삭제 (마이그레이션용)
+    /// - available_keyrings.json 빈 배열로 초기화
+    /// - *_widget.png 파일 전부 삭제
+    /// - 썸네일(_thumb.png)은 유지
+    func clearAllWidgetData() {
+        // 1. 메타데이터의 모든 키링 위젯 이미지 삭제
+        let keyrings = loadWidgetKeyrings()
+        for keyring in keyrings {
+            delete(for: keyring.id, type: .widget)
+        }
+
+        // 2. 메타데이터 빈 배열로 초기화
+        saveWidgetKeyrings([])
+
+        // 3. 위젯 타임라인 새로고침
+        reloadWidgets()
+    }
+
     // MARK: - 캐시 스케일 버전 관리
     
     /// 캐시 스케일 버전 (KeyringScale 적용으로 인해 증가)
@@ -463,10 +491,7 @@ class KeyringImageCache {
         let savedVersion = UserDefaults.standard.integer(forKey: scaleVersionKey)
         
         guard savedVersion < currentScaleVersion else { return }
-        
-        print("[KeyringCache] 스케일 버전 변경 감지: v\(savedVersion) → v\(currentScaleVersion)")
-        print("[KeyringCache] 캐시 전체 삭제 후 재캡처 예정")
-        
+    
         clearAll()
         
         UserDefaults.standard.set(currentScaleVersion, forKey: scaleVersionKey)
