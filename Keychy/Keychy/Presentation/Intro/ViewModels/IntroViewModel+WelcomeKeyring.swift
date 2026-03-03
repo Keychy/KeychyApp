@@ -128,7 +128,7 @@ extension IntroViewModel {
                 if !loadingCompleted {
                     print("[WelcomeKeyring] 위젯 캐싱 타임아웃: \(keyringId)")
                 } else {
-                    try? await Task.sleep(nanoseconds: 200_000_000)
+                    try? await Task.sleep(for: .seconds(0.2))
                 }
 
                 // PNG 캡처 및 저장
