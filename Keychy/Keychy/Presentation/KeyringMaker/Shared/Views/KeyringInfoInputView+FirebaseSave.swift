@@ -416,19 +416,7 @@ extension KeyringInfoInputView {
                 if let pngData = await scene.captureToPNG() {
                     // FileManager 캐시에 저장 (위젯에서 접근 가능)
                     KeyringImageCache.shared.save(pngData: pngData, for: keyringId, type: .thumbnail)
-                    
-                    // App Group에 위젯용 이미지 및 메타데이터 동기화
-                    KeyringImageCache.shared.syncKeyring(
-                        id: keyringId,
-                        name: keyringName,
-                        imageData: pngData,
-                        createdAt: createdAt
-                    )
-                    
-                } else {
-                    print("[InfoInput] 캡처 실패: \(keyringId)")
                 }
-                
                 continuation.resume()
             }
         }
