@@ -23,40 +23,55 @@ struct KeyringWidgetProvider: AppIntentTimelineProvider {
 
     func timeline(for configuration: KeyringSelectionIntent, in context: Context) async -> Timeline<KeyringWidgetEntry> {
         let defaults = UserDefaults(suiteName: "group.keychy.app")
-        let familyString = context.family == .systemSmall ? "small" : "large"
 
-        // 애니메이션 상태 확인 (키링 타입일 때만)
         if configuration.displayType == .keyring,
-           let keyring = configuration.selectedKeyring,
-           let defaults = defaults {
+           let keyring = configuration.selectedKeyring {
 
-            let animKey = ToggleAnimationIntent.animationKey(
-                keyringId: keyring.id, family: familyString
-            )
+            let frames = AnimationFrameStorage.loadFrames(keyringID: keyring.id)
 
-            if let startTime = defaults.object(forKey: animKey) as? Date {
-                let elapsed = Date().timeIntervalSince(startTime)
+            // 애니메이션 상태 확인 (같은 키링이면 크기 무관하게 동기화)
+            if let defaults = defaults {
+                let animKey = ToggleAnimationIntent.animationKey(
+                    keyringId: keyring.id
+                )
 
-                if elapsed < ToggleAnimationIntent.animationDuration {
-                    let stopDate = startTime.addingTimeInterval(ToggleAnimationIntent.animationDuration)
-                    let frames = AnimationFrameStorage.loadFrames(keyringID: keyring.id)
+                if let startTime = defaults.object(forKey: animKey) as? Date {
+                    let elapsed = Date().timeIntervalSince(startTime)
 
-                    let entry = KeyringWidgetEntry(
-                        date: Date(),
-                        configuration: configuration,
-                        isAnimating: true,
-                        animationFrames: frames,
-                        animationStartDate: startTime
-                    )
-                    return Timeline(entries: [entry], policy: .after(stopDate))
-                } else {
-                    // 30초 지남 → 애니메이션 키 제거
-                    defaults.removeObject(forKey: animKey)
+                    if elapsed < ToggleAnimationIntent.animationDuration {
+                        let stopDate = startTime.addingTimeInterval(ToggleAnimationIntent.animationDuration)
+
+                        // 애니메이션 엔트리 (지금)
+                        let animEntry = KeyringWidgetEntry(
+                            date: Date(),
+                            configuration: configuration,
+                            isAnimating: true,
+                            animationFrames: frames,
+                            animationStartDate: startTime
+                        )
+                        // 정지 엔트리 (stopDate에 자동 전환) — frame[0]만 유지
+                        let stopEntry = KeyringWidgetEntry(
+                            date: stopDate,
+                            configuration: configuration,
+                            animationFrames: frames?.first.map { [$0] }
+                        )
+                        return Timeline(entries: [animEntry, stopEntry], policy: .never)
+                    } else {
+                        defaults.removeObject(forKey: animKey)
+                    }
                 }
             }
+
+            // 정적 모드 — Intent 실행 후 WidgetKit이 자동 타임라인 리로드
+            let entry = KeyringWidgetEntry(
+                date: Date(),
+                configuration: configuration,
+                animationFrames: frames
+            )
+            return Timeline(entries: [entry], policy: .never)
         }
 
-        // 정적 모드
+        // 키링 외 (뭉치 등)
         let entry = KeyringWidgetEntry(date: Date(), configuration: configuration)
         return Timeline(entries: [entry], policy: .never)
     }
@@ -108,44 +123,33 @@ struct KeyringWidgetEntryView: View {
 
     @ViewBuilder
     private var keyringView: some View {
-        let familyString = widgetFamily == .systemSmall ? "small" : "large"
+        if let keyring = entry.configuration.selectedKeyring,
+           let frames = entry.animationFrames,
+           !frames.isEmpty {
+            GeometryReader { geometry in
+                let size = min(geometry.size.width, geometry.size.height)
 
-        if let keyring = entry.configuration.selectedKeyring {
-            if entry.isAnimating,
-               let frames = entry.animationFrames,
-               let startDate = entry.animationStartDate {
-                // BlinkMask 폰트 마스킹 애니메이션
-                GeometryReader { geometry in
-                    let size = min(geometry.size.width, geometry.size.height)
+                if entry.isAnimating,
+                   let startDate = entry.animationStartDate {
                     AnimatedKeyringView(
                         frames: frames,
                         size: size,
-                        referenceDate: startDate
+                        startDate: startDate
                     )
-                }
-                .overlay {
-                    Button(intent: ToggleAnimationIntent(keyringId: keyring.id, family: familyString)) {
-                        Color.clear
-                            .contentShape(.rect)
-                    }
-                    .buttonStyle(.plain)
-                }
-            } else if let uiImage = loadKeyringImage(keyringId: keyring.id) {
-                // 정적 이미지 → 탭 시 애니메이션 시작
-                if AnimationFrameStorage.hasFrames(keyringID: keyring.id) {
-                    Button(intent: ToggleAnimationIntent(keyringId: keyring.id, family: familyString)) {
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .scaledToFit()
-                    }
-                    .buttonStyle(.plain)
                 } else {
-                    Image(uiImage: uiImage)
+                    Image(uiImage: frames[0])
                         .resizable()
-                        .scaledToFit()
+                        .scaledToFill()
+                        .frame(width: size, height: size)
+                        .clipped()
                 }
-            } else {
-                placeholderView
+            }
+            .overlay {
+                Button(intent: ToggleAnimationIntent(keyringId: keyring.id)) {
+                    Color.clear
+                        .contentShape(.rect)
+                }
+                .buttonStyle(.plain)
             }
         } else {
             placeholderView
@@ -175,18 +179,6 @@ struct KeyringWidgetEntryView: View {
             return uiImage
         }
         if let imageData = BundleImageCache.shared.loadImageByPath("\(bundleId).png"),
-           let uiImage = UIImage(data: imageData) {
-            return uiImage
-        }
-        return nil
-    }
-
-    private func loadKeyringImage(keyringId: String) -> UIImage? {
-        if let imageData = KeyringImageCache.shared.loadImageByPath("\(keyringId)_widget.png"),
-           let uiImage = UIImage(data: imageData) {
-            return uiImage
-        }
-        if let imageData = KeyringImageCache.shared.loadImageByPath("\(keyringId)_thumb.png"),
            let uiImage = UIImage(data: imageData) {
             return uiImage
         }
