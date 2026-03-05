@@ -50,6 +50,7 @@ struct CollectionKeyringDetailView: View {
 
     // 위젯 추가/제거 관련
     @State var showWidgetAddedToast: Bool = false
+    @State var showWidgetAddFailToast: Bool = false
     @State var showWidgetRemoveAlert: Bool = false
     @State var showWidgetRemovedToast: Bool = false
     @State var isGeneratingAnimationFrames: Bool = false
@@ -185,7 +186,7 @@ struct CollectionKeyringDetailView: View {
         showImageSaved ||
         isGeneratingVideo ||
         showVideoSaved ||
-        false
+        isGeneratingAnimationFrames
     }
     
     // 복사권 개수 리프레쉬

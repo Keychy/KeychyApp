@@ -43,6 +43,10 @@ extension CollectionKeyringDetailView {
             widgetAddedToast
         }
 
+        if showWidgetAddFailToast {
+            widgetAddFailToast
+        }
+
         if showWidgetRemoveAlert {
             widgetRemoveOverlay
         }
@@ -365,6 +369,12 @@ extension CollectionKeyringDetailView {
     // MARK: - Widget Added Toast
     private var widgetAddedToast: some View {
         WidgetAddedToast(isPresented: $showWidgetAddedToast)
+            .zIndex(101)
+    }
+
+    // MARK: - Widget Add Fail Toast
+    private var widgetAddFailToast: some View {
+        WidgetAddFailToast(isPresented: $showWidgetAddFailToast)
             .zIndex(101)
     }
 
