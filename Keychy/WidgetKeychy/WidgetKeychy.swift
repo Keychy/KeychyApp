@@ -7,6 +7,7 @@
 
 import WidgetKit
 import SwiftUI
+import AppIntents
 import UIKit
 
 // MARK: - Timeline Provider
@@ -21,6 +22,41 @@ struct KeyringWidgetProvider: AppIntentTimelineProvider {
     }
 
     func timeline(for configuration: KeyringSelectionIntent, in context: Context) async -> Timeline<KeyringWidgetEntry> {
+        let defaults = UserDefaults(suiteName: "group.keychy.app")
+        let familyString = context.family == .systemSmall ? "small" : "large"
+
+        // 애니메이션 상태 확인 (키링 타입일 때만)
+        if configuration.displayType == .keyring,
+           let keyring = configuration.selectedKeyring,
+           let defaults = defaults {
+
+            let animKey = ToggleAnimationIntent.animationKey(
+                keyringId: keyring.id, family: familyString
+            )
+
+            if let startTime = defaults.object(forKey: animKey) as? Date {
+                let elapsed = Date().timeIntervalSince(startTime)
+
+                if elapsed < ToggleAnimationIntent.animationDuration {
+                    let stopDate = startTime.addingTimeInterval(ToggleAnimationIntent.animationDuration)
+                    let frames = AnimationFrameStorage.loadFrames(keyringID: keyring.id)
+
+                    let entry = KeyringWidgetEntry(
+                        date: Date(),
+                        configuration: configuration,
+                        isAnimating: true,
+                        animationFrames: frames,
+                        animationStartDate: startTime
+                    )
+                    return Timeline(entries: [entry], policy: .after(stopDate))
+                } else {
+                    // 30초 지남 → 애니메이션 키 제거
+                    defaults.removeObject(forKey: animKey)
+                }
+            }
+        }
+
+        // 정적 모드
         let entry = KeyringWidgetEntry(date: Date(), configuration: configuration)
         return Timeline(entries: [entry], policy: .never)
     }
@@ -31,6 +67,9 @@ struct KeyringWidgetProvider: AppIntentTimelineProvider {
 struct KeyringWidgetEntry: TimelineEntry {
     let date: Date
     let configuration: KeyringSelectionIntent
+    var isAnimating: Bool = false
+    var animationFrames: [UIImage]? = nil
+    var animationStartDate: Date? = nil
 }
 
 // MARK: - Widget
@@ -59,35 +98,82 @@ struct KeyringWidgetEntryView: View {
     var body: some View {
         switch entry.configuration.displayType {
         case .keyring:
-            if let keyring = entry.configuration.selectedKeyring,
-               let uiImage = loadKeyringImage(keyringId: keyring.id) {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFit()
-            } else {
-                placeholderView
-            }
+            keyringView
         case .bundle:
-            if let bundle = entry.configuration.selectedBundle,
-               let uiImage = loadBundleImage(bundleId: bundle.id) {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFit()
-                    .scaleEffect(0.85)
-            } else {
-                placeholderView
-            }
+            bundleView
         }
     }
 
-    /// 뭉치 이미지 로드 (위젯용 우선, 없으면 full 버전 사용)
+    // MARK: - 키링 뷰
+
+    @ViewBuilder
+    private var keyringView: some View {
+        let familyString = widgetFamily == .systemSmall ? "small" : "large"
+
+        if let keyring = entry.configuration.selectedKeyring {
+            if entry.isAnimating,
+               let frames = entry.animationFrames,
+               let startDate = entry.animationStartDate {
+                // BlinkMask 폰트 마스킹 애니메이션
+                GeometryReader { geometry in
+                    let size = min(geometry.size.width, geometry.size.height)
+                    AnimatedKeyringView(
+                        frames: frames,
+                        size: size,
+                        referenceDate: startDate
+                    )
+                }
+                .overlay {
+                    Button(intent: ToggleAnimationIntent(keyringId: keyring.id, family: familyString)) {
+                        Color.clear
+                            .contentShape(.rect)
+                    }
+                    .buttonStyle(.plain)
+                }
+            } else if let uiImage = loadKeyringImage(keyringId: keyring.id) {
+                // 정적 이미지 → 탭 시 애니메이션 시작
+                if AnimationFrameStorage.hasFrames(keyringID: keyring.id) {
+                    Button(intent: ToggleAnimationIntent(keyringId: keyring.id, family: familyString)) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFit()
+                    }
+                    .buttonStyle(.plain)
+                } else {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFit()
+                }
+            } else {
+                placeholderView
+            }
+        } else {
+            placeholderView
+        }
+    }
+
+    // MARK: - 뭉치 뷰
+
+    @ViewBuilder
+    private var bundleView: some View {
+        if let bundle = entry.configuration.selectedBundle,
+           let uiImage = loadBundleImage(bundleId: bundle.id) {
+            Image(uiImage: uiImage)
+                .resizable()
+                .scaledToFit()
+                .scaleEffect(0.85)
+        } else {
+            placeholderView
+        }
+    }
+
+    // MARK: - 이미지 로드
+
     private func loadBundleImage(bundleId: String) -> UIImage? {
-        // 1. 위젯용 이미지 시도 (_widget.png)
         if let imageData = BundleImageCache.shared.loadImageByPath("\(bundleId)_widget.png"),
            let uiImage = UIImage(data: imageData) {
             return uiImage
         }
-        // 2. Fallback: full 이미지 (.png)
         if let imageData = BundleImageCache.shared.loadImageByPath("\(bundleId).png"),
            let uiImage = UIImage(data: imageData) {
             return uiImage
@@ -95,20 +181,19 @@ struct KeyringWidgetEntryView: View {
         return nil
     }
 
-    /// 키링 이미지 로드 (위젯용 우선, 없으면 썸네일 사용)
     private func loadKeyringImage(keyringId: String) -> UIImage? {
-        // 1. 위젯용 이미지 시도 (_widget.png)
         if let imageData = KeyringImageCache.shared.loadImageByPath("\(keyringId)_widget.png"),
            let uiImage = UIImage(data: imageData) {
             return uiImage
         }
-        // 2. Fallback: 썸네일 이미지 (_thumb.png)
         if let imageData = KeyringImageCache.shared.loadImageByPath("\(keyringId)_thumb.png"),
            let uiImage = UIImage(data: imageData) {
             return uiImage
         }
         return nil
     }
+
+    // MARK: - 플레이스홀더
 
     @ViewBuilder
     private var placeholderView: some View {
