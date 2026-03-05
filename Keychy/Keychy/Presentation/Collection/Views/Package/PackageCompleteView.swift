@@ -173,7 +173,7 @@ struct PackageCompleteView: View {
             let isSmallScreen = geometry.size.height < 700
             
             ZStack {
-                Image(.greenBackground)
+                Image(.pinkGlitterBG)
                     .resizable()
                     .scaledToFill()
                     .ignoresSafeArea()
