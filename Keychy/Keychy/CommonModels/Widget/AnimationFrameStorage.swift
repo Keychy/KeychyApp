@@ -10,9 +10,6 @@ import UIKit
 
 /// App Group에 키링별 애니메이션 프레임(30장 PNG)을 저장/로드하는 유틸리티
 ///
-/// 앱에서 FrameCompositor로 합성한 30장 PNG를 저장하고,
-/// 위젯에서 BlinkMask 애니메이션용으로 로드한다.
-///
 /// 디렉토리 구조:
 /// ```
 /// AppGroup/

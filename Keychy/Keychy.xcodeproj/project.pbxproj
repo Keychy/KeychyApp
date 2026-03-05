@@ -285,6 +285,8 @@
 		4C5D0BD02F595F5200242703 /* AnimationFrameStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5D0BCD2F595F5200242703 /* AnimationFrameStorage.swift */; };
 		4C5D0BD32F59609400242703 /* KeyringFrameCompositor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5D0BD12F59609400242703 /* KeyringFrameCompositor.swift */; };
 		4C5D0BD52F59623000242703 /* AnimatedKeyringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5D0BD42F59623000242703 /* AnimatedKeyringView.swift */; };
+		4C5D0C2E2F59B72300242703 /* ClockHandRotationEffect.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C5D0C2B2F59B51400242703 /* ClockHandRotationEffect.xcframework */; };
+		4C5D0C2F2F59B72300242703 /* ClockHandRotationEffect.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4C5D0C2B2F59B51400242703 /* ClockHandRotationEffect.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4C65303B2EBA5FA0000F8154 /* CheckmarkAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */; };
 		4C65303E2EBA6042000F8154 /* ImageSaveAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */; };
 		4C6530442EBA8077000F8154 /* PurchaseSuccessAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6530432EBA8077000F8154 /* PurchaseSuccessAlert.swift */; };
@@ -509,6 +511,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		4C5D0C302F59B72300242703 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4C5D0C2F2F59B72300242703 /* ClockHandRotationEffect.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4C6621DF2EAE0EB6001760B5 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -801,6 +814,7 @@
 		4C5D0BCD2F595F5200242703 /* AnimationFrameStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationFrameStorage.swift; sourceTree = "<group>"; };
 		4C5D0BD12F59609400242703 /* KeyringFrameCompositor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringFrameCompositor.swift; sourceTree = "<group>"; };
 		4C5D0BD42F59623000242703 /* AnimatedKeyringView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedKeyringView.swift; sourceTree = "<group>"; };
+		4C5D0C2B2F59B51400242703 /* ClockHandRotationEffect.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = ClockHandRotationEffect.xcframework; sourceTree = "<group>"; };
 		4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckmarkAlert.swift; sourceTree = "<group>"; };
 		4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSaveAlert.swift; sourceTree = "<group>"; };
 		4C6530432EBA8077000F8154 /* PurchaseSuccessAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseSuccessAlert.swift; sourceTree = "<group>"; };
@@ -1040,6 +1054,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C6B56F362EC061BB0049F969 /* SwiftUI.framework in Frameworks */,
+				4C5D0C2E2F59B72300242703 /* ClockHandRotationEffect.xcframework in Frameworks */,
 				C6B56F342EC061BB0049F969 /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1863,6 +1878,14 @@
 			path = ObjC;
 			sourceTree = "<group>";
 		};
+		4C5D0C2C2F59B51400242703 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4C5D0C2B2F59B51400242703 /* ClockHandRotationEffect.xcframework */,
+			);
+			path = Frameworks;
+			sourceTree = "<group>";
+		};
 		4C65303C2EBA5FF3000F8154 /* Alerts */ = {
 			isa = PBXGroup;
 			children = (
@@ -1993,6 +2016,7 @@
 		4CC8D0162EF0395F00317467 /* WidgetKeychy */ = {
 			isa = PBXGroup;
 			children = (
+				4C5D0C2C2F59B51400242703 /* Frameworks */,
 				4C5D0BD62F5965A200242703 /* Animation */,
 				4C5D0BD82F5965B500242703 /* Intent */,
 				4C5D0BD92F5965BE00242703 /* Resources */,
@@ -2704,6 +2728,7 @@
 				C6B56F2E2EC061BB0049F969 /* Sources */,
 				C6B56F2F2EC061BB0049F969 /* Frameworks */,
 				C6B56F302EC061BB0049F969 /* Resources */,
+				4C5D0C302F59B72300242703 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
