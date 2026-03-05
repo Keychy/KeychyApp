@@ -6,110 +6,42 @@
 //
 
 import SwiftUI
+import UIKit
 import WidgetKit
 
 // MARK: - 애니메이션 설정
 
 enum AnimationConfig {
     static let frameCount = AnimationFrameStorage.frameCount  // 30
-    static let halfCount = frameCount / 2                     // 15
+    static let halfCount = frameCount / 2  // 15
 
-    /// 15 FPS — 키링 흔들림 애니메이션에 충분한 프레임 레이트
+    /// 15 FPS (30프레임, 각 프레임 ≈0.067초)
     static let fps: CGFloat = 15.0
     static let frameDuration: CGFloat = 1.0 / fps
 
-    /// BlinkMask 타이머의 기준 시각 오프셋
-    /// 타이머가 0:00에 리셋되므로, 모든 오프셋이 양수가 되도록
-    /// 충분히 과거 시점을 기준으로 잡는다.
-    static let referenceOffset: TimeInterval = 60
-
-    /// 타이머가 표시할 수 있는 최대 자릿수 (H:MM:SS + 소수점)
-    /// 마지막 글자 센터링에 사용
+    /// 타이머 최대 자릿수 (H:MM:SS 등)
     static let maxDigitSlots: CGFloat = 9
 }
 
-// MARK: - 애니메이션 키링 뷰
+// MARK: - BlinkMask 마스크 뷰
 
-/// BlinkMask 폰트 기법으로 30프레임 키링 애니메이션을 표시하는 뷰
+/// BlinkMask 폰트로 1초 on/off 깜빡이는 마스크
 ///
-/// 원리: WidgetKit은 프레임 애니메이션을 직접 지원하지 않지만,
-/// `Text(.timer)`는 매초 업데이트된다. BlinkMask 폰트는 짝수 숫자 = 불투명 사각형,
-/// 홀수 숫자 = 투명으로 구성되어 있어서 프로그래밍 가능한 마스크 역할을 한다.
+/// BlinkMask 폰트 구조:
+/// - 짝수 숫자(0,2,4,6,8) → 불투명 사각형 (보임)
+/// - 홀수 숫자(1,3,5,7,9) → 투명 (안 보임)
 ///
-/// 30프레임을 두 그룹(0~14, 15~29)으로 나누어:
-/// 1) 전반부(0~14)는 항상 화면에 표시되며, 각 프레임은 1/15초간만 보임
-/// 2) 후반부(15~29)는 1초 주기 깜빡임 마스크로 전반부와 번갈아 표시
-struct AnimatedKeyringView: View {
-    let frames: [UIImage]
-    let size: CGFloat
-
-    /// 모든 타이머가 동기화되도록 같은 기준 시각을 공유
-    static let referenceDate = Date() - AnimationConfig.referenceOffset
-
-    var body: some View {
-        ZStack {
-            // 전반부 (0~14): 항상 화면에 표시
-            // 프레임 0은 마스크 없음 — 루프 전환 시 흰색 깜빡임 방지용 폴백
-            ZStack {
-                imageFrame(image: frames[0], index: 0, masked: false)
-
-                ForEach(1..<AnimationConfig.halfCount, id: \.self) { i in
-                    imageFrame(image: frames[i], index: i)
-                }
-            }
-
-            // 후반부 (15~29): 1초 주기 깜빡임 마스크 적용
-            ZStack {
-                ForEach(AnimationConfig.halfCount..<AnimationConfig.frameCount, id: \.self) { i in
-                    imageFrame(image: frames[i], index: i)
-                }
-            }
-            .mask(
-                SimpleBlinkingView(blinkOffset: 1)
-                    .frame(width: size, height: size)
-            )
-        }
-        .frame(width: size, height: size)
-    }
-
-    /// 개별 프레임 뷰 — 각 프레임은 자신의 타임 슬롯에서만 보이도록 마스킹됨
-    @ViewBuilder
-    private func imageFrame(image: UIImage, index: Int, masked: Bool = true) -> some View {
-        let base = Image(uiImage: image)
-            .resizable()
-            .scaledToFill()
-            .frame(width: size, height: size)
-            .clipped()
-
-        if masked {
-            base.mask(
-                SimpleBlinkingView(blinkOffset: CGFloat(-index) * AnimationConfig.frameDuration)
-                    .frame(width: size, height: size)
-            )
-        } else {
-            base
-        }
-    }
-}
-
-// MARK: - BlinkMask 깜빡임 뷰
-
-/// BlinkMask 커스텀 폰트로 깜빡이는 마스크 뷰
-///
-/// BlinkMask 폰트는 짝수 숫자 = 불투명 사각형, 홀수 = 투명.
-/// `Text(.timer)`의 마지막 자릿수가 0~9를 순환하면서
-/// 1초 켜짐 / 1초 꺼짐을 반복하는 마스크가 된다.
-///
-/// `blinkOffset`으로 타이머 기준 시각을 이동시켜
-/// 각 프레임이 정확한 시점에 보이도록 제어한다.
+/// `blinkOffset`으로 타이머 기준 시점을 이동시켜
+/// 각 프레임이 서로 다른 타이밍에 보이도록 제어한다.
 struct SimpleBlinkingView: View {
-    var blinkOffset: TimeInterval
+    let referenceDate: Date
+    let blinkOffset: TimeInterval
 
     var body: some View {
         GeometryReader { geometry in
             let maxSize = max(geometry.size.width, geometry.size.height)
 
-            Text(AnimatedKeyringView.referenceDate - blinkOffset, style: .timer)
+            Text(referenceDate.addingTimeInterval(-blinkOffset), style: .timer)
                 .font(.custom("BlinkMask", size: maxSize))
                 .centerLastCharacter(size: maxSize, anchor: .topLeading)
         }
@@ -117,14 +49,86 @@ struct SimpleBlinkingView: View {
     }
 }
 
+// MARK: - 애니메이션 키링 뷰
+
+/// BlinkMask + 다중 타이머 오프셋으로 15 FPS 프레임 애니메이션을 구현
+///
+/// **동작 원리**:
+/// 30개 프레임에 각각 다른 타이머 오프셋(0, 1/15, 2/15, ...)을 적용.
+/// BlinkMask 폰트가 짝수초/홀수초마다 on/off되므로,
+/// 오프셋이 다른 프레임은 미세하게 다른 타이밍에 깜빡인다.
+/// 결과적으로 30개 프레임이 순차적으로 표시되어 애니메이션이 된다.
+///
+/// **반분할(Half) 구조**:
+/// - 전반부 (Frame 0~14): 각 프레임이 개별 마스크로 순차 표시
+/// - 후반부 (Frame 15~29): 추가 1초 블링크 마스크로 전반부와 교대
+///
+/// ⚠️ 투명 배경에서는 여러 프레임이 동시에 보여 잔상(ghosting) 발생.
+/// 불투명 배경에서는 최상위 프레임이 하위를 가려 정상 동작.
+struct AnimatedKeyringView: View {
+    let frames: [UIImage]
+    let size: CGFloat
+    let referenceDate: Date
+
+    var body: some View {
+        ZStack {
+            // 전반부 (Frame 0~14)
+            // Frame 0: 마스크 없음 (루프 전환 시 빈 화면 방지용 폴백)
+            ZStack {
+                imageFrame(index: 0, masked: false)
+
+                ForEach(1..<AnimationConfig.halfCount, id: \.self) { i in
+                    imageFrame(index: i)
+                }
+            }
+
+            // 후반부 (Frame 15~29): 1초 블링크로 전반부와 번갈아 표시
+            ZStack {
+                ForEach(
+                    AnimationConfig.halfCount..<min(frames.count, AnimationConfig.frameCount),
+                    id: \.self
+                ) { i in
+                    imageFrame(index: i)
+                }
+            }
+            .mask(
+                SimpleBlinkingView(referenceDate: referenceDate, blinkOffset: 1)
+                    .frame(width: size, height: size)
+            )
+        }
+        .frame(width: size, height: size)
+    }
+
+    /// 개별 프레임 뷰 (타이머 오프셋 기반 마스크 적용)
+    @ViewBuilder
+    private func imageFrame(index: Int, masked: Bool = true) -> some View {
+        let base = Image(uiImage: frames[index])
+            .resizable()
+            .scaledToFill()
+            .frame(width: size, height: size)
+            .clipped()
+
+        if masked {
+            base.mask(
+                SimpleBlinkingView(
+                    referenceDate: referenceDate,
+                    blinkOffset: CGFloat(-index) * AnimationConfig.frameDuration
+                )
+                .frame(width: size, height: size)
+            )
+        } else {
+            base
+        }
+    }
+}
+
 // MARK: - Text 센터링 확장
 
 extension Text {
-    /// 타이머 마지막 글자를 뷰 중앙에 배치하는 트릭
+    /// 타이머 마지막 글자를 뷰의 특정 위치에 배치
     ///
-    /// 1) 너비를 size×9로 설정 (타이머 최대 9자리 수용)
-    /// 2) trailing 정렬로 마지막 자릿수를 오른쪽 끝에 고정
-    /// 3) 오프셋으로 오른쪽 끝이 뷰 중앙에 오도록 이동
+    /// 타이머 텍스트("0:00" 등)의 마지막 자릿수만 보이도록
+    /// 큰 프레임으로 확장 후 오프셋으로 위치 조정
     enum AnchorOrigin {
         case viewCenter
         case topLeading
