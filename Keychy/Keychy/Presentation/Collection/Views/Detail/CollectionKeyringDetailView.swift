@@ -52,6 +52,7 @@ struct CollectionKeyringDetailView: View {
     @State var showWidgetAddedToast: Bool = false
     @State var showWidgetRemoveAlert: Bool = false
     @State var showWidgetRemovedToast: Bool = false
+    @State var isGeneratingAnimationFrames: Bool = false
 
     // 포장 관련
     @State var postOfficeId: String = ""

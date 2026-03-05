@@ -35,6 +35,10 @@ extension CollectionKeyringDetailView {
             videoGeneratingAlert
         }
 
+        if isGeneratingAnimationFrames {
+            animationFrameGeneratingAlert
+        }
+
         if showWidgetAddedToast {
             widgetAddedToast
         }
@@ -401,6 +405,18 @@ extension CollectionKeyringDetailView {
                 .zIndex(99)
 
             LoadingAlert(type: .longWithKeychy, message: "공유할 영상을 만들고 있어요!")
+                .zIndex(100)
+        }
+    }
+
+    // MARK: - Animation Frame Generating Alert
+    private var animationFrameGeneratingAlert: some View {
+        ZStack {
+            Color.black20
+                .ignoresSafeArea()
+                .zIndex(99)
+
+            LoadingAlert(type: .short40, message: nil)
                 .zIndex(100)
         }
     }

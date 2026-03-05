@@ -113,16 +113,44 @@ extension CollectionKeyringDetailView {
                 showWidgetRemoveAlert = true
             }
         } else {
-            // 추가
+            // 추가 — 정적 이미지 + 애니메이션 프레임 생성
             guard let imageData = KeyringImageCache.shared.load(for: documentId, type: .thumbnail) else { return }
-            KeyringImageCache.shared.addToKeyringWidget(
-                id: documentId,
-                name: keyring.name,
-                imageData: imageData,
-                createdAt: keyring.createdAt
-            )
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                showWidgetAddedToast = true
+
+            isGeneratingAnimationFrames = true
+
+            Task {
+                // 1. 바디이미지 다운로드 (Firebase URL)
+                var bodyImage: UIImage? = nil
+                if let url = URL(string: keyring.bodyImage),
+                   let (data, _) = try? await URLSession.shared.data(from: url) {
+                    bodyImage = UIImage(data: data)
+                }
+
+                // 2. 애니메이션 프레임 합성 (백그라운드 스레드)
+                if let bodyImage {
+                    let frames = await Task.detached {
+                        KeyringFrameCompositor.generateFrames(from: bodyImage)
+                    }.value
+
+                    if let frames {
+                        try? AnimationFrameStorage.saveFrames(frames, keyringID: documentId)
+                    }
+                }
+
+                // 3. 위젯 이미지 저장 + UI 업데이트 (메인 스레드)
+                await MainActor.run {
+                    KeyringImageCache.shared.addToKeyringWidget(
+                        id: documentId,
+                        name: keyring.name,
+                        imageData: imageData,
+                        createdAt: keyring.createdAt
+                    )
+
+                    isGeneratingAnimationFrames = false
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        showWidgetAddedToast = true
+                    }
+                }
             }
         }
     }
@@ -136,6 +164,7 @@ extension CollectionKeyringDetailView {
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
             KeyringImageCache.shared.removeFromWidget(id: documentId)
+            AnimationFrameStorage.deleteFrames(keyringID: documentId)
 
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                 showWidgetRemovedToast = true

@@ -469,10 +469,13 @@ class KeyringImageCache {
             delete(for: keyring.id, type: .widget)
         }
 
-        // 2. 메타데이터 빈 배열로 초기화
+        // 2. 애니메이션 프레임 전체 삭제
+        AnimationFrameStorage.deleteAllFrames()
+
+        // 3. 메타데이터 빈 배열로 초기화
         saveWidgetKeyrings([])
 
-        // 3. 위젯 타임라인 새로고침
+        // 4. 위젯 타임라인 새로고침
         reloadWidgets()
     }
 
