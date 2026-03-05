@@ -91,15 +91,12 @@ struct BundleEntityQuery: EntityQuery {
 
 // MARK: - 애니메이션 토글 Intent
 
-/// 위젯 터치 시 애니메이션을 (재)시작하는 인터랙티브 Intent
-///
-/// iOS 17+ `Button(intent:)` 와 함께 사용하여
-/// 앱을 열지 않고 위젯 내에서 애니메이션을 재생한다.
+/// 위젯 터치 시 애니메이션을 시작/정지하는 인터랙티브 Intent
 ///
 /// 동작:
 /// - 정지 중 → 탭 → 시작 시각 기록 → 30초간 애니메이션
-/// - 재생 중 → 탭 → 시작 시각 갱신 → 처음부터 다시 30초 재생
-/// - 30초 경과 → Timeline policy(.after)에 의해 자동 정지
+/// - 재생 중 → 탭 → 시작 시각 삭제 → 즉시 정지
+/// - 30초 경과 → 타임라인 정지 엔트리에 의해 자동 정지
 struct ToggleAnimationIntent: AppIntent {
     static var title: LocalizedStringResource = "키링 애니메이션 토글"
     /// 위젯 내에서 실행 — 앱을 열지 않음
@@ -108,34 +105,34 @@ struct ToggleAnimationIntent: AppIntent {
     @Parameter(title: "Keyring ID")
     var keyringId: String
 
-    /// 위젯 패밀리 ("small" / "large") — 같은 키링이라도 크기별로 애니메이션 상태 분리
-    @Parameter(title: "Widget Family")
-    var family: String
-
     static let animationDuration: TimeInterval = 30
 
-    /// 애니메이션 상태 저장 키 생성 (keyringId + family 조합)
-    static func animationKey(keyringId: String, family: String) -> String {
-        "animStart_\(keyringId)_\(family)"
+    /// 애니메이션 상태 저장 키 (같은 키링이면 크기 무관하게 동기화)
+    static func animationKey(keyringId: String) -> String {
+        "animStart_\(keyringId)"
     }
 
     init() {}
 
-    init(keyringId: String, family: String) {
+    init(keyringId: String) {
         self.keyringId = keyringId
-        self.family = family
     }
 
     func perform() async throws -> some IntentResult {
-        let defaults = UserDefaults(suiteName: "group.keychy.app")!
-        let key = Self.animationKey(keyringId: keyringId, family: family)
+        guard let defaults = UserDefaults(suiteName: "group.keychy.app") else {
+            return .result()
+        }
+        let key = Self.animationKey(keyringId: keyringId)
 
-        // 항상 현재 시각으로 갱신 → 처음부터 (재)재생
-        // 30초 후 자동 정지 (Timeline policy: .after)
-        defaults.set(Date(), forKey: key)
+        if let startTime = defaults.object(forKey: key) as? Date,
+           Date().timeIntervalSince(startTime) < Self.animationDuration {
+            // 재생 중 → 정지
+            defaults.removeObject(forKey: key)
+        } else {
+            // 정지 중 → 시작
+            defaults.set(Date(), forKey: key)
+        }
 
-        // 위젯 타임라인 리로드
-        WidgetCenter.shared.reloadTimelines(ofKind: "WidgetKeychy")
         return .result()
     }
 }
