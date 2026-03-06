@@ -260,6 +260,7 @@ extension CollectionViewModel {
                         
                         // 위젯 캐시 정리
                         KeyringImageCache.shared.removeKeyring(id: keyringId)
+                        AnimationFrameStorage.deleteFrames(keyringID: keyringId)
                         
                         // 사용자에게 즉시 성공 알림
                         completion(true)

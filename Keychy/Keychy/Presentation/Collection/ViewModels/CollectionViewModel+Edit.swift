@@ -174,6 +174,7 @@ extension CollectionViewModel {
 
                             // 7. App Group 위젯용 캐시에서도 제거
                             KeyringImageCache.shared.removeKeyring(id: documentId)
+                            AnimationFrameStorage.deleteFrames(keyringID: documentId)
 
                             // 8. 변경된 Bundle들의 캡처 캐시 삭제
                             for bundleId in affectedBundleIds {

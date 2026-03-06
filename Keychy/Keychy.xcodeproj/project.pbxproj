@@ -250,6 +250,43 @@
 		4C4734052F22615D005D2376 /* WorkshopSortSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733FF2F22615D005D2376 /* WorkshopSortSheet.swift */; };
 		4C4734072F226B81005D2376 /* WorkshopMakeMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4734062F226B81005D2376 /* WorkshopMakeMenu.swift */; };
 		4C5D0B1C2F56A8D200242703 /* WidgetPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5D0B1B2F56A8D200242703 /* WidgetPopup.swift */; };
+		4C5D0B8F2F595E3800242703 /* BlinkMask.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0B8E2F595E3800242703 /* BlinkMask.otf */; };
+		4C5D0BAF2F595E4400242703 /* keyring_29.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0BAD2F595E4400242703 /* keyring_29.png */; };
+		4C5D0BB02F595E4400242703 /* keyring_27.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0BAB2F595E4400242703 /* keyring_27.png */; };
+		4C5D0BB12F595E4400242703 /* keyring_05.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0B952F595E4400242703 /* keyring_05.png */; };
+		4C5D0BB22F595E4400242703 /* keyring_11.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0B9B2F595E4400242703 /* keyring_11.png */; };
+		4C5D0BB32F595E4400242703 /* keyring_12.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0B9C2F595E4400242703 /* keyring_12.png */; };
+		4C5D0BB42F595E4400242703 /* keyring_22.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0BA62F595E4400242703 /* keyring_22.png */; };
+		4C5D0BB52F595E4400242703 /* keyring_04.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0B942F595E4400242703 /* keyring_04.png */; };
+		4C5D0BB62F595E4400242703 /* keyring_18.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0BA22F595E4400242703 /* keyring_18.png */; };
+		4C5D0BB72F595E4400242703 /* keyring_23.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0BA72F595E4400242703 /* keyring_23.png */; };
+		4C5D0BB82F595E4400242703 /* keyring_08.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0B982F595E4400242703 /* keyring_08.png */; };
+		4C5D0BB92F595E4400242703 /* keyring_10.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0B9A2F595E4400242703 /* keyring_10.png */; };
+		4C5D0BBA2F595E4400242703 /* keyring_21.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0BA52F595E4400242703 /* keyring_21.png */; };
+		4C5D0BBB2F595E4400242703 /* keyring_28.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0BAC2F595E4400242703 /* keyring_28.png */; };
+		4C5D0BBC2F595E4400242703 /* keyring_02.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0B922F595E4400242703 /* keyring_02.png */; };
+		4C5D0BBD2F595E4400242703 /* keyring_06.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0B962F595E4400242703 /* keyring_06.png */; };
+		4C5D0BBE2F595E4400242703 /* keyring_14.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0B9E2F595E4400242703 /* keyring_14.png */; };
+		4C5D0BBF2F595E4400242703 /* keyring_15.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0B9F2F595E4400242703 /* keyring_15.png */; };
+		4C5D0BC02F595E4400242703 /* keyring_19.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0BA32F595E4400242703 /* keyring_19.png */; };
+		4C5D0BC12F595E4400242703 /* keyring_17.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0BA12F595E4400242703 /* keyring_17.png */; };
+		4C5D0BC22F595E4400242703 /* keyring_00.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0B902F595E4400242703 /* keyring_00.png */; };
+		4C5D0BC32F595E4400242703 /* keyring_20.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0BA42F595E4400242703 /* keyring_20.png */; };
+		4C5D0BC42F595E4400242703 /* keyring_07.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0B972F595E4400242703 /* keyring_07.png */; };
+		4C5D0BC52F595E4400242703 /* keyring_01.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0B912F595E4400242703 /* keyring_01.png */; };
+		4C5D0BC62F595E4400242703 /* keyring_03.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0B932F595E4400242703 /* keyring_03.png */; };
+		4C5D0BC72F595E4400242703 /* keyring_16.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0BA02F595E4400242703 /* keyring_16.png */; };
+		4C5D0BC82F595E4400242703 /* keyring_25.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0BA92F595E4400242703 /* keyring_25.png */; };
+		4C5D0BC92F595E4400242703 /* keyring_24.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0BA82F595E4400242703 /* keyring_24.png */; };
+		4C5D0BCA2F595E4400242703 /* keyring_26.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0BAA2F595E4400242703 /* keyring_26.png */; };
+		4C5D0BCB2F595E4400242703 /* keyring_09.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0B992F595E4400242703 /* keyring_09.png */; };
+		4C5D0BCC2F595E4400242703 /* keyring_13.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0B9D2F595E4400242703 /* keyring_13.png */; };
+		4C5D0BCF2F595F5200242703 /* AnimationFrameStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5D0BCD2F595F5200242703 /* AnimationFrameStorage.swift */; };
+		4C5D0BD02F595F5200242703 /* AnimationFrameStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5D0BCD2F595F5200242703 /* AnimationFrameStorage.swift */; };
+		4C5D0BD32F59609400242703 /* KeyringFrameCompositor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5D0BD12F59609400242703 /* KeyringFrameCompositor.swift */; };
+		4C5D0BD52F59623000242703 /* AnimatedKeyringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5D0BD42F59623000242703 /* AnimatedKeyringView.swift */; };
+		4C5D0C2E2F59B72300242703 /* ClockHandRotationEffect.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C5D0C2B2F59B51400242703 /* ClockHandRotationEffect.xcframework */; };
+		4C5D0C2F2F59B72300242703 /* ClockHandRotationEffect.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4C5D0C2B2F59B51400242703 /* ClockHandRotationEffect.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4C65303B2EBA5FA0000F8154 /* CheckmarkAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */; };
 		4C65303E2EBA6042000F8154 /* ImageSaveAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */; };
 		4C6530442EBA8077000F8154 /* PurchaseSuccessAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6530432EBA8077000F8154 /* PurchaseSuccessAlert.swift */; };
@@ -474,6 +511,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		4C5D0C302F59B72300242703 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4C5D0C2F2F59B72300242703 /* ClockHandRotationEffect.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4C6621DF2EAE0EB6001760B5 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -732,6 +780,41 @@
 		4C4733FF2F22615D005D2376 /* WorkshopSortSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopSortSheet.swift; sourceTree = "<group>"; };
 		4C4734062F226B81005D2376 /* WorkshopMakeMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopMakeMenu.swift; sourceTree = "<group>"; };
 		4C5D0B1B2F56A8D200242703 /* WidgetPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetPopup.swift; sourceTree = "<group>"; };
+		4C5D0B8E2F595E3800242703 /* BlinkMask.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = BlinkMask.otf; sourceTree = "<group>"; };
+		4C5D0B902F595E4400242703 /* keyring_00.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_00.png; sourceTree = "<group>"; };
+		4C5D0B912F595E4400242703 /* keyring_01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_01.png; sourceTree = "<group>"; };
+		4C5D0B922F595E4400242703 /* keyring_02.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_02.png; sourceTree = "<group>"; };
+		4C5D0B932F595E4400242703 /* keyring_03.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_03.png; sourceTree = "<group>"; };
+		4C5D0B942F595E4400242703 /* keyring_04.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_04.png; sourceTree = "<group>"; };
+		4C5D0B952F595E4400242703 /* keyring_05.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_05.png; sourceTree = "<group>"; };
+		4C5D0B962F595E4400242703 /* keyring_06.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_06.png; sourceTree = "<group>"; };
+		4C5D0B972F595E4400242703 /* keyring_07.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_07.png; sourceTree = "<group>"; };
+		4C5D0B982F595E4400242703 /* keyring_08.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_08.png; sourceTree = "<group>"; };
+		4C5D0B992F595E4400242703 /* keyring_09.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_09.png; sourceTree = "<group>"; };
+		4C5D0B9A2F595E4400242703 /* keyring_10.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_10.png; sourceTree = "<group>"; };
+		4C5D0B9B2F595E4400242703 /* keyring_11.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_11.png; sourceTree = "<group>"; };
+		4C5D0B9C2F595E4400242703 /* keyring_12.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_12.png; sourceTree = "<group>"; };
+		4C5D0B9D2F595E4400242703 /* keyring_13.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_13.png; sourceTree = "<group>"; };
+		4C5D0B9E2F595E4400242703 /* keyring_14.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_14.png; sourceTree = "<group>"; };
+		4C5D0B9F2F595E4400242703 /* keyring_15.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_15.png; sourceTree = "<group>"; };
+		4C5D0BA02F595E4400242703 /* keyring_16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_16.png; sourceTree = "<group>"; };
+		4C5D0BA12F595E4400242703 /* keyring_17.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_17.png; sourceTree = "<group>"; };
+		4C5D0BA22F595E4400242703 /* keyring_18.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_18.png; sourceTree = "<group>"; };
+		4C5D0BA32F595E4400242703 /* keyring_19.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_19.png; sourceTree = "<group>"; };
+		4C5D0BA42F595E4400242703 /* keyring_20.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_20.png; sourceTree = "<group>"; };
+		4C5D0BA52F595E4400242703 /* keyring_21.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_21.png; sourceTree = "<group>"; };
+		4C5D0BA62F595E4400242703 /* keyring_22.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_22.png; sourceTree = "<group>"; };
+		4C5D0BA72F595E4400242703 /* keyring_23.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_23.png; sourceTree = "<group>"; };
+		4C5D0BA82F595E4400242703 /* keyring_24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_24.png; sourceTree = "<group>"; };
+		4C5D0BA92F595E4400242703 /* keyring_25.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_25.png; sourceTree = "<group>"; };
+		4C5D0BAA2F595E4400242703 /* keyring_26.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_26.png; sourceTree = "<group>"; };
+		4C5D0BAB2F595E4400242703 /* keyring_27.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_27.png; sourceTree = "<group>"; };
+		4C5D0BAC2F595E4400242703 /* keyring_28.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_28.png; sourceTree = "<group>"; };
+		4C5D0BAD2F595E4400242703 /* keyring_29.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyring_29.png; sourceTree = "<group>"; };
+		4C5D0BCD2F595F5200242703 /* AnimationFrameStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationFrameStorage.swift; sourceTree = "<group>"; };
+		4C5D0BD12F59609400242703 /* KeyringFrameCompositor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringFrameCompositor.swift; sourceTree = "<group>"; };
+		4C5D0BD42F59623000242703 /* AnimatedKeyringView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedKeyringView.swift; sourceTree = "<group>"; };
+		4C5D0C2B2F59B51400242703 /* ClockHandRotationEffect.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = ClockHandRotationEffect.xcframework; sourceTree = "<group>"; };
 		4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckmarkAlert.swift; sourceTree = "<group>"; };
 		4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSaveAlert.swift; sourceTree = "<group>"; };
 		4C6530432EBA8077000F8154 /* PurchaseSuccessAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseSuccessAlert.swift; sourceTree = "<group>"; };
@@ -768,7 +851,7 @@
 		4C7A9EC62F2B0567008B520C /* KeyringPackageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringPackageManager.swift; sourceTree = "<group>"; };
 		4C7A9EC82F2B0586008B520C /* KeyringPackageCompleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringPackageCompleteView.swift; sourceTree = "<group>"; };
 		4C7A9ECA2F2DA419008B520C /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
-		4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; path = "gulimche-Regular.ttf"; sourceTree = "<group>"; };
+		4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "gulimche-Regular.ttf"; sourceTree = "<group>"; };
 		4C8426632ED375840050B6FE /* ColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPalette.swift; sourceTree = "<group>"; };
 		4C86A6112F25C0B10023AA2D /* WorkshopBundleGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopBundleGridView.swift; sourceTree = "<group>"; };
 		4C86A6132F25C0BA0023AA2D /* WorkshopKeyringGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopKeyringGridView.swift; sourceTree = "<group>"; };
@@ -971,6 +1054,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C6B56F362EC061BB0049F969 /* SwiftUI.framework in Frameworks */,
+				4C5D0C2E2F59B72300242703 /* ClockHandRotationEffect.xcframework in Frameworks */,
 				C6B56F342EC061BB0049F969 /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1705,6 +1789,103 @@
 			path = Bundle;
 			sourceTree = "<group>";
 		};
+		4C5D0BAE2F595E4400242703 /* KeyringFrames */ = {
+			isa = PBXGroup;
+			children = (
+				4C5D0B902F595E4400242703 /* keyring_00.png */,
+				4C5D0B912F595E4400242703 /* keyring_01.png */,
+				4C5D0B922F595E4400242703 /* keyring_02.png */,
+				4C5D0B932F595E4400242703 /* keyring_03.png */,
+				4C5D0B942F595E4400242703 /* keyring_04.png */,
+				4C5D0B952F595E4400242703 /* keyring_05.png */,
+				4C5D0B962F595E4400242703 /* keyring_06.png */,
+				4C5D0B972F595E4400242703 /* keyring_07.png */,
+				4C5D0B982F595E4400242703 /* keyring_08.png */,
+				4C5D0B992F595E4400242703 /* keyring_09.png */,
+				4C5D0B9A2F595E4400242703 /* keyring_10.png */,
+				4C5D0B9B2F595E4400242703 /* keyring_11.png */,
+				4C5D0B9C2F595E4400242703 /* keyring_12.png */,
+				4C5D0B9D2F595E4400242703 /* keyring_13.png */,
+				4C5D0B9E2F595E4400242703 /* keyring_14.png */,
+				4C5D0B9F2F595E4400242703 /* keyring_15.png */,
+				4C5D0BA02F595E4400242703 /* keyring_16.png */,
+				4C5D0BA12F595E4400242703 /* keyring_17.png */,
+				4C5D0BA22F595E4400242703 /* keyring_18.png */,
+				4C5D0BA32F595E4400242703 /* keyring_19.png */,
+				4C5D0BA42F595E4400242703 /* keyring_20.png */,
+				4C5D0BA52F595E4400242703 /* keyring_21.png */,
+				4C5D0BA62F595E4400242703 /* keyring_22.png */,
+				4C5D0BA72F595E4400242703 /* keyring_23.png */,
+				4C5D0BA82F595E4400242703 /* keyring_24.png */,
+				4C5D0BA92F595E4400242703 /* keyring_25.png */,
+				4C5D0BAA2F595E4400242703 /* keyring_26.png */,
+				4C5D0BAB2F595E4400242703 /* keyring_27.png */,
+				4C5D0BAC2F595E4400242703 /* keyring_28.png */,
+				4C5D0BAD2F595E4400242703 /* keyring_29.png */,
+			);
+			path = KeyringFrames;
+			sourceTree = "<group>";
+		};
+		4C5D0BCE2F595F5200242703 /* Widget */ = {
+			isa = PBXGroup;
+			children = (
+				4C5D0BCD2F595F5200242703 /* AnimationFrameStorage.swift */,
+			);
+			path = Widget;
+			sourceTree = "<group>";
+		};
+		4C5D0BD22F59609400242703 /* Widget */ = {
+			isa = PBXGroup;
+			children = (
+				4C5D0BD12F59609400242703 /* KeyringFrameCompositor.swift */,
+			);
+			path = Widget;
+			sourceTree = "<group>";
+		};
+		4C5D0BD62F5965A200242703 /* Animation */ = {
+			isa = PBXGroup;
+			children = (
+				4C5D0BD42F59623000242703 /* AnimatedKeyringView.swift */,
+				4C5D0B8E2F595E3800242703 /* BlinkMask.otf */,
+			);
+			path = Animation;
+			sourceTree = "<group>";
+		};
+		4C5D0BD82F5965B500242703 /* Intent */ = {
+			isa = PBXGroup;
+			children = (
+				4CC8D00E2EF0395F00317467 /* AppIntent.swift */,
+			);
+			path = Intent;
+			sourceTree = "<group>";
+		};
+		4C5D0BD92F5965BE00242703 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4CC8D00F2EF0395F00317467 /* Assets.xcassets */,
+				4CC8D0102EF0395F00317467 /* Info.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		4C5D0BDA2F5965BF00242703 /* ObjC */ = {
+			isa = PBXGroup;
+			children = (
+				4CC8D0142EF0395F00317467 /* WidgetKeychy-Bridging-Header.h */,
+				4CC8D0112EF0395F00317467 /* WidgetConfiguration.h */,
+				4CC8D0122EF0395F00317467 /* WidgetConfiguration.mm */,
+			);
+			path = ObjC;
+			sourceTree = "<group>";
+		};
+		4C5D0C2C2F59B51400242703 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4C5D0C2B2F59B51400242703 /* ClockHandRotationEffect.xcframework */,
+			);
+			path = Frameworks;
+			sourceTree = "<group>";
+		};
 		4C65303C2EBA5FF3000F8154 /* Alerts */ = {
 			isa = PBXGroup;
 			children = (
@@ -1835,12 +2016,11 @@
 		4CC8D0162EF0395F00317467 /* WidgetKeychy */ = {
 			isa = PBXGroup;
 			children = (
-				4CC8D00F2EF0395F00317467 /* Assets.xcassets */,
-				4CC8D0102EF0395F00317467 /* Info.plist */,
-				4CC8D0142EF0395F00317467 /* WidgetKeychy-Bridging-Header.h */,
-				4CC8D0112EF0395F00317467 /* WidgetConfiguration.h */,
-				4CC8D0122EF0395F00317467 /* WidgetConfiguration.mm */,
-				4CC8D00E2EF0395F00317467 /* AppIntent.swift */,
+				4C5D0C2C2F59B51400242703 /* Frameworks */,
+				4C5D0BD62F5965A200242703 /* Animation */,
+				4C5D0BD82F5965B500242703 /* Intent */,
+				4C5D0BD92F5965BE00242703 /* Resources */,
+				4C5D0BDA2F5965BF00242703 /* ObjC */,
 				4CC8D0132EF0395F00317467 /* WidgetKeychy.swift */,
 				4CC8D0152EF0395F00317467 /* WidgetKeychyBundle.swift */,
 				C6B56F5C2EC06B310049F969 /* WidgetKeychyExtension.entitlements */,
@@ -1991,6 +2171,7 @@
 		4CEC61E42EAE08C00099ECEE /* CommonModels */ = {
 			isa = PBXGroup;
 			children = (
+				4C5D0BCE2F595F5200242703 /* Widget */,
 				38A596712EAFA8BA0003D712 /* User */,
 				4CEC61E32EAE08C00099ECEE /* Keyring */,
 				4CEC61D92EAE08C00099ECEE /* KeyringBundle */,
@@ -2155,6 +2336,7 @@
 				4CEC62182EAE08DA0099ECEE /* Extensions */,
 				385425C42EB2C49700A06C02 /* Firebase */,
 				385425C52EB2C49D00A06C02 /* Store */,
+				4C5D0BD22F59609400242703 /* Widget */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -2304,10 +2486,11 @@
 		4CEC62912EAE08F70099ECEE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				4CEC62902EAE08F70099ECEE /* Fonts */,
+				4CEC628A2EAE08F70099ECEE /* Lotties */,
+				4C5D0BAE2F595E4400242703 /* KeyringFrames */,
 				4CEC62872EAE08F70099ECEE /* Assets.xcassets */,
 				4CA9C6D52ECB7AEA00CA546B /* BadWords.json */,
-				4CEC628A2EAE08F70099ECEE /* Lotties */,
-				4CEC62902EAE08F70099ECEE /* Fonts */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -2545,6 +2728,7 @@
 				C6B56F2E2EC061BB0049F969 /* Sources */,
 				C6B56F2F2EC061BB0049F969 /* Frameworks */,
 				C6B56F302EC061BB0049F969 /* Resources */,
+				4C5D0C302F59B72300242703 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2626,6 +2810,36 @@
 				4C3688092EC07C4E00C64E75 /* NotoSansKR-ExtraLight.ttf in Resources */,
 				4C36880A2EC07C4E00C64E75 /* NotoSansKR-Light.ttf in Resources */,
 				4C36880B2EC07C4E00C64E75 /* NotoSansKR-Thin.ttf in Resources */,
+				4C5D0BAF2F595E4400242703 /* keyring_29.png in Resources */,
+				4C5D0BB02F595E4400242703 /* keyring_27.png in Resources */,
+				4C5D0BB12F595E4400242703 /* keyring_05.png in Resources */,
+				4C5D0BB22F595E4400242703 /* keyring_11.png in Resources */,
+				4C5D0BB32F595E4400242703 /* keyring_12.png in Resources */,
+				4C5D0BB42F595E4400242703 /* keyring_22.png in Resources */,
+				4C5D0BB52F595E4400242703 /* keyring_04.png in Resources */,
+				4C5D0BB62F595E4400242703 /* keyring_18.png in Resources */,
+				4C5D0BB72F595E4400242703 /* keyring_23.png in Resources */,
+				4C5D0BB82F595E4400242703 /* keyring_08.png in Resources */,
+				4C5D0BB92F595E4400242703 /* keyring_10.png in Resources */,
+				4C5D0BBA2F595E4400242703 /* keyring_21.png in Resources */,
+				4C5D0BBB2F595E4400242703 /* keyring_28.png in Resources */,
+				4C5D0BBC2F595E4400242703 /* keyring_02.png in Resources */,
+				4C5D0BBD2F595E4400242703 /* keyring_06.png in Resources */,
+				4C5D0BBE2F595E4400242703 /* keyring_14.png in Resources */,
+				4C5D0BBF2F595E4400242703 /* keyring_15.png in Resources */,
+				4C5D0BC02F595E4400242703 /* keyring_19.png in Resources */,
+				4C5D0BC12F595E4400242703 /* keyring_17.png in Resources */,
+				4C5D0BC22F595E4400242703 /* keyring_00.png in Resources */,
+				4C5D0BC32F595E4400242703 /* keyring_20.png in Resources */,
+				4C5D0BC42F595E4400242703 /* keyring_07.png in Resources */,
+				4C5D0BC52F595E4400242703 /* keyring_01.png in Resources */,
+				4C5D0BC62F595E4400242703 /* keyring_03.png in Resources */,
+				4C5D0BC72F595E4400242703 /* keyring_16.png in Resources */,
+				4C5D0BC82F595E4400242703 /* keyring_25.png in Resources */,
+				4C5D0BC92F595E4400242703 /* keyring_24.png in Resources */,
+				4C5D0BCA2F595E4400242703 /* keyring_26.png in Resources */,
+				4C5D0BCB2F595E4400242703 /* keyring_09.png in Resources */,
+				4C5D0BCC2F595E4400242703 /* keyring_13.png in Resources */,
 				4C36880C2EC07C4E00C64E75 /* NotoSansKR-Medium.ttf in Resources */,
 				4C36880D2EC07C4E00C64E75 /* NotoSansKR-SemiBold.ttf in Resources */,
 				4C36880E2EC07C4E00C64E75 /* NotoSansKR-ExtraBold.ttf in Resources */,
@@ -2648,6 +2862,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C5D0B8F2F595E3800242703 /* BlinkMask.otf in Resources */,
 				4CC8D0172EF0395F00317467 /* Assets.xcassets in Resources */,
 				C6C35EF72ED17228009642F4 /* RealStoreKit2.storekit in Resources */,
 			);
@@ -2726,6 +2941,7 @@
 				4CC8D0252EF11CD200317467 /* HomeViewModel.swift in Sources */,
 				C68931CE2EB7B94B00C5F083 /* EffectManager.swift in Sources */,
 				C6B56F202EBF72130049F969 /* ItemPurchaseManager.swift in Sources */,
+				4C5D0BD02F595F5200242703 /* AnimationFrameStorage.swift in Sources */,
 				38818DBC2F3C444300B0A49C /* DuZzonKuVM+Firebase.swift in Sources */,
 				38C3C28C2EC1E4B4003C5DE1 /* CollectionKeyringDetailView+Alerts.swift in Sources */,
 				4CAF11AB2EBF6058004CB08C /* CollectionKeyringDetailView+SaveImage.swift in Sources */,
@@ -2749,6 +2965,7 @@
 				AA0000022F17000100000001 /* BundleSwitchPopup.swift in Sources */,
 				AA390CE52ECC60A700D87EEC /* BundleRoute.swift in Sources */,
 				38C3C27E2EC08794003C5DE1 /* PopupManager.swift in Sources */,
+				4C5D0BD32F59609400242703 /* KeyringFrameCompositor.swift in Sources */,
 				C6C4028D2EB2741D006B58DF /* Sound.swift in Sources */,
 				AA39098E2ECA061700D87EEC /* GridItemSpacing.swift in Sources */,
 				C6C35F432ED2B70E009642F4 /* Showcase25BoardViewModel.swift in Sources */,
@@ -3065,6 +3282,8 @@
 				C6B56F702EC08ED40049F969 /* WidgetKeyring.swift in Sources */,
 				C6B56F612EC08CCE0049F969 /* KeyringImageCache.swift in Sources */,
 				4C25259E2F3037D6003CC5AD /* BundleImageCache.swift in Sources */,
+				4C5D0BD52F59623000242703 /* AnimatedKeyringView.swift in Sources */,
+				4C5D0BCF2F595F5200242703 /* AnimationFrameStorage.swift in Sources */,
 				4CC8D0192EF0395F00317467 /* AppIntent.swift in Sources */,
 				4C25259D2F3037CD003CC5AD /* WidgetBundleModel.swift in Sources */,
 				4CC8D01A2EF0395F00317467 /* WidgetConfiguration.mm in Sources */,
@@ -3316,7 +3535,7 @@
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = BUKGH5MWAT;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = WidgetKeychy/Info.plist;
+				INFOPLIST_FILE = WidgetKeychy/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = WidgetKeychy;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3359,7 +3578,7 @@
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = BUKGH5MWAT;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = WidgetKeychy/Info.plist;
+				INFOPLIST_FILE = WidgetKeychy/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = WidgetKeychy;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (

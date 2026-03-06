@@ -87,6 +87,27 @@ struct WidgetRemovedToast: View {
     }
 }
 
+// 위젯 추가 실패 토스트
+struct WidgetAddFailToast: View {
+    @Binding var isPresented: Bool
+
+    var body: some View {
+        Text("위젯 추가에 실패했습니다")
+            .typography(.suit17SB)
+            .foregroundColor(.black100)
+            .frame(width: 300, height: 73)
+            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 34))
+            .transition(.scale.combined(with: .opacity))
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        isPresented = false
+                    }
+                }
+            }
+    }
+}
+
 // 위젯 목록에 추가 완료 토스트
 struct WidgetAddedToast: View {
     @Binding var isPresented: Bool

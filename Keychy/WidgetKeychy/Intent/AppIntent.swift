@@ -7,6 +7,7 @@
 
 import WidgetKit
 import AppIntents
+import SwiftUI
 
 // MARK: - 표시 유형 (키링 / 뭉치)
 
@@ -86,6 +87,54 @@ struct BundleEntityQuery: EntityQuery {
     }
 
     func defaultResult() async -> BundleEntity? { nil }
+}
+
+// MARK: - 애니메이션 토글 Intent
+
+/// 위젯 터치 시 애니메이션을 시작/정지하는 인터랙티브 Intent
+///
+/// 동작:
+/// - 정지 중 → 탭 → 시작 시각 기록 → 30초간 애니메이션
+/// - 재생 중 → 탭 → 시작 시각 삭제 → 즉시 정지
+/// - 30초 경과 → 타임라인 정지 엔트리에 의해 자동 정지
+struct ToggleAnimationIntent: AppIntent {
+    static var title: LocalizedStringResource = "키링 애니메이션 토글"
+    /// 위젯 내에서 실행 — 앱을 열지 않음
+    static var openAppWhenRun: Bool = false
+
+    @Parameter(title: "Keyring ID")
+    var keyringId: String
+
+    static let animationDuration: TimeInterval = 30
+
+    /// 애니메이션 상태 저장 키 (같은 키링이면 크기 무관하게 동기화)
+    static func animationKey(keyringId: String) -> String {
+        "animStart_\(keyringId)"
+    }
+
+    init() {}
+
+    init(keyringId: String) {
+        self.keyringId = keyringId
+    }
+
+    func perform() async throws -> some IntentResult {
+        guard let defaults = UserDefaults(suiteName: "group.keychy.app") else {
+            return .result()
+        }
+        let key = Self.animationKey(keyringId: keyringId)
+
+        if let startTime = defaults.object(forKey: key) as? Date,
+           Date().timeIntervalSince(startTime) < Self.animationDuration {
+            // 재생 중 → 정지
+            defaults.removeObject(forKey: key)
+        } else {
+            // 정지 중 → 시작
+            defaults.set(Date(), forKey: key)
+        }
+
+        return .result()
+    }
 }
 
 // MARK: - Selection Intent
