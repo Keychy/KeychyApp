@@ -32,12 +32,10 @@ nonisolated enum KeyringFrameCompositor {
     /// 체인 길이별 애니메이션 설정값
     /// - transforms: 프레임별 (x, y, rotation°) — 디자이너 좌표(y-down) → CG(y-up) 변환 적용
     /// - bodyWidth/Height: 바디이미지 기본 크기 (px)
-    /// - bodyOffsetY: 바디이미지 y 미세 조정 (양수 = 아래로, 음수 = 위로)
     private struct ChainAnimationConfig {
         let transforms: [(x: CGFloat, y: CGFloat, rotation: CGFloat)]
         let bodyWidth: Int
         let bodyHeight: Int
-        let bodyOffsetY: CGFloat
     }
 
     /// chain5 프레임별 transform 데이터 (30개)
@@ -54,23 +52,49 @@ nonisolated enum KeyringFrameCompositor {
         ( 102.581, -16.501, -25.488), ( 105.793, -15.454, -26.312), ( 107.783, -14.787, -26.824),
     ]
 
-    // TODO: 디자이너 데이터 도착 시 교체 (현재 chain5 값 복사)
-    private static let chain3Transforms = chain5Transforms
-    private static let chain1Transforms = chain5Transforms
+    /// chain3 프레임별 transform 데이터 (30개)
+    /// 디자이너 좌표(y-down) → CG 좌표(y-up) 변환: y 부호 반전 적용
+    private static let chain3Transforms: [(x: CGFloat, y: CGFloat, rotation: CGFloat)] = [
+        ( -56.850,  97.051, 18.000), ( -56.492,  96.965, 17.883), ( -55.450,  96.718, 17.541),
+        ( -53.770,  96.330, 16.992), ( -51.498,  95.826, 16.251), ( -48.679,  95.232, 15.333),
+        ( -45.359,  94.578, 14.256), ( -41.583,  93.892, 13.035), ( -37.398,  93.205, 11.685),
+        ( -32.852,  92.544, 10.224), ( -27.992,  91.934,  8.667), ( -22.868,  91.401,  7.029),
+        ( -17.533,  90.962,  5.328), ( -12.037,  90.635,  3.579), (  -6.434,  90.431,  1.797),
+        (  -0.777,  90.358, -0.000), (   4.881,  90.417, -1.797), (  10.485,  90.607, -3.579),
+        (  15.982,  90.920, -5.328), (  21.318,  91.345, -7.029), (  26.443,  91.866, -8.667),
+        (  31.305,  92.463, -10.224), (  35.854,  93.113, -11.685), (  40.042,  93.790, -13.035),
+        (  43.820,  94.466, -14.256), (  47.142,  95.112, -15.333), (  49.963,  95.699, -16.251),
+        (  52.236,  96.198, -16.992), (  53.918,  96.582, -17.541), (  54.961,  96.826, -17.883),
+    ]
+
+    /// chain1 프레임별 transform 데이터 (30개)
+    /// 디자이너 좌표(y-down) → CG 좌표(y-up) 변환: y 부호 반전 적용
+    private static let chain1Transforms: [(x: CGFloat, y: CGFloat, rotation: CGFloat)] = [
+        ( -17.810, 175.906,  9.000), ( -17.701, 175.888,  8.941), ( -17.382, 175.838,  8.771),
+        ( -16.869, 175.758,  8.496), ( -16.175, 175.655,  8.125), ( -15.316, 175.534,  7.667),
+        ( -14.306, 175.400,  7.128), ( -13.160, 175.260,  6.517), ( -11.892, 175.120,  5.843),
+        ( -10.516, 174.985,  5.112), (  -9.049, 174.860,  4.333), (  -7.504, 174.750,  3.515),
+        (  -5.898, 174.660,  2.664), (  -4.245, 174.591,  1.789), (  -2.561, 174.548,  0.899),
+        (  -0.862, 174.530, -0.000), (   0.838, 174.539, -0.899), (   2.522, 174.575, -1.789),
+        (   4.175, 174.635, -2.664), (   5.782, 174.718, -3.515), (   7.327, 174.820, -4.333),
+        (   8.795, 174.937, -5.112), (  10.171, 175.066, -5.843), (  11.439, 175.200, -6.517),
+        (  12.587, 175.335, -7.128), (  13.597, 175.463, -7.667), (  14.457, 175.580, -8.125),
+        (  15.151, 175.680, -8.496), (  15.664, 175.757, -8.771), (  15.983, 175.806, -8.941),
+    ]
 
     /// 체인 길이 → 애니메이션 설정 매핑
     private static let chainConfigs: [Int: ChainAnimationConfig] = [
         5: ChainAnimationConfig(
             transforms: chain5Transforms,
-            bodyWidth: 588, bodyHeight: 632, bodyOffsetY: -30
+            bodyWidth: 588, bodyHeight: 632
         ),
         3: ChainAnimationConfig(
             transforms: chain3Transforms,
-            bodyWidth: 588, bodyHeight: 632, bodyOffsetY: -30  // TODO: 디자이너 데이터
+            bodyWidth: 662, bodyHeight: 711
         ),
         1: ChainAnimationConfig(
             transforms: chain1Transforms,
-            bodyWidth: 588, bodyHeight: 632, bodyOffsetY: -30  // TODO: 디자이너 데이터
+            bodyWidth: 777, bodyHeight: 836
         ),
     ]
 
@@ -89,22 +113,9 @@ nonisolated enum KeyringFrameCompositor {
     ) -> [Data]? {
         let config = chainConfigs[chainLength] ?? chainConfigs[5]!
 
-        // 템플릿 비율에 맞게 바디 크기 조정
-        let templateSize = KeyringScale.maxSize(for: template)
-        let templateRatio = templateSize.width / templateSize.height
-        let baseRatio = CGFloat(config.bodyWidth) / CGFloat(config.bodyHeight)
-
-        let bodyWidth: Int
-        let bodyHeight: Int
-        if templateRatio > baseRatio {
-            // 템플릿이 더 넓음 → 가로 맞춤, 세로 축소
-            bodyWidth = config.bodyWidth
-            bodyHeight = Int(CGFloat(config.bodyWidth) / templateRatio)
-        } else {
-            // 템플릿이 더 좁음 → 세로 맞춤, 가로 축소
-            bodyHeight = config.bodyHeight
-            bodyWidth = Int(CGFloat(config.bodyHeight) * templateRatio)
-        }
+        let bodyWidth = config.bodyWidth
+        let bodyHeight = config.bodyHeight
+        let bodyOffsetY = KeyringScale.widgetBodyOffsetY(for: template)
 
         guard let source = bodyImage.cgImage else { return nil }
         guard let resized = centerCropAndResize(source, width: bodyWidth, height: bodyHeight) else {
@@ -127,7 +138,7 @@ nonisolated enum KeyringFrameCompositor {
                 userImage: resized,
                 bodyWidth: bodyWidth,
                 bodyHeight: bodyHeight,
-                bodyOffsetY: config.bodyOffsetY,
+                bodyOffsetY: bodyOffsetY,
                 x: transform.x,
                 y: transform.y,
                 rotation: transform.rotation
@@ -149,15 +160,12 @@ nonisolated enum KeyringFrameCompositor {
 
     // MARK: - 번들에서 키링 프레임 로드
 
-    /// chainLength에 해당하는 하위 폴더에서 프레임 PNG를 로드
-    /// Folder Reference 구조: KeyringFrames/chain{N}/frame00.png
+    /// 체인 길이별 프레임 PNG를 로드
+    /// 파일명 규칙: chain{N}_frame{00~29}.png
     private static func loadKeyringFrame(index: Int, chainLength: Int) -> CGImage? {
-        let name = String(format: "frame%02d", index)
-        let subdirectory = "KeyringFrames/chain\(chainLength)"
+        let name = String(format: "chain%d_frame%02d", chainLength, index)
 
-        guard let url = Bundle.main.url(
-                  forResource: name, withExtension: "png", subdirectory: subdirectory
-              ),
+        guard let url = Bundle.main.url(forResource: name, withExtension: "png"),
               let data = try? Data(contentsOf: url),
               let image = UIImage(data: data)?.cgImage else {
             return nil
