@@ -111,7 +111,9 @@ nonisolated enum KeyringFrameCompositor {
         chainLength: Int,
         template: String
     ) -> [Data]? {
-        let config = chainConfigs[chainLength] ?? chainConfigs[5]!
+        guard let config = chainConfigs[chainLength] ?? chainConfigs[5] else {
+            return nil
+        }
 
         let bodyWidth = config.bodyWidth
         let bodyHeight = config.bodyHeight
