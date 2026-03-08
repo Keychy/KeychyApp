@@ -12,8 +12,12 @@ import UniformTypeIdentifiers
 
 /// 바디이미지를 키링 애니메이션 프레임에 합성하여 왕복 58장 PNG를 생성
 ///
-/// 키링 프레임(frame00~29.png)은 투명 영역이 있는 PNG이며,
+/// 키링 프레임(chain{N}_frame00~29.png)은 투명 영역이 있는 PNG이며,
 /// 해당 영역에 사용자의 바디이미지가 표시된다.
+///
+/// 바디 크기는 앱 내 `KeyringScale.maxSize × sceneToFrameScale`로 결정한다.
+/// 프레임의 링·체인이 1350px 해상도에 맞춰 디자인되었으므로,
+/// 동일한 스케일을 바디에 적용하면 앱과 같은 비율이 된다.
 ///
 /// 레이어 구조 (아래→위):
 /// ```
@@ -27,15 +31,20 @@ nonisolated enum KeyringFrameCompositor {
     static let outputSize = 700
     static let baseFrameCount = AnimationFrameStorage.baseFrameCount
 
+    /// 앱 포인트 → 1350px 프레임 픽셀 변환 스케일
+    /// 프레임의 링·체인이 이 스케일 기준으로 디자인되어 있음
+    private static let sceneToFrameScale: CGFloat = 3.0
+    /// 캔버스 가장자리 최소 여백 (바디가 프레임 밖으로 넘치지 않도록 제한)
+    private static let minPadding: CGFloat = 50
+
     // MARK: - 체인별 애니메이션 설정
 
     /// 체인 길이별 애니메이션 설정값
     /// - transforms: 프레임별 (x, y, rotation°) — 디자이너 좌표(y-down) → CG(y-up) 변환 적용
-    /// - bodyWidth/Height: 바디이미지 기본 크기 (px)
+    /// - frameScale: 프레임 드로잉 스케일 (체인이 짧을수록 전체가 작아짐, 앱과 동일)
     private struct ChainAnimationConfig {
         let transforms: [(x: CGFloat, y: CGFloat, rotation: CGFloat)]
-        let bodyWidth: Int
-        let bodyHeight: Int
+        let frameScale: CGFloat
     }
 
     /// chain5 프레임별 transform 데이터 (30개)
@@ -84,27 +93,20 @@ nonisolated enum KeyringFrameCompositor {
 
     /// 체인 길이 → 애니메이션 설정 매핑
     private static let chainConfigs: [Int: ChainAnimationConfig] = [
-        5: ChainAnimationConfig(
-            transforms: chain5Transforms,
-            bodyWidth: 588, bodyHeight: 632
-        ),
-        3: ChainAnimationConfig(
-            transforms: chain3Transforms,
-            bodyWidth: 662, bodyHeight: 711
-        ),
-        1: ChainAnimationConfig(
-            transforms: chain1Transforms,
-            bodyWidth: 777, bodyHeight: 836
-        ),
+        5: ChainAnimationConfig(transforms: chain5Transforms, frameScale: 0.9),
+        3: ChainAnimationConfig(transforms: chain3Transforms, frameScale: 0.7),
+        1: ChainAnimationConfig(transforms: chain1Transforms, frameScale: 0.7),
     ]
 
     // MARK: - 프레임 생성
 
     /// 바디이미지로 왕복 애니메이션 프레임 PNG Data 배열 생성
+    ///
+    /// 바디 크기는 `KeyringScale.maxSize(for:) × sceneToFrameScale`로 결정한다.
     /// - Parameters:
     ///   - bodyImage: 사용자 바디이미지
     ///   - chainLength: 체인 길이 (1, 3, 5)
-    ///   - template: 템플릿 ID (KeyringScale.maxSize에 사용)
+    ///   - template: 템플릿 ID — 바디 크기 및 Y 보정에 사용
     /// - Returns: 편도 30장 + 역순 28장 = 총 58장 PNG Data 배열
     static func generateFrames(
         from bodyImage: UIImage,
@@ -115,9 +117,16 @@ nonisolated enum KeyringFrameCompositor {
             return nil
         }
 
-        let bodyWidth = config.bodyWidth
-        let bodyHeight = config.bodyHeight
+        // 템플릿 maxSize × sceneToFrameScale → 프레임 픽셀 크기
+        let templateSize = KeyringScale.maxSize(for: template)
+        let bodyWidth = Int(templateSize.width * sceneToFrameScale)
+        let bodyHeight = Int(templateSize.height * sceneToFrameScale)
         let bodyOffsetY = KeyringScale.widgetBodyOffsetY(for: template)
+
+        // 오버플로 방지: 바디가 피벗 아래로 매달리므로 캔버스 절반 기준으로 제한
+        let maxAllowed = CGFloat(frameSize) * 0.55
+        let bodyMaxDim = max(CGFloat(bodyWidth), CGFloat(bodyHeight))
+        let bodyClampScale = min(maxAllowed / bodyMaxDim, 1.0)
 
         guard let source = bodyImage.cgImage else { return nil }
         guard let resized = centerCropAndResize(source, width: bodyWidth, height: bodyHeight) else {
@@ -143,7 +152,9 @@ nonisolated enum KeyringFrameCompositor {
                 bodyOffsetY: bodyOffsetY,
                 x: transform.x,
                 y: transform.y,
-                rotation: transform.rotation
+                rotation: transform.rotation,
+                frameScale: config.frameScale,
+                bodyClampScale: bodyClampScale
             ) else { return nil }
 
             // 1350 → 700 축소 (위젯 메모리 절약)
@@ -179,6 +190,8 @@ nonisolated enum KeyringFrameCompositor {
     // MARK: - 합성
 
     /// 바디이미지를 키링 프레임 뒤에 합성
+    /// - frameScale: 키링 프레임(링·체인) PNG 스케일 — 체인이 짧을수록 작게
+    /// - bodyClampScale: 바디 오버플로 방지용 축소 (보통 1.0)
     private static func composite(
         keyring: CGImage,
         userImage: CGImage,
@@ -187,7 +200,9 @@ nonisolated enum KeyringFrameCompositor {
         bodyOffsetY: CGFloat,
         x: CGFloat,
         y: CGFloat,
-        rotation: CGFloat
+        rotation: CGFloat,
+        frameScale: CGFloat,
+        bodyClampScale: CGFloat
     ) -> CGImage? {
         let size = CGFloat(frameSize)
 
@@ -198,21 +213,33 @@ nonisolated enum KeyringFrameCompositor {
             bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
         ) else { return nil }
 
-        let cgCenterX = size / 2 + x
-        let cgCenterY = size / 2 + y
+        let scaledFrameSize = size * frameScale
 
-        // 1) 바디이미지 (하단 레이어)
+        // 프레임을 캔버스 위쪽 정렬 + 상단 여백 (CG 좌표: y가 클수록 위)
+        let frameOriginX = (size - scaledFrameSize) / 2
+        let frameOriginY = size - scaledFrameSize - minPadding
+
+        // 피벗: 프레임 중심 기준으로 계산
+        let frameCenterX = size / 2
+        let frameCenterY = size - scaledFrameSize / 2 - minPadding
+        let cgCenterX = frameCenterX + x * frameScale
+        let cgCenterY = frameCenterY + y * frameScale
+
+        // 바디 크기: 오버플로 방지용 clamp만 적용 (frameScale 영향 없음)
+        let clampedBodyW = CGFloat(bodyWidth) * bodyClampScale
+        let clampedBodyH = CGFloat(bodyHeight) * bodyClampScale
+
+        // 1) 바디이미지 (하단 레이어) — 템플릿 크기 유지
         ctx.saveGState()
         ctx.translateBy(x: cgCenterX, y: cgCenterY)
         ctx.rotate(by: -rotation * .pi / 180)
-        // bodyOffsetY: 회전 후 로컬 좌표에서 적용 → 회전 중심에 영향 없음
-        ctx.translateBy(x: -CGFloat(bodyWidth) / 2, y: -CGFloat(bodyHeight) - bodyOffsetY)
+        ctx.translateBy(x: -clampedBodyW / 2, y: -clampedBodyH - bodyOffsetY)
         ctx.interpolationQuality = .high
-        ctx.draw(userImage, in: CGRect(x: 0, y: 0, width: bodyWidth, height: bodyHeight))
+        ctx.draw(userImage, in: CGRect(x: 0, y: 0, width: clampedBodyW, height: clampedBodyH))
         ctx.restoreGState()
 
-        // 2) 키링 프레임 (상단 레이어 — 투명 영역에 바디이미지가 보임)
-        ctx.draw(keyring, in: CGRect(x: 0, y: 0, width: frameSize, height: frameSize))
+        // 2) 키링 프레임 (상단 레이어) — frameScale 적용, 캔버스 위쪽 정렬
+        ctx.draw(keyring, in: CGRect(x: frameOriginX, y: frameOriginY, width: scaledFrameSize, height: scaledFrameSize))
 
         return ctx.makeImage()
     }
