@@ -26,16 +26,22 @@ nonisolated enum KeyringFrameCompositor {
     /// 위젯 출력용 크기 (1350에서 합성 후 축소하여 메모리 절약)
     static let outputSize = 700
     static let baseFrameCount = AnimationFrameStorage.baseFrameCount
-    static let imageWidth = 588
-    static let imageHeight = 632
 
-    /// 바디이미지 y 미세 조정 (양수 = 아래로, 음수 = 위로)
-    /// 구멍 위치에 맞게 조절하세요
-    static let bodyOffsetY: CGFloat = -30
+    // MARK: - 체인별 애니메이션 설정
 
-    /// 프레임별 transform 데이터: (x, y, rotation°)
-    /// 디자이너 좌표(y-down) → CG 좌표(y-up) 변환: y 부호 반전
-    private static let frameTransforms: [(x: CGFloat, y: CGFloat, rotation: CGFloat)] = [
+    /// 체인 길이별 애니메이션 설정값
+    /// - transforms: 프레임별 (x, y, rotation°) — 디자이너 좌표(y-down) → CG(y-up) 변환 적용
+    /// - bodyWidth/Height: 바디이미지 기본 크기 (px)
+    /// - bodyOffsetY: 바디이미지 y 미세 조정 (양수 = 아래로, 음수 = 위로)
+    private struct ChainAnimationConfig {
+        let transforms: [(x: CGFloat, y: CGFloat, rotation: CGFloat)]
+        let bodyWidth: Int
+        let bodyHeight: Int
+        let bodyOffsetY: CGFloat
+    }
+
+    /// chain5 프레임별 transform 데이터 (30개)
+    private static let chain5Transforms: [(x: CGFloat, y: CGFloat, rotation: CGFloat)] = [
         (-109.803, -14.373, 27.000), (-109.120, -14.606, 26.824), (-107.132, -15.276, 26.312),
         (-103.922, -16.328, 25.488), ( -99.572, -17.698, 24.376), ( -94.162, -19.312, 23.000),
         ( -87.770, -21.092, 21.384), ( -80.477, -22.958, 19.552), ( -72.369, -24.831, 17.528),
@@ -48,14 +54,60 @@ nonisolated enum KeyringFrameCompositor {
         ( 102.581, -16.501, -25.488), ( 105.793, -15.454, -26.312), ( 107.783, -14.787, -26.824),
     ]
 
+    // TODO: 디자이너 데이터 도착 시 교체 (현재 chain5 값 복사)
+    private static let chain3Transforms = chain5Transforms
+    private static let chain1Transforms = chain5Transforms
+
+    /// 체인 길이 → 애니메이션 설정 매핑
+    private static let chainConfigs: [Int: ChainAnimationConfig] = [
+        5: ChainAnimationConfig(
+            transforms: chain5Transforms,
+            bodyWidth: 588, bodyHeight: 632, bodyOffsetY: -30
+        ),
+        3: ChainAnimationConfig(
+            transforms: chain3Transforms,
+            bodyWidth: 588, bodyHeight: 632, bodyOffsetY: -30  // TODO: 디자이너 데이터
+        ),
+        1: ChainAnimationConfig(
+            transforms: chain1Transforms,
+            bodyWidth: 588, bodyHeight: 632, bodyOffsetY: -30  // TODO: 디자이너 데이터
+        ),
+    ]
+
     // MARK: - 프레임 생성
 
     /// 바디이미지로 왕복 애니메이션 프레임 PNG Data 배열 생성
-    /// 편도 30장 합성 후, 역순 28장을 복사하여 총 58장 반환
-    static func generateFrames(from bodyImage: UIImage) -> [Data]? {
-        guard let source = bodyImage.cgImage else { return nil }
+    /// - Parameters:
+    ///   - bodyImage: 사용자 바디이미지
+    ///   - chainLength: 체인 길이 (1, 3, 5)
+    ///   - template: 템플릿 ID (KeyringScale.maxSize에 사용)
+    /// - Returns: 편도 30장 + 역순 28장 = 총 58장 PNG Data 배열
+    static func generateFrames(
+        from bodyImage: UIImage,
+        chainLength: Int,
+        template: String
+    ) -> [Data]? {
+        let config = chainConfigs[chainLength] ?? chainConfigs[5]!
 
-        guard let resized = centerCropAndResize(source, width: imageWidth, height: imageHeight) else {
+        // 템플릿 비율에 맞게 바디 크기 조정
+        let templateSize = KeyringScale.maxSize(for: template)
+        let templateRatio = templateSize.width / templateSize.height
+        let baseRatio = CGFloat(config.bodyWidth) / CGFloat(config.bodyHeight)
+
+        let bodyWidth: Int
+        let bodyHeight: Int
+        if templateRatio > baseRatio {
+            // 템플릿이 더 넓음 → 가로 맞춤, 세로 축소
+            bodyWidth = config.bodyWidth
+            bodyHeight = Int(CGFloat(config.bodyWidth) / templateRatio)
+        } else {
+            // 템플릿이 더 좁음 → 세로 맞춤, 가로 축소
+            bodyHeight = config.bodyHeight
+            bodyWidth = Int(CGFloat(config.bodyHeight) * templateRatio)
+        }
+
+        guard let source = bodyImage.cgImage else { return nil }
+        guard let resized = centerCropAndResize(source, width: bodyWidth, height: bodyHeight) else {
             return nil
         }
 
@@ -64,13 +116,18 @@ nonisolated enum KeyringFrameCompositor {
         frames.reserveCapacity(AnimationFrameStorage.totalFrameCount)
 
         for i in 0..<baseFrameCount {
-            guard let keyringFrame = loadKeyringFrame(index: i) else { return nil }
+            guard let keyringFrame = loadKeyringFrame(index: i, chainLength: chainLength) else {
+                return nil
+            }
 
-            let transform = frameTransforms[i]
+            let transform = config.transforms[i]
 
             guard let composited = composite(
                 keyring: keyringFrame,
                 userImage: resized,
+                bodyWidth: bodyWidth,
+                bodyHeight: bodyHeight,
+                bodyOffsetY: config.bodyOffsetY,
                 x: transform.x,
                 y: transform.y,
                 rotation: transform.rotation
@@ -92,10 +149,15 @@ nonisolated enum KeyringFrameCompositor {
 
     // MARK: - 번들에서 키링 프레임 로드
 
-    private static func loadKeyringFrame(index: Int) -> CGImage? {
+    /// chainLength에 해당하는 하위 폴더에서 프레임 PNG를 로드
+    /// Folder Reference 구조: KeyringFrames/chain{N}/frame00.png
+    private static func loadKeyringFrame(index: Int, chainLength: Int) -> CGImage? {
         let name = String(format: "frame%02d", index)
+        let subdirectory = "KeyringFrames/chain\(chainLength)"
 
-        guard let url = Bundle.main.url(forResource: name, withExtension: "png"),
+        guard let url = Bundle.main.url(
+                  forResource: name, withExtension: "png", subdirectory: subdirectory
+              ),
               let data = try? Data(contentsOf: url),
               let image = UIImage(data: data)?.cgImage else {
             return nil
@@ -110,6 +172,9 @@ nonisolated enum KeyringFrameCompositor {
     private static func composite(
         keyring: CGImage,
         userImage: CGImage,
+        bodyWidth: Int,
+        bodyHeight: Int,
+        bodyOffsetY: CGFloat,
         x: CGFloat,
         y: CGFloat,
         rotation: CGFloat
@@ -131,9 +196,9 @@ nonisolated enum KeyringFrameCompositor {
         ctx.translateBy(x: cgCenterX, y: cgCenterY)
         ctx.rotate(by: -rotation * .pi / 180)
         // bodyOffsetY: 회전 후 로컬 좌표에서 적용 → 회전 중심에 영향 없음
-        ctx.translateBy(x: -CGFloat(imageWidth) / 2, y: -CGFloat(imageHeight) - bodyOffsetY)
+        ctx.translateBy(x: -CGFloat(bodyWidth) / 2, y: -CGFloat(bodyHeight) - bodyOffsetY)
         ctx.interpolationQuality = .high
-        ctx.draw(userImage, in: CGRect(x: 0, y: 0, width: imageWidth, height: imageHeight))
+        ctx.draw(userImage, in: CGRect(x: 0, y: 0, width: bodyWidth, height: bodyHeight))
         ctx.restoreGState()
 
         // 2) 키링 프레임 (상단 레이어 — 투명 영역에 바디이미지가 보임)
