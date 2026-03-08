@@ -55,14 +55,14 @@ enum KeyringScale {
     // MARK: - 위젯 바디 Y 보정값 (템플릿별)
     /// 위젯 합성 시 바디이미지 Y축 위치 보정 (음수 = 위로, 양수 = 아래로)
     private static let templateWidgetBodyOffsetY: [String: CGFloat] = [
-        "Polaroid": -20,
+        "Polaroid": -30,
         "AcrylicPhoto": -200,
-        "ClearSketch": -150,
-        "PixelKeyring": -40,
+        "ClearSketch": -180,
+        "PixelKeyring": -20,
         "SpeechBubble": -60,
-        "welcome": -60,
-        "WishHorse26": -70,
-        "DuZzonKu": -30,
+        "welcome": -40,
+        "WishHorse26": -110,
+        "DuZzonKu": -40,
     ]
 
     // MARK: - 기본값
