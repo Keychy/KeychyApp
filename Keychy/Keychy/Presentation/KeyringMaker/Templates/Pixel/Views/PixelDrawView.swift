@@ -13,12 +13,17 @@ struct PixelDrawView: View {
     
     /// 팔레트 표시 여부 (그리기 모드일 때만 표시)
     @State private var showPalette: Bool = true
-    
     @State private var showResetAlert = false
     
     /// 화면 사라지기 전 그리드 렌더링 막기용 파라미터
     @State private var isResetting = false
-
+    
+    /// 줌/패닝 상태
+    @State private var scale: CGFloat = 1.0
+    @State private var lastScale: CGFloat = 1.0
+    @State private var offset: CGSize = .zero
+    @State private var lastOffset: CGSize = .zero
+    
     /// GlassEffect 애니메이션을 위한 네임스페이스
     @Namespace private var unionNamespace
 
@@ -99,43 +104,91 @@ struct PixelDrawView: View {
 extension PixelDrawView {
     private var pixelGrid: some View {
         GeometryReader { geometry in
-            // 화면 가로 기준으로 그리드 크기 계산 (좌우 18 여백 제외)
             let totalSize = geometry.size.width - 36
-            // gridSize 대신 pixelGrid 실제 크기를 참조
             let count = viewModel.pixelGrid.count
             let cellSize = count > 0 ? totalSize / CGFloat(count) : totalSize
 
-            VStack(spacing: 0) {
-                ForEach(0..<count, id: \.self) { row in
-                    HStack(spacing: 0) {
-                        ForEach(0..<viewModel.pixelGrid[row].count, id: \.self) { col in
-                            PixelCell(
-                                color: viewModel.pixelGrid[row][col],
-                                size: cellSize,
-                                onTap: { viewModel.paintPixel(row: row, col: col) }
-                            )
+            ZStack {
+                // 그리드 렌더링
+                VStack(spacing: 0) {
+                    ForEach(0..<count, id: \.self) { row in
+                        HStack(spacing: 0) {
+                            ForEach(0..<viewModel.pixelGrid[row].count, id: \.self) { col in
+                                PixelCell(
+                                    color: viewModel.pixelGrid[row][col],
+                                    size: cellSize,
+                                    onTap: { viewModel.paintPixel(row: row, col: col) }
+                                )
+                            }
                         }
                     }
                 }
-            }
-            .frame(width: totalSize, height: totalSize)
-            .background(Color.gray50)
-            .border(.gray100, width: 1)
-            .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
-            .gesture(
-                DragGesture(minimumDistance: 0)
-                    .onChanged { value in
+                .frame(width: totalSize, height: totalSize)
+                .background(Color.gray50)
+                .border(.gray100, width: 1)
+                .scaleEffect(scale)
+                .offset(offset)
+                .allowsHitTesting(false) // 터치는 아래 UIKit 뷰가 처리
+
+                // UIKit 제스처 오버레이
+                PixelGestureView(
+                    onDraw: { point in
+                        // 터치 좌표 → 그리드 셀 좌표 역변환
                         let gridOriginX = (geometry.size.width - totalSize) / 2
                         let gridOriginY = (geometry.size.height - totalSize) / 2
-                        
-                        let col = Int((value.location.x - gridOriginX) / cellSize)
-                        let row = Int((value.location.y - gridOriginY) / cellSize)
-                        
+
+                        let adjustedX = (point.x - gridOriginX - offset.width - totalSize / 2) / scale + totalSize / 2
+                        let adjustedY = (point.y - gridOriginY - offset.height - totalSize / 2) / scale + totalSize / 2
+
+                        let col = Int(adjustedX / cellSize)
+                        let row = Int(adjustedY / cellSize)
                         viewModel.paintPixel(row: row, col: col)
+                    },
+                    onPan: { translation in
+                        guard scale > 1.0 else { return }
+                        let newOffset = CGSize(
+                            width: lastOffset.width + translation.width,
+                            height: lastOffset.height + translation.height
+                        )
+                        offset = clampedOffset(newOffset, scale: scale, totalSize: totalSize)
+                    },
+                    onPanEnd: {
+                        lastOffset = offset
+                    },
+                    onPinch: { delta in
+                        let newScale = min(max(scale * delta, 1.0), 4.0)
+                        scale = newScale
+                        offset = clampedOffset(offset, scale: scale, totalSize: totalSize)
+                    },
+                    onPinchEnd: {
+                        lastScale = scale
+                    },
+                    onDoubleTap: {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            scale = 1.0
+                            lastScale = 1.0
+                            offset = .zero
+                            lastOffset = .zero
+                        }
                     }
-            )
+                )
+                .frame(width: geometry.size.width, height: geometry.size.height)
+            }
+            .frame(width: geometry.size.width, height: geometry.size.height)
         }
         .aspectRatio(1, contentMode: .fit)
+    }
+
+    private func clampedOffset(
+        _ proposedOffset: CGSize,
+        scale: CGFloat,
+        totalSize: CGFloat
+    ) -> CGSize {
+        let maxOffset = max(0, (totalSize * scale - totalSize) / 2)
+        return CGSize(
+            width: min(max(proposedOffset.width, -maxOffset), maxOffset),
+            height: min(max(proposedOffset.height, -maxOffset), maxOffset)
+        )
     }
 }
 
