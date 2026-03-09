@@ -94,39 +94,37 @@ extension PixelDrawView {
             // 화면 가로 기준으로 그리드 크기 계산 (좌우 18 여백 제외)
             let gridSize = geometry.size.width - 36
             let cellSize = gridSize / 15
+            let totalSize = geometry.size.width - 36
+            // gridSize 대신 pixelGrid 실제 크기를 참조
+            let count = viewModel.pixelGrid.count
+            let cellSize = count > 0 ? totalSize / CGFloat(count) : totalSize
 
             VStack(spacing: 0) {
-                ForEach(0..<15, id: \.self) { row in
+                ForEach(0..<count, id: \.self) { row in
                     HStack(spacing: 0) {
-                        ForEach(0..<15, id: \.self) { col in
+                        ForEach(0..<viewModel.pixelGrid[row].count, id: \.self) { col in
                             PixelCell(
                                 color: viewModel.pixelGrid[row][col],
                                 size: cellSize,
-                                onTap: {
-                                    viewModel.paintPixel(row: row, col: col)
-                                }
+                                onTap: { viewModel.paintPixel(row: row, col: col) }
                             )
                         }
                     }
                 }
             }
-            .frame(width: gridSize, height: gridSize)
+            .frame(width: totalSize, height: totalSize)
             .background(Color.gray50)
             .border(.gray100, width: 1)
             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { value in
-                        let location = value.location
-                        let gridOriginX = (geometry.size.width - gridSize) / 2
-                        let gridOriginY = (geometry.size.height - gridSize) / 2
-
-                        let relativeX = location.x - gridOriginX
-                        let relativeY = location.y - gridOriginY
-
-                        let col = Int(relativeX / cellSize)
-                        let row = Int(relativeY / cellSize)
-
+                        let gridOriginX = (geometry.size.width - totalSize) / 2
+                        let gridOriginY = (geometry.size.height - totalSize) / 2
+                        
+                        let col = Int((value.location.x - gridOriginX) / cellSize)
+                        let row = Int((value.location.y - gridOriginY) / cellSize)
+                        
                         viewModel.paintPixel(row: row, col: col)
                     }
             )
