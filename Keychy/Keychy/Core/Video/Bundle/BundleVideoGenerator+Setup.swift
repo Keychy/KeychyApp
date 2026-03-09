@@ -101,8 +101,8 @@ extension BundleVideoGenerator {
         if let watermarkImage = UIImage(named: "shareWaterMark") {
             let watermarkNode = SKSpriteNode(texture: SKTexture(image: watermarkImage))
             
-            let nodeWidth: CGFloat = 120
-            let nodeHeight: CGFloat = 30
+            let nodeWidth: CGFloat = 100
+            let nodeHeight: CGFloat = 26
             watermarkNode.size = CGSize(width: nodeWidth, height: nodeHeight)
             
             let bottomMargin = (16 + nodeHeight / 2)
