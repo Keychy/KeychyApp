@@ -52,7 +52,6 @@ extension MainTabView {
             collectionTab
         }
         .tint(.main500)
-        .tabBarMinimizeBehavior(.onScrollDown)
         .onAppear(perform: viewModel.handleAppear)
         .onChange(of: viewModel.deepLinkManager.pendingPostOfficeId, viewModel.handleDeepLinkChange)
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
