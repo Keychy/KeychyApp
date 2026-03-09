@@ -15,6 +15,9 @@ struct PixelDrawView: View {
     @State private var showPalette: Bool = true
     
     @State private var showResetAlert = false
+    
+    /// 화면 사라지기 전 그리드 렌더링 막기용 파라미터
+    @State private var isResetting = false
 
     /// GlassEffect 애니메이션을 위한 네임스페이스
     @Namespace private var unionNamespace
@@ -30,17 +33,17 @@ struct PixelDrawView: View {
                     .ignoresSafeArea()
                 
                 // MARK: - 픽셀 그리드 (화면 중앙 배치)
-                VStack {
-                    Spacer()
-                    pixelGrid
-                        .padding(.horizontal, 18)
-                        .padding(.bottom, 50)
-                    Spacer()
+                if !isResetting {
+                    VStack {
+                        Spacer()
+                        pixelGrid
+                            .padding(.bottom, 50)
+                        Spacer()
+                    }
                 }
 
                 // MARK: - 버튼 + 색상 팔레트 (화면 하단에 고정)
                 VStack(spacing: 15) {
-                    
                     
                     Spacer()
                     
@@ -77,9 +80,14 @@ struct PixelDrawView: View {
         .alert("작업을 취소하시겠습니까?", isPresented: $showResetAlert) {
             Button("취소", role: .cancel) { }
             Button("확인", role: .destructive) {
-                viewModel.resetAll()
-                TabBarManager.show()
-                router.reset()
+                // 1. 그리드 렌더링 막기
+                isResetting = true
+                // 2. 초기화 + 화면 이동
+                DispatchQueue.main.async {
+                    viewModel.resetAll()
+                    TabBarManager.show()
+                    router.reset()
+                }
             }
         } message: {
             Text("지금까지 작업한 내용이 모두 초기화됩니다.")
@@ -92,8 +100,6 @@ extension PixelDrawView {
     private var pixelGrid: some View {
         GeometryReader { geometry in
             // 화면 가로 기준으로 그리드 크기 계산 (좌우 18 여백 제외)
-            let gridSize = geometry.size.width - 36
-            let cellSize = gridSize / 15
             let totalSize = geometry.size.width - 36
             // gridSize 대신 pixelGrid 실제 크기를 참조
             let count = viewModel.pixelGrid.count
