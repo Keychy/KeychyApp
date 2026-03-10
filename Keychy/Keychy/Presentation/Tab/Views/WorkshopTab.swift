@@ -19,6 +19,7 @@ struct WorkshopTab: View {
     @State private var speechBubbleVM: SpeechBubbleVM?
     @State private var wishHorse26VM: WishHorse26VM?
     @State private var duZzonKuVM: DuZzonKuVM?
+    @State private var crossStitchVM: CrossStitchVM?
     @State private var workshopViewModel = WorkshopViewModel(userManager: UserManager.shared)
 
     var body: some View {
@@ -228,6 +229,35 @@ struct WorkshopTab: View {
                 navigationTitle: "키링이 완성되었어요!"
             )
 
+        // MARK: - CrossStitch
+        case .crossStitchPreview:
+            CrossStitchPreview(router: router, viewModel: getCrossStitchVM())
+        case .crossStitchDraw:
+            //CrossStitchDrawView(router: router, viewModel: getCrossStitchVM())
+            KeyringCustomizingView(
+                router: router,
+                viewModel: getCrossStitchVM(),
+                nextRoute: .crossStitchCustomizing
+            )
+        case .crossStitchCustomizing:
+            KeyringCustomizingView(
+                router: router,
+                viewModel: getCrossStitchVM(),
+                nextRoute: .crossStitchInfoInput
+            )
+        case .crossStitchInfoInput:
+            KeyringInfoInputView(
+                router: router,
+                viewModel: getCrossStitchVM(),
+                nextRoute: .crossStitchComplete
+            )
+        case .crossStitchComplete:
+            KeyringCompleteView(
+                router: router,
+                viewModel: getCrossStitchVM(),
+                navigationTitle: "키링이 완성되었어요!"
+            )
+            
         // MARK: - 선물 포장 완료
         case .packageComplete(let keyringDocumentId, let postOfficeId, let templateId, let shareLink):
             KeyringPackageCompleteView(
@@ -315,6 +345,15 @@ struct WorkshopTab: View {
         guard let viewModel = duZzonKuVM else {
             let newViewModel = DuZzonKuVM()
             duZzonKuVM = newViewModel
+            return newViewModel
+        }
+        return viewModel
+    }
+    
+    private func getCrossStitchVM() -> CrossStitchVM {
+        guard let viewModel = crossStitchVM else {
+            let newViewModel = CrossStitchVM()
+            crossStitchVM = newViewModel
             return newViewModel
         }
         return viewModel
