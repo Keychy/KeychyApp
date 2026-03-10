@@ -51,6 +51,16 @@ enum KeyringScale {
         "HeartPlanet": 0.6,
         "MeltingWhiteChoco": 0.7,
         "UfoCat": 0.5,
+        "YellowPin": 0.6,
+        "RedPin": 0.6,
+        "MintPin": 0.5,
+        "PurplePin": 0.5,
+        "CheeseNyangi": 0.6,
+        "GrayNyangi": 0.6,
+        "BlackNyangi": 0.6,
+        "Baduki": 0.6,
+        "Baekgu": 0.6,
+        "Nureungi": 0.6,
     ]
 
     // MARK: - 위젯 바디 Y 보정값 (템플릿별)
