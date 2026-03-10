@@ -8,11 +8,26 @@
 import SwiftUI
 
 struct CrossStitchPreview: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
+    @Bindable var router: NavigationRouter<WorkshopRoute>
+    @State var viewModel: CrossStitchVM
+    @Environment(UserManager.self) private var userManager
+    @State private var showSizeSelector = false
 
-#Preview {
-    CrossStitchPreview()
+    var body: some View {
+        TemplatePreviewBody(
+            template: viewModel.template,
+            fetchTemplate: { await viewModel.fetchTemplate() },
+            onMake: {
+                showSizeSelector = true
+            },
+            router: router
+        )
+        .swipeBackGesture(enabled: true)
+        .sheet(isPresented: $showSizeSelector) {
+            CrossStitchSizeSelection { selectedSize in
+                viewModel.setGridSize(selectedSize)
+                router.push(.pixelDraw)
+            }
+        }
+    }
 }
