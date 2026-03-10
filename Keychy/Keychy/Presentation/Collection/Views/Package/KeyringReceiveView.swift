@@ -277,7 +277,7 @@ struct KeyringReceiveView: View {
             Color.white
                 .ignoresSafeArea()
         } else {
-            Image(.greenBackground)
+            Image(.greenGlitterBG)
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()

@@ -18,7 +18,9 @@ struct NotificationGiftView: View {
 
     var body: some View {
         ZStack {
-            Color.white
+            Image(.greenGlitterBG)
+                .resizable()
+                .scaledToFill()
                 .ignoresSafeArea()
 
             if viewModel.hasNetworkError {

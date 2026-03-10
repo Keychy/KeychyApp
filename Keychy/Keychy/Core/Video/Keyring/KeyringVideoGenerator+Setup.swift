@@ -26,7 +26,7 @@ extension KeyringVideoGenerator {
             ringType: .basic,
             chainType: .basic,
             templateId: viewModel.templateId,
-            screen: .complete,
+            screen: .video,
             bodyImage: viewModel.bodyImage,
             backgroundColor: .clear,
             hookOffsetY: viewModel.hookOffsetY != 0 ? viewModel.hookOffsetY : nil,
@@ -39,7 +39,7 @@ extension KeyringVideoGenerator {
         // 배경 이미지 추가 (scene보다 여유 있게 배치)
         if let bgImage = backgroundImage {
             let backgroundNode = SKSpriteNode(texture: SKTexture(image: bgImage))
-            backgroundNode.size = CGSize(width: sceneWidth * 1.5, height: sceneHeight * 1.5)
+            backgroundNode.size = CGSize(width: sceneWidth * 1.25, height: sceneHeight * 1.25)
             backgroundNode.position = CGPoint(x: sceneWidth / 2, y: sceneHeight / 2)
             backgroundNode.zPosition = -1000
             scene.addChild(backgroundNode)

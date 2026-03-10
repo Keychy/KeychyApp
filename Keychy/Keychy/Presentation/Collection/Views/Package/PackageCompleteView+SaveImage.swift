@@ -27,7 +27,7 @@ extension PackageCompleteView {
         
         // 배경 포함한 전체 뷰 구성
         let captureView = ZStack {
-            Image(.greenBackground)
+            Image(.pinkGlitterBG)
                 .resizable()
                 .scaledToFill()
                 .frame(width: screenSize.width, height: screenSize.height)

@@ -100,7 +100,7 @@ extension KeyringPackageCompleteView {
 
             ZStack {
                 // 배경
-                Image(.greenBackground)
+                Image(.pinkGlitterBG)
                     .resizable()
                     .scaledToFill()
                     .ignoresSafeArea()
