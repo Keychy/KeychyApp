@@ -31,6 +31,13 @@
 		38489EBD2F290BD000E41FAE /* CopyTooltipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38489EBC2F290BD000E41FAE /* CopyTooltipView.swift */; };
 		3851D48C2F5F2F950013C052 /* PixelSizeSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3851D48B2F5F2F950013C052 /* PixelSizeSelection.swift */; };
 		3851D48E2F5F44D40013C052 /* PixelGestureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3851D48D2F5F44D40013C052 /* PixelGestureView.swift */; };
+		3851D4932F5FD1210013C052 /* CrossStitchPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3851D4922F5FD1210013C052 /* CrossStitchPreview.swift */; };
+		3851D4952F5FD1380013C052 /* CrossStitchSizeSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3851D4942F5FD1380013C052 /* CrossStitchSizeSelection.swift */; };
+		3851D4972F5FD1660013C052 /* CrossStitchDrawView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3851D4962F5FD1660013C052 /* CrossStitchDrawView.swift */; };
+		3851D4992F5FD1940013C052 /* CrossStitchGestureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3851D4982F5FD1940013C052 /* CrossStitchGestureView.swift */; };
+		3851D49B2F5FD1A50013C052 /* CrossStitchVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3851D49A2F5FD1A50013C052 /* CrossStitchVM.swift */; };
+		3851D49D2F5FD56D0013C052 /* CrossStitchVM+Effect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3851D49C2F5FD56D0013C052 /* CrossStitchVM+Effect.swift */; };
+		3851D49F2F5FD57B0013C052 /* CrossStitchVM+ImageConversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3851D49E2F5FD57B0013C052 /* CrossStitchVM+ImageConversion.swift */; };
 		385425BE2EB2989400A06C02 /* CollectionCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385425BD2EB2989400A06C02 /* CollectionCellView.swift */; };
 		385425C02EB2AE7800A06C02 /* CollectionViewModel+Sort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385425BF2EB2AE7800A06C02 /* CollectionViewModel+Sort.swift */; };
 		385425C32EB2C35E00A06C02 /* WidgetSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385425C22EB2C35E00A06C02 /* WidgetSettingView.swift */; };
@@ -632,6 +639,13 @@
 		38489EBC2F290BD000E41FAE /* CopyTooltipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyTooltipView.swift; sourceTree = "<group>"; };
 		3851D48B2F5F2F950013C052 /* PixelSizeSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelSizeSelection.swift; sourceTree = "<group>"; };
 		3851D48D2F5F44D40013C052 /* PixelGestureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelGestureView.swift; sourceTree = "<group>"; };
+		3851D4922F5FD1210013C052 /* CrossStitchPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossStitchPreview.swift; sourceTree = "<group>"; };
+		3851D4942F5FD1380013C052 /* CrossStitchSizeSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossStitchSizeSelection.swift; sourceTree = "<group>"; };
+		3851D4962F5FD1660013C052 /* CrossStitchDrawView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossStitchDrawView.swift; sourceTree = "<group>"; };
+		3851D4982F5FD1940013C052 /* CrossStitchGestureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossStitchGestureView.swift; sourceTree = "<group>"; };
+		3851D49A2F5FD1A50013C052 /* CrossStitchVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossStitchVM.swift; sourceTree = "<group>"; };
+		3851D49C2F5FD56D0013C052 /* CrossStitchVM+Effect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CrossStitchVM+Effect.swift"; sourceTree = "<group>"; };
+		3851D49E2F5FD57B0013C052 /* CrossStitchVM+ImageConversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CrossStitchVM+ImageConversion.swift"; sourceTree = "<group>"; };
 		385425BD2EB2989400A06C02 /* CollectionCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionCellView.swift; sourceTree = "<group>"; };
 		385425BF2EB2AE7800A06C02 /* CollectionViewModel+Sort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Sort.swift"; sourceTree = "<group>"; };
 		385425C22EB2C35E00A06C02 /* WidgetSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSettingView.swift; sourceTree = "<group>"; };
@@ -1205,6 +1219,36 @@
 				389080622ED47F2500D7A49F /* VotePopup.swift */,
 			);
 			path = Popup;
+			sourceTree = "<group>";
+		};
+		3851D48F2F5FD0D90013C052 /* CrossStitch */ = {
+			isa = PBXGroup;
+			children = (
+				3851D4912F5FD1050013C052 /* ViewModels */,
+				3851D4902F5FD1000013C052 /* Views */,
+			);
+			path = CrossStitch;
+			sourceTree = "<group>";
+		};
+		3851D4902F5FD1000013C052 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				3851D4962F5FD1660013C052 /* CrossStitchDrawView.swift */,
+				3851D4982F5FD1940013C052 /* CrossStitchGestureView.swift */,
+				3851D4942F5FD1380013C052 /* CrossStitchSizeSelection.swift */,
+				3851D4922F5FD1210013C052 /* CrossStitchPreview.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		3851D4912F5FD1050013C052 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				3851D49A2F5FD1A50013C052 /* CrossStitchVM.swift */,
+				3851D49C2F5FD56D0013C052 /* CrossStitchVM+Effect.swift */,
+				3851D49E2F5FD57B0013C052 /* CrossStitchVM+ImageConversion.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		385425C12EB2C34D00A06C02 /* Widget */ = {
@@ -1883,6 +1927,7 @@
 				4C47338F2F1FA388005D2376 /* SpeechBubble */,
 				3896B95F2F3B960500220134 /* WishHorse26 */,
 				38818DAE2F3C42AF00B0A49C /* DuZzonKu */,
+				3851D48F2F5FD0D90013C052 /* CrossStitch */,
 			);
 			path = Templates;
 			sourceTree = "<group>";
@@ -3235,6 +3280,7 @@
 				AA0000022F17000100000001 /* BundleSwitchPopup.swift in Sources */,
 				AA390CE52ECC60A700D87EEC /* BundleRoute.swift in Sources */,
 				38C3C27E2EC08794003C5DE1 /* PopupManager.swift in Sources */,
+				3851D4972F5FD1660013C052 /* CrossStitchDrawView.swift in Sources */,
 				4C5D0BD32F59609400242703 /* KeyringFrameCompositor.swift in Sources */,
 				C6C4028D2EB2741D006B58DF /* Sound.swift in Sources */,
 				AA39098E2ECA061700D87EEC /* GridItemSpacing.swift in Sources */,
@@ -3254,6 +3300,7 @@
 				4C2526312F3C95EA003CC5AD /* LottieItemView.swift in Sources */,
 				4CC3D3C82EC8A47E0009D376 /* OutlineText.swift in Sources */,
 				385425C32EB2C35E00A06C02 /* WidgetSettingView.swift in Sources */,
+				3851D49B2F5FD1A50013C052 /* CrossStitchVM.swift in Sources */,
 				4CEC622B2EAE08DA0099ECEE /* Font+Styles.swift in Sources */,
 				386B17522ECCDFBA00CCCC23 /* KeyringCollectView.swift in Sources */,
 				4CEBB15F2EFAD3D600CF53E2 /* MainTabViewModel.swift in Sources */,
@@ -3389,6 +3436,7 @@
 				4C2526072F3B27B3003CC5AD /* KeyringBodyComponent.swift in Sources */,
 				4C25260A2F3B27B3003CC5AD /* KeyringRingComponent.swift in Sources */,
 				4C25260C2F3B27B3003CC5AD /* KeyringSceneView.swift in Sources */,
+				3851D49D2F5FD56D0013C052 /* CrossStitchVM+Effect.swift in Sources */,
 				4C4733282F1FA2AB005D2376 /* WorkshopTemplatesView.swift in Sources */,
 				4C47332D2F1FA2AB005D2376 /* WorkshopViewModel.swift in Sources */,
 				3896B96B2F3BA16200220134 /* WishHorse26FramePreviewView.swift in Sources */,
@@ -3396,6 +3444,7 @@
 				386B17642ECD142600CCCC23 /* String+Extension.swift in Sources */,
 				4CEBB1652EFBA54200CF53E2 /* RootViewModel.swift in Sources */,
 				4CC3D37F2EC464D70009D376 /* IntroAppGuidingView.swift in Sources */,
+				3851D4952F5FD1380013C052 /* CrossStitchSizeSelection.swift in Sources */,
 				3828F5432EC4C80800F1B040 /* CollectionView+Alerts.swift in Sources */,
 				4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */,
 				4CEC62A72EAE0C130099ECEE /* LottieView.swift in Sources */,
@@ -3414,6 +3463,7 @@
 				4CF2A9702F0FB2E100BA9FDA /* AppUpdateManager.swift in Sources */,
 				AA9B2E912EB081750004D31C /* ItemDetailView.swift in Sources */,
 				C665DDE82EAEFA8700CE4495 /* CoinChargeView.swift in Sources */,
+				3851D4992F5FD1940013C052 /* CrossStitchGestureView.swift in Sources */,
 				AAEB46AD2EC1C893002B13E5 /* BundleMenu.swift in Sources */,
 				4CF2A96D2F0F969300BA9FDA /* UpdateAlert.swift in Sources */,
 				4C7775322EB0EEF100981C3E /* ItemDetailImage.swift in Sources */,
@@ -3448,6 +3498,7 @@
 				38F832CD2EC90DEF00D3A248 /* WidgetOnboardingStepView+Helpers.swift in Sources */,
 				38A22A9D2EC27AC400B4C7C5 /* PackagedKeyringView+SaveImage.swift in Sources */,
 				3861024A2F1129FA0045C529 /* KeyringCacheManager.swift in Sources */,
+				3851D49F2F5FD57B0013C052 /* CrossStitchVM+ImageConversion.swift in Sources */,
 				38818DBE2F3C444C00B0A49C /* DuZzonKuVM+ImageConversion.swift in Sources */,
 				AABA4DAC2ED2D4C700A7D062 /* cardPagerView.swift in Sources */,
 				AA9115082EB126A60026E9BC /* CarabinerCell.swift in Sources */,
@@ -3511,6 +3562,7 @@
 				4C25261F2F3B290A003CC5AD /* KeyringCellScene+Setup.swift in Sources */,
 				4C2526202F3B290A003CC5AD /* KeyringDetailScene.swift in Sources */,
 				4C2526212F3B290A003CC5AD /* KeyringScene+Touch.swift in Sources */,
+				3851D4932F5FD1210013C052 /* CrossStitchPreview.swift in Sources */,
 				4C2526222F3B290A003CC5AD /* KeyringScene+Swipe.swift in Sources */,
 				4C2526232F3B290A003CC5AD /* KeyringScene+Setup.swift in Sources */,
 				4C2526242F3B290A003CC5AD /* KeyringCellScene+Capture.swift in Sources */,
