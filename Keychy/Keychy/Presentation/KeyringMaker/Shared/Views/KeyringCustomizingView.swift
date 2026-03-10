@@ -17,7 +17,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     let nextRoute: WorkshopRoute
     
     // 뒤로가기 시 팝만 하는 템플릿들 (초기화 경고 없음)
-    let popOnlyTemplates = ["ClearSketch", "PixelKeyring"]
+    let popOnlyTemplates = ["ClearSketch", "PixelKeyring", "CrossStitch"]
 
     @State private var selectedMode: CustomizingMode = .effect  // onAppear에서 첫 번째 모드로 재설정됨
     @State private var isLoadingResources = true
