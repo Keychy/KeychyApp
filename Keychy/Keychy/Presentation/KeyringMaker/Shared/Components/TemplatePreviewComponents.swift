@@ -39,29 +39,35 @@ struct TemplatePreviewBody: View {
 
     var body: some View {
         ZStack {
-            VStack(alignment: .leading, spacing: 0) {
-                Spacer()
-                
-                // 프리뷰 이미지
-                templatePreview
-                
-                Spacer()
-                
+            if template == nil {
+                // fetch 중 — 로딩 인디케이터만 표시
+                LoadingAlert(type: .short40, message: nil)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
                 VStack(alignment: .leading, spacing: 0) {
-                    // 템플릿 정보
-                    infoSection
-                        .padding(.bottom, 40)
-                        .frame(minHeight: 120, alignment: .top)
-                    
-                    // 액션 버튼
-                    actionButton
-                        .adaptiveBottomPadding()
-                        .padding(.bottom, getBottomPadding(40) == 0 ? 40 : 0)
+                    Spacer()
+
+                    // 프리뷰 이미지
+                    templatePreview
+
+                    Spacer()
+
+                    VStack(alignment: .leading, spacing: 0) {
+                        // 템플릿 정보
+                        infoSection
+                            .padding(.bottom, 40)
+                            .frame(minHeight: 120, alignment: .top)
+
+                        // 액션 버튼
+                        actionButton
+                            .adaptiveBottomPadding()
+                            .padding(.bottom, getBottomPadding(40) == 0 ? 40 : 0)
+                    }
+                    .padding(.horizontal, 34)
+
                 }
-                .padding(.horizontal, 34)
-                
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
             
             CustomNavigationBar {
                 BackToolbarButton {
@@ -184,7 +190,6 @@ extension TemplatePreviewBody {
 
             if let template {
                 if template.previewImages.count > 1 {
-                    // 슬라이드 이미지
                     TemplateImageSlideshow(
                         imageURLs: template.previewImages,
                         localFirstImageName: "preview_\(template.id ?? "")"
@@ -192,13 +197,10 @@ extension TemplatePreviewBody {
                         .scaledToFit()
                         .frame(width: 386, height: 386)
                 } else {
-                    // fallback: 기존 단일 프리뷰 이미지
                     ItemDetailImage(itemURL: template.previewURL)
                         .scaledToFit()
                         .frame(width: 386, height: 386)
                 }
-            } else {
-                LoadingAlert(type: .short40, message: nil)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: 500)
@@ -209,8 +211,6 @@ extension TemplatePreviewBody {
         Group {
             if let template {
                 ItemDetailInfoSection(item: template)
-            } else {
-                Text("템플릿 정보 없음")
             }
         }
     }
@@ -236,8 +236,6 @@ extension TemplatePreviewBody {
                         }
                     }
                 )
-            } else {
-                LoadingAlert(type: .short40, message: nil)
             }
         }
     }
