@@ -19,6 +19,7 @@ enum KeyringScale {
         case customizing    // 커스터마이징뷰
         case infoInput      // 정보입력뷰
         case complete       // 완성뷰
+        case video          // 영상생성용
     }
 
     // MARK: - 템플릿별 maxSize
@@ -34,13 +35,13 @@ enum KeyringScale {
 
     // MARK: - 템플릿 × 화면별 zoomScale
     private static let templateZoomScales: [String: [Screen: CGFloat]] = [
-        "Polaroid": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.7],
-        "AcrylicPhoto": [.customizing: 1.0, .infoInput: 1.0, .complete: 1.0],
-        "ClearSketch": [.customizing: 1.0, .infoInput: 1.0, .complete: 1.0],
-        "PixelKeyring": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.9],
-        "SpeechBubble": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.9],
-        "WishHorse26": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.85],
-        "DuZzonKu": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.8]
+        "Polaroid": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.7, .video: 0.8],
+        "AcrylicPhoto": [.customizing: 1.0, .infoInput: 1.0, .complete: 1.0, .video: 0.8],
+        "ClearSketch": [.customizing: 1.0, .infoInput: 1.0, .complete: 1.0, .video: 0.8],
+        "PixelKeyring": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.9, .video: 0.8],
+        "SpeechBubble": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.9, .video: 0.8],
+        "WishHorse26": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.85, .video: 0.8],
+        "DuZzonKu": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.8, .video: 0.8]
     ]
 
     // MARK: - 카라비너별 뭉치 키링 스케일
