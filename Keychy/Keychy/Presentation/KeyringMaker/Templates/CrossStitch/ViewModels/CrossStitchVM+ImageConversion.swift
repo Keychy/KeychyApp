@@ -62,9 +62,11 @@ extension CrossStitchVM {
         let renderW  = cellSize + hOverlap * 2   // 좌우 겹침 포함 렌더 너비
         let renderH  = cellSize + vOverlap * 2   // 상하 겹침 포함 렌더 높이
 
-        // 전체 이미지 크기 = cellSize 기준 (겹침은 이웃 셀 위에 그려지므로)
-        let totalSize = cellSize * CGFloat(count)
-        let imageSize = CGSize(width: totalSize, height: totalSize)
+        // 가장자리 셀의 겹침 여백만큼 이미지 크기를 늘림 (DrawView와 동일)
+        let totalInner = cellSize * CGFloat(count)
+        let totalW = totalInner + hOverlap * 2
+        let totalH = totalInner + vOverlap * 2
+        let imageSize = CGSize(width: totalW, height: totalH)
 
         let renderer = UIGraphicsImageRenderer(size: imageSize)
 
@@ -78,9 +80,9 @@ extension CrossStitchVM {
                     let stitchColor = stitchGrid[row][col]
                     let img = UIImage(resource: stitchColor.stitchImage)
 
-                    // 셀 중심 좌표 기준으로 renderW x renderH 크기로 그리기
-                    let centerX = (CGFloat(col) + 0.5) * cellSize
-                    let centerY = (CGFloat(row) + 0.5) * cellSize
+                    // hOverlap/vOverlap 여백을 시작점으로 offset해서 가장자리가 잘리지 않도록
+                    let centerX = hOverlap + (CGFloat(col) + 0.5) * cellSize
+                    let centerY = vOverlap + (CGFloat(row) + 0.5) * cellSize
 
                     let rect = CGRect(
                         x: centerX - renderW / 2,
