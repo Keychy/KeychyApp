@@ -26,7 +26,7 @@ struct CrossStitchPreview: View {
         .sheet(isPresented: $showSizeSelector) {
             CrossStitchSizeSelection { selectedSize in
                 viewModel.setGridSize(selectedSize)
-                router.push(.pixelDraw)
+                router.push(.crossStitchDraw)
             }
         }
     }

@@ -233,12 +233,7 @@ struct WorkshopTab: View {
         case .crossStitchPreview:
             CrossStitchPreview(router: router, viewModel: getCrossStitchVM())
         case .crossStitchDraw:
-            //CrossStitchDrawView(router: router, viewModel: getCrossStitchVM())
-            KeyringCustomizingView(
-                router: router,
-                viewModel: getCrossStitchVM(),
-                nextRoute: .crossStitchCustomizing
-            )
+            CrossStitchDrawView(router: router, viewModel: getCrossStitchVM())
         case .crossStitchCustomizing:
             KeyringCustomizingView(
                 router: router,
