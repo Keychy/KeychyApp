@@ -52,10 +52,24 @@ enum KeyringScale {
         "UfoCat": 0.5,
     ]
 
+    // MARK: - 위젯 바디 Y 보정값 (템플릿별)
+    /// 위젯 합성 시 바디이미지 Y축 위치 보정 (음수 = 위로, 양수 = 아래로)
+    private static let templateWidgetBodyOffsetY: [String: CGFloat] = [
+        "Polaroid": -30,
+        "AcrylicPhoto": -200,
+        "ClearSketch": -180,
+        "PixelKeyring": -20,
+        "SpeechBubble": -60,
+        "welcome": -40,
+        "WishHorse26": -110,
+        "DuZzonKu": -40,
+    ]
+
     // MARK: - 기본값
     private static let defaultMaxSize = CGSize(width: 210, height: 210)
     private static let defaultZoomScale: CGFloat = 1.0
     private static let defaultCarabinerScale: CGFloat = 0.65
+    private static let defaultWidgetBodyOffsetY: CGFloat = 0
 
     // MARK: - Public API
 
@@ -72,5 +86,10 @@ enum KeyringScale {
     /// 카라비너별 뭉치 키링 스케일 반환
     static func bundleKeyringScale(for carabiner: String) -> CGFloat {
         return carabinerScales[carabiner] ?? defaultCarabinerScale
+    }
+
+    /// 위젯 합성 시 템플릿별 바디 Y 보정값 반환
+    static func widgetBodyOffsetY(for template: String) -> CGFloat {
+        return templateWidgetBodyOffsetY[template] ?? defaultWidgetBodyOffsetY
     }
 }

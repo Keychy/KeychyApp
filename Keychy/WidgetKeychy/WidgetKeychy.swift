@@ -49,11 +49,11 @@ struct KeyringWidgetProvider: AppIntentTimelineProvider {
                             animationFrames: frames,
                             animationStartDate: startTime
                         )
-                        // 정지 엔트리 (stopDate에 자동 전환) — frame[0]만 유지
+                        // 정지 엔트리 (stopDate에 자동 전환) — 중앙 프레임만 유지
                         let stopEntry = KeyringWidgetEntry(
                             date: stopDate,
                             configuration: configuration,
-                            animationFrames: frames?.first.map { [$0] }
+                            animationFrames: frames.map { [$0[AnimationFrameStorage.baseFrameCount / 2]] }
                         )
                         return Timeline(entries: [animEntry, stopEntry], policy: .never)
                     } else {
@@ -137,7 +137,7 @@ struct KeyringWidgetEntryView: View {
                         startDate: startDate
                     )
                 } else {
-                    Image(uiImage: frames[0])
+                    Image(uiImage: frames[min(AnimationFrameStorage.baseFrameCount / 2, frames.count - 1)])
                         .resizable()
                         .scaledToFill()
                         .frame(width: size, height: size)

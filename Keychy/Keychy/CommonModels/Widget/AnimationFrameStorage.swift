@@ -8,18 +8,21 @@
 import Foundation
 import UIKit
 
-/// App Group에 키링별 애니메이션 프레임(30장 PNG)을 저장/로드하는 유틸리티
+/// App Group에 키링별 애니메이션 프레임을 저장/로드하는 유틸리티
 ///
 /// 디렉토리 구조:
 /// ```
 /// AppGroup/
 ///   AnimatedFrames/
 ///     {keyringID}/
-///       frame_00.png … frame_29.png
+///       frame_00.png … frame_57.png
 /// ```
 nonisolated enum AnimationFrameStorage {
 
-    static let frameCount = 30
+    /// 편도 프레임 수 (디자이너 제공: 0→29)
+    static let baseFrameCount = 30
+    /// 왕복 포함 총 프레임 수 (0→29→28→...→1)
+    static let totalFrameCount = baseFrameCount * 2 - 2
     private static let appGroupID = "group.keychy.app"
     private static let rootDirName = "AnimatedFrames"
 
@@ -46,7 +49,7 @@ nonisolated enum AnimationFrameStorage {
 
     // MARK: - 저장
 
-    /// 30장 PNG 프레임을 App Group에 저장
+    /// 왕복 프레임을 App Group에 저장
     ///
     /// 기존 프레임이 있으면 삭제 후 새로 저장한다.
     /// 위젯 프로세스의 파일 캐시 문제를 방지하기 위해
@@ -74,12 +77,12 @@ nonisolated enum AnimationFrameStorage {
 
     // MARK: - 조회
 
-    /// 30장 프레임이 모두 존재하는지 확인
+    /// 왕복 프레임이 모두 존재하는지 확인
     static func hasFrames(keyringID: String) -> Bool {
         guard let dir = framesDirectory(for: keyringID) else { return false }
         let fm = FileManager.default
 
-        for i in 0..<frameCount {
+        for i in 0..<totalFrameCount {
             let url = dir.appendingPathComponent(
                 String(format: "frame_%02d.png", i)
             )
@@ -88,14 +91,14 @@ nonisolated enum AnimationFrameStorage {
         return true
     }
 
-    /// 30장 프레임 UIImage 배열 로드 (위젯에서 사용)
+    /// 왕복 프레임 UIImage 배열 로드 (위젯에서 사용)
     static func loadFrames(keyringID: String) -> [UIImage]? {
         guard let dir = framesDirectory(for: keyringID) else { return nil }
 
         var images = [UIImage]()
-        images.reserveCapacity(frameCount)
+        images.reserveCapacity(totalFrameCount)
 
-        for i in 0..<frameCount {
+        for i in 0..<totalFrameCount {
             let url = dir.appendingPathComponent(
                 String(format: "frame_%02d.png", i)
             )
