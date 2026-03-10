@@ -28,6 +28,7 @@ import FirebaseFirestore
 /// - backgroundName: 표시 이름
 /// - description: 설명
 /// - backgroundImage: 썸네일 이미지 URL (Firebase Storage)
+/// - recommendedCombinations: 추천 조합 (빈 문자열 가능)
 /// - tags: 태그 배열
 /// - price: 가격 (0 = 무료)
 ///
@@ -46,6 +47,7 @@ func initializeBackgrounds() async {
 //            "backgroundName": "새 배경",
 //            "description": "새 배경 설명",
 //            "backgroundImage": "https://firebasestorage.googleapis.com/...",
+//            "recommendedCombinations": "",
 //            "tags": ["배경"],
 //            "price": 0,
 //            "downloadCount": 0,
@@ -60,6 +62,7 @@ func initializeBackgrounds() async {
 //            "description": "새 Lottie 배경 설명",
 //            "backgroundImage": "https://firebasestorage.googleapis.com/...",
 //            "backgroundLottie": "gs://keychy-f6011.firebasestorage.app/Backgrounds/{아이템ID}/background.json",
+//            "recommendedCombinations": "",
 //            "tags": ["배경"],
 //            "price": 0,
 //            "downloadCount": 0,
