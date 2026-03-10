@@ -81,22 +81,25 @@ class CrossStitchVM: KeyringViewModelProtocol {
     // MARK: - UserManager
     var userManager: UserManager
 
-    // MARK: - Pixel Grid Data
+    // MARK: - Stitch Grid Data
     /// 선택된 그리드 사이즈
     var gridSize: Int = 16
     
-    /// gridSize x gridSize 픽셀 그리드
-    var pixelGrid: [[Color]] = Array(repeating: Array(repeating: .clear, count: 16), count: 16)
+    /// gridSize x gridSize 스티치 그리드 (기본값: .white)
+    var stitchGrid: [[StitchColor]] = Array(
+        repeating: Array(repeating: .white, count: 16),
+        count: 16
+    )
 
     /// Undo/Redo 스택
-    var undoStack: [[[Color]]] = []
-    var redoStack: [[[Color]]] = []
+    var undoStack: [[[StitchColor]]] = []
+    var redoStack: [[[StitchColor]]] = []
 
     /// 현재 그리기 모드 (draw or eraser)
     var isDrawMode: Bool = true
 
-    /// 현재 선택된 색상
-    var selectedColor: Color = .black
+    /// 현재 선택된 스티치 색상
+    var selectedStitchColor: StitchColor = .white
 
     /// 바디 이미지 (픽셀 그리드를 이미지로 변환한 결과)
     var bodyImage: UIImage? = nil
@@ -124,7 +127,7 @@ class CrossStitchVM: KeyringViewModelProtocol {
     // MARK: - Grid Size 설정
     func setGridSize(_ size: CrossStitchGridSize) {
         gridSize = size.rawValue
-        pixelGrid = Array(repeating: Array(repeating: .clear, count: gridSize), count: gridSize)
+        stitchGrid = Array(repeating: Array(repeating: .white, count: gridSize), count: gridSize)
         undoStack.removeAll()
         redoStack.removeAll()
     }
@@ -134,79 +137,58 @@ class CrossStitchVM: KeyringViewModelProtocol {
         self.userManager = userManager
     }
 
-    // MARK: - Pixel Drawing Methods
+    // MARK: - Stitch Drawing Methods
 
-    /// 픽셀 색칠하기
-    func paintPixel(row: Int, col: Int) {
+    /// 스티치 칠하기
+    func paintStitch(row: Int, col: Int) {
         guard row >= 0, row < gridSize, col >= 0, col < gridSize else { return }
 
-        let newColor = isDrawMode ? selectedColor : .clear
+        let newColor: StitchColor = isDrawMode ? selectedStitchColor : .white
 
         // 이미 같은 색이면 무시
-        if pixelGrid[row][col] == newColor { return }
+        if stitchGrid[row][col] == newColor { return }
 
-        // Undo 스택에 현재 상태 저장
         saveToUndoStack()
-
-        // 색상 변경
-        pixelGrid[row][col] = newColor
-
-        // Redo 스택 초기화 (새로운 작업 시)
+        stitchGrid[row][col] = newColor
         redoStack.removeAll()
     }
 
-    /// Undo 스택에 현재 상태 저장
     private func saveToUndoStack() {
-        undoStack.append(pixelGrid)
-
-        // 최대 50개까지만 저장
-        if undoStack.count > 50 {
-            undoStack.removeFirst()
-        }
+        undoStack.append(stitchGrid)
+        if undoStack.count > 50 { undoStack.removeFirst() }
     }
 
-    /// Undo
     func undo() {
         guard !undoStack.isEmpty else { return }
-
-        // 현재 상태를 Redo 스택에 저장
-        redoStack.append(pixelGrid)
-
-        // Undo 스택에서 이전 상태 복원
-        pixelGrid = undoStack.removeLast()
+        redoStack.append(stitchGrid)
+        stitchGrid = undoStack.removeLast()
     }
 
-    /// Redo
     func redo() {
         guard !redoStack.isEmpty else { return }
-
-        // 현재 상태를 Undo 스택에 저장
-        undoStack.append(pixelGrid)
-
-        // Redo 스택에서 다음 상태 복원
-        pixelGrid = redoStack.removeLast()
+        undoStack.append(stitchGrid)
+        stitchGrid = redoStack.removeLast()
     }
 
-    /// 전체 초기화
     func clearGrid() {
         saveToUndoStack()
-        pixelGrid = Array(repeating: Array(repeating: .clear, count: gridSize), count: gridSize)
+        stitchGrid = Array(repeating: Array(repeating: .white, count: gridSize), count: gridSize)
         redoStack.removeAll()
     }
 
-    // MARK: - 픽셀 그리드 데이터 초기화
-    func resetPixelData() {
-        pixelGrid = Array(repeating: Array(repeating: .clear, count: gridSize), count: gridSize)
+    // MARK: - 스티치 데이터 초기화
+    func resetStitchData() {
+        stitchGrid = Array(repeating: Array(repeating: .white, count: gridSize), count: gridSize)
         undoStack.removeAll()
         redoStack.removeAll()
         bodyImage = nil
         isDrawMode = true
-        selectedColor = .black
+        selectedStitchColor = .white
     }
 
     // MARK: - 완전 초기화
     func resetAll() {
-        resetPixelData()
+        resetStitchData()
         resetCustomizingData()
         resetInfoData()
     }
