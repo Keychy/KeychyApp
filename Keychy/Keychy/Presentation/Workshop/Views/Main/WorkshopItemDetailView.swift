@@ -185,7 +185,7 @@ extension WorkshopItemDetailView {
                 if let background = item as? Background, background.isLottie, let bgId = background.id {
                     // Lottie 배경
                     LottieItemView(assetId: bgId, directory: "lottie_backgrounds")
-                        .frame(height: getBottomPadding(5) == 0 ? 501 : 380)
+                        .frame(height: getBottomPadding(5) == 0 ? 471 : 350)
                         .frame(maxWidth: .infinity)
                         .clipped()
                         .cornerRadius(20)
@@ -200,9 +200,9 @@ extension WorkshopItemDetailView {
                         .clipped()
                         .cornerRadius(20)
                 } else if item is Background {
-                    ItemDetailImage(itemURL: getPreviewURL())
-                        .scaledToFill()
-                        .frame(maxWidth: .infinity, maxHeight: getBottomPadding(5) == 0 ? 501 : 380)
+                    ItemDetailImage(itemURL: getPreviewURL(), contentMode: .fill)
+                        .frame(maxWidth: .infinity, maxHeight: getBottomPadding(5) == 0 ? 471 : 350)
+                        .clipped()
                         .cornerRadius(20)
                         .overlay(
                             RoundedRectangle(cornerRadius: 20)
@@ -211,9 +211,8 @@ extension WorkshopItemDetailView {
                 } else {
                     // 카라비너, 사운드: 1:1 비율
                     ItemDetailImage(itemURL: getPreviewURL())
-                        .scaledToFit()
                         .aspectRatio(1, contentMode: .fit)
-                        .cornerRadius(20)
+                        .frame(maxWidth: .infinity)
                 }
             }
             
