@@ -38,6 +38,7 @@
 		3851D49B2F5FD1A50013C052 /* CrossStitchVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3851D49A2F5FD1A50013C052 /* CrossStitchVM.swift */; };
 		3851D49D2F5FD56D0013C052 /* CrossStitchVM+Effect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3851D49C2F5FD56D0013C052 /* CrossStitchVM+Effect.swift */; };
 		3851D49F2F5FD57B0013C052 /* CrossStitchVM+ImageConversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3851D49E2F5FD57B0013C052 /* CrossStitchVM+ImageConversion.swift */; };
+		3851D4A22F6070620013C052 /* StitchColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3851D4A12F6070620013C052 /* StitchColor.swift */; };
 		385425BE2EB2989400A06C02 /* CollectionCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385425BD2EB2989400A06C02 /* CollectionCellView.swift */; };
 		385425C02EB2AE7800A06C02 /* CollectionViewModel+Sort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385425BF2EB2AE7800A06C02 /* CollectionViewModel+Sort.swift */; };
 		385425C32EB2C35E00A06C02 /* WidgetSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385425C22EB2C35E00A06C02 /* WidgetSettingView.swift */; };
@@ -646,6 +647,7 @@
 		3851D49A2F5FD1A50013C052 /* CrossStitchVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossStitchVM.swift; sourceTree = "<group>"; };
 		3851D49C2F5FD56D0013C052 /* CrossStitchVM+Effect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CrossStitchVM+Effect.swift"; sourceTree = "<group>"; };
 		3851D49E2F5FD57B0013C052 /* CrossStitchVM+ImageConversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CrossStitchVM+ImageConversion.swift"; sourceTree = "<group>"; };
+		3851D4A12F6070620013C052 /* StitchColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StitchColor.swift; sourceTree = "<group>"; };
 		385425BD2EB2989400A06C02 /* CollectionCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionCellView.swift; sourceTree = "<group>"; };
 		385425BF2EB2AE7800A06C02 /* CollectionViewModel+Sort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Sort.swift"; sourceTree = "<group>"; };
 		385425C22EB2C35E00A06C02 /* WidgetSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSettingView.swift; sourceTree = "<group>"; };
@@ -1224,6 +1226,7 @@
 		3851D48F2F5FD0D90013C052 /* CrossStitch */ = {
 			isa = PBXGroup;
 			children = (
+				3851D4A02F6070510013C052 /* Models */,
 				3851D4912F5FD1050013C052 /* ViewModels */,
 				3851D4902F5FD1000013C052 /* Views */,
 			);
@@ -1249,6 +1252,14 @@
 				3851D49E2F5FD57B0013C052 /* CrossStitchVM+ImageConversion.swift */,
 			);
 			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		3851D4A02F6070510013C052 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				3851D4A12F6070620013C052 /* StitchColor.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		385425C12EB2C34D00A06C02 /* Widget */ = {
@@ -3491,6 +3502,7 @@
 				4CEBB1552EFACFA900CF53E2 /* HomeTab.swift in Sources */,
 				3896B96D2F3BA1A700220134 /* WishHorse26FrameSelectorView.swift in Sources */,
 				4CEBB1572EFACFA900CF53E2 /* CollectionTab.swift in Sources */,
+				3851D4A22F6070620013C052 /* StitchColor.swift in Sources */,
 				4C25262B2F3B97D6003CC5AD /* UIViewController+Find.swift in Sources */,
 				4C25262C2F3B97D6003CC5AD /* TabBarManager.swift in Sources */,
 				4C25262D2F3B97D6003CC5AD /* TabBarSwipeObserver.swift in Sources */,
