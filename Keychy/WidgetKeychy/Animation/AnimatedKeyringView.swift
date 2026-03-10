@@ -64,8 +64,8 @@ struct AnimatedKeyringView: View {
                     .clipped()
                     .mask(
                         ArcShape(
-                            startAngle: angle * Double(index) + phaseOffset,
-                            endAngle: angle * Double(index + 1) + phaseOffset,
+                            startAngle: -angle * Double(index + 1) + phaseOffset,
+                            endAngle: -angle * Double(index) + phaseOffset,
                             radius: arcRadius
                         )
                         .stroke(style: StrokeStyle(

@@ -147,7 +147,11 @@ extension CollectionKeyringDetailView {
 
                 // 2. 애니메이션 프레임 합성 (백그라운드 스레드)
                 guard let frames = await Task.detached(operation: {
-                    KeyringFrameCompositor.generateFrames(from: bodyImage)
+                    KeyringFrameCompositor.generateFrames(
+                        from: bodyImage,
+                        chainLength: keyring.chainLength,
+                        template: keyring.selectedTemplate
+                    )
                 }).value else {
                     await showWidgetAddFail()
                     return
