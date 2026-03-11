@@ -128,23 +128,13 @@ extension IntroViewModel {
                 if !loadingCompleted {
                     print("[WelcomeKeyring] 위젯 캐싱 타임아웃: \(keyringId)")
                 } else {
-                    try? await Task.sleep(nanoseconds: 200_000_000)
+                    try? await Task.sleep(for: .seconds(0.2))
                 }
 
                 // PNG 캡처 및 저장
                 if let pngData = await scene.captureToPNG() {
                     KeyringImageCache.shared.save(pngData: pngData, for: keyringId, type: .thumbnail)
-                    KeyringImageCache.shared.syncKeyring(
-                        id: keyringId,
-                        name: nickname,
-                        imageData: pngData,
-                        createdAt: Date()
-                    )
-                    print("[WelcomeKeyring] 위젯 캐싱 완료: \(keyringId)")
-                } else {
-                    print("[WelcomeKeyring] 위젯 캐싱 실패: \(keyringId)")
                 }
-
                 continuation.resume()
             }
         }

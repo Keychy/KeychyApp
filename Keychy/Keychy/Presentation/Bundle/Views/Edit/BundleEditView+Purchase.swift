@@ -9,7 +9,7 @@ import SwiftUI
 
 extension BundleEditView {
     var purchaseSheetView: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 12) {
             // 상단 섹션 - 닫기 버튼, 타이틀
             HStack {
                 Button {
@@ -26,43 +26,41 @@ extension BundleEditView {
                 Spacer()
             }
             .padding(EdgeInsets(top: 30, leading: 20, bottom: 10, trailing: 20))
-            .padding(.bottom, 12)
-            
+
             // 구매할 아이템 목록
-            ScrollView {
-                VStack(spacing: 20) {
-                    if let bg = bundleVM.newSelectedBackground, !bg.isOwned && bg.background.price > 0 {
-                        BundlePurchaseCartItem(
-                            imageURL: bg.background.backgroundImage,
-                            name: bg.background.backgroundName,
-                            type: "배경",
-                            price: bg.background.price
-                        )
-                    }
-                    if let cb = bundleVM.newSelectedCarabiner, !cb.isOwned && cb.carabiner.price > 0 {
-                        BundlePurchaseCartItem(
-                            imageURL: cb.carabiner.carabinerImage.first ?? "",
-                            name: cb.carabiner.carabinerName,
-                            type: "카라비너",
-                            price: cb.carabiner.price
-                        )
-                    }
+            VStack(spacing: 20) {
+                if let bg = bundleVM.newSelectedBackground, !bg.isOwned && bg.background.price > 0 {
+                    BundlePurchaseCartItem(
+                        imageURL: bg.background.backgroundImage,
+                        name: bg.background.backgroundName,
+                        type: "배경",
+                        price: bg.background.price
+                    )
                 }
-                .padding(.horizontal, 20)
+                if let cb = bundleVM.newSelectedCarabiner, !cb.isOwned && cb.carabiner.price > 0 {
+                    BundlePurchaseCartItem(
+                        imageURL: cb.carabiner.carabinerImage.first ?? "",
+                        name: cb.carabiner.carabinerName,
+                        type: "카라비너",
+                        price: cb.carabiner.price
+                    )
+                }
             }
-            
-            // 내 보유 재화와 총 가격
+            .padding(.horizontal, 20)
+            .padding(.bottom, 30)
+
+            Spacer()
+
+            // 내 보유 재화와 총 가격 (하단 고정)
             HStack(spacing: 6) {
                 Text("내 보유 : ")
                     .typography(.suit15M25)
                     .foregroundStyle(.black100)
+                    .padding(.vertical, 4.5)
                 Text("\(UserManager.shared.currentUser?.coin ?? 0)")
                     .typography(.nanum16EB)
                     .foregroundStyle(.main500)
-                    .padding(.top, 2)
             }
-            .padding(.top, 20)
-            
             purchaseButton
                 .padding(.horizontal, 33.2)
                 .adaptiveBottomPadding()
@@ -109,7 +107,14 @@ extension BundleEditView {
         case .success:
             // 모든 구매 성공
             await MainActor.run {
+                bundleVM.isPurchasing = false
                 showPurchaseSheet = false
+            }
+
+            // 시트 닫히는 애니메이션 대기
+            try? await Task.sleep(for: .seconds(0.3))
+
+            await MainActor.run {
                 showPurchaseSuccessAlert = true
                 purchasesSuccessScale = 0.3
                 withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {

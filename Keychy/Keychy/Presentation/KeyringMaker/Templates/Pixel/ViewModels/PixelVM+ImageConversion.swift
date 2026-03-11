@@ -82,7 +82,10 @@ extension PixelVM {
     /// @param scale: 이미지 크기 배율 (기본 32배 = 480x480)
     func convertGridToImage(scale: CGFloat = 32) -> UIImage? {
         let pixelSize: CGFloat = 1.0
-        let imageSize = CGSize(width: 15 * pixelSize * scale, height: 15 * pixelSize * scale)
+        let imageSize = CGSize(
+            width: CGFloat(gridSize) * pixelSize * scale,
+            height: CGFloat(gridSize) * pixelSize * scale
+        )
 
         let renderer = UIGraphicsImageRenderer(size: imageSize)
 
@@ -92,11 +95,9 @@ extension PixelVM {
             context.fill(CGRect(origin: .zero, size: imageSize))
 
             // 각 픽셀 그리기
-            for row in 0..<15 {
-                for col in 0..<15 {
+            for row in 0..<gridSize {
+                for col in 0..<gridSize {
                     let color = pixelGrid[row][col]
-
-                    // .clear는 건너뛰기
                     if color == .clear { continue }
 
                     let rect = CGRect(

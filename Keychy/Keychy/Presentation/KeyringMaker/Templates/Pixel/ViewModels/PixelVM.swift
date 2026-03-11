@@ -82,8 +82,11 @@ class PixelVM: KeyringViewModelProtocol {
     var userManager: UserManager
 
     // MARK: - Pixel Grid Data
-    /// 15x15 픽셀 그리드 (각 셀의 색상)
-    var pixelGrid: [[Color]] = Array(repeating: Array(repeating: .clear, count: 15), count: 15)
+    /// 선택된 그리드 사이즈
+    var gridSize: Int = 16
+    
+    /// gridSize x gridSize 픽셀 그리드
+    var pixelGrid: [[Color]] = Array(repeating: Array(repeating: .clear, count: 16), count: 16)
 
     /// Undo/Redo 스택
     var undoStack: [[[Color]]] = []
@@ -100,7 +103,7 @@ class PixelVM: KeyringViewModelProtocol {
     var hookOffsetY: CGFloat = 0.0
 
     /// 체인 길이 (Pixel은 1)
-    var chainLength: Int { 3 }
+    var chainLength: Int { 1 }
 
     /// 템플릿 ID
     var templateId: String {
@@ -118,6 +121,14 @@ class PixelVM: KeyringViewModelProtocol {
     var packagedPostOfficeId: String?
     var packagedShareLink: String?
 
+    // MARK: - Grid Size 설정
+    func setGridSize(_ size: PixelGridSize) {
+        gridSize = size.rawValue
+        pixelGrid = Array(repeating: Array(repeating: .clear, count: gridSize), count: gridSize)
+        undoStack.removeAll()
+        redoStack.removeAll()
+    }
+    
     // MARK: - 초기화
     init(userManager: UserManager = UserManager.shared) {
         self.userManager = userManager
@@ -127,7 +138,7 @@ class PixelVM: KeyringViewModelProtocol {
 
     /// 픽셀 색칠하기
     func paintPixel(row: Int, col: Int) {
-        guard row >= 0, row < 15, col >= 0, col < 15 else { return }
+        guard row >= 0, row < gridSize, col >= 0, col < gridSize else { return }
 
         let newColor = isDrawMode ? selectedColor : .clear
 
@@ -179,13 +190,13 @@ class PixelVM: KeyringViewModelProtocol {
     /// 전체 초기화
     func clearGrid() {
         saveToUndoStack()
-        pixelGrid = Array(repeating: Array(repeating: .clear, count: 15), count: 15)
+        pixelGrid = Array(repeating: Array(repeating: .clear, count: gridSize), count: gridSize)
         redoStack.removeAll()
     }
 
     // MARK: - 픽셀 그리드 데이터 초기화
     func resetPixelData() {
-        pixelGrid = Array(repeating: Array(repeating: .clear, count: 15), count: 15)
+        pixelGrid = Array(repeating: Array(repeating: .clear, count: gridSize), count: gridSize)
         undoStack.removeAll()
         redoStack.removeAll()
         bodyImage = nil

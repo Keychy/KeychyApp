@@ -146,15 +146,22 @@ class LottieItemManager {
             }
         }
 
-        // 완료 대기
-        await withCheckedContinuation { continuation in
+        // 완료 대기 (성공/실패 구분)
+        let success = await withCheckedContinuation { (continuation: CheckedContinuation<Bool, Never>) in
             downloadTask.observe(.success) { _ in
-                continuation.resume()
+                continuation.resume(returning: true)
             }
-            downloadTask.observe(.failure) { _ in
-                continuation.resume()
+            downloadTask.observe(.failure) { snapshot in
+                print("[LottieItemManager] 다운로드 실패 (\(type.rawValue)/\(id)): \(snapshot.error?.localizedDescription ?? "알 수 없는 에러")")
+                continuation.resume(returning: false)
             }
         }
+
+        downloadingItemIds.remove(downloadKey)
+        downloadProgress.removeValue(forKey: downloadKey)
+
+        // 실패 시 캐시 저장하지 않고 조기 종료
+        guard success else { return }
 
         // 파일 쓰기 완료 확인
         try? await Task.sleep(nanoseconds: 100_000_000)
@@ -164,14 +171,11 @@ class LottieItemManager {
             attempts += 1
         }
 
-        // 캐시 URL 저장 (다음 검증용)
+        // 캐시 URL 저장 (성공 시에만 — 다음 검증용)
         saveCacheURL(id: id, url: remoteURL, type: type)
 
         // 해당 에셋의 인메모리 캐시만 무효화 (전체 캐시 삭제 X)
         LottieItemView.invalidateCache(assetId: id, directory: type.rawValue)
-
-        downloadingItemIds.remove(downloadKey)
-        downloadProgress.removeValue(forKey: downloadKey)
     }
 
     /// 캐시 파일 경로 생성

@@ -197,8 +197,8 @@ extension CollectionKeyringPackageView {
             let isSmallScreen = geometry.size.height < 700
             
             ZStack {
-                // 배경 이미지 (초록 패턴)
-                Image(.greenBackground)
+                // 배경 이미지
+                Image(.pinkGlitterBG)
                     .resizable()
                     .scaledToFill()
                     .ignoresSafeArea()

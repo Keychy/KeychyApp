@@ -19,6 +19,7 @@ enum KeyringScale {
         case customizing    // 커스터마이징뷰
         case infoInput      // 정보입력뷰
         case complete       // 완성뷰
+        case video          // 영상생성용
     }
 
     // MARK: - 템플릿별 maxSize
@@ -26,21 +27,23 @@ enum KeyringScale {
         "Polaroid": CGSize(width: 265, height: 324),
         "AcrylicPhoto": CGSize(width: 360, height: 360),
         "ClearSketch": CGSize(width: 210, height: 210),
-        "PixelKeyring": CGSize(width: 277, height: 257),
+        "PixelKeyring": CGSize(width: 277, height: 277),
         "SpeechBubble": CGSize(width: 360, height: 249),
-        "WishHorse26": CGSize(width: 269, height: 310),
-        "DuZzonKu": CGSize(width: 376, height: 376)
+        "WishHorse26": CGSize(width: 280, height: 310),
+        "DuZzonKu": CGSize(width: 376, height: 376),
+        "CrossStitch": CGSize(width: 258, height: 258)
     ]
 
     // MARK: - 템플릿 × 화면별 zoomScale
     private static let templateZoomScales: [String: [Screen: CGFloat]] = [
-        "Polaroid": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.7],
-        "AcrylicPhoto": [.customizing: 1.0, .infoInput: 1.0, .complete: 1.0],
-        "ClearSketch": [.customizing: 1.0, .infoInput: 1.0, .complete: 1.0],
-        "PixelKeyring": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.9],
-        "SpeechBubble": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.9],
-        "WishHorse26": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.85],
-        "DuZzonKu": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.8]
+        "Polaroid": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.7, .video: 0.8],
+        "AcrylicPhoto": [.customizing: 1.0, .infoInput: 1.0, .complete: 1.0, .video: 0.8],
+        "ClearSketch": [.customizing: 1.0, .infoInput: 1.0, .complete: 1.0, .video: 0.8],
+        "PixelKeyring": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.9, .video: 0.8],
+        "SpeechBubble": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.9, .video: 0.8],
+        "WishHorse26": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.85, .video: 0.8],
+        "DuZzonKu": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.8, .video: 0.8],
+        "CrossStitch": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.9, .video: 0.8]
     ]
 
     // MARK: - 카라비너별 뭉치 키링 스케일
@@ -50,12 +53,37 @@ enum KeyringScale {
         "HeartPlanet": 0.6,
         "MeltingWhiteChoco": 0.7,
         "UfoCat": 0.5,
+        "YellowPin": 0.6,
+        "RedPin": 0.6,
+        "MintPin": 0.5,
+        "PurplePin": 0.5,
+        "CheeseNyangi": 0.6,
+        "GrayNyangi": 0.6,
+        "BlackNyangi": 0.6,
+        "Baduki": 0.6,
+        "Baekgu": 0.6,
+        "Nureungi": 0.6,
+    ]
+
+    // MARK: - 위젯 바디 Y 보정값 (템플릿별)
+    /// 위젯 합성 시 바디이미지 Y축 위치 보정 (음수 = 위로, 양수 = 아래로)
+    private static let templateWidgetBodyOffsetY: [String: CGFloat] = [
+        "Polaroid": -30,
+        "AcrylicPhoto": -200,
+        "ClearSketch": -180,
+        "PixelKeyring": -20,
+        "SpeechBubble": -60,
+        "welcome": -40,
+        "WishHorse26": -110,
+        "DuZzonKu": -40,
+        "CrossStitch": -30
     ]
 
     // MARK: - 기본값
     private static let defaultMaxSize = CGSize(width: 210, height: 210)
     private static let defaultZoomScale: CGFloat = 1.0
     private static let defaultCarabinerScale: CGFloat = 0.65
+    private static let defaultWidgetBodyOffsetY: CGFloat = 0
 
     // MARK: - Public API
 
@@ -72,5 +100,10 @@ enum KeyringScale {
     /// 카라비너별 뭉치 키링 스케일 반환
     static func bundleKeyringScale(for carabiner: String) -> CGFloat {
         return carabinerScales[carabiner] ?? defaultCarabinerScale
+    }
+
+    /// 위젯 합성 시 템플릿별 바디 Y 보정값 반환
+    static func widgetBodyOffsetY(for template: String) -> CGFloat {
+        return templateWidgetBodyOffsetY[template] ?? defaultWidgetBodyOffsetY
     }
 }

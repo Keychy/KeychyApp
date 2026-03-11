@@ -68,6 +68,13 @@ enum WorkshopRoute: Hashable, BundleRoute {
     case duZzonKuCustomizing
     case duZzonKuInfoInput
     case duZzonKuComplete
+    
+    // MARK: - 십자수 키링 템플릿
+    case crossStitchPreview
+    case crossStitchDraw
+    case crossStitchCustomizing
+    case crossStitchInfoInput
+    case crossStitchComplete
 
     // MARK: - 선물 포장 완료
     case packageComplete(keyringDocumentId: String, postOfficeId: String, templateId: String, shareLink: String)
@@ -92,6 +99,8 @@ enum WorkshopRoute: Hashable, BundleRoute {
             return .wishHorse26Preview
         case "DuZzonKu":
             return .duZzonKuPreview
+        case "CrossStitch":
+            return .crossStitchPreview
         default:
             return nil
         }

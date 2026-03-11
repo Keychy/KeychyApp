@@ -75,9 +75,16 @@ struct BackgroundCell: View {
                 }
             }
             // 이름 라벨
-            Text(background.background.backgroundName)
-                .typography(isSelected ? .notosans14SB : .notosans14M)
-                .foregroundStyle(isSelected ? .main500 : .black100)
+            HStack(spacing: 4) {
+                if background.background.isLottie {
+                    Image(.lottieIcon)
+                        .resizable()
+                        .frame(width: 15, height: 15)
+                }
+                Text(background.background.backgroundName)
+                    .typography(isSelected ? .notosans14SB : .notosans14M)
+                    .foregroundStyle(isSelected ? .main500 : .black100)
+            }
         }
         .contentShape(Rectangle())
     }

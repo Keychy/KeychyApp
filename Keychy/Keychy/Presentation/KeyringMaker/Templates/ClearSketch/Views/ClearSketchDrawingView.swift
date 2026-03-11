@@ -176,7 +176,7 @@ extension ClearSketchDrawingView {
             HStack {
                 // 커스텀 슬라이더
                 customSlider
-                    .padding(.leading, 10)
+                    .padding(.leading, 4)
                 
                 Spacer()
 
@@ -244,6 +244,8 @@ extension ClearSketchDrawingView {
                         .fill(.white)
                         .frame(width: controlSize, height: controlSize)
                         .glassEffect(.regular)
+                        .padding(12)  // 터치 영역 추가
+                        .contentShape(Rectangle())  // 패딩 영역도 터치 가능하게
                         .offset(y: -thumbPosition)
                         .scaleEffect(isDragging ? 1.1 : 1.0)
                         .animation(.easeInOut(duration: 0.2), value: isDragging)

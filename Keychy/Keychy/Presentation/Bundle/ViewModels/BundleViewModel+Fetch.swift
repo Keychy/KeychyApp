@@ -67,11 +67,11 @@ extension BundleViewModel {
                 BackgroundViewData(background: bg, isOwned: ownedIds.contains(bg.id ?? ""))
             }
 
-            // Lottie 배경 JSON 다운로드 (백그라운드에서 비동기 실행)
+            // Lottie 배경 JSON 병렬 다운로드 (뷰 렌더링 전 완료 보장)
             let lottieBackgrounds = items.filter { $0.isLottie }
-            if !lottieBackgrounds.isEmpty {
-                Task {
-                    for bg in lottieBackgrounds {
+            await withTaskGroup(of: Void.self) { group in
+                for bg in lottieBackgrounds {
+                    group.addTask {
                         await LottieItemManager.shared.downloadBackgroundLottie(bg)
                     }
                 }
@@ -98,11 +98,11 @@ extension BundleViewModel {
                 CarabinerViewData(carabiner: cb, isOwned: ownedIds.contains(cb.id ?? ""))
             }
 
-            // Lottie 카라비너 JSON 다운로드 (백그라운드에서 비동기 실행)
+            // Lottie 카라비너 JSON 병렬 다운로드 (뷰 렌더링 전 완료 보장)
             let lottieCarabiners = items.filter { $0.isLottie }
-            if !lottieCarabiners.isEmpty {
-                Task {
-                    for cb in lottieCarabiners {
+            await withTaskGroup(of: Void.self) { group in
+                for cb in lottieCarabiners {
+                    group.addTask {
                         await LottieItemManager.shared.downloadCarabinerLottie(cb)
                     }
                 }

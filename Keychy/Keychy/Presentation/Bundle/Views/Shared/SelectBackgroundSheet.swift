@@ -12,12 +12,7 @@ struct SelectBackgroundSheet: View {
     let selectedBG: BackgroundViewData?
     let onBackgroundTap: (BackgroundViewData) -> Void
 
-    /// 3열 그리드 컬럼 설정
-    private let gridColumns: [GridItem] = [
-        GridItem(.flexible(), spacing: 10),
-        GridItem(.flexible(), spacing: 10),
-        GridItem(.flexible(), spacing: 10)
-    ]
+    private let columnCount = 3
 
     /// 필터링 및 정렬된 배경 목록
     private var filteredAndSortedBackgrounds: [BackgroundViewData] {
@@ -56,18 +51,37 @@ struct SelectBackgroundSheet: View {
         return result
     }
 
+    /// 3열 행 단위로 분할
+    private var rows: [[BackgroundViewData]] {
+        let items = filteredAndSortedBackgrounds
+        return stride(from: 0, to: items.count, by: columnCount).map {
+            Array(items[$0..<min($0 + columnCount, items.count)])
+        }
+    }
+
     var body: some View {
-        // 그리드만 (필터바는 DraggableSheet header로 이동)
-        LazyVGrid(columns: gridColumns, spacing: 20) {
-            ForEach(filteredAndSortedBackgrounds) { bg in
-                Button {
-                    onBackgroundTap(bg)
-                } label: {
-                    BackgroundCell(background: bg, isSelected: (bg == selectedBG))
+        VStack(spacing: 20) {
+            ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
+                HStack(spacing: 10) {
+                    ForEach(row) { bg in
+                        Button {
+                            onBackgroundTap(bg)
+                        } label: {
+                            BackgroundCell(background: bg, isSelected: (bg == selectedBG), useThumbnail: true)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    // 마지막 행이 3개 미만일 때 빈 공간 채우기
+                    if row.count < columnCount {
+                        ForEach(0..<(columnCount - row.count), id: \.self) { _ in
+                            Color.clear
+                                .frame(maxWidth: .infinity)
+                        }
+                    }
                 }
-                .buttonStyle(.plain)
             }
         }
         .padding(.horizontal, 20)
+        .padding(.bottom, 40)
     }
 }

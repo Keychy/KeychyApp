@@ -79,7 +79,7 @@ struct KeyringCompleteView<VM: KeyringViewModelProtocol>: View {
 extension KeyringCompleteView {
     /// 배경 이미지
     private var backgroundView: some View {
-        Image(.completeBG2)
+        Image(.pinkGlitterBG)
             .resizable()
             .scaledToFill()
             .ignoresSafeArea()
