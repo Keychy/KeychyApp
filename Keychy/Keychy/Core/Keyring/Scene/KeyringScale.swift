@@ -66,6 +66,7 @@ enum KeyringScale {
         "welcome": -40,
         "WishHorse26": -110,
         "DuZzonKu": -40,
+        "CrossStitch": -30
     ]
 
     // MARK: - 기본값
