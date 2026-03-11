@@ -119,12 +119,20 @@ extension BundleEditView {
     // MARK: - 로딩 오버레이
     var loadingOverlay: some View {
         Group {
-            // 첫 진입 : 씬 준비 + 사용자 보유 키링 로딩 + 배경 다운로드가 모두 끝나야 사라짐
-            if (!isSceneReady || isKeyringSheetLoading || isBackgroundLoading) && !isNavigatingAway {
+            // 최초 진입 로딩
+            if !hasInitiallyLoaded && !isNavigatingAway {
                 Color.black20
                     .ignoresSafeArea()
                     .zIndex(100)
                 LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
+                    .zIndex(101)
+            }
+            // 아이템 변경 시 캐시 미스 로딩 (최초 로딩 이후에만)
+            if hasInitiallyLoaded && (!isSceneReady || isBackgroundLoading) && !isNavigatingAway {
+                Color.black20
+                    .ignoresSafeArea()
+                    .zIndex(100)
+                LoadingAlert(type: .short40, message: nil)
                     .zIndex(101)
             }
             if isCapturing {

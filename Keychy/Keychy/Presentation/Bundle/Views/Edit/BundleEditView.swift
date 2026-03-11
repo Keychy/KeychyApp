@@ -24,6 +24,8 @@ struct BundleEditView<Route: BundleRoute>: View {
     @State var isKeyringSheetLoading: Bool = true
     @State var isCapturing: Bool = false
     @State var isBackgroundLoading = false
+    // 최초 씬 로딩 완료 여부 (아이템 변경 로딩과 분리)
+    @State var hasInitiallyLoaded = false
     
     // MARK: - Sheet
     @Namespace var sheetButtonNamespace
@@ -205,6 +207,7 @@ struct BundleEditView<Route: BundleRoute>: View {
                 onAllKeyringsReady: {
                     withAnimation(.easeOut(duration: 0.3)) {
                         isSceneReady = true
+                        hasInitiallyLoaded = true
                     }
                 }
             )
