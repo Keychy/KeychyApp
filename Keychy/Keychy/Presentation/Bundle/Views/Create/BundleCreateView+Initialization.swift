@@ -36,27 +36,25 @@ extension BundleCreateView {
         let currentBackgroundId = bundleVM.newSelectedBackground?.background.id
         let currentCarabinerId = bundleVM.newSelectedCarabiner?.carabiner.id
 
-        // 배경 데이터 새로고침
-        await withCheckedContinuation { continuation in
+        // 배경 + 카라비너 병렬 새로고침
+        async let bgRefresh: Void = withCheckedContinuation { continuation in
             bundleVM.fetchAllBackgrounds { _ in
-                // 이전에 선택했던 배경을 다시 찾아서 선택 (구매 상태가 업데이트됨)
                 if let bgId = currentBackgroundId {
                     self.bundleVM.newSelectedBackground = bundleVM.backgroundViewData.first { $0.background.id == bgId }
                 }
                 continuation.resume()
             }
         }
-
-        // 카라비너 데이터 새로고침
-        await withCheckedContinuation { continuation in
+        async let cbRefresh: Void = withCheckedContinuation { continuation in
             bundleVM.fetchAllCarabiners { _ in
-                // 이전에 선택했던 카라비너를 다시 찾아서 선택 (구매 상태가 업데이트됨)
                 if let cbId = currentCarabinerId {
                     self.bundleVM.newSelectedCarabiner = bundleVM.carabinerViewData.first { $0.carabiner.id == cbId }
                 }
                 continuation.resume()
             }
         }
+        await bgRefresh
+        await cbRefresh
     }
 
     /// 사용자가 소유한 배경과 카라비너 아이템들을 로드
@@ -67,19 +65,15 @@ extension BundleCreateView {
 
         let uid = UserManager.shared.userUID
 
-        // 배경 데이터 로드
-        await withCheckedContinuation { continuation in
-            bundleVM.fetchAllBackgrounds { _ in
-                continuation.resume()
-            }
+        // 배경 + 카라비너 병렬 로드
+        async let bgTask: Void = withCheckedContinuation { continuation in
+            bundleVM.fetchAllBackgrounds { _ in continuation.resume() }
         }
-
-        // 카라비너 데이터 로드
-        await withCheckedContinuation { continuation in
-            bundleVM.fetchAllCarabiners { _ in
-                continuation.resume()
-            }
+        async let cbTask: Void = withCheckedContinuation { continuation in
+            bundleVM.fetchAllCarabiners { _ in continuation.resume() }
         }
+        await bgTask
+        await cbTask
 
         // 코인 충전 후 복귀 시 저장된 선택 복원
         bundleVM.restoreSelectionIfNeeded()
