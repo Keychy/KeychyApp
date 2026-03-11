@@ -67,7 +67,7 @@ struct SelectCarabinerSheet: View {
                         Button {
                             onCarabinerTap(cb)
                         } label: {
-                            CarabinerCell(carabiner: cb, isSelected: (selectedCarabiner == cb))
+                            CarabinerCell(carabiner: cb, isSelected: (selectedCarabiner == cb), useThumbnail: true)
                         }
                         .buttonStyle(.plain)
                     }

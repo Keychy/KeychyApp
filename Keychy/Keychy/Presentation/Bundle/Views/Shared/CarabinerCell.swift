@@ -76,9 +76,16 @@ struct CarabinerCell: View {
                 }
             } //: ZSTACK
             .clipped()
-            Text(carabiner.carabiner.carabinerName)
-                .typography(isSelected ? .notosans14SB : .notosans14M)
-                .foregroundStyle(isSelected ? .main500 : .black100)
+            HStack(spacing: 4) {
+                if carabiner.carabiner.isLottie {
+                    Image(.lottieIcon)
+                        .resizable()
+                        .frame(width: 15, height: 15)
+                }
+                Text(carabiner.carabiner.carabinerName)
+                    .typography(isSelected ? .notosans14SB : .notosans14M)
+                    .foregroundStyle(isSelected ? .main500 : .black100)
+            }
         }
         .contentShape(Rectangle())
     }

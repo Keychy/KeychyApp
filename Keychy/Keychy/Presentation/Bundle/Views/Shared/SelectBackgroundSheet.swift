@@ -67,7 +67,7 @@ struct SelectBackgroundSheet: View {
                         Button {
                             onBackgroundTap(bg)
                         } label: {
-                            BackgroundCell(background: bg, isSelected: (bg == selectedBG))
+                            BackgroundCell(background: bg, isSelected: (bg == selectedBG), useThumbnail: true)
                         }
                         .buttonStyle(.plain)
                     }
