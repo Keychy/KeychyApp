@@ -8,12 +8,11 @@
 import SwiftUI
 
 struct PixelGestureView: UIViewRepresentable {
-    let onDraw: (CGPoint) -> Void        // 한 손가락 드래그
+    let onDraw: (CGPoint) -> Void        // 한 손가락 드래그 + 탭
     let onPan: (CGSize) -> Void          // 두 손가락 드래그
     let onPanEnd: () -> Void
     let onPinch: (CGFloat) -> Void       // 핀치
     let onPinchEnd: () -> Void
-    let onDoubleTap: () -> Void          // 더블탭
 
     func makeUIView(context: Context) -> UIView {
         let view = UIView()
@@ -46,13 +45,14 @@ struct PixelGestureView: UIViewRepresentable {
         pinch.delegate = context.coordinator
         view.addGestureRecognizer(pinch)
 
-        // 더블탭
-        let doubleTap = UITapGestureRecognizer(
+        // 싱글탭 (그리기)
+        let singleTap = UITapGestureRecognizer(
             target: context.coordinator,
-            action: #selector(Coordinator.handleDoubleTap)
+            action: #selector(Coordinator.handleSingleTap(_:))
         )
-        doubleTap.numberOfTapsRequired = 2
-        view.addGestureRecognizer(doubleTap)
+        singleTap.numberOfTapsRequired = 1
+        singleTap.delegate = context.coordinator
+        view.addGestureRecognizer(singleTap)
 
         return view
     }
@@ -65,8 +65,7 @@ struct PixelGestureView: UIViewRepresentable {
             onPan: onPan,
             onPanEnd: onPanEnd,
             onPinch: onPinch,
-            onPinchEnd: onPinchEnd,
-            onDoubleTap: onDoubleTap
+            onPinchEnd: onPinchEnd
         )
     }
 
@@ -76,27 +75,31 @@ struct PixelGestureView: UIViewRepresentable {
         let onPanEnd: () -> Void
         let onPinch: (CGFloat) -> Void
         let onPinchEnd: () -> Void
-        let onDoubleTap: () -> Void
 
         init(
             onDraw: @escaping (CGPoint) -> Void,
             onPan: @escaping (CGSize) -> Void,
             onPanEnd: @escaping () -> Void,
             onPinch: @escaping (CGFloat) -> Void,
-            onPinchEnd: @escaping () -> Void,
-            onDoubleTap: @escaping () -> Void
+            onPinchEnd: @escaping () -> Void
         ) {
             self.onDraw = onDraw
             self.onPan = onPan
             self.onPanEnd = onPanEnd
             self.onPinch = onPinch
             self.onPinchEnd = onPinchEnd
-            self.onDoubleTap = onDoubleTap
+        }
+
+        // 싱글탭 → 그리기
+        @objc func handleSingleTap(_ gesture: UITapGestureRecognizer) {
+            let point = gesture.location(in: gesture.view)
+            onDraw(point)
         }
 
         // 한 손가락 드래그 → 그리기
         @objc func handleDraw(_ gesture: UIPanGestureRecognizer) {
             guard gesture.numberOfTouches == 1 else { return }
+            guard gesture.state == .began || gesture.state == .changed else { return }
             let point = gesture.location(in: gesture.view)
             onDraw(point)
         }
@@ -119,7 +122,7 @@ struct PixelGestureView: UIViewRepresentable {
             switch gesture.state {
             case .changed:
                 onPinch(gesture.scale)
-                gesture.scale = 1.0  // 델타값으로 초기화
+                gesture.scale = 1.0
             case .ended, .cancelled:
                 onPinchEnd()
             default:
@@ -127,11 +130,6 @@ struct PixelGestureView: UIViewRepresentable {
             }
         }
 
-        @objc func handleDoubleTap() {
-            onDoubleTap()
-        }
-
-        // 핀치 + 패닝 동시 인식 허용
         func gestureRecognizer(
             _ gestureRecognizer: UIGestureRecognizer,
             shouldRecognizeSimultaneouslyWith other: UIGestureRecognizer
