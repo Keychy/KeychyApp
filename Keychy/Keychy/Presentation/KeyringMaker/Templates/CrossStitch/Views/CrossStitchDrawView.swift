@@ -90,7 +90,7 @@ struct CrossStitchDrawView: View {
 
 // MARK: - Stitch Grid Overlap Constants
 private enum StitchOverlap {
-    static let horizontal: CGFloat = 0.22
+    static let horizontal: CGFloat = 0.20
     static let vertical: CGFloat = 0.10
 }
 
