@@ -92,27 +92,25 @@ extension BundleCreateView {
     }
     
     var itemSheetContent: some View {
-        ZStack(alignment: .top) {
-            SelectBackgroundSheet(
-                viewModel: bundleVM,
-                selectedBG: bundleVM.newSelectedBackground,
-                onBackgroundTap: { bg in
-                    bundleVM.newSelectedBackground = bg
-                }
-            )
-            .opacity(isBackgroundMode ? 1 : 0)
-            .allowsHitTesting(isBackgroundMode)
-
-            SelectCarabinerSheet(
-                viewModel: bundleVM,
-                selectedCarabiner: bundleVM.newSelectedCarabiner,
-                onCarabinerTap: { carabiner in
-                    if carabiner.carabiner.isLottie { isSceneReady = false }
-                    bundleVM.newSelectedCarabiner = carabiner
-                }
-            )
-            .opacity(isBackgroundMode ? 0 : 1)
-            .allowsHitTesting(!isBackgroundMode)
+        Group {
+            if isBackgroundMode {
+                SelectBackgroundSheet(
+                    viewModel: bundleVM,
+                    selectedBG: bundleVM.newSelectedBackground,
+                    onBackgroundTap: { bg in
+                        bundleVM.newSelectedBackground = bg
+                    }
+                )
+            } else {
+                SelectCarabinerSheet(
+                    viewModel: bundleVM,
+                    selectedCarabiner: bundleVM.newSelectedCarabiner,
+                    onCarabinerTap: { carabiner in
+                        if carabiner.carabiner.isLottie { isSceneReady = false }
+                        bundleVM.newSelectedCarabiner = carabiner
+                    }
+                )
+            }
         }
     }
     

@@ -50,27 +50,25 @@ extension BundleEditView {
     }
 
     private var itemSheetContent: some View {
-        ZStack(alignment: .top) {
-            SelectBackgroundSheet(
-                viewModel: bundleVM,
-                selectedBG: bundleVM.newSelectedBackground,
-                onBackgroundTap: { bg in
-                    bundleVM.newSelectedBackground = bg
-                }
-            )
-            .opacity(isBackgroundMode ? 1 : 0)
-            .allowsHitTesting(isBackgroundMode)
-
-            SelectCarabinerSheet(
-                viewModel: bundleVM,
-                selectedCarabiner: bundleVM.newSelectedCarabiner,
-                onCarabinerTap: { carabiner in
-                    selectCarabiner = carabiner
-                    showChangeCarabinerAlert = true
-                }
-            )
-            .opacity(isBackgroundMode ? 0 : 1)
-            .allowsHitTesting(!isBackgroundMode)
+        Group {
+            if isBackgroundMode {
+                SelectBackgroundSheet(
+                    viewModel: bundleVM,
+                    selectedBG: bundleVM.newSelectedBackground,
+                    onBackgroundTap: { bg in
+                        bundleVM.newSelectedBackground = bg
+                    }
+                )
+            } else {
+                SelectCarabinerSheet(
+                    viewModel: bundleVM,
+                    selectedCarabiner: bundleVM.newSelectedCarabiner,
+                    onCarabinerTap: { carabiner in
+                        selectCarabiner = carabiner
+                        showChangeCarabinerAlert = true
+                    }
+                )
+            }
         }
     }
     
