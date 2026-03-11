@@ -100,8 +100,8 @@ extension CrossStitchDrawView {
     private var stitchGrid: some View {
         GeometryReader { geometry in
             // 가장자리 셀이 잘리지 않도록 hOverlap만큼 양쪽 여백 확보
-            let hOverlapAbs = (geometry.size.width - 36) / CGFloat(max(viewModel.stitchGrid.count, 1)) * StitchOverlap.horizontal
-            let availableSize = geometry.size.width - 36 - hOverlapAbs * 2
+            let hOverlapAbs = (geometry.size.width - 52) / CGFloat(max(viewModel.stitchGrid.count, 1)) * StitchOverlap.horizontal
+            let availableSize = geometry.size.width - 52 - hOverlapAbs * 2
             let count = viewModel.stitchGrid.count
             let cellSize = count > 0 ? availableSize / CGFloat(count) : availableSize
             let renderW = cellSize * (1 + StitchOverlap.horizontal * 2)
@@ -131,6 +131,16 @@ extension CrossStitchDrawView {
                 .scaleEffect(scale)
                 .offset(offset)
                 .allowsHitTesting(false)
+
+                // 그리드와 같은 scaleEffect/offset 적용
+                Image(.stitchFrame)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: screenWidth - 16)
+                    .offset(y: -12)
+                    .scaleEffect(scale)
+                    .offset(offset)
+                    .allowsHitTesting(false)
 
                 // UIKit 제스처 오버레이
                 CrossStitchGestureView(
