@@ -266,7 +266,6 @@
 		4C5D0BD32F59609400242703 /* KeyringFrameCompositor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5D0BD12F59609400242703 /* KeyringFrameCompositor.swift */; };
 		4C5D0BD52F59623000242703 /* AnimatedKeyringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5D0BD42F59623000242703 /* AnimatedKeyringView.swift */; };
 		4C5D0C2E2F59B72300242703 /* ClockHandRotationEffect.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C5D0C2B2F59B51400242703 /* ClockHandRotationEffect.xcframework */; };
-		4C5D0C2F2F59B72300242703 /* ClockHandRotationEffect.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4C5D0C2B2F59B51400242703 /* ClockHandRotationEffect.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4C5D12272F5DB83800242703 /* chain3_frame08.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D11F12F5DB83800242703 /* chain3_frame08.png */; };
 		4C5D12282F5DB83800242703 /* chain5_frame11.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D12132F5DB83800242703 /* chain5_frame11.png */; };
 		4C5D12292F5DB83800242703 /* chain5_frame24.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D12202F5DB83800242703 /* chain5_frame24.png */; };
@@ -357,6 +356,8 @@
 		4C5D127E2F5DB83800242703 /* chain3_frame17.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D11FA2F5DB83800242703 /* chain3_frame17.png */; };
 		4C5D127F2F5DB83800242703 /* chain1_frame12.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D11D62F5DB83800242703 /* chain1_frame12.png */; };
 		4C5D12802F5DB83800242703 /* chain5_frame19.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D121B2F5DB83800242703 /* chain5_frame19.png */; };
+		4C5D12812F61961000242703 /* ClockHandRotationEffect.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C5D0C2B2F59B51400242703 /* ClockHandRotationEffect.xcframework */; };
+		4C5D12822F61961000242703 /* ClockHandRotationEffect.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4C5D0C2B2F59B51400242703 /* ClockHandRotationEffect.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4C65303B2EBA5FA0000F8154 /* CheckmarkAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303A2EBA5FA0000F8154 /* CheckmarkAlert.swift */; };
 		4C65303E2EBA6042000F8154 /* ImageSaveAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65303D2EBA6042000F8154 /* ImageSaveAlert.swift */; };
 		4C6530442EBA8077000F8154 /* PurchaseSuccessAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6530432EBA8077000F8154 /* PurchaseSuccessAlert.swift */; };
@@ -587,7 +588,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				4C5D0C2F2F59B72300242703 /* ClockHandRotationEffect.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -598,6 +598,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				4C5D12822F61961000242703 /* ClockHandRotationEffect.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1180,6 +1181,7 @@
 				38A594462EAE4EE20003D712 /* FirebaseMessaging in Frameworks */,
 				4C2525DD2F39E38C003CC5AD /* FirebaseAppCheck in Frameworks */,
 				38A594422EAE4EE20003D712 /* FirebaseCrashlytics in Frameworks */,
+				4C5D12812F61961000242703 /* ClockHandRotationEffect.xcframework in Frameworks */,
 				38A594402EAE4EE20003D712 /* FirebaseCore in Frameworks */,
 				38A594482EAE4EE20003D712 /* FirebaseStorage in Frameworks */,
 				4C6621DB2EAE0D93001760B5 /* Lottie in Frameworks */,
