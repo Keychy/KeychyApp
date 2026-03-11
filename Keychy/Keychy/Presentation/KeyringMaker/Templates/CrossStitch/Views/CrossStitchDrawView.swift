@@ -57,7 +57,7 @@ struct CrossStitchDrawView: View {
                     threadPalette
                         .frame(
                             maxWidth: .infinity,
-                            maxHeight: geometry.size.height * 0.15
+                            maxHeight: geometry.size.height * 0.2
                         )
                         .padding(.bottom, 0)
                 }
@@ -219,30 +219,40 @@ extension CrossStitchDrawView {
                             viewModel.isDrawMode = true
                             Haptic.impact(style: .light)
                         } label: {
-                            Image(color.threadImage)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 73, height: 82)
-                                .overlay(
-                                    Circle()
-                                        .strokeBorder(
-                                            viewModel.selectedStitchColor == color && viewModel.isDrawMode
-                                                ? Color.main500
-                                                : Color.clear,
-                                            lineWidth: 2.5
-                                        )
-                                        .padding(-3)
-                                )
+                            threadView(color: color)
                         }
                         .buttonStyle(.plain)
                     }
                 }
                 .padding(.horizontal, 20)
+                .padding(.top, 20)
                 .padding(.vertical, 14)
             }
         }
         .background(Color.gray50)
         .ignoresSafeArea(edges: .bottom)
+    }
+    
+    @ViewBuilder
+    private func threadView(color: StitchColor) -> some View {
+        let isSelected = viewModel.selectedStitchColor == color && viewModel.isDrawMode
+
+        ZStack(alignment: .top) {
+            Image(color.threadImage)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 73, height: 82)
+                .offset(y: isSelected ? -20 : 0)
+                .animation(
+                    .interpolatingSpring(
+                        stiffness: 300,
+                        damping: 20,
+                        initialVelocity: isSelected ? 10 : -5
+                    ),
+                    value: isSelected
+                )
+        }
+        .frame(width: 73)
     }
 }
 
