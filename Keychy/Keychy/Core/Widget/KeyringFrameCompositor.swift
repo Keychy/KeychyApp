@@ -28,7 +28,7 @@ nonisolated enum KeyringFrameCompositor {
 
     static let frameSize = 1350
     /// 위젯 출력용 크기 (1350에서 합성 후 축소하여 메모리 절약)
-    static let outputSize = 700
+    static let outputSize = 400
     static let baseFrameCount = AnimationFrameStorage.baseFrameCount
 
     /// 앱 포인트 → 1350px 프레임 픽셀 변환 스케일
