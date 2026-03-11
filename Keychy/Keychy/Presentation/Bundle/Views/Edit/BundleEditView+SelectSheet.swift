@@ -56,6 +56,11 @@ extension BundleEditView {
                     viewModel: bundleVM,
                     selectedBG: bundleVM.newSelectedBackground,
                     onBackgroundTap: { bg in
+                        // 정적 배경 + 캐시 미스일 때만 로딩 표시
+                        if !bg.background.isLottie
+                            && !StorageManager.shared.isCached(path: bg.background.backgroundImage) {
+                            isBackgroundLoading = true
+                        }
                         bundleVM.newSelectedBackground = bg
                     }
                 )
@@ -103,6 +108,10 @@ extension BundleEditView {
                     }
                     bundleVM.selectedKeyrings[selectedPosition] = keyring
                     bundleVM.keyringOrder.append(selectedPosition)
+                    // 키링 바디 이미지 캐시 미스 시 로딩 표시
+                    if !StorageManager.shared.isCached(path: keyring.bodyImage) {
+                        isSceneReady = false
+                    }
                     showSelectKeyringSheet = false
                 }
                 updateKeyringDataList()

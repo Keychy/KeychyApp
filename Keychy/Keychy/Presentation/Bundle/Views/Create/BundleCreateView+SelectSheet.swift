@@ -98,6 +98,11 @@ extension BundleCreateView {
                     viewModel: bundleVM,
                     selectedBG: bundleVM.newSelectedBackground,
                     onBackgroundTap: { bg in
+                        // 정적 배경 + 캐시 미스일 때만 로딩 표시
+                        if !bg.background.isLottie
+                            && !StorageManager.shared.isCached(path: bg.background.backgroundImage) {
+                            isBackgroundLoading = true
+                        }
                         bundleVM.newSelectedBackground = bg
                     }
                 )
@@ -106,7 +111,10 @@ extension BundleCreateView {
                     viewModel: bundleVM,
                     selectedCarabiner: bundleVM.newSelectedCarabiner,
                     onCarabinerTap: { carabiner in
-                        if carabiner.carabiner.isLottie { isSceneReady = false }
+                        // 정적 카라비너 + 캐시 미스일 때만 로딩 표시
+                        if !carabiner.carabiner.isLottie && !isCarabinerCached(carabiner) {
+                            isSceneReady = false
+                        }
                         bundleVM.newSelectedCarabiner = carabiner
                     }
                 )
@@ -144,6 +152,10 @@ extension BundleCreateView {
                     }
                     selectedKeyrings[selectedPosition] = keyring
                     keyringOrder.append(selectedPosition)
+                    // 키링 바디 이미지 캐시 미스 시 로딩 표시
+                    if !StorageManager.shared.isCached(path: keyring.bodyImage) {
+                        isSceneReady = false
+                    }
                     showKeyringSheet = false
                 }
                 sceneRefreshId = UUID()
@@ -158,6 +170,14 @@ extension BundleCreateView {
         .padding(.horizontal, 20)
         .presentationDetents([.fraction(0.45), .fraction(0.95)])
         .presentationDragIndicator(.visible)
+    }
+
+    // MARK: - 카라비너 캐시 확인
+    /// 카라비너의 front/back 이미지가 모두 캐시되어 있는지 확인
+    private func isCarabinerCached(_ cb: CarabinerViewData) -> Bool {
+        [cb.carabiner.backImageURL, cb.carabiner.frontImageURL]
+            .compactMap { $0 }
+            .allSatisfy { StorageManager.shared.isCached(path: $0) }
     }
 
     // MARK: - 정렬된 키링 목록 (필터링은 KeyringSelectionContent에서 처리)

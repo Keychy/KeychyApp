@@ -46,6 +46,9 @@ struct BundleCreateView<Route: BundleRoute>: View {
     // 구매 시트
     @State var showPurchaseSheet = false
 
+    // 배경 로딩 상태 (정적 배경 캐시 미스 시)
+    @State var isBackgroundLoading = false
+
     // 구매 Alert 애니메이션
     @State var showPurchaseSuccessAlert = false
     @State var purchasesSuccessScale: CGFloat = 0.3
@@ -84,6 +87,9 @@ struct BundleCreateView<Route: BundleRoute>: View {
                         carabinerWidth: cb.carabiner.carabinerWidth,
                         currentCarabinerType: cb.carabiner.type,
                         cleanupOnDisappear: true,
+                        onBackgroundLoaded: {
+                            isBackgroundLoading = false
+                        },
                         onAllKeyringsReady: {
                             // onSetupComplete에서 호출됨
                             // (카라비너 Lottie 프리렌더링 + 키링 로드 + 물리 활성화 후)
@@ -110,8 +116,8 @@ struct BundleCreateView<Route: BundleRoute>: View {
                     .blur(radius: showPurchaseSuccessAlert || isCapturing ? 10 : 0)
             }
 
-            // Lottie 씬 로딩 중 (시트 포함 전체 차단)
-            if !isSceneReady {
+            // 씬 로딩 중 또는 정적 배경 다운로드 중 (시트 포함 전체 차단)
+            if !isSceneReady || isBackgroundLoading {
                 Color.black20
                     .ignoresSafeArea()
                 LoadingAlert(type: .longWithKeychy, message: "아이템을 불러오고 있어요")
