@@ -24,6 +24,7 @@ extension BundleCreateView {
         let cbURLs = bundleVM.carabinerViewData.compactMap { URL(string: $0.carabiner.carabinerImage[0]) }
         let prefetcher = ImagePrefetcher()
         prefetcher.startPrefetching(with: bgURLs + cbURLs)
+        bundleVM.imagePrefetcher = prefetcher
     }
 
     /// 화면이 다시 나타날 때 데이터 새로고침

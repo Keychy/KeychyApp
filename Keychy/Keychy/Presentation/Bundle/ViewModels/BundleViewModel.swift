@@ -20,6 +20,7 @@
 //   +Views     - UI 컴포넌트
 
 import SwiftUI
+import Nuke
 import FirebaseFirestore
 import FirebaseStorage
 
@@ -84,6 +85,10 @@ class BundleViewModel {
 
     var isLoading = false
     var isPurchasing = false
+
+    // MARK: - 이미지 프리페처 (ARC 해제 방지용)
+    /// 로컬 변수로 생성하면 함수 종료 시 해제되어 프리페치 취소됨
+    @ObservationIgnored var imagePrefetcher: ImagePrefetcher?
 
     // MARK: - 정렬 상태
     

@@ -27,6 +27,7 @@ extension BundleEditView {
         let cbURLs = bundleVM.carabinerViewData.compactMap { URL(string: $0.carabiner.carabinerImage[0]) }
         let prefetcher = ImagePrefetcher()
         prefetcher.startPrefetching(with: bgURLs + cbURLs)
+        bundleVM.imagePrefetcher = prefetcher
     }
     
     func resetSceneState() {
