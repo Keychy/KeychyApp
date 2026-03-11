@@ -12,12 +12,7 @@ struct SelectCarabinerSheet: View {
     let selectedCarabiner: CarabinerViewData?
     let onCarabinerTap: (CarabinerViewData) -> Void
 
-    /// 3열 그리드 컬럼 설정
-    private let gridColumns: [GridItem] = [
-        GridItem(.flexible(), spacing: 10),
-        GridItem(.flexible(), spacing: 10),
-        GridItem(.flexible(), spacing: 10)
-    ]
+    private let columnCount = 3
 
     /// 필터링 및 정렬된 카라비너 목록
     private var filteredAndSortedCarabiners: [CarabinerViewData] {
@@ -56,16 +51,34 @@ struct SelectCarabinerSheet: View {
         return result
     }
 
+    /// 3열 행 단위로 분할
+    private var rows: [[CarabinerViewData]] {
+        let items = filteredAndSortedCarabiners
+        return stride(from: 0, to: items.count, by: columnCount).map {
+            Array(items[$0..<min($0 + columnCount, items.count)])
+        }
+    }
+
     var body: some View {
-        // 그리드만 (필터바는 DraggableSheet header로 이동)
-        LazyVGrid(columns: gridColumns, spacing: 20) {
-            ForEach(filteredAndSortedCarabiners) { cb in
-                Button {
-                    onCarabinerTap(cb)
-                } label: {
-                    CarabinerCell(carabiner: cb, isSelected: (selectedCarabiner == cb))
+        VStack(spacing: 20) {
+            ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
+                HStack(spacing: 10) {
+                    ForEach(row) { cb in
+                        Button {
+                            onCarabinerTap(cb)
+                        } label: {
+                            CarabinerCell(carabiner: cb, isSelected: (selectedCarabiner == cb))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    // 마지막 행이 3개 미만일 때 빈 공간 채우기
+                    if row.count < columnCount {
+                        ForEach(0..<(columnCount - row.count), id: \.self) { _ in
+                            Color.clear
+                                .frame(maxWidth: .infinity)
+                        }
+                    }
                 }
-                .buttonStyle(.plain)
             }
         }
         .padding(.horizontal, 20)
