@@ -50,27 +50,30 @@ extension BundleEditView {
     }
 
     private var itemSheetContent: some View {
-        ZStack(alignment: .top) {
-            SelectBackgroundSheet(
-                viewModel: bundleVM,
-                selectedBG: bundleVM.newSelectedBackground,
-                onBackgroundTap: { bg in
-                    bundleVM.newSelectedBackground = bg
-                }
-            )
-            .opacity(isBackgroundMode ? 1 : 0)
-            .allowsHitTesting(isBackgroundMode)
-
-            SelectCarabinerSheet(
-                viewModel: bundleVM,
-                selectedCarabiner: bundleVM.newSelectedCarabiner,
-                onCarabinerTap: { carabiner in
-                    selectCarabiner = carabiner
-                    showChangeCarabinerAlert = true
-                }
-            )
-            .opacity(isBackgroundMode ? 0 : 1)
-            .allowsHitTesting(!isBackgroundMode)
+        Group {
+            if isBackgroundMode {
+                SelectBackgroundSheet(
+                    viewModel: bundleVM,
+                    selectedBG: bundleVM.newSelectedBackground,
+                    onBackgroundTap: { bg in
+                        // 정적 배경 + 캐시 미스일 때만 로딩 표시
+                        if !bg.background.isLottie
+                            && !StorageManager.shared.isCached(path: bg.background.backgroundImage) {
+                            isBackgroundLoading = true
+                        }
+                        bundleVM.newSelectedBackground = bg
+                    }
+                )
+            } else {
+                SelectCarabinerSheet(
+                    viewModel: bundleVM,
+                    selectedCarabiner: bundleVM.newSelectedCarabiner,
+                    onCarabinerTap: { carabiner in
+                        selectCarabiner = carabiner
+                        showChangeCarabinerAlert = true
+                    }
+                )
+            }
         }
     }
     
@@ -105,6 +108,10 @@ extension BundleEditView {
                     }
                     bundleVM.selectedKeyrings[selectedPosition] = keyring
                     bundleVM.keyringOrder.append(selectedPosition)
+                    // 키링 바디 이미지 캐시 미스 시 로딩 표시
+                    if !StorageManager.shared.isCached(path: keyring.bodyImage) {
+                        isSceneReady = false
+                    }
                     showSelectKeyringSheet = false
                 }
                 updateKeyringDataList()

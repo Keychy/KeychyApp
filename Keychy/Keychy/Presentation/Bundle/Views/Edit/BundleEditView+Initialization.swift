@@ -27,6 +27,7 @@ extension BundleEditView {
         let cbURLs = bundleVM.carabinerViewData.compactMap { URL(string: $0.carabiner.carabinerImage[0]) }
         let prefetcher = ImagePrefetcher()
         prefetcher.startPrefetching(with: bgURLs + cbURLs)
+        bundleVM.imagePrefetcher = prefetcher
     }
     
     func resetSceneState() {
@@ -46,47 +47,41 @@ extension BundleEditView {
     }
     
     func loadBackgroundAndCarabiner() async {
-        await withCheckedContinuation { continuation in
-            bundleVM.fetchAllBackgrounds { _ in
-                // 현재 뭉치의 배경으로 항상 초기화
-                if let selectedBundle = bundleVM.selectedBundle {
-                    bundleVM.newSelectedBackground = bundleVM.backgroundViewData.first { bgData in
-                        bgData.background.id == selectedBundle.selectedBackground
-                    }
-                }
+        // 배경 + 카라비너 병렬 로드
+        async let bgTask: Void = withCheckedContinuation { continuation in
+            bundleVM.fetchAllBackgrounds { _ in continuation.resume() }
+        }
+        async let cbTask: Void = withCheckedContinuation { continuation in
+            bundleVM.fetchAllCarabiners { _ in continuation.resume() }
+        }
+        await bgTask
+        await cbTask
 
-                bundleVM.fetchAllCarabiners { _ in
-                    // 현재 뭉치의 카라비너로 항상 초기화
-                    if let selectedBundle = bundleVM.selectedBundle {
-                        bundleVM.newSelectedCarabiner = bundleVM.carabinerViewData.first { cbData in
-                            cbData.carabiner.id == selectedBundle.selectedCarabiner
-                        }
-                    }
-
-                    // 코인 충전 후 복귀 시 저장된 선택 복원
-                    bundleVM.restoreSelectionIfNeeded()
-                    
-                    Task {
-                        // Firebase 데이터를 한 번만 로컬 상태로 초기화
-                        await self.initializeSelectedKeyringsFromFirebase()
-                        // 이후부터는 완전히 로컬 데이터만 사용
-                        self.updateKeyringDataList()
-                        
-                        isKeyringSheetLoading = false
-                        
-                        // 씬 재구성 조건 설정
-                        if !keyringDataList.isEmpty {
-                            sceneRefreshId = UUID()
-                        }
-                    }
-                    // 키링 데이터까지 불러오고 난 후에도 키링의 개수가 0개라면 바로 씬을 준비 완료 상태로 체크
-                    if keyringDataList.isEmpty {
-                        isSceneReady = true
-                    }
-                    
-                    continuation.resume()
-                }
+        // 현재 뭉치의 배경/카라비너로 초기화
+        if let selectedBundle = bundleVM.selectedBundle {
+            bundleVM.newSelectedBackground = bundleVM.backgroundViewData.first {
+                $0.background.id == selectedBundle.selectedBackground
             }
+            bundleVM.newSelectedCarabiner = bundleVM.carabinerViewData.first {
+                $0.carabiner.id == selectedBundle.selectedCarabiner
+            }
+        }
+
+        // 코인 충전 후 복귀 시 저장된 선택 복원
+        bundleVM.restoreSelectionIfNeeded()
+
+        // Firebase 키링 데이터 초기화 (비동기)
+        Task {
+            await self.initializeSelectedKeyringsFromFirebase()
+            self.updateKeyringDataList()
+            isKeyringSheetLoading = false
+            if !keyringDataList.isEmpty {
+                sceneRefreshId = UUID()
+            }
+        }
+
+        if keyringDataList.isEmpty {
+            isSceneReady = true
         }
     }
     

@@ -41,8 +41,8 @@ extension BundleEditView {
                                 bundleVM.selectedKeyrings.removeAll()
                                 bundleVM.keyringOrder.removeAll()
                                 
-                                // 3) 새 카라비너 적용 (Lottie면 로딩 표시)
-                                if selectCarabiner?.carabiner.isLottie == true {
+                                // 3) 새 카라비너 적용 (정적 + 캐시 미스일 때만 로딩 표시)
+                                if let cb = selectCarabiner, !cb.carabiner.isLottie, !isCarabinerCached(cb) {
                                     isSceneReady = false
                                 }
                                 bundleVM.newSelectedCarabiner = selectCarabiner
@@ -108,15 +108,31 @@ extension BundleEditView {
         }
     }
     
+    // MARK: - 카라비너 캐시 확인
+    /// 카라비너의 front/back 이미지가 모두 캐시되어 있는지 확인
+    private func isCarabinerCached(_ cb: CarabinerViewData) -> Bool {
+        [cb.carabiner.backImageURL, cb.carabiner.frontImageURL]
+            .compactMap { $0 }
+            .allSatisfy { StorageManager.shared.isCached(path: $0) }
+    }
+
     // MARK: - 로딩 오버레이
     var loadingOverlay: some View {
         Group {
-            // 첫 진입 : 씬 준비 + 사용자 보유 키링 로딩이 모두 끝나야 사라짐
-            if (!isSceneReady || isKeyringSheetLoading) && !isNavigatingAway {
+            // 최초 진입 로딩
+            if !hasInitiallyLoaded && !isNavigatingAway {
                 Color.black20
                     .ignoresSafeArea()
                     .zIndex(100)
                 LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
+                    .zIndex(101)
+            }
+            // 아이템 변경 시 캐시 미스 로딩 (최초 로딩 이후에만)
+            if hasInitiallyLoaded && (!isSceneReady || isBackgroundLoading) && !isNavigatingAway {
+                Color.black20
+                    .ignoresSafeArea()
+                    .zIndex(100)
+                LoadingAlert(type: .short40, message: nil)
                     .zIndex(101)
             }
             if isCapturing {

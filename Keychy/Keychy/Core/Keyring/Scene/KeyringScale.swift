@@ -27,7 +27,7 @@ enum KeyringScale {
         "Polaroid": CGSize(width: 265, height: 324),
         "AcrylicPhoto": CGSize(width: 360, height: 360),
         "ClearSketch": CGSize(width: 210, height: 210),
-        "PixelKeyring": CGSize(width: 277, height: 257),
+        "PixelKeyring": CGSize(width: 277, height: 277),
         "SpeechBubble": CGSize(width: 360, height: 249),
         "WishHorse26": CGSize(width: 280, height: 310),
         "DuZzonKu": CGSize(width: 376, height: 376),

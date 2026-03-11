@@ -23,6 +23,9 @@ struct BundleEditView<Route: BundleRoute>: View {
     @State var isNavigatingAway = false // 화면 전환 중인지 추적
     @State var isKeyringSheetLoading: Bool = true
     @State var isCapturing: Bool = false
+    @State var isBackgroundLoading = false
+    // 최초 씬 로딩 완료 여부 (아이템 변경 로딩과 분리)
+    @State var hasInitiallyLoaded = false
     
     // MARK: - Sheet
     @Namespace var sheetButtonNamespace
@@ -60,7 +63,7 @@ struct BundleEditView<Route: BundleRoute>: View {
     let sheetHeightRatio: CGFloat = 0.43
     
     var shouldApplyBlur: Bool {
-        showPurchaseFailAlert || showPurchaseSuccessAlert || isCapturing || !isSceneReady || bundleVM.isPurchasing
+        showPurchaseFailAlert || showPurchaseSuccessAlert || isCapturing || !isSceneReady || isBackgroundLoading || bundleVM.isPurchasing
     }
     
     var body: some View {
@@ -198,9 +201,13 @@ struct BundleEditView<Route: BundleRoute>: View {
                 carabinerWidth: carabiner.carabiner.carabinerWidth,
                 currentCarabinerType: carabiner.carabiner.type,
                 cleanupOnDisappear: true,
+                onBackgroundLoaded: {
+                    isBackgroundLoading = false
+                },
                 onAllKeyringsReady: {
                     withAnimation(.easeOut(duration: 0.3)) {
                         isSceneReady = true
+                        hasInitiallyLoaded = true
                     }
                 }
             )
