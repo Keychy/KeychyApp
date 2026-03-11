@@ -166,14 +166,6 @@ extension CrossStitchDrawView {
                     },
                     onPinchEnd: {
                         lastScale = scale
-                    },
-                    onDoubleTap: {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                            scale = 1.0
-                            lastScale = 1.0
-                            offset = .zero
-                            lastOffset = .zero
-                        }
                     }
                 )
                 .frame(width: geometry.size.width, height: geometry.size.height)
