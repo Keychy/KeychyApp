@@ -69,7 +69,8 @@ enum KeyringScale {
     /// 위젯 프레임 합성 후 최종 축소 크기 (px)
     /// PNG 복잡도가 높은 템플릿은 낮춰서 30MB 제한 회피
     private static let templateWidgetOutputSize: [String: Int] = [
-        "CrossStitch": 400
+        "CrossStitch": 400,
+        "PixelKeyring": 400
     ]
 
     // MARK: - 위젯 바디 Y 보정값 (템플릿별)
