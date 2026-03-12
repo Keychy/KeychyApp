@@ -88,9 +88,9 @@ struct WorkshopItemCard<Item: WorkshopItem>: View {
                 SimpleAnimatedImage(url: item.thumbnailURL)
                     .aspectRatio(contentMode: item is Carabiner || item is KeyringTemplate ? .fit : .fill)
                     .padding(.horizontal, item is Carabiner ? 5 : 0)
-                    .padding(.vertical, item is KeyringTemplate ? 10 : 0)
-                    .clipped()
+                    .padding(.vertical, item is Carabiner || item is KeyringTemplate ? 10 : 0)
                     .frame(width: twoGridCellWidth, height: itemHeight)
+                    .clipped()
             }
 
             // 가격 오버레이
