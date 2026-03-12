@@ -65,6 +65,13 @@ enum KeyringScale {
         "Nureungi": 0.6,
     ]
 
+    // MARK: - 위젯 출력 크기 (템플릿별)
+    /// 위젯 프레임 합성 후 최종 축소 크기 (px)
+    /// PNG 복잡도가 높은 템플릿은 낮춰서 30MB 제한 회피
+    private static let templateWidgetOutputSize: [String: Int] = [
+        "CrossStitch": 400
+    ]
+
     // MARK: - 위젯 바디 Y 보정값 (템플릿별)
     /// 위젯 합성 시 바디이미지 Y축 위치 보정 (음수 = 위로, 양수 = 아래로)
     private static let templateWidgetBodyOffsetY: [String: CGFloat] = [
@@ -84,6 +91,7 @@ enum KeyringScale {
     private static let defaultZoomScale: CGFloat = 1.0
     private static let defaultCarabinerScale: CGFloat = 0.65
     private static let defaultWidgetBodyOffsetY: CGFloat = 0
+    private static let defaultWidgetOutputSize: Int = 500
 
     // MARK: - Public API
 
@@ -105,5 +113,10 @@ enum KeyringScale {
     /// 위젯 합성 시 템플릿별 바디 Y 보정값 반환
     static func widgetBodyOffsetY(for template: String) -> CGFloat {
         return templateWidgetBodyOffsetY[template] ?? defaultWidgetBodyOffsetY
+    }
+
+    /// 위젯 프레임 합성 후 최종 출력 크기 반환
+    static func widgetOutputSize(for template: String) -> Int {
+        return templateWidgetOutputSize[template] ?? defaultWidgetOutputSize
     }
 }
