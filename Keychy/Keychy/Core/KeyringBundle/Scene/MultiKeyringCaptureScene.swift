@@ -457,7 +457,8 @@ class MultiKeyringCaptureScene: SKScene {
             // hookOffsetYRatio: 원본 이미지(아크릴 효과 전) 높이 대비 구멍 위치 비율 (0.0 ~ 1.0)
             //                   0.0 = 이미지 상단, 1.0 = 이미지 하단
             // actualHookOffsetY: Scene의 실제 body 크기에 맞게 변환된 픽셀 값
-            let hookOffsetYRatio = hookOffsetY ?? 0.0
+            var hookOffsetYRatio = hookOffsetY ?? 0.0
+            if templateId == "PixelKeyring" { hookOffsetYRatio += 0.03 }
             let actualHookOffsetY = hookOffsetYRatio * bodyFrame.height
 
             // Body 중심 Y 계산: 체인 끝에서 body 절반만큼 내리고, 구멍 위치만큼 올림
