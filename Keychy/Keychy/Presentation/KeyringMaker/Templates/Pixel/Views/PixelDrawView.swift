@@ -25,6 +25,9 @@ struct PixelDrawView: View {
     @State private var offset: CGSize = .zero
     @State private var lastOffset: CGSize = .zero
     
+    /// "다음" 버튼 다중 탭 방지
+    @State private var isProcessingNext = false
+
     /// GlassEffect 애니메이션을 위한 네임스페이스
     @Namespace private var unionNamespace
 
@@ -78,6 +81,13 @@ struct PixelDrawView: View {
                 
                 // MARK: - 커스텀 네비게이션
                 customNavigationBar
+
+                // MARK: - 로딩 오버레이
+                if isProcessingNext {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                    LoadingAlert(type: .short40, message: nil)
+                }
             }
         }
         .ignoresSafeArea()
@@ -370,11 +380,15 @@ extension PixelDrawView {
             Text("그림을 그려주세요")
         } trailing: {
             NextToolbarButton {
+                guard !isProcessingNext else { return }
+                isProcessingNext = true
                 Task {
                     await viewModel.updateBodyImage()
                     router.push(.pixelCustomizing)
+                    isProcessingNext = false
                 }
             }
+            .disabled(isProcessingNext)
             .frame(width: 44, height: 44)
             .offset(x: -4)
         }

@@ -15,6 +15,9 @@ struct CrossStitchDrawView: View {
     @State private var isResetting = false
     @State private var swipeDisabled = false
 
+    /// "다음" 버튼 다중 탭 방지
+    @State private var isProcessingNext = false
+
     /// 줌/패닝 상태
     @State private var scale: CGFloat = 1.0
     @State private var lastScale: CGFloat = 1.0
@@ -68,6 +71,13 @@ struct CrossStitchDrawView: View {
 
                 // MARK: - 커스텀 네비게이션
                 customNavigationBar
+
+                // MARK: - 로딩 오버레이
+                if isProcessingNext {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                    LoadingAlert(type: .short40, message: nil)
+                }
             }
         }
         .ignoresSafeArea()
@@ -351,11 +361,15 @@ extension CrossStitchDrawView {
             Text("자수를 놓아주세요")
         } trailing: {
             NextToolbarButton {
+                guard !isProcessingNext else { return }
+                isProcessingNext = true
                 Task {
                     await viewModel.updateBodyImage()
                     router.push(.crossStitchCustomizing)
+                    isProcessingNext = false
                 }
             }
+            .disabled(isProcessingNext)
             .frame(width: 44, height: 44)
             .offset(x: -4)
         }
