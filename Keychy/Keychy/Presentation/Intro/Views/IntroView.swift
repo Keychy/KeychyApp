@@ -71,13 +71,16 @@ extension IntroView {
     private var loadingAndError: some View {
         VStack(spacing: 20) {
             if viewModel.isLoading {
-                ProgressView("로그인 중")
-                    .typography(.suit15R)
+                ProgressView()
+                    .tint(.gray900)
+                Text(viewModel.loadingMessage)
+                    .typography(.suit14M)
                     .foregroundStyle(.gray900)
+                    .padding(.top, 12)
             }
             if viewModel.errorMessage != nil {
                 Text("로그인에 실패했습니다. 다시 시도해주세요.")
-                    .typography(.suit15R)
+                    .typography(.suit14M)
                     .foregroundStyle(.gray900)
             }
         }

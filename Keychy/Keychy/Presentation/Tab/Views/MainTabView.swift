@@ -66,7 +66,7 @@ extension MainTabView {
             Color.white
                 .ignoresSafeArea()
 
-            SplashView()
+            SplashView(message: "유저 정보를 가져오고 있어요")
         }
         .transition(.opacity)
         .zIndex(999)

@@ -17,6 +17,7 @@ class IntroViewModel: NSObject, ASAuthorizationControllerDelegate {
     // 로그인 관련
     var isLoggedIn = false
     var isLoading = false
+    var loadingMessage = "로그인 중"
     var errorMessage: String?
     var currentNonce: String?
 
