@@ -378,11 +378,11 @@ class MultiKeyringCaptureScene: SKScene {
 
         // chainLength를 기본으로 사용하되, 카라비너 타입에 따라 조정
         let chainCount: Int = {
-            if let carabinerType = currentCarabinerType {
-                // 카라비너가 있으면 plain은 chainLength - 1, 그 외는 chainLength 사용
-                return carabinerType == .plain ? max(chainLength - 1, 1) : chainLength
+            if let carabinerType = currentCarabinerType, carabinerType == .plain {
+                // plain 카라비너: 체인 1개 감소, 단 1개짜리는 2개로 증가 (0개 방지)
+                return chainLength <= 1 ? chainLength + 1 : chainLength - 1
             }
-            return chainLength  // 전달받은 chainLength 사용
+            return chainLength
         }()
 
         // 햄버거 타입에서도 기본 baseZPosition 사용 (카라비너 앞면 -800보다 위)

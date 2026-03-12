@@ -736,7 +736,13 @@ class MultiKeyringScene: SKScene {
         // 체인 간격도 bundleScale에 맞게 조정
         let chainSpacing: CGFloat = 22 * bundleScale
 
-        let chainCount: Int = (currentCarabinerType == .plain ? max(data.chainLength - 1, 1) : data.chainLength)
+        let chainCount: Int = {
+            if currentCarabinerType == .plain {
+                // plain 카라비너: 체인 1개 감소, 단 1개짜리는 2개로 증가 (0개 방지)
+                return data.chainLength <= 1 ? data.chainLength + 1 : data.chainLength - 1
+            }
+            return data.chainLength
+        }()
 
         KeyringChainComponent.createLinks(
             from: currentChainType,
@@ -1249,8 +1255,7 @@ class MultiKeyringScene: SKScene {
 
             // Body 근처에서만 힘 적용 (거리가 가까울수록 강한 힘)
             if distance < 50 {
-                // 체인 1개(픽셀/십자수)는 힘이 분산되지 않아 약하게 적용
-                let multiplier: CGFloat = chains.count == 1 ? 0.12 : 0.3
+                let multiplier: CGFloat = 0.3
                 let force = CGVector(
                     dx: velocity.dx * multiplier,
                     dy: velocity.dy * multiplier
@@ -1278,7 +1283,7 @@ class MultiKeyringScene: SKScene {
         guard let chains = chainNodesByKeyring[index],
               let body = bodyNodes[index] else { return }
 
-        let multiplier: CGFloat = chains.count == 1 ? 0.12 : 0.3
+        let multiplier: CGFloat = 0.3
         let force = CGVector(
             dx: velocity.dx * multiplier,
             dy: velocity.dy * multiplier
