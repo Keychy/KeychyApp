@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreGraphics
+import UIKit
 
 /// 키링 스케일 중앙 관리
 /// - 템플릿별 maxSize
@@ -79,7 +80,7 @@ enum KeyringScale {
         "Polaroid": -30,
         "AcrylicPhoto": -200,
         "ClearSketch": -180,
-        "PixelKeyring": -20,
+        "PixelKeyring": -40,
         "SpeechBubble": -60,
         "welcome": -40,
         "WishHorse26": -110,
@@ -112,7 +113,12 @@ enum KeyringScale {
     }
 
     /// 위젯 합성 시 템플릿별 바디 Y 보정값 반환
-    static func widgetBodyOffsetY(for template: String) -> CGFloat {
+    /// - bodyImage: WishHorse26 type A(기울어진) 판별용 (세로가 더 길면 type A)
+    static func widgetBodyOffsetY(for template: String, bodyImage: UIImage? = nil) -> CGFloat {
+        if template == "WishHorse26", let image = bodyImage {
+            let isTilted = image.size.height > image.size.width
+            return isTilted ? -90 : -110
+        }
         return templateWidgetBodyOffsetY[template] ?? defaultWidgetBodyOffsetY
     }
 
