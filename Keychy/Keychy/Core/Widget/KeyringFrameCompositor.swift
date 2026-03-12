@@ -119,7 +119,7 @@ nonisolated enum KeyringFrameCompositor {
         let templateSize = KeyringScale.maxSize(for: template)
         let bodyWidth = Int(templateSize.width * sceneToFrameScale)
         let bodyHeight = Int(templateSize.height * sceneToFrameScale)
-        let bodyOffsetY = KeyringScale.widgetBodyOffsetY(for: template)
+        let bodyOffsetY = KeyringScale.widgetBodyOffsetY(for: template, bodyImage: bodyImage)
 
         // 오버플로 방지: 바디가 피벗 아래로 매달리므로 캔버스 절반 기준으로 제한
         let maxAllowed = CGFloat(frameSize) * 0.55
