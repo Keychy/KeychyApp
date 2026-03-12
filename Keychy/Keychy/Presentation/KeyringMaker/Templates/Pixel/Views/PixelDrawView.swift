@@ -14,7 +14,8 @@ struct PixelDrawView: View {
     /// 팔레트 표시 여부 (그리기 모드일 때만 표시)
     @State private var showPalette: Bool = true
     @State private var showResetAlert = false
-    
+    @State private var swipeDisabled = false
+
     /// 화면 사라지기 전 그리드 렌더링 막기용 파라미터
     @State private var isResetting = false
     
@@ -82,6 +83,12 @@ struct PixelDrawView: View {
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(true)
+        .swipeBackGesture(enabled: !swipeDisabled)
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                swipeDisabled = true
+            }
+        }
         .alert("작업을 취소하시겠습니까?", isPresented: $showResetAlert) {
             Button("취소", role: .cancel) { }
             Button("확인", role: .destructive) {

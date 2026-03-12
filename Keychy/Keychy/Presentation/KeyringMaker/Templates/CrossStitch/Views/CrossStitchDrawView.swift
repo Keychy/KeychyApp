@@ -13,6 +13,7 @@ struct CrossStitchDrawView: View {
 
     @State private var showResetAlert = false
     @State private var isResetting = false
+    @State private var swipeDisabled = false
 
     /// 줌/패닝 상태
     @State private var scale: CGFloat = 1.0
@@ -72,6 +73,14 @@ struct CrossStitchDrawView: View {
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(true)
+        .swipeBackGesture(enabled: !swipeDisabled)
+        .onAppear {
+            // sheet 닫힘 후 Preview의 swipeBackGesture(enabled: true)가
+            // 덮어쓰는 타이밍 이슈 방지를 위해 onAppear에서 state 변경으로 재트리거
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                swipeDisabled = true
+            }
+        }
         .alert("작업을 취소하시겠습니까?", isPresented: $showResetAlert) {
             Button("취소", role: .cancel) { }
             Button("확인", role: .destructive) {

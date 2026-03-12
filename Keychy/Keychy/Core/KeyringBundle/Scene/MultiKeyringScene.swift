@@ -1078,14 +1078,13 @@ class MultiKeyringScene: SKScene {
             if let carabinerType = currentCarabinerType, carabinerType == .plain {
                 // Plain 타입: 첫 번째 체인 완전 고정, 나머지는 자유롭게 움직임
                 for (index, chain) in chains.enumerated() {
-                    if index == 0 {
-                        // 첫 번째 체인: 완전히 고정 (물리 비활성화)
+                    if index == 0 && chains.count > 1 {
+                        // 첫 번째 체인: 앵커 역할로 고정 (아래 체인이 있을 때만)
                         chain.physicsBody?.isDynamic = false
                     } else {
-                        // 나머지 체인들: 자유롭게 움직임
                         chain.physicsBody?.isDynamic = true
-                        chain.physicsBody?.linearDamping = 1.5
-                        chain.physicsBody?.angularDamping = 1.5
+                        chain.physicsBody?.linearDamping = chains.count == 1 ? 5.0 : 1.5
+                        chain.physicsBody?.angularDamping = chains.count == 1 ? 5.0 : 1.5
                     }
                 }
             } else {
@@ -1250,9 +1249,11 @@ class MultiKeyringScene: SKScene {
 
             // Body 근처에서만 힘 적용 (거리가 가까울수록 강한 힘)
             if distance < 50 {
+                // 체인 1개(픽셀/십자수)는 힘이 분산되지 않아 약하게 적용
+                let multiplier: CGFloat = chains.count == 1 ? 0.12 : 0.3
                 let force = CGVector(
-                    dx: velocity.dx * 0.3,
-                    dy: velocity.dy * 0.3
+                    dx: velocity.dx * multiplier,
+                    dy: velocity.dy * multiplier
                 )
 
                 // Plain 타입일 때는 Ring에도 약한 힘 적용
@@ -1277,9 +1278,10 @@ class MultiKeyringScene: SKScene {
         guard let chains = chainNodesByKeyring[index],
               let body = bodyNodes[index] else { return }
 
+        let multiplier: CGFloat = chains.count == 1 ? 0.12 : 0.3
         let force = CGVector(
-            dx: velocity.dx * 0.3,
-            dy: velocity.dy * 0.3
+            dx: velocity.dx * multiplier,
+            dy: velocity.dy * multiplier
         )
 
         // Plain 타입일 때는 Ring과 체인이 모두 찰랑거림

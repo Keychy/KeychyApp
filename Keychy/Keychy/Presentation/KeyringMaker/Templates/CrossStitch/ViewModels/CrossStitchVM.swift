@@ -155,7 +155,6 @@ class CrossStitchVM: KeyringViewModelProtocol {
 
     private func saveToUndoStack() {
         undoStack.append(stitchGrid)
-        if undoStack.count > 50 { undoStack.removeFirst() }
     }
 
     func undo() {

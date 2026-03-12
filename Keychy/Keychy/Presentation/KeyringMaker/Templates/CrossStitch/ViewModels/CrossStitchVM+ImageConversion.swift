@@ -102,7 +102,7 @@ extension CrossStitchVM {
         let frameH = frameImage.size.height
         let aspectRatio = frameH > 0 ? frameW / frameH : 1.0
 
-        let canvasH: CGFloat = 200
+        let canvasH: CGFloat = 258
         let canvasW: CGFloat = canvasH * aspectRatio
         let canvasSize = CGSize(width: canvasW, height: canvasH)
 
