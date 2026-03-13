@@ -260,7 +260,6 @@
 		4C4734052F22615D005D2376 /* WorkshopSortSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4733FF2F22615D005D2376 /* WorkshopSortSheet.swift */; };
 		4C4734072F226B81005D2376 /* WorkshopMakeMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4734062F226B81005D2376 /* WorkshopMakeMenu.swift */; };
 		4C5D0B1C2F56A8D200242703 /* WidgetPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5D0B1B2F56A8D200242703 /* WidgetPopup.swift */; };
-		4C5D0B8F2F595E3800242703 /* BlinkMask.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C5D0B8E2F595E3800242703 /* BlinkMask.otf */; };
 		4C5D0BCF2F595F5200242703 /* AnimationFrameStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5D0BCD2F595F5200242703 /* AnimationFrameStorage.swift */; };
 		4C5D0BD02F595F5200242703 /* AnimationFrameStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5D0BCD2F595F5200242703 /* AnimationFrameStorage.swift */; };
 		4C5D0BD32F59609400242703 /* KeyringFrameCompositor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5D0BD12F59609400242703 /* KeyringFrameCompositor.swift */; };
@@ -861,7 +860,6 @@
 		4C4733FF2F22615D005D2376 /* WorkshopSortSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopSortSheet.swift; sourceTree = "<group>"; };
 		4C4734062F226B81005D2376 /* WorkshopMakeMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopMakeMenu.swift; sourceTree = "<group>"; };
 		4C5D0B1B2F56A8D200242703 /* WidgetPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetPopup.swift; sourceTree = "<group>"; };
-		4C5D0B8E2F595E3800242703 /* BlinkMask.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = BlinkMask.otf; sourceTree = "<group>"; };
 		4C5D0BCD2F595F5200242703 /* AnimationFrameStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationFrameStorage.swift; sourceTree = "<group>"; };
 		4C5D0BD12F59609400242703 /* KeyringFrameCompositor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringFrameCompositor.swift; sourceTree = "<group>"; };
 		4C5D0BD42F59623000242703 /* AnimatedKeyringView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedKeyringView.swift; sourceTree = "<group>"; };
@@ -1993,7 +1991,6 @@
 			isa = PBXGroup;
 			children = (
 				4C5D0BD42F59623000242703 /* AnimatedKeyringView.swift */,
-				4C5D0B8E2F595E3800242703 /* BlinkMask.otf */,
 			);
 			path = Animation;
 			sourceTree = "<group>";
@@ -3190,7 +3187,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4C5D0B8F2F595E3800242703 /* BlinkMask.otf in Resources */,
 				4CC8D0172EF0395F00317467 /* Assets.xcassets in Resources */,
 				C6C35EF72ED17228009642F4 /* RealStoreKit2.storekit in Resources */,
 			);
