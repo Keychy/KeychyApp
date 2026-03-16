@@ -55,6 +55,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         // Firebase 초기화
         FirebaseApp.configure()
 
+        // 빌드 환경 판별 (Debug/TestFlight vs App Store)
+        Task { await BuildEnvironment.configure() }
+
         // TabBar 외형 설정
         configureTabBarAppearance()
 
