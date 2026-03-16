@@ -1256,7 +1256,9 @@ class MultiKeyringScene: SKScene {
 
             // Body 근처에서만 힘 적용 (거리가 가까울수록 강한 힘)
             if distance < 50 {
-                let multiplier: CGFloat = 0.3
+                // 스케일이 작을수록 impulse도 비례하여 줄여 과도한 회전/이탈 방지
+                let bundleScale = KeyringScale.bundleKeyringScale(for: carabinerId)
+                let multiplier: CGFloat = 0.3 * bundleScale
                 let force = CGVector(
                     dx: velocity.dx * multiplier,
                     dy: velocity.dy * multiplier
@@ -1284,7 +1286,9 @@ class MultiKeyringScene: SKScene {
         guard let chains = chainNodesByKeyring[index],
               let body = bodyNodes[index] else { return }
 
-        let multiplier: CGFloat = 0.3
+        // 스케일이 작을수록 impulse도 비례하여 줄여 과도한 회전/이탈 방지
+        let bundleScale = KeyringScale.bundleKeyringScale(for: carabinerId)
+        let multiplier: CGFloat = 0.3 * bundleScale
         let force = CGVector(
             dx: velocity.dx * multiplier,
             dy: velocity.dy * multiplier
