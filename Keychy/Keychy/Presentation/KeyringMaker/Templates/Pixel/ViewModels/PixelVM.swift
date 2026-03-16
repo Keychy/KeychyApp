@@ -234,8 +234,7 @@ class PixelVM: KeyringViewModelProtocol {
             // Sound 전체 가져오기
             let soundsSnapshot = try await Firestore.firestore()
                 .collection("Sound")
-                .whereField("isActive", isEqualTo: true)
-                .getDocuments()
+                .activeItems()
 
             let allSounds = try soundsSnapshot.documents.compactMap {
                 try $0.data(as: Sound.self)
@@ -255,8 +254,7 @@ class PixelVM: KeyringViewModelProtocol {
             // Particle 전체 가져오기
             let particlesSnapshot = try await Firestore.firestore()
                 .collection("Particle")
-                .whereField("isActive", isEqualTo: true)
-                .getDocuments()
+                .activeItems()
 
             let allParticles = try particlesSnapshot.documents.compactMap {
                 try $0.data(as: Particle.self)
