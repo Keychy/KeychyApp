@@ -42,6 +42,7 @@ struct BundleCreateView<Route: BundleRoute>: View {
     @State var isCapturing: Bool = false
     @State var sceneRefreshId = UUID()
     @State var isSceneReady: Bool = false
+    @State var isNavigatingDeeper = true // router push를 하는지 여부
 
     // 구매 시트
     @State var showPurchaseSheet = false
@@ -158,7 +159,10 @@ struct BundleCreateView<Route: BundleRoute>: View {
             bundleVM.resetSheetFilterState()
         }
         .onDisappear {
-            bundleVM.resetEditState()
+            if !isNavigatingDeeper {
+                bundleVM.resetEditState()
+            }
+            isNavigatingDeeper = false
         }
         .sheet(isPresented: $showPurchaseSheet) {
             purchaseSheetView

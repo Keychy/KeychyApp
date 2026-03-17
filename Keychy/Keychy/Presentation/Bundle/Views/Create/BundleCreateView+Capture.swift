@@ -143,6 +143,7 @@ extension BundleCreateView {
         // 캡처 완료 후 다음 화면으로 이동
         await MainActor.run {
             isCapturing = false
+            isNavigatingDeeper = true
             router.push(.bundleNameInputView)
         }
     }
