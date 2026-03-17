@@ -110,6 +110,16 @@ class BundleViewModel {
         showSheetSortSheet = false
     }
 
+    /// 생성 화면 상태 초기화 (완성 화면에서 나갈 때 호출)
+    func resetCreateState() {
+        selectedKeyringsForBundle = [:]
+        keyringOrderForBundle = []
+        bundleCapturedImage = nil
+        bundleWidgetImage = nil
+        newSelectedBackground = nil
+        newSelectedCarabiner = nil
+    }
+    
     /// 편집 화면 상태 초기화 (편집 화면 나갈 때 호출)
     func resetEditState() {
         newSelectedBackground = nil
