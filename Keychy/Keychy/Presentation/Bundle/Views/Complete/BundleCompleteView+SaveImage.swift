@@ -77,10 +77,27 @@ extension BundleCompleteView {
 
         Task {
             // 캡쳐용 키링 데이터 생성 (로컬 데이터 사용)
-            var captureKeyringDataList: [MultiKeyringCaptureScene.KeyringData] = []
             let selectedKeyrings = bundleVM.selectedKeyringsForBundle
+            let keyringOrder = bundleVM.keyringOrderForBundle
 
-            for (index, keyring) in selectedKeyrings.sorted(by: { $0.key < $1.key }) {
+            // 장착 순서 기반 정렬, 없으면 슬롯 index 순 fallback (구버전 데이터)
+            let orderedEntries: [(slotIndex: Int, keyring: Keyring)]
+            if !keyringOrder.isEmpty {
+                orderedEntries = keyringOrder.compactMap { slotIndex in
+                    guard let keyring = selectedKeyrings[slotIndex] else { return nil }
+                    return (slotIndex, keyring)
+                }
+            } else {
+                orderedEntries = selectedKeyrings
+                    .sorted(by: { $0.key < $1.key })
+                    .map { ($0.key, $0.value) }
+            }
+            
+            
+            // 캡처용 키링 데이터 생성 - 장착 순서대로 배열 구성
+            var captureKeyringDataList: [MultiKeyringCaptureScene.KeyringData] = []
+
+            for (index, keyring) in orderedEntries {
                 guard index < carabiner.maxKeyringCount else { continue }
 
                 captureKeyringDataList.append(
