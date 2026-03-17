@@ -18,6 +18,7 @@ struct KeyringBundle: Identifiable, Equatable, Hashable {
     var selectedBackground: String
     var selectedCarabiner: String
     var keyrings: [String]
+    var keyringOrder: [Int]  // 장착 순서 (슬롯 index 배열, 앞쪽이 먼저 건 것)
     var maxKeyrings: Int
     var isMain: Bool
     var createdAt: Date
@@ -30,6 +31,7 @@ struct KeyringBundle: Identifiable, Equatable, Hashable {
             "selectedBackground": selectedBackground,
             "selectedCarabiner": selectedCarabiner,
             "keyrings": keyrings,
+            "keyringOrder": keyringOrder,
             "maxKeyrings": maxKeyrings,
             "isMain": isMain,
             "createdAt": Timestamp(date: createdAt)
@@ -55,6 +57,8 @@ struct KeyringBundle: Identifiable, Equatable, Hashable {
         self.selectedBackground = selectedBackground
         self.selectedCarabiner = selectedCarabiner
         self.keyrings = keyrings
+        // keyringOrder가 없는 구버전 문서는 빈 배열로 fallback
+        self.keyringOrder = data["keyringOrder"] as? [Int] ?? []
         self.maxKeyrings = maxKeyrings
         self.isMain = isMain
         self.createdAt = createdAtTimestamp.dateValue()
@@ -66,6 +70,7 @@ struct KeyringBundle: Identifiable, Equatable, Hashable {
          selectedBackground: String,
          selectedCarabiner: String,
          keyrings: [String],
+         keyringOrder: [Int],
          maxKeyrings: Int,
          isMain: Bool,
          createdAt: Date
@@ -76,6 +81,7 @@ struct KeyringBundle: Identifiable, Equatable, Hashable {
         self.selectedBackground = selectedBackground
         self.selectedCarabiner = selectedCarabiner
         self.keyrings = keyrings
+        self.keyringOrder = keyringOrder
         self.maxKeyrings = maxKeyrings
         self.isMain = isMain
         self.createdAt = createdAt
