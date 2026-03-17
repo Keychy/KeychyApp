@@ -69,8 +69,20 @@ extension BundleEditView {
                     viewModel: bundleVM,
                     selectedCarabiner: bundleVM.newSelectedCarabiner,
                     onCarabinerTap: { carabiner in
-                        selectCarabiner = carabiner
-                        showChangeCarabinerAlert = true
+                        let maxCount = carabiner.carabiner.maxKeyringCount
+
+                        // 슬롯 초과 키링만 제거 (나머지 유지)
+                        let overflowIndices = bundleVM.selectedKeyrings.keys.filter { $0 >= maxCount }
+                        for idx in overflowIndices {
+                            bundleVM.selectedKeyrings[idx] = nil
+                            bundleVM.keyringOrder.removeAll { $0 == idx }
+                        }
+
+                        // 정적 카라비너 + 캐시 미스일 때만 로딩 표시
+                        if !carabiner.carabiner.isLottie && !isCarabinerCached(carabiner) {
+                            isSceneReady = false
+                        }
+                        bundleVM.newSelectedCarabiner = carabiner
                     }
                 )
             }
