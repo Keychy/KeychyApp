@@ -79,7 +79,10 @@ extension BundleCreateView {
         // 캡처용 키링 데이터 생성
         var keyringDataList: [MultiKeyringCaptureScene.KeyringData] = []
 
-        for (index, keyring) in selectedKeyrings.sorted(by: { $0.key < $1.key }) {
+        for index in keyringOrder {
+            guard index < carabiner.keyringXPosition.count else { continue }
+            guard let keyring = selectedKeyrings[index] else { continue }
+
             let data = MultiKeyringCaptureScene.KeyringData(
                 index: index,
                 position: CGPoint(
