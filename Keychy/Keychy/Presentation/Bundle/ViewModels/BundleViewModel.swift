@@ -57,6 +57,7 @@ class BundleViewModel {
     // MARK: - 뭉치 생성 시 선택된 키링
 
     var selectedKeyringsForBundle: [Int: Keyring] = [:]
+    var keyringOrderForBundle: [Int] = []
 
     // MARK: - 뭉치 캡쳐 이미지
 
