@@ -76,37 +76,45 @@ extension WidgetOnboardingStep {
     static let steps: [WidgetOnboardingStep] = [
         WidgetOnboardingStep(
             id: 1,
-            title: "홈 화면을 길게 눌러 왼쪽 위의\n편집 버튼을 누르고 위젯 추가를 선택해주세요.",
+            title: "보관함 > 키링 > [...] > 위젯 목록에 추가를 눌러 원하는 위젯을 추가해주세요.",
             imageName: "widget1",
             highlightKeywords: [
-                HighlightKeyword("편집", style: .semibold),
-                HighlightKeyword("위젯 추가", style: .semibold)
+                HighlightKeyword("위젯 목록에 추가", style: .semibold),
             ]
         ),
         WidgetOnboardingStep(
             id: 2,
-            title: "위젯 목록에서 KEYCHY를 찾아 선택합니다.",
+            title: "홈 화면을 길게 눌러 왼쪽 위의\n편집 버튼을 누르고 위젯 추가를 선택해주세요.",
             imageName: "widget2",
             highlightKeywords: [
-                HighlightKeyword("KEYCHY", style: .extrabold)
+                HighlightKeyword("편집", style: .extrabold),
+                HighlightKeyword("위젯 추가", style: .extrabold),
             ]
         ),
         WidgetOnboardingStep(
             id: 3,
-            title: "원하는 크기의 위젯을 고르고\n위젯 추가를 눌러주세요.",
+            title: "위젯 목록에서 KEYCHY를 찾아 선택합니다.",
             imageName: "widget3",
-            highlightKeywords: nil
+            highlightKeywords: [
+                HighlightKeyword("KEYCHY", style: .extrabold),
+            ]
         ),
         WidgetOnboardingStep(
             id: 4,
-            title: "추가된 위젯을 바로 터치해\n표시할 키링을 골라주세요.",
+            title: "원하는 크기의 위젯을 고르고\n위젯 추가를 눌러주세요.",
             imageName: "widget4",
             highlightKeywords: nil
         ),
         WidgetOnboardingStep(
             id: 5,
-            title: "혹은 위젯을 꾹 눌러 위젯 편집에서 표시할 키링을 바꿀 수도 있어요.",
+            title: "추가된 위젯을 바로 터치해\n표시할 키링을 골라주세요.",
             imageName: "widget5",
+            highlightKeywords: nil
+        ),
+        WidgetOnboardingStep(
+            id: 6,
+            title: "혹은 위젯을 꾹 눌러 위젯 편집에서 표시할 키링을 바꿀 수도 있어요.",
+            imageName: "widget6",
             highlightKeywords: nil
         )
     ]

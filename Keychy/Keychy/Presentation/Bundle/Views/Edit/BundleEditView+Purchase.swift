@@ -78,7 +78,8 @@ extension BundleEditView {
         } label: {
             HStack(spacing: 5) {
                 if bundleVM.isPurchasing {
-                    LoadingAlert(type: .short40, message: nil)
+                    ProgressView()
+                        .tint(.white100)
                 } else {
                     Image(.myCoinMini)
                 }

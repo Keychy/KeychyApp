@@ -16,7 +16,6 @@ struct BundleEditView<Route: BundleRoute>: View {
     @State var bundleVM: BundleViewModel
     
     @State var selectedCategory: String = ""
-    @State var selectCarabiner: CarabinerViewData?
     
     // MARK: - Loading
     @State var isSceneReady = false
@@ -33,9 +32,6 @@ struct BundleEditView<Route: BundleRoute>: View {
     @State var isBackgroundMode: Bool = true  // true: 배경, false: 카라비너
     @State var showPurchaseSheet = false
     @State var showSelectKeyringSheet = false
-    
-    // MARK: - Alert
-    @State var showChangeCarabinerAlert: Bool = false
     
     // 구매 관련
     @State var showPurchaseSuccessAlert = false
