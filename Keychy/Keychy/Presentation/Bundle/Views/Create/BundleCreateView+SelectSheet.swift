@@ -111,6 +111,15 @@ extension BundleCreateView {
                     viewModel: bundleVM,
                     selectedCarabiner: bundleVM.newSelectedCarabiner,
                     onCarabinerTap: { carabiner in
+                        let maxCount = carabiner.carabiner.maxKeyringCount  // 새 카라비너 슬롯 수
+                        
+                        // 슬롯 초과 키링 제거
+                        let overflowIndices = selectedKeyrings.keys.filter { $0 >= maxCount }
+                        for idx in overflowIndices {
+                            selectedKeyrings[idx] = nil
+                            keyringOrder.removeAll { $0 == idx }
+                        }
+                        
                         // 정적 카라비너 + 캐시 미스일 때만 로딩 표시
                         if !carabiner.carabiner.isLottie && !isCarabinerCached(carabiner) {
                             isSceneReady = false

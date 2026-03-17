@@ -12,8 +12,10 @@ extension BundleCreateView {
     /// 키링 데이터 리스트 생성 (씬 표시용)
     func createKeyringDataList(carabiner: Carabiner) -> [MultiKeyringScene.KeyringData] {
         var dataList: [MultiKeyringScene.KeyringData] = []
+        let maxCount = carabiner.keyringXPosition.count
 
         for index in keyringOrder {
+            guard index < maxCount else { continue }  // 범위 초과된 index 스킵
             guard let keyring = selectedKeyrings[index] else { continue }
             let soundId = keyring.soundId
 
