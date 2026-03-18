@@ -189,6 +189,7 @@ extension BundleCreateView {
     var customNavigationBar: some View {
         CustomNavigationBar {
             BackToolbarButton {
+                bundleVM.resetCreateState()
                 bundleVM.restoreMainBundle()
                 TabBarManager.show()
                 router.pop()

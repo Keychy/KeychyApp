@@ -253,10 +253,11 @@ class MultiKeyringCaptureScene: SKScene {
     // MARK: - Setup
 
     /// 모든 키링 정적 배치
+    /// keyringDataList는 이미 장착 순서대로 정렬된 배열이므로
+    /// enumerated()의 order(0,1,2...)를 baseZPosition으로 사용하여 레이어 순서 보장
     private func setupKeyrings() {
-        for data in keyringDataList {
-            // data.index가 원본 인덱스, 이를 그대로 사용하여 정확한 위치에 배치
-            setupSingleKeyring(data: data, order: data.index)
+        for (order, data) in keyringDataList.enumerated() {
+            setupSingleKeyring(data: data, order: order)
         }
     }
 

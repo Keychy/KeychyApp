@@ -199,6 +199,9 @@ extension BundleNameInputView {
             }
         }
         
+        // 장착 순서 그대로 사용
+        let keyringOrder = bundleVM.keyringOrderForBundle
+        
         let maxKeyrings = carabiner.maxKeyringCount
         let isMain = bundleVM.bundles.isEmpty
         
@@ -216,6 +219,7 @@ extension BundleNameInputView {
             selectedBackground: backgroundId,
             selectedCarabiner: carabinerId,
             keyrings: keyringIds,
+            keyringOrder: keyringOrder,
             maxKeyrings: maxKeyrings,
             isMain: isMain
         ) { success, bundleId in
