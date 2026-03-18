@@ -38,9 +38,6 @@ class MyPageViewModel {
 
     // MARK: - Notification States
 
-    /// 푸시 알림 활성화 여부
-    var isPushNotificationEnabled = false
-
     /// 선물 알림 활성화 여부
     var isGiftNotificationEnabled = true
 
@@ -67,14 +64,11 @@ class MyPageViewModel {
 
     enum AlertType {
         case turnOn
-        case turnOff
 
         var title: String {
             switch self {
             case .turnOn:
                 return "알림 권한이 필요해요"
-            case .turnOff:
-                return "알림을 끄시겠어요?"
             }
         }
 
@@ -82,61 +76,78 @@ class MyPageViewModel {
             switch self {
             case .turnOn:
                 return "설정에서 알림을 켜주세요"
-            case .turnOff:
-                return "설정에서 알림을 끌 수 있어요"
             }
         }
     }
 
     // MARK: - Notification Methods
 
-    /// 알림 권한 체크 (초기화용)
-    func checkNotificationPermission() {
+    /// 시스템 알림 권한에 따라 토글 UI 동기화 (Firestore는 건드리지 않음)
+    func syncWithSystemPermission(userManager: UserManager) {
         notificationManager.checkPermission { [weak self] isAuthorized in
-            self?.isPushNotificationEnabled = isAuthorized
+            guard let self = self else { return }
+            if !isAuthorized {
+                // 시스템 OFF → 토글 UI만 OFF (Firestore 값은 유지)
+                self.isGiftNotificationEnabled = false
+                self.isMarketingNotificationEnabled = false
+            } else {
+                // 시스템 ON → Firestore 값 복원
+                self.isGiftNotificationEnabled = userManager.currentUser?.giftNotificationEnabled ?? true
+                self.isMarketingNotificationEnabled = userManager.currentUser?.marketingAgreed ?? false
+            }
         }
     }
 
-    /// 전체 알림 토글 변경 처리
-    func handlePushNotificationToggle(newValue: Bool) {
-        notificationManager.checkPermission { [weak self] isAuthorized in
+    /// 알림 권한 확보 후 콜백 실행 (notDetermined → 시스템 팝업, denied → 설정 Alert)
+    private func ensureNotificationPermission(
+        onDeniedRevert: @escaping () -> Void,
+        onAuthorized: @escaping () -> Void
+    ) {
+        notificationManager.getAuthorizationStatus { [weak self] status in
             guard let self = self else { return }
-
-            if newValue {
-                // 토글 ON 시도
-                if isAuthorized {
-                    // 이미 허용됨
-                    self.isPushNotificationEnabled = true
-                } else {
-                    // 권한 없음 -> 권한 요청
-                    self.notificationManager.requestPermission { granted in
-                        if granted {
-                            self.isPushNotificationEnabled = true
-                        } else {
-                            // 권한 거부됨 -> 설정 이동 Alert
-                            self.alertType = .turnOn
-                            self.showSettingsAlert = true
-                        }
+            switch status {
+            case .authorized:
+                onAuthorized()
+            case .notDetermined:
+                // 아직 한 번도 안 물어봄 → 시스템 팝업
+                self.notificationManager.requestPermission { granted in
+                    if granted {
+                        onAuthorized()
+                    } else {
+                        onDeniedRevert()
                     }
                 }
-            } else {
-                // 토글 OFF 시도
-                if isAuthorized {
-                    // 현재 권한이 있는 상태에서 끄려고 함 -> 설정으로 안내 (끄기)
-                    self.alertType = .turnOff
-                    self.showSettingsAlert = true
-                } else {
-                    // 이미 꺼진 상태 -> 그대로 유지
-                    self.isPushNotificationEnabled = false
-                }
+            default:
+                // denied, provisional 등 → 설정 이동 Alert
+                onDeniedRevert()
+                self.alertType = .turnOn
+                self.showSettingsAlert = true
             }
         }
     }
 
     /// 선물 알림 토글 변경 처리
     func handleGiftNotificationToggle(newValue: Bool, userManager: UserManager) {
-        guard isPushNotificationEnabled else { return }
+        if newValue {
+            ensureNotificationPermission(
+                onDeniedRevert: { [weak self] in
+                    self?.isGiftNotificationEnabled = false
+                },
+                onAuthorized: { [weak self] in
+                    self?.updateGiftNotification(newValue: true, userManager: userManager)
+                }
+            )
+        } else {
+            // 시스템 ON일 때만 Firestore 업데이트 (시스템 OFF면 UI 동기화일 뿐)
+            notificationManager.checkPermission { [weak self] isAuthorized in
+                guard isAuthorized else { return }
+                self?.updateGiftNotification(newValue: false, userManager: userManager)
+            }
+        }
+    }
 
+    /// 선물 알림 Firestore 업데이트
+    private func updateGiftNotification(newValue: Bool, userManager: UserManager) {
         guard let uid = Auth.auth().currentUser?.uid else { return }
 
         db.collection("User")
@@ -162,12 +173,25 @@ class MyPageViewModel {
 
     /// 마케팅 정보 알림 토글 변경 처리
     func handleMarketingToggle(newValue: Bool, userManager: UserManager) {
-        // 전체 알림이 꺼져있으면 아무것도 안함
-        guard isPushNotificationEnabled else {
-            return
+        if newValue {
+            ensureNotificationPermission(
+                onDeniedRevert: { [weak self] in
+                    self?.isMarketingNotificationEnabled = false
+                },
+                onAuthorized: { [weak self] in
+                    self?.updateMarketingNotification(newValue: true, userManager: userManager)
+                }
+            )
+        } else {
+            notificationManager.checkPermission { [weak self] isAuthorized in
+                guard isAuthorized else { return }
+                self?.updateMarketingNotification(newValue: false, userManager: userManager)
+            }
         }
+    }
 
-        // Firestore에 마케팅 동의 저장
+    /// 마케팅 알림 Firestore 업데이트
+    private func updateMarketingNotification(newValue: Bool, userManager: UserManager) {
         guard let uid = Auth.auth().currentUser?.uid else { return }
 
         db.collection("User")
@@ -175,13 +199,11 @@ class MyPageViewModel {
             .updateData(["marketingAgreed": newValue]) { [weak self] error in
                 if let error = error {
                     print("마케팅 알림 설정 저장 실패: \(error.localizedDescription)")
-                    // 실패 시 원래대로 되돌리기
                     DispatchQueue.main.async { [weak self] in
                         self?.isMarketingNotificationEnabled = !newValue
                     }
                 } else {
                     print("마케팅 알림 설정 저장 성공: \(newValue)")
-                    // UserManager의 currentUser도 즉시 업데이트
                     DispatchQueue.main.async {
                         if var user = userManager.currentUser {
                             user.marketingAgreed = newValue
