@@ -144,6 +144,7 @@ class UserManager {
         UserDefaults.standard.set(user.nickname, forKey: "userNickname")
         UserDefaults.standard.set(user.email, forKey: "userEmail")
         UserDefaults.standard.set(user.marketingAgreed, forKey: "userMarketingAgreed")
+        UserDefaults.standard.set(user.giftNotificationEnabled, forKey: "userGiftNotificationEnabled")
     }
 
     private func loadFromCache() {
@@ -151,6 +152,8 @@ class UserManager {
         let nickname = UserDefaults.standard.string(forKey: "userNickname") ?? ""
         let email = UserDefaults.standard.string(forKey: "userEmail") ?? ""
         let marketingAgreed = UserDefaults.standard.bool(forKey: "userMarketingAgreed")
+        // UserDefaults.bool은 키가 없으면 false를 반환하므로, 키 존재 여부로 기본값 분기
+        let giftNotificationEnabled = UserDefaults.standard.object(forKey: "userGiftNotificationEnabled") as? Bool ?? true
 
         if !uid.isEmpty {
             // 캐시에서 임시 유저 생성 (전체 데이터는 Firestore에서 로드 필요)
@@ -160,6 +163,7 @@ class UserManager {
                 email: email
             )
             user.marketingAgreed = marketingAgreed
+            user.giftNotificationEnabled = giftNotificationEnabled
             currentUser = user
             isLoaded = true
         }
@@ -198,6 +202,7 @@ class UserManager {
         UserDefaults.standard.removeObject(forKey: "userEmail")
         UserDefaults.standard.removeObject(forKey: "userUID")
         UserDefaults.standard.removeObject(forKey: "userMarketingAgreed")
+        UserDefaults.standard.removeObject(forKey: "userGiftNotificationEnabled")
 
         // 키링 캐시 전체 삭제
         KeyringImageCache.shared.clearAll()
