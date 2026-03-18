@@ -58,18 +58,20 @@ extension MyPageView {
         }
         .scrollIndicators(.never)
         .onAppear {
-            viewModel.checkNotificationPermission()
-            viewModel.isMarketingNotificationEnabled = userManager.currentUser?.marketingAgreed ?? false
+            viewModel.syncWithSystemPermission(userManager: userManager)
 
             if let uid = Auth.auth().currentUser?.uid {
                 userManager.loadUserInfo(uid: uid) { _ in }
             }
         }
+        .onChange(of: userManager.currentUser?.giftNotificationEnabled) { _, newValue in
+            viewModel.isGiftNotificationEnabled = newValue ?? true
+        }
         .onChange(of: userManager.currentUser?.marketingAgreed) { _, newValue in
             viewModel.isMarketingNotificationEnabled = newValue ?? false
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-            viewModel.checkNotificationPermission()
+            viewModel.syncWithSystemPermission(userManager: userManager)
         }
         .modifier(MyPageAlertsModifier(
             viewModel: viewModel,
@@ -202,29 +204,26 @@ extension MyPageView {
         VStack(alignment: .leading, spacing: 0) {
             sectionTitle("알림 설정")
 
-            // 전체 알림
+            // 선물 알림
             HStack {
-                menuItemText("알림 설정")
+                menuItemText("선물 알림")
                 Spacer()
-                Toggle("", isOn: $viewModel.isPushNotificationEnabled)
+                Toggle("", isOn: $viewModel.isGiftNotificationEnabled)
                     .labelsHidden()
                     .tint(.gray700)
-                    .onChange(of: viewModel.isPushNotificationEnabled) { _, newValue in
-                        viewModel.handlePushNotificationToggle(newValue: newValue)
+                    .onChange(of: viewModel.isGiftNotificationEnabled) { _, newValue in
+                        viewModel.handleGiftNotificationToggle(newValue: newValue, userManager: userManager)
                     }
                     .padding(.bottom, 30)
             }
 
-            // 마케팅 정보 알림
+            // 키치 소식 알림
             HStack {
-                menuItemText("마케팅 정보 알림")
-                    .opacity(viewModel.isPushNotificationEnabled ? 1.0 : 0.3)
+                menuItemText("키치 소식 알림")
                 Spacer()
                 Toggle("", isOn: $viewModel.isMarketingNotificationEnabled)
                     .labelsHidden()
                     .tint(.gray700)
-                    .disabled(!viewModel.isPushNotificationEnabled)
-                    .opacity(viewModel.isPushNotificationEnabled ? 1.0 : 0.3)
                     .onChange(of: viewModel.isMarketingNotificationEnabled) { _, newValue in
                         viewModel.handleMarketingToggle(newValue: newValue, userManager: userManager)
                     }
@@ -390,9 +389,7 @@ struct MyPageAlertsModifier: ViewModifier {
         content
             // 설정 Alert
             .alert(viewModel.alertType.title, isPresented: $viewModel.showSettingsAlert) {
-                Button("취소", role: .cancel) {
-                    viewModel.checkNotificationPermission()
-                }
+                Button("취소", role: .cancel) {}
                 Button("설정으로 이동") {
                     NotificationManager.shared.openSettings()
                 }

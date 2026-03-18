@@ -30,6 +30,7 @@ struct KeychyUser: Identifiable {
     var recentTemplates: [String] // 최근 사용 템플릿 ID (최대 5개, 최신순)
     var termsAgreed: Bool         // 필수 약관 동의 여부
     var marketingAgreed: Bool     // 마케팅 수신 동의 여부
+    var giftNotificationEnabled: Bool  // 선물 알림 수신 여부
 
     // MARK: - Firestore 변환
     func toDictionary() -> [String: Any] {
@@ -51,7 +52,8 @@ struct KeychyUser: Identifiable {
             "keyrings": keyrings,
             "recentTemplates": recentTemplates,
             "termsAgreed": termsAgreed,
-            "marketingAgreed": marketingAgreed
+            "marketingAgreed": marketingAgreed,
+            "giftNotificationEnabled": giftNotificationEnabled
         ]
     }
 
@@ -82,6 +84,7 @@ struct KeychyUser: Identifiable {
         self.recentTemplates = data["recentTemplates"] as? [String] ?? []
         self.termsAgreed = data["termsAgreed"] as? Bool ?? false
         self.marketingAgreed = data["marketingAgreed"] as? Bool ?? false
+        self.giftNotificationEnabled = data["giftNotificationEnabled"] as? Bool ?? true
     }
 
     // 일반 초기화 (새 유저 생성용)
@@ -105,5 +108,6 @@ struct KeychyUser: Identifiable {
         self.recentTemplates = []
         self.termsAgreed = false
         self.marketingAgreed = false
+        self.giftNotificationEnabled = true
     }
 }

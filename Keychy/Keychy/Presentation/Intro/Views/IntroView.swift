@@ -121,7 +121,7 @@ extension IntroView {
                 termRowAll
                     .padding(.horizontal, 20)
                 termRow(text: "개인정보 처리방침 및 이용약관 동의", initial: true)
-                termRow(text: "마케팅 정보 수신 동의", initial: false)
+                termRow(text: "키치 소식 알림 동의", initial: false)
             }
             
             Spacer()

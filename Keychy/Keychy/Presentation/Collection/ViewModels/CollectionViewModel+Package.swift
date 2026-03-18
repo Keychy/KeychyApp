@@ -394,32 +394,47 @@ extension CollectionViewModel {
     ) {
         let db = Firestore.firestore()
 
-        // 1. 선물 받은 사람의 닉네임 조회
-        db.collection("User").document(giftRecipientId).getDocument { snapshot, error in
-            guard let data = snapshot?.data(),
-                  let giftRecipientNickname = data["nickname"] as? String else {
-                print("알림 생성 실패: 선물 받은 사람 닉네임 조회 실패")
+        // 1. 알림 받을 사람의 선물 알림 설정 확인
+        db.collection("User").document(keyringOriginalOwnerId).getDocument { snapshot, error in
+            guard let ownerData = snapshot?.data() else {
+                print("알림 생성 실패: 키링 소유자 데이터 조회 실패")
                 return
             }
 
-            // 2. KeychyNotification 생성
-            let notification = KeychyNotification(
-                type: .giftAccepted,
-                receiverId: keyringOriginalOwnerId,  // 알림 받을 사람 = 키링 원래 소유자
-                senderId: giftRecipientId,           // 알림 발신자 = 선물 받은 사람
-                senderNickname: giftRecipientNickname,  // "영희님이 선물을 수락했어요!"
-                keyringName: keyringName,
-                postOfficeId: postOfficeId,
-                isRead: false,
-                createdAt: Date()
-            )
+            // giftNotificationEnabled가 false면 알림 생성 스킵
+            let giftNotificationEnabled = ownerData["giftNotificationEnabled"] as? Bool ?? true
+            guard giftNotificationEnabled else {
+                print("선물 알림 비활성화 상태 - 알림 생성 스킵")
+                return
+            }
 
-            // 3. Firestore에 알림 문서 추가
-            db.collection("Notifications").addDocument(data: notification.toDictionary()) { error in
-                if let error = error {
-                    print("알림 생성 실패: \(error.localizedDescription)")
-                } else {
-                    print("알림 생성 완료: \(giftRecipientNickname)님이 '\(keyringName)' 선물을 수락했습니다")
+            // 2. 선물 받은 사람의 닉네임 조회
+            db.collection("User").document(giftRecipientId).getDocument { snapshot, error in
+                guard let data = snapshot?.data(),
+                      let giftRecipientNickname = data["nickname"] as? String else {
+                    print("알림 생성 실패: 선물 받은 사람 닉네임 조회 실패")
+                    return
+                }
+
+                // 3. KeychyNotification 생성
+                let notification = KeychyNotification(
+                    type: .giftAccepted,
+                    receiverId: keyringOriginalOwnerId,
+                    senderId: giftRecipientId,
+                    senderNickname: giftRecipientNickname,
+                    keyringName: keyringName,
+                    postOfficeId: postOfficeId,
+                    isRead: false,
+                    createdAt: Date()
+                )
+
+                // 4. Firestore에 알림 문서 추가
+                db.collection("Notifications").addDocument(data: notification.toDictionary()) { error in
+                    if let error = error {
+                        print("알림 생성 실패: \(error.localizedDescription)")
+                    } else {
+                        print("알림 생성 완료: \(giftRecipientNickname)님이 '\(keyringName)' 선물을 수락했습니다")
+                    }
                 }
             }
         }
