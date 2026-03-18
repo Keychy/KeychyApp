@@ -41,6 +41,9 @@ class MyPageViewModel {
     /// 푸시 알림 활성화 여부
     var isPushNotificationEnabled = false
 
+    /// 선물 알림 활성화 여부
+    var isGiftNotificationEnabled = true
+
     /// 마케팅 알림 활성화 여부
     var isMarketingNotificationEnabled = false
 
@@ -128,6 +131,33 @@ class MyPageViewModel {
                 }
             }
         }
+    }
+
+    /// 선물 알림 토글 변경 처리
+    func handleGiftNotificationToggle(newValue: Bool, userManager: UserManager) {
+        guard isPushNotificationEnabled else { return }
+
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+
+        db.collection("User")
+            .document(uid)
+            .updateData(["giftNotificationEnabled": newValue]) { [weak self] error in
+                if let error = error {
+                    print("선물 알림 설정 저장 실패: \(error.localizedDescription)")
+                    DispatchQueue.main.async { [weak self] in
+                        self?.isGiftNotificationEnabled = !newValue
+                    }
+                } else {
+                    print("선물 알림 설정 저장 성공: \(newValue)")
+                    DispatchQueue.main.async {
+                        if var user = userManager.currentUser {
+                            user.giftNotificationEnabled = newValue
+                            userManager.currentUser = user
+                            userManager.saveToCache()
+                        }
+                    }
+                }
+            }
     }
 
     /// 마케팅 정보 알림 토글 변경 처리
