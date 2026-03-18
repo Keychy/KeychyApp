@@ -211,7 +211,8 @@ extension WorkshopItemDetailView {
                 } else {
                     // 카라비너, 사운드: 1:1 비율
                     ItemDetailImage(itemURL: getPreviewURL())
-                        .aspectRatio(1, contentMode: .fit)
+                        .scaledToFit()
+                        .padding(.vertical, 60)
                         .frame(maxWidth: .infinity)
                 }
             }
