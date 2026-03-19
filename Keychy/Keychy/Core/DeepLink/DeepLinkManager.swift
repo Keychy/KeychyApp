@@ -28,6 +28,9 @@ class DeepLinkManager {
     var pendingPostOfficeId: String?
     var pendingDeepLinkType: DeepLinkType?
     var pendingError: DeepLinkError?
+
+    // 키치 소식 푸시 알림 → 탭 이동용
+    var pendingTabDestination: String?
     
     private init() {}
     
@@ -83,6 +86,20 @@ class DeepLinkManager {
         }
     }
     
+    // 키치 소식 푸시 → 탭 이동 처리
+    func handleNewsPush(destination: String) {
+        DispatchQueue.main.async {
+            self.pendingTabDestination = destination
+        }
+    }
+
+    // 탭 이동 대기열 소비 (한 번만 사용)
+    func consumePendingTab() -> String? {
+        guard let destination = pendingTabDestination else { return nil }
+        pendingTabDestination = nil
+        return destination
+    }
+
     func consumePendingDeepLink() -> (postOfficeId: String, type: DeepLinkType, error: DeepLinkError?)? {
         guard let postOfficeId = pendingPostOfficeId,
               let type = pendingDeepLinkType else {

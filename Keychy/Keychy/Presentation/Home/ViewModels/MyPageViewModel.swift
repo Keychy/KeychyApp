@@ -204,6 +204,8 @@ class MyPageViewModel {
                     }
                 } else {
                     print("마케팅 알림 설정 저장 성공: \(newValue)")
+                    // Firestore 저장 성공 → 토픽 구독/해제
+                    self?.notificationManager.syncKeychyNewsSubscription(marketingAgreed: newValue)
                     DispatchQueue.main.async {
                         if var user = userManager.currentUser {
                             user.marketingAgreed = newValue
@@ -226,13 +228,16 @@ class MyPageViewModel {
         }
 
         do {
-            // 1. Firebase Auth 로그아웃
+            // 1. keychyNews 토픽 구독 해제
+            notificationManager.unsubscribeFromKeychyNews()
+
+            // 2. Firebase Auth 로그아웃
             try Auth.auth().signOut()
 
-            // 2. UserManager 초기화
+            // 3. UserManager 초기화
             userManager.clearUserInfo()
 
-            // 3. 로그인 상태 변경 → RootView가 자동으로 IntroView로 전환
+            // 4. 로그인 상태 변경 → RootView가 자동으로 IntroView로 전환
             introViewModel.isLoggedIn = false
             introViewModel.needsProfileSetup = false
         } catch {

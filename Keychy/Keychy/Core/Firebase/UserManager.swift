@@ -96,6 +96,9 @@ class UserManager {
                 // 실시간 리스너 시작
                 self.startUserListener(uid: uid)
 
+                // keychyNews 토픽 구독 동기화 (앱 재설치/재로그인 대응)
+                NotificationManager.shared.syncKeychyNewsSubscription(marketingAgreed: user.marketingAgreed)
+
                 completion(true)
             } else {
                 // 신규 유저 또는 프로필 미완성
