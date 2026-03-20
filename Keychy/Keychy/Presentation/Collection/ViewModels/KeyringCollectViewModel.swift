@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseFirestore
 
 @Observable
 class KeyringCollectViewModel {
@@ -54,10 +55,20 @@ class KeyringCollectViewModel {
                 self.isLoading = false
                 return
             }
-            
+
+            // 만료 이중 검증 — DeepLinkManager에서 1차 검증 후 여기서 2차 확인
+            if let expiresTimestamp = postOfficeData["expiresAt"] as? Timestamp {
+                if expiresTimestamp.dateValue() < Date() {
+                    print("배포 만료 (2차 검증)")
+                    self.hasDeepLinkError = true
+                    self.isLoading = false
+                    return
+                }
+            }
+
             self.senderId = senderId
             self.keyringId = keyringId
-            
+
             // 키링 정보 가져오기
             self.loadKeyringInfo(keyringId: keyringId, senderId: senderId)
         }
@@ -79,11 +90,9 @@ class KeyringCollectViewModel {
                 self.authorName = name
             }
             
-            // senderId로 발신자 이름 로드
-            self.collectionViewModel.fetchUserName(userId: senderId) { name in
-                self.senderName = name
-                self.isLoading = false
-            }
+            // collect 타입은 Studio 배포이므로 발신자를 "KEYCHY"로 고정
+            self.senderName = "KEYCHY"
+            self.isLoading = false
         }
     }
     

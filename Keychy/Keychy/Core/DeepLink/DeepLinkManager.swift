@@ -19,6 +19,7 @@ enum DeepLinkError {
     case notFound           // 존재하지 않는 링크
     case missingType        // type 필드 없음
     case typeMismatch       // URL 타입과 문서 타입 불일치
+    case expired            // 배포 만료
 }
 
 @Observable
@@ -66,7 +67,7 @@ class DeepLinkManager {
             
             // 3. URL 타입과 문서 타입 비교
             let isValid = self.validateLinkType(urlType: type, documentType: documentType)
-            
+
             guard isValid else {
                 print("타입 불일치 - URL: \(type), Document: \(documentType)")
                 DispatchQueue.main.async {
@@ -76,8 +77,22 @@ class DeepLinkManager {
                 }
                 return
             }
-            
-            // 4. 검증 통과 → 정상 처리
+
+            // 4. 만료 검증 — expiresAt이 nil이면 무한배포(통과), 있으면 현재 시간과 비교
+            if let expiresTimestamp = data["expiresAt"] as? Timestamp {
+                let expiresDate = expiresTimestamp.dateValue()
+                if expiresDate < Date() {
+                    print("배포 만료 - 만료일: \(expiresDate)")
+                    DispatchQueue.main.async {
+                        self.pendingPostOfficeId = postOfficeId
+                        self.pendingDeepLinkType = type
+                        self.pendingError = .expired
+                    }
+                    return
+                }
+            }
+
+            // 5. 검증 통과 → 정상 처리
             DispatchQueue.main.async {
                 self.pendingPostOfficeId = postOfficeId
                 self.pendingDeepLinkType = type

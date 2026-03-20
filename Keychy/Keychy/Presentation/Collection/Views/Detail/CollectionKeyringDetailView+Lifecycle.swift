@@ -90,9 +90,15 @@ extension CollectionKeyringDetailView {
             self.senderName = "알 수 없음"
             return
         }
-        
+
+        // collect 배포 키링은 senderId가 "KEYCHY"로 저장됨
+        guard senderId != "KEYCHY" else {
+            self.senderName = "KEYCHY"
+            return
+        }
+
         let db = Firestore.firestore()
-        
+
         db.collection("User")
             .document(senderId)
             .getDocument { snapshot, error in
@@ -100,13 +106,13 @@ extension CollectionKeyringDetailView {
                     self.senderName = "알 수 없음"
                     return
                 }
-                
+
                 guard let data = snapshot?.data(),
                       let name = data["nickname"] as? String else {
                     self.senderName = "알 수 없음"
                     return
                 }
-                
+
                 self.senderName = name
             }
     }

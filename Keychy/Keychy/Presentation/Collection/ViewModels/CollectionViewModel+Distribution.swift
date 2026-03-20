@@ -35,6 +35,8 @@ extension CollectionViewModel {
                     )
                     
                     // 3. 새 키링 생성 (복사본)
+                    // collect 배포는 senderId를 "KEYCHY"로 저장
+                    // → 디테일뷰에서 선물 보낸 사람이 "KEYCHY"로 표시됨
                     let copiedKeyring = Keyring(
                         name: originalKeyring.name,
                         bodyImage: newBodyImageURL,
@@ -51,7 +53,7 @@ extension CollectionViewModel {
                         chainLength: originalKeyring.chainLength,
                         isEditable: false,
                         isNew: true,
-                        senderId: senderId,
+                        senderId: "KEYCHY",
                         receivedAt: Date(),
                         hookOffsetY: originalKeyring.hookOffsetY
                     )

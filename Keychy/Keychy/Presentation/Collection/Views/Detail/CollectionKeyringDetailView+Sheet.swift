@@ -157,10 +157,13 @@ extension CollectionKeyringDetailView {
             Text(formattedDate(date: keyring.createdAt))
                 .typography(.suit14M)
             
-            Text("@\(authorName)")
-                .typography(.notosans14R)
-                .foregroundColor(.gray500)
-                .padding(.top, 10)
+            // collect 배포 키링이면 만든사람 숨김
+            if keyring.senderId != "KEYCHY" {
+                Text("@\(authorName)")
+                    .typography(.notosans14R)
+                    .foregroundColor(.gray500)
+                    .padding(.top, 10)
+            }
         }
     }
     
