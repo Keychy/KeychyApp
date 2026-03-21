@@ -128,8 +128,25 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     ) {
         let userInfo = response.notification.request.content.userInfo
 
-        // postOfficeId 추출해서 화면 이동
-        if let postOfficeId = userInfo["postOfficeId"] as? String {
+        // 키치 소식 푸시 (공지 / 키링 배포)
+        if let type = userInfo["type"] as? String {
+            switch type {
+            case "announcement":
+                let destination = userInfo["deepLink"] as? String ?? "홈"
+                DeepLinkManager.shared.handleNewsPush(destination: destination)
+            case "keyringEvent":
+                if let postOfficeId = userInfo["postOfficeId"] as? String, !postOfficeId.isEmpty {
+                    // postOfficeId가 있으면 기존 collect 수령 플로우로 연결
+                    DeepLinkManager.shared.handleDeepLink(postOfficeId: postOfficeId, type: .collect)
+                } else {
+                    DeepLinkManager.shared.handleNewsPush(destination: "보관함")
+                }
+            default:
+                break
+            }
+        }
+        // 기존 선물 알림 (postOfficeId 기반)
+        else if let postOfficeId = userInfo["postOfficeId"] as? String {
             DeepLinkManager.shared.handleDeepLink(postOfficeId: postOfficeId, type: .notification)
         }
 

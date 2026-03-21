@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseFirestore
 
 @Observable
 class KeyringCollectViewModel {
@@ -13,6 +14,7 @@ class KeyringCollectViewModel {
     var keyring: Keyring?
     var keyringId: String?
     var senderId: String?
+    var senderDisplayName: String?
     var senderName: String = ""
     var authorName: String = ""
     var isLoading: Bool = true
@@ -54,10 +56,21 @@ class KeyringCollectViewModel {
                 self.isLoading = false
                 return
             }
-            
+
+            // 만료 이중 검증 — DeepLinkManager에서 1차 검증 후 여기서 2차 확인
+            if let expiresTimestamp = postOfficeData["expiresAt"] as? Timestamp {
+                if expiresTimestamp.dateValue() < Date() {
+                    print("배포 만료 (2차 검증)")
+                    self.hasDeepLinkError = true
+                    self.isLoading = false
+                    return
+                }
+            }
+
             self.senderId = senderId
             self.keyringId = keyringId
-            
+            self.senderDisplayName = postOfficeData["senderDisplayName"] as? String
+
             // 키링 정보 가져오기
             self.loadKeyringInfo(keyringId: keyringId, senderId: senderId)
         }
@@ -79,11 +92,9 @@ class KeyringCollectViewModel {
                 self.authorName = name
             }
             
-            // senderId로 발신자 이름 로드
-            self.collectionViewModel.fetchUserName(userId: senderId) { name in
-                self.senderName = name
-                self.isLoading = false
-            }
+            // Studio에서 설정한 표시명 사용, 없으면 "KEYCHY" fallback
+            self.senderName = self.senderDisplayName ?? "KEYCHY"
+            self.isLoading = false
         }
     }
     
@@ -113,7 +124,8 @@ class KeyringCollectViewModel {
             self.collectionViewModel.collectKeyring(
                 keyringId: keyringId,
                 senderId: senderId,
-                receiverId: receiverId
+                receiverId: receiverId,
+                senderDisplayName: self.senderDisplayName ?? "KEYCHY"
             ) { success, errorMessage in
                 DispatchQueue.main.async {
                     self.isAccepting = false

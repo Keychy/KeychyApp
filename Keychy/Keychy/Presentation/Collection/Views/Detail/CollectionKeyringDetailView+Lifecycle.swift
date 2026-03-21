@@ -90,24 +90,22 @@ extension CollectionKeyringDetailView {
             self.senderName = "알 수 없음"
             return
         }
-        
+
         let db = Firestore.firestore()
-        
+
         db.collection("User")
             .document(senderId)
             .getDocument { snapshot, error in
-                if error != nil {
-                    self.senderName = "탈퇴한 회원"
-                    return
-                }
+                if let data = snapshot?.data(),
+                   let name = data["nickname"] as? String {
+                    self.senderName = name
+                } else {
+                    // Firebase UID: ASCII 영숫자 28자
+                    let isFirebaseUID = senderId.count >= 28
+                        && senderId.allSatisfy { $0.isASCII && ($0.isLetter || $0.isNumber) }
 
-                guard let data = snapshot?.data(),
-                      let name = data["nickname"] as? String else {
-                    self.senderName = "탈퇴한 회원"
-                    return
+                    self.senderName = isFirebaseUID ? "탈퇴한 회원" : senderId
                 }
-
-                self.senderName = name
             }
     }
 }

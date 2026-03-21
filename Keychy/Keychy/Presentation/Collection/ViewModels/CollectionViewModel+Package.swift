@@ -71,18 +71,9 @@ extension CollectionViewModel {
                 }
                 
                 print("PostOffice 데이터 조회 성공")
-                
-                var postOfficeData: [String: Any] = [
-                    "senderId": senderId,
-                    "keyringId": keyringId
-                ]
-                
-                // receiverId 필드가 있으면 포함
-                if let receiverId = data["receiverId"] as? String {
-                    postOfficeData["receiverId"] = receiverId
-                }
-                
-                completion(postOfficeData)
+
+                // 전체 data를 그대로 전달 (senderDisplayName, expiresAt 등 포함)
+                completion(data)
             }
     }
 

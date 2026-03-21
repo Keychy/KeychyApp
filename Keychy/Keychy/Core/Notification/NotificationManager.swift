@@ -93,6 +93,39 @@ class NotificationManager: NSObject {
         }
     }
 
+    // MARK: - FCM 토픽 구독 관리
+
+    /// keychyNews 토픽 구독 (마케팅 알림 수신 동의 시)
+    func subscribeToKeychyNews() {
+        Messaging.messaging().subscribe(toTopic: "keychyNews") { error in
+            if let error = error {
+                print("[FCM] keychyNews 토픽 구독 실패: \(error.localizedDescription)")
+            } else {
+                print("[FCM] keychyNews 토픽 구독 성공")
+            }
+        }
+    }
+
+    /// keychyNews 토픽 구독 해제 (마케팅 알림 수신 거부 시)
+    func unsubscribeFromKeychyNews() {
+        Messaging.messaging().unsubscribe(fromTopic: "keychyNews") { error in
+            if let error = error {
+                print("[FCM] keychyNews 토픽 구독 해제 실패: \(error.localizedDescription)")
+            } else {
+                print("[FCM] keychyNews 토픽 구독 해제 성공")
+            }
+        }
+    }
+
+    /// marketingAgreed 값에 따라 토픽 구독 상태 동기화
+    func syncKeychyNewsSubscription(marketingAgreed: Bool) {
+        if marketingAgreed {
+            subscribeToKeychyNews()
+        } else {
+            unsubscribeFromKeychyNews()
+        }
+    }
+
     // MARK: - FCM 토큰 갱신 처리
     /// 토큰이 갱신될 때마다 호출 (MessagingDelegate에서 사용)
     func updateFCMToken(_ token: String, userId: String) {
