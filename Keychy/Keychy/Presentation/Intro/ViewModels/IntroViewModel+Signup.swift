@@ -58,7 +58,12 @@ extension IntroViewModel {
         newUser.termsAgreed = true
         newUser.marketingAgreed = tempMarketingAgreed
 
+        let marketingAgreed = tempMarketingAgreed
         UserManager.shared.saveProfile(user: newUser) { success in
+            if success {
+                // 마케팅 동의 시 keychyNews 토픽 구독
+                NotificationManager.shared.syncKeychyNewsSubscription(marketingAgreed: marketingAgreed)
+            }
             completion(success)
         }
     }

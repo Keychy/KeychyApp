@@ -64,6 +64,7 @@ class MainTabViewModel {
         Task { @MainActor in
             try? await Task.sleep(for: .seconds(Delay.deepLinkCheck))
             checkPendingDeepLink()
+            checkPendingTabDestination()
         }
     }
 
@@ -77,7 +78,36 @@ class MainTabViewModel {
         }
     }
 
+    /// 키치 소식 푸시의 탭 이동 감지 시 호출
+    func handleTabDestinationChange(_: String?, newValue: String?) {
+        if newValue != nil {
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(Delay.deepLinkChange))
+                checkPendingTabDestination()
+            }
+        }
+    }
+
     // MARK: - Private Methods
+    /// 대기 중인 탭 이동이 있는지 확인하고 처리
+    private func checkPendingTabDestination() {
+        guard let destination = deepLinkManager.consumePendingTab() else { return }
+        switch destination {
+        case "홈":
+            selectedTab = TabIndex.home.rawValue
+        case "공방":
+            selectedTab = TabIndex.workshop.rawValue
+        case "보관함":
+            selectedTab = TabIndex.collection.rawValue
+        case "앱스토어":
+            if let url = URL(string: "itms-apps://itunes.apple.com/app/id6754951347") {
+                UIApplication.shared.open(url)
+            }
+        default:
+            selectedTab = TabIndex.home.rawValue
+        }
+    }
+
     /// 대기 중인 딥링크가 있는지 확인하고 처리
     private func checkPendingDeepLink() {
         if let (postOfficeId, type, error) = deepLinkManager.consumePendingDeepLink() {

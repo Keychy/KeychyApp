@@ -15,6 +15,7 @@ extension CollectionViewModel {
         keyringId: String,
         senderId: String,
         receiverId: String,
+        senderDisplayName: String = "KEYCHY",
         completion: @escaping (Bool, String?) -> Void
     ) {
         // 1. 기존 fetchKeyringById로 키링 데이터 가져오기
@@ -35,6 +36,8 @@ extension CollectionViewModel {
                     )
                     
                     // 3. 새 키링 생성 (복사본)
+                    // senderId에 Studio에서 설정한 표시명 저장
+                    // → 디테일뷰에서 선물 보낸 사람으로 표시됨
                     let copiedKeyring = Keyring(
                         name: originalKeyring.name,
                         bodyImage: newBodyImageURL,
@@ -51,7 +54,7 @@ extension CollectionViewModel {
                         chainLength: originalKeyring.chainLength,
                         isEditable: false,
                         isNew: true,
-                        senderId: senderId,
+                        senderId: senderDisplayName,
                         receivedAt: Date(),
                         hookOffsetY: originalKeyring.hookOffsetY
                     )
