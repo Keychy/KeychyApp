@@ -14,6 +14,7 @@ class KeyringCollectViewModel {
     var keyring: Keyring?
     var keyringId: String?
     var senderId: String?
+    var senderDisplayName: String?
     var senderName: String = ""
     var authorName: String = ""
     var isLoading: Bool = true
@@ -68,6 +69,7 @@ class KeyringCollectViewModel {
 
             self.senderId = senderId
             self.keyringId = keyringId
+            self.senderDisplayName = postOfficeData["senderDisplayName"] as? String
 
             // 키링 정보 가져오기
             self.loadKeyringInfo(keyringId: keyringId, senderId: senderId)
@@ -90,8 +92,8 @@ class KeyringCollectViewModel {
                 self.authorName = name
             }
             
-            // collect 타입은 Studio 배포이므로 발신자를 "KEYCHY"로 고정
-            self.senderName = "KEYCHY"
+            // Studio에서 설정한 표시명 사용, 없으면 "KEYCHY" fallback
+            self.senderName = self.senderDisplayName ?? "KEYCHY"
             self.isLoading = false
         }
     }
@@ -122,7 +124,8 @@ class KeyringCollectViewModel {
             self.collectionViewModel.collectKeyring(
                 keyringId: keyringId,
                 senderId: senderId,
-                receiverId: receiverId
+                receiverId: receiverId,
+                senderDisplayName: self.senderDisplayName ?? "KEYCHY"
             ) { success, errorMessage in
                 DispatchQueue.main.async {
                     self.isAccepting = false

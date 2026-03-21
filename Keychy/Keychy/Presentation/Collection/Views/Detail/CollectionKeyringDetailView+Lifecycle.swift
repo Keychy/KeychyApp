@@ -91,29 +91,19 @@ extension CollectionKeyringDetailView {
             return
         }
 
-        // collect 배포 키링은 senderId가 "KEYCHY"로 저장됨
-        guard senderId != "KEYCHY" else {
-            self.senderName = "KEYCHY"
-            return
-        }
-
         let db = Firestore.firestore()
 
         db.collection("User")
             .document(senderId)
             .getDocument { snapshot, error in
-                if error != nil {
-                    self.senderName = "알 수 없음"
-                    return
+                if let data = snapshot?.data(),
+                   let name = data["nickname"] as? String {
+                    // 실제 User 문서가 있으면 닉네임 사용 (1:1 선물)
+                    self.senderName = name
+                } else {
+                    // User 문서가 없으면 senderId 자체가 표시명 (collect 배포)
+                    self.senderName = senderId
                 }
-
-                guard let data = snapshot?.data(),
-                      let name = data["nickname"] as? String else {
-                    self.senderName = "알 수 없음"
-                    return
-                }
-
-                self.senderName = name
             }
     }
 }
