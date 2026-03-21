@@ -328,18 +328,18 @@ extension CollectionKeyringPackageView {
                     .getDocument { keyringSnapshot, keyringError in
                         if let keyringError {
                             print("Keyring 조회 실패: \(keyringError.localizedDescription)")
-                            self.packageAuthorName = "알 수 없음"
+                            self.packageAuthorName = "탈퇴한 회원"
                             return
                         }
-                        
+
                         guard let authorId = keyringSnapshot?.data()?["authorId"] as? String else {
                             print("authorId 없음")
-                            self.packageAuthorName = "알 수 없음"
+                            self.packageAuthorName = "탈퇴한 회원"
                             return
                         }
                         
                         self.viewModel.fetchUserNickname(userId: authorId) { nickname in
-                            self.packageAuthorName = nickname ?? "알 수 없음"
+                            self.packageAuthorName = nickname ?? "탈퇴한 회원"
                         }
                     }
             }

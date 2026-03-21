@@ -97,16 +97,16 @@ extension CollectionKeyringDetailView {
             .document(senderId)
             .getDocument { snapshot, error in
                 if error != nil {
-                    self.senderName = "알 수 없음"
+                    self.senderName = "탈퇴한 회원"
                     return
                 }
-                
+
                 guard let data = snapshot?.data(),
                       let name = data["nickname"] as? String else {
-                    self.senderName = "알 수 없음"
+                    self.senderName = "탈퇴한 회원"
                     return
                 }
-                
+
                 self.senderName = name
             }
     }
