@@ -322,19 +322,26 @@ extension CollectionKeyringPackageView {
                     print("ShareLink 로드: \(link)")
                 }
                 
-                // 발신자 정보 로드
-                if let senderId = data["senderId"] as? String {
-                    db.collection("User")
-                        .document(senderId)
-                        .getDocument { userSnapshot, userError in
-                            if let userData = userSnapshot?.data(),
-                               let name = userData["nickname"] as? String {
-                                self.packageAuthorName = name
-                            } else {
-                                self.packageAuthorName = "알 수 없음"
-                            }
+                // 키링 제작자 정보 로드
+                db.collection("Keyring")
+                    .document(keyringDocId)
+                    .getDocument { keyringSnapshot, keyringError in
+                        if let keyringError {
+                            print("Keyring 조회 실패: \(keyringError.localizedDescription)")
+                            self.packageAuthorName = "알 수 없음"
+                            return
                         }
-                }
+                        
+                        guard let authorId = keyringSnapshot?.data()?["authorId"] as? String else {
+                            print("authorId 없음")
+                            self.packageAuthorName = "알 수 없음"
+                            return
+                        }
+                        
+                        self.viewModel.fetchUserNickname(userId: authorId) { nickname in
+                            self.packageAuthorName = nickname ?? "알 수 없음"
+                        }
+                    }
             }
     }
     
