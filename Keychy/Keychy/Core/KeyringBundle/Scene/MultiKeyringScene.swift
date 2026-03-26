@@ -825,10 +825,12 @@ class MultiKeyringScene: SKScene {
 
         // 뭉치용 키링 스케일 적용 (카라비너는 그대로, 키링 바디만 축소)
         let bundleScale = KeyringScale.bundleKeyringScale(for: carabinerId)
+        // 템플릿 추가 스케일 (바디에만 적용)
+        let bodyScale = KeyringScale.bundleBodyScale(for: templateId)
 
         let displaySize = CGSize(
-            width: originalSize.width * scale * bundleScale,
-            height: originalSize.height * scale * bundleScale
+            width: originalSize.width * scale * bundleScale * bodyScale,
+            height: originalSize.height * scale * bundleScale * bodyScale
         )
 
         let texture = SKTexture(image: image)

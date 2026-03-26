@@ -445,7 +445,8 @@ class MultiKeyringCaptureScene: SKScene {
 
             // 뭉치용 키링 스케일 적용
             let bundleScale = KeyringScale.bundleKeyringScale(for: self.carabinerId)
-            body.setScale(bundleScale)
+            let bodyScale = KeyringScale.bundleBodyScale(for: templateId)
+            body.setScale(bundleScale * bodyScale)
 
             let bodyFrame = body.calculateAccumulatedFrame()
             let bodyHalfHeight = bodyFrame.height / 2
