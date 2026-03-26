@@ -1,0 +1,125 @@
+//
+//  LenticularVM.swift
+//  Keychy
+//
+//  Created by 길지훈 on 2026-03-23.
+//
+
+import SwiftUI
+import Combine
+import FirebaseFirestore
+
+@Observable
+class LenticularVM: KeyringViewModelProtocol {
+    // MARK: - Template Data
+    var template: KeyringTemplate?
+    var isLoadingTemplate = false
+
+    // MARK: - Effect Data
+    var availableSounds: [Sound] = []
+    var availableParticles: [Particle] = []
+    var selectedSound: Sound? = nil
+    var selectedParticle: Particle? = nil
+    var customSoundURL: URL? = nil
+    var downloadingItemIds: Set<String> = []
+    var downloadProgress: [String: Double] = [:]
+    var soundId: String = "none"
+    var particleId: String = "none"
+    let effectSubject = PassthroughSubject<(soundId: String, particleId: String, type: KeyringUpdateType), Never>()
+
+    // MARK: - Lenticular Image Data
+    /// 사용자가 선택한 이미지 A (렌티큘러 좌측)
+    var imageA: UIImage?
+    /// 사용자가 선택한 이미지 B (렌티큘러 우측)
+    var imageB: UIImage?
+
+    // MARK: - Body Image
+    /// A+B 가로 합성 아틀라스 (셰이더가 UV로 좌/우 분리 샘플링)
+    var bodyImage: UIImage? = nil
+    var hookOffsetY: CGFloat = 0.0
+
+    // MARK: - Info Data
+    var nameText: String = ""
+    var maxTextCount: Int = 10
+    var memoText: String = ""
+    var maxMemoCount: Int = 500
+    var selectedTags: [String] = []
+    var createdAt: Date = Date()
+    var savedKeyringDocumentId: String?
+    var packagedPostOfficeId: String?
+    var packagedShareLink: String?
+
+    // MARK: - Dependencies
+    var userManager: UserManager
+    var errorMessage: String?
+
+    // MARK: - Template Info
+    var templateId: String { template?.id ?? "Lenticular" }
+    var chainLength: Int { template?.chainLength ?? 3 }
+
+    // MARK: - Customizing Modes
+    /// 렌티큘러는 바디 편집 불가 (아틀라스) → 이펙트만
+    var availableCustomizingModes: [CustomizingMode] { [.effect] }
+
+    // MARK: - 초기화
+    init(userManager: UserManager = UserManager.shared) {
+        self.userManager = userManager
+    }
+
+    // MARK: - View Providers
+    func sceneView(for mode: CustomizingMode, onSceneReady: @escaping () -> Void) -> AnyView {
+        switch mode {
+        case .effect:
+            return AnyView(KeyringSceneView(viewModel: self, onSceneReady: onSceneReady))
+        default:
+            return AnyView(EmptyView())
+        }
+    }
+
+    func bottomContentView(
+        for mode: CustomizingMode,
+        showPurchaseSheet: Binding<Bool>,
+        cartItems: Binding<[EffectItem]>
+    ) -> AnyView {
+        switch mode {
+        case .effect:
+            return AnyView(EffectSelectorView(viewModel: self, cartItems: cartItems))
+        default:
+            return AnyView(EmptyView())
+        }
+    }
+
+    func bottomViewHeightRatio(for mode: CustomizingMode) -> CGFloat {
+        switch mode {
+        case .effect:
+            return 0.3
+        default:
+            return 0.35
+        }
+    }
+
+    // MARK: - Reset
+    func resetCustomizingData() {
+        selectedSound = nil
+        selectedParticle = nil
+        customSoundURL = nil
+        soundId = "none"
+        particleId = "none"
+        downloadingItemIds.removeAll()
+        downloadProgress.removeAll()
+        imageA = nil
+        imageB = nil
+        bodyImage = nil
+    }
+
+    func resetInfoData() {
+        nameText = ""
+        memoText = ""
+        selectedTags = []
+    }
+
+    func resetAll() {
+        resetCustomizingData()
+        resetInfoData()
+    }
+}

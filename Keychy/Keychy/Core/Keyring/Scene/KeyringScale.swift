@@ -32,7 +32,8 @@ enum KeyringScale {
         "SpeechBubble": CGSize(width: 360, height: 249),
         "WishHorse26": CGSize(width: 280, height: 310),
         "DuZzonKu": CGSize(width: 376, height: 376),
-        "CrossStitch": CGSize(width: 258, height: 258)
+        "CrossStitch": CGSize(width: 258, height: 258),
+        "Lenticular": CGSize(width: 300, height: 390)
     ]
 
     // MARK: - 템플릿 × 화면별 zoomScale
@@ -44,7 +45,8 @@ enum KeyringScale {
         "SpeechBubble": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.9, .video: 0.8],
         "WishHorse26": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.85, .video: 0.8],
         "DuZzonKu": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.8, .video: 0.8],
-        "CrossStitch": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.9, .video: 0.8]
+        "CrossStitch": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.9, .video: 0.8],
+        "Lenticular": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.8, .video: 0.8]
     ]
 
     // MARK: - 카라비너별 뭉치 키링 스케일

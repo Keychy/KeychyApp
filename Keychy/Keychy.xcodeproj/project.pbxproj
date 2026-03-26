@@ -393,6 +393,10 @@
 		4C7A9EC72F2B0567008B520C /* KeyringPackageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7A9EC62F2B0567008B520C /* KeyringPackageManager.swift */; };
 		4C7A9EC92F2B0586008B520C /* KeyringPackageCompleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7A9EC82F2B0586008B520C /* KeyringPackageCompleteView.swift */; };
 		4C7A9ECB2F2DA419008B520C /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7A9ECA2F2DA419008B520C /* ShareSheet.swift */; };
+		4C7E95E72F754A0400C8B109 /* LenticularPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E95E42F754A0400C8B109 /* LenticularPreview.swift */; };
+		4C7E95E82F754A0400C8B109 /* LenticularVM+Firebase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E95E22F754A0400C8B109 /* LenticularVM+Firebase.swift */; };
+		4C7E95E92F754A0400C8B109 /* LenticularVM+Effect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E95E12F754A0400C8B109 /* LenticularVM+Effect.swift */; };
+		4C7E95EA2F754A0400C8B109 /* LenticularVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E95E02F754A0400C8B109 /* LenticularVM.swift */; };
 		4C8426602ED3585A0050B6FE /* gulimche-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */; };
 		4C8426642ED375840050B6FE /* ColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8426632ED375840050B6FE /* ColorPalette.swift */; };
 		4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A596832EAFEAA20003D712 /* ProfileSetupView.swift */; };
@@ -991,6 +995,10 @@
 		4C7A9EC62F2B0567008B520C /* KeyringPackageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringPackageManager.swift; sourceTree = "<group>"; };
 		4C7A9EC82F2B0586008B520C /* KeyringPackageCompleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringPackageCompleteView.swift; sourceTree = "<group>"; };
 		4C7A9ECA2F2DA419008B520C /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
+		4C7E95E02F754A0400C8B109 /* LenticularVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LenticularVM.swift; sourceTree = "<group>"; };
+		4C7E95E12F754A0400C8B109 /* LenticularVM+Effect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LenticularVM+Effect.swift"; sourceTree = "<group>"; };
+		4C7E95E22F754A0400C8B109 /* LenticularVM+Firebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LenticularVM+Firebase.swift"; sourceTree = "<group>"; };
+		4C7E95E42F754A0400C8B109 /* LenticularPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LenticularPreview.swift; sourceTree = "<group>"; };
 		4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "gulimche-Regular.ttf"; sourceTree = "<group>"; };
 		4C8426632ED375840050B6FE /* ColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPalette.swift; sourceTree = "<group>"; };
 		4C86A6112F25C0B10023AA2D /* WorkshopBundleGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopBundleGridView.swift; sourceTree = "<group>"; };
@@ -1941,6 +1949,7 @@
 				3896B95F2F3B960500220134 /* WishHorse26 */,
 				38818DAE2F3C42AF00B0A49C /* DuZzonKu */,
 				3851D48F2F5FD0D90013C052 /* CrossStitch */,
+				4C7E95E62F754A0400C8B109 /* Lenticular */,
 			);
 			path = Templates;
 			sourceTree = "<group>";
@@ -2222,6 +2231,33 @@
 				4CC3D36D2EC2801F0009D376 /* WelcomeKeyringViewModel.swift */,
 			);
 			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		4C7E95E32F754A0400C8B109 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				4C7E95E02F754A0400C8B109 /* LenticularVM.swift */,
+				4C7E95E12F754A0400C8B109 /* LenticularVM+Effect.swift */,
+				4C7E95E22F754A0400C8B109 /* LenticularVM+Firebase.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		4C7E95E52F754A0400C8B109 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				4C7E95E42F754A0400C8B109 /* LenticularPreview.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4C7E95E62F754A0400C8B109 /* Lenticular */ = {
+			isa = PBXGroup;
+			children = (
+				4C7E95E32F754A0400C8B109 /* ViewModels */,
+				4C7E95E52F754A0400C8B109 /* Views */,
+			);
+			path = Lenticular;
 			sourceTree = "<group>";
 		};
 		4C84265E2ED358520050B6FE /* Gulim */ = {
@@ -3568,6 +3604,10 @@
 				40WF8CXMLHGD9B5S521VX89Y /* BundleViewModel+Cache.swift in Sources */,
 				AA3908F82EC8BF0400D87EEC /* BundleDetailView+SaveImage.swift in Sources */,
 				BC4CMPLT2F3B123400000001 /* BundleCompleteView.swift in Sources */,
+				4C7E95E72F754A0400C8B109 /* LenticularPreview.swift in Sources */,
+				4C7E95E82F754A0400C8B109 /* LenticularVM+Firebase.swift in Sources */,
+				4C7E95E92F754A0400C8B109 /* LenticularVM+Effect.swift in Sources */,
+				4C7E95EA2F754A0400C8B109 /* LenticularVM.swift in Sources */,
 				BC5CMPLT2F3B123400000002 /* BundleCompleteView+VideoGen.swift in Sources */,
 				4C25261B2F3B290A003CC5AD /* KeyringDetailScene+Setup.swift in Sources */,
 				4C25261C2F3B290A003CC5AD /* KeyringScene.swift in Sources */,

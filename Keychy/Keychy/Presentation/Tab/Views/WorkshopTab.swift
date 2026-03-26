@@ -20,6 +20,7 @@ struct WorkshopTab: View {
     @State private var wishHorse26VM: WishHorse26VM?
     @State private var duZzonKuVM: DuZzonKuVM?
     @State private var crossStitchVM: CrossStitchVM?
+    @State private var lenticularVM: LenticularVM?
     @State private var workshopViewModel = WorkshopViewModel(userManager: UserManager.shared)
 
     var body: some View {
@@ -253,6 +254,32 @@ struct WorkshopTab: View {
                 navigationTitle: "키링이 완성되었어요!"
             )
             
+        // MARK: - Lenticular
+        case .lenticularPreview:
+            LenticularPreview(router: router, viewModel: getLenticularVM())
+        case .lenticularImageSelect:
+            EmptyView() // Phase 2에서 구현
+        case .lenticularFusion:
+            EmptyView() // Phase 3에서 구현
+        case .lenticularCustomizing:
+            KeyringCustomizingView(
+                router: router,
+                viewModel: getLenticularVM(),
+                nextRoute: .lenticularInfoInput
+            )
+        case .lenticularInfoInput:
+            KeyringInfoInputView(
+                router: router,
+                viewModel: getLenticularVM(),
+                nextRoute: .lenticularComplete
+            )
+        case .lenticularComplete:
+            KeyringCompleteView(
+                router: router,
+                viewModel: getLenticularVM(),
+                navigationTitle: "키링이 완성되었어요!"
+            )
+
         // MARK: - 선물 포장 완료
         case .packageComplete(let keyringDocumentId, let postOfficeId, let templateId, let shareLink):
             KeyringPackageCompleteView(
@@ -354,6 +381,15 @@ struct WorkshopTab: View {
         return viewModel
     }
 
+    private func getLenticularVM() -> LenticularVM {
+        guard let viewModel = lenticularVM else {
+            let newViewModel = LenticularVM()
+            lenticularVM = newViewModel
+            return newViewModel
+        }
+        return viewModel
+    }
+
     // MARK: - ViewModel by TemplateId
     private func getViewModelForTemplate(_ templateId: String) -> any KeyringViewModelProtocol {
         switch templateId {
@@ -369,6 +405,8 @@ struct WorkshopTab: View {
             return getSpeechBubbleVM()
         case "DuZzonKu":
             return getDuZzonKuVM()
+        case "Lenticular":
+            return getLenticularVM()
         default:
             return getPolaroidVM()
         }
