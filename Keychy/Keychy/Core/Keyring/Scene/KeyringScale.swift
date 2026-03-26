@@ -65,6 +65,18 @@ enum KeyringScale {
         "Baekgu": 0.6,
         "Nureungi": 0.6,
     ]
+    
+    // MARK: - 템플릿별 뭉치 키링 스케일
+    private static let templateBodyScales: [String: CGFloat] = [
+        "Polaroid":     0.85,
+        "AcrylicPhoto": 1.0,
+        "ClearSketch":  1.0,
+        "PixelKeyring": 0.7,
+        "SpeechBubble": 1.0,
+        "WishHorse26":  1.0,
+        "DuZzonKu":     0.9,
+        "CrossStitch":  0.7
+    ]
 
     // MARK: - 위젯 출력 크기 (템플릿별)
     /// 위젯 프레임 합성 후 최종 축소 크기 (px)
@@ -101,6 +113,7 @@ enum KeyringScale {
     private static let defaultMaxSize = CGSize(width: 210, height: 210)
     private static let defaultZoomScale: CGFloat = 1.0
     private static let defaultCarabinerScale: CGFloat = 0.65
+    private static let defaultTemplateBodyScale: CGFloat = 1.0
     private static let defaultWidgetBodyOffsetY: CGFloat = 0
     private static let defaultWidgetOutputSize: Int = 500
     private static let defaultWidgetBodyClamp: CGFloat = 0.7
@@ -117,9 +130,14 @@ enum KeyringScale {
         return templateZoomScales[template]?[screen] ?? defaultZoomScale
     }
 
-    /// 카라비너별 뭉치 키링 스케일 반환
+    /// 카라비너별 뭉치 키링 스케일 반환 (링, 체인, 바디 공통)
     static func bundleKeyringScale(for carabiner: String) -> CGFloat {
         return carabinerScales[carabiner] ?? defaultCarabinerScale
+    }
+    
+    /// 템플릿별 뭉치 바디 추가 스케일 (바디에만 적용)
+    static func bundleBodyScale(for template: String?) -> CGFloat {
+        return templateBodyScales[template ?? ""] ?? defaultTemplateBodyScale
     }
 
     /// 위젯 합성 시 템플릿별 바디 Y 보정값 반환
