@@ -83,6 +83,11 @@ struct KeyringBodyComponent {
 
     // MARK: - Image Body (KeyringScale 사용)
     private static func createImageBody(image: UIImage, templateId: String) -> SKNode {
+        // 렌티큘러: 아틀라스(600×390)를 300×390으로 강제 표시 + 셰이더 적용
+        if templateId == "Lenticular" {
+            return createLenticularBody(atlasImage: image, templateId: templateId)
+        }
+
         let maxSize = KeyringScale.maxSize(for: templateId)
         let originalSize = image.size
 
@@ -100,6 +105,42 @@ struct KeyringBodyComponent {
         let spriteNode = SKSpriteNode(texture: texture, size: displaySize)
         spriteNode.zPosition = -1
 
+        let physicsBody = SKPhysicsBody(rectangleOf: displaySize)
+        physicsBody.isDynamic = true
+        physicsBody.affectedByGravity = true
+        physicsBody.mass = 6.0
+        physicsBody.friction = 0.5
+        physicsBody.restitution = 0.2
+        physicsBody.linearDamping = 0.8
+        physicsBody.angularDamping = 0.95
+        spriteNode.physicsBody = physicsBody
+
+        return spriteNode
+    }
+
+    // MARK: - Lenticular Body (셰이더 적용)
+    /// 아틀라스 텍스처를 maxSize로 강제 표시하고 LenticularShader 적용
+    /// - 셰이더가 UV 좌/우 절반을 분리 샘플링하여 렌티큘러 효과 생성
+    static func createLenticularBody(atlasImage: UIImage, templateId: String) -> SKSpriteNode {
+        let displaySize = KeyringScale.maxSize(for: templateId)
+
+        let texture = SKTexture(image: atlasImage)
+        texture.filteringMode = .linear
+        let spriteNode = SKSpriteNode(texture: texture, size: displaySize)
+        spriteNode.zPosition = -1
+
+        // 셰이더 로드 + uniform 설정
+        if let shaderPath = Bundle.main.path(forResource: "LenticularShader", ofType: "fsh"),
+           let shaderSource = try? String(contentsOfFile: shaderPath, encoding: .utf8) {
+            let shader = SKShader(source: shaderSource)
+            shader.uniforms = [
+                SKUniform(name: "u_tilt", float: 0.0),
+                SKUniform(name: "u_direction", float: 0.35)  // 사선 쉬머
+            ]
+            spriteNode.shader = shader
+        }
+
+        // 물리 바디
         let physicsBody = SKPhysicsBody(rectangleOf: displaySize)
         physicsBody.isDynamic = true
         physicsBody.affectedByGravity = true
