@@ -397,7 +397,8 @@ extension LenticularImageSelectView {
         }
         ToolbarItem(placement: .navigationBarTrailing) {
             Button("다음") {
-                router.push(.lenticularCustomizing)
+                viewModel.composeAtlas()
+                router.push(.lenticularFusion)
             }
             .disabled(!viewModel.canProceed)
             .typography(.suit17B)

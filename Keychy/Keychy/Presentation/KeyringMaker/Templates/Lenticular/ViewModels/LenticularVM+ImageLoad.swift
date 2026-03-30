@@ -100,6 +100,47 @@ extension LenticularVM {
         }
     }
 
+    // MARK: - 아틀라스 합성
+
+    /// 사용자 크롭(스케일/오프셋) 적용 후 A+B 아틀라스 합성 → bodyImage에 저장
+    func composeAtlas() {
+        guard let a = imageA, let b = imageB else { return }
+        let targetSize = KeyringScale.maxSize(for: "Lenticular") // 300×390
+
+        let croppedA = cropImage(a, scale: photoScaleA, offset: photoOffsetA, targetSize: targetSize)
+        let croppedB = cropImage(b, scale: photoScaleB, offset: photoOffsetB, targetSize: targetSize)
+
+        bodyImage = TextureComposer.compose(
+            imageA: croppedA,
+            imageB: croppedB,
+            targetSize: targetSize,
+            cornerRadius: 20
+        )
+    }
+
+    /// 이미지에 사용자 크롭(스케일/오프셋)을 적용하여 targetSize로 렌더링
+    private func cropImage(
+        _ image: UIImage,
+        scale: CGFloat,
+        offset: CGSize,
+        targetSize: CGSize
+    ) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: targetSize)
+        return renderer.image { _ in
+            let fillScale = max(targetSize.width / image.size.width,
+                                targetSize.height / image.size.height)
+            let drawSize = CGSize(
+                width: image.size.width * fillScale * scale,
+                height: image.size.height * fillScale * scale
+            )
+            let drawOrigin = CGPoint(
+                x: (targetSize.width - drawSize.width) / 2 + offset.width,
+                y: (targetSize.height - drawSize.height) / 2 + offset.height
+            )
+            image.draw(in: CGRect(origin: drawOrigin, size: drawSize))
+        }
+    }
+
     enum ImageTarget {
         case a, b
     }
