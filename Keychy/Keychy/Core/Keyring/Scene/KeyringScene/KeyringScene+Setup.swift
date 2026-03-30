@@ -67,7 +67,8 @@ extension KeyringScene {
             // UIImage인 경우
             KeyringBodyComponent.createNode(
                 from: bodyImage,
-                templateId: templateId
+                templateId: templateId,
+                isGyroscope: isGyroscope
             ) { [weak self] body in
                 guard let self = self, let body = body else {
                     print("Body 생성 실패")
@@ -87,7 +88,8 @@ extension KeyringScene {
             // URL만 있는 경우
             KeyringBodyComponent.createNode(
                 from: bodyImageURL,
-                templateId: templateId
+                templateId: templateId,
+                isGyroscope: isGyroscope
             ) { [weak self] body in
                 guard let self = self, let body = body else {
                     print("Body 생성 실패")
@@ -104,7 +106,7 @@ extension KeyringScene {
                 )
             }
         } else {
-            let body = KeyringBodyComponent.createNode(from: .basic, templateId: templateId)
+            let body = KeyringBodyComponent.createNode(from: .basic, templateId: templateId, isGyroscope: isGyroscope)
             positionAndConnectBody(
                 body: body,
                 ring: ring,

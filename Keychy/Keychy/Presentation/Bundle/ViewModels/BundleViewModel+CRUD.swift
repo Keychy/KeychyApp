@@ -128,7 +128,8 @@ extension BundleViewModel {
                 customSoundURL: customSoundURL,
                 particleId: keyringInfo.particleId,
                 hookOffsetY: keyringInfo.hookOffsetY,
-                chainLength: keyringInfo.chainLength
+                chainLength: keyringInfo.chainLength,
+                isGyroscope: keyringInfo.isGyroscope
             )
             dataList.append(data)
         }

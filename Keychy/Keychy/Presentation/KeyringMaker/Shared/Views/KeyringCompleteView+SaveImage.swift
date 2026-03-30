@@ -24,6 +24,7 @@ extension KeyringCompleteView {
             chainType: .basic,
             bodyUIImage: bodyImage,
             templateId: viewModel.templateId,
+            isGyroscope: viewModel.isGyroscope,
             targetSize: CGSize(width: 350, height: 466),
             customBackgroundColor: .clear,
             zoomScale: 2.0,

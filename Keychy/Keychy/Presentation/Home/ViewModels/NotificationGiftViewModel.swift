@@ -216,6 +216,8 @@ class NotificationGiftViewModel {
                 ringType: ringType,
                 chainType: chainType,
                 bodyImage: keyring.bodyImage,
+                templateId: keyring.selectedTemplate,
+                isGyroscope: keyring.isGyroscope,
                 targetSize: CGSize(width: 304, height: 490),
                 customBackgroundColor: .clear,
                 zoomScale: 1.9,

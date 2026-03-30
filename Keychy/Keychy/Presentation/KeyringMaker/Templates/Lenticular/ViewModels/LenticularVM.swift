@@ -65,6 +65,7 @@ class LenticularVM: KeyringViewModelProtocol {
     // MARK: - Template Info
     var templateId: String { template?.id ?? "Lenticular" }
     var chainLength: Int { template?.chainLength ?? 3 }
+    var isGyroscope: Bool { template?.interactions.contains("tilt") ?? true }
 
     // MARK: - Customizing Modes
     /// 렌티큘러는 바디 편집 불가 (아틀라스) → 이펙트만

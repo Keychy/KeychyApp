@@ -26,8 +26,9 @@ class MultiKeyringScene: SKScene {
         let particleId: String      // 파티클 ID
         let hookOffsetY: CGFloat?   // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
         let chainLength: Int        // 체인 길이 (기본값 5)
+        let isGyroscope: Bool       // 자이로 인터랙션 사용 여부
 
-        init(index: Int, position: CGPoint, bodyImageURL: String, templateId: String? = nil, soundId: String, customSoundURL: URL? = nil, particleId: String, hookOffsetY: CGFloat? = nil, chainLength: Int = 5) {
+        init(index: Int, position: CGPoint, bodyImageURL: String, templateId: String? = nil, soundId: String, customSoundURL: URL? = nil, particleId: String, hookOffsetY: CGFloat? = nil, chainLength: Int = 5, isGyroscope: Bool = false) {
             self.index = index
             self.position = position
             self.bodyImageURL = bodyImageURL
@@ -37,6 +38,7 @@ class MultiKeyringScene: SKScene {
             self.particleId = particleId
             self.hookOffsetY = hookOffsetY
             self.chainLength = chainLength
+            self.isGyroscope = isGyroscope
         }
     }
 
@@ -74,6 +76,10 @@ class MultiKeyringScene: SKScene {
 
     // MARK: - 씬 정리 상태
     private var isCleaningUp = false
+
+    // MARK: - 자이로 (렌티큘러 등)
+    private var hasGyroscopeKeyrings = false  // 자이로 키링이 하나라도 있는지
+    private var lenticularHaptic: LenticularHapticManager?
 
     // MARK: - 선택된 타입들
     var currentCarabinerType: CarabinerType?
@@ -154,7 +160,13 @@ class MultiKeyringScene: SKScene {
     func cleanup() {
         guard !isCleaningUp else { return }
         isCleaningUp = true
-        
+
+        // 자이로 정지
+        if hasGyroscopeKeyrings {
+            LenticularMotionManager.shared.stop()
+            lenticularHaptic = nil
+        }
+
         // 콜백 무효화
         onPlayParticleEffect = nil
         onSetupComplete = nil
@@ -187,6 +199,13 @@ class MultiKeyringScene: SKScene {
         backgroundColor = customBackgroundColor
         // 물리 시뮬레이션을 처음에는 비활성화
         physicsWorld.gravity = CGVector(dx: 0, dy: 0)  // 중력 0으로 설정
+
+        // 자이로 키링 존재 여부 확인 및 시작
+        hasGyroscopeKeyrings = keyringDataList.contains { $0.isGyroscope }
+        if hasGyroscopeKeyrings {
+            LenticularMotionManager.shared.start()
+            lenticularHaptic = LenticularHapticManager()
+        }
 
         // 카메라 설정 (carabinerScale 적용)
         setupCamera()
@@ -775,7 +794,7 @@ class MultiKeyringScene: SKScene {
             // 3. Body 생성
             let body: SKNode
             if let bodyImage = images.body {
-                body = self.createBodyNode(image: bodyImage, templateId: data.templateId)
+                body = self.createBodyNode(image: bodyImage, templateId: data.templateId, isGyroscope: data.isGyroscope)
             } else {
                 body = self.createBasicBodyNode()
             }
@@ -815,7 +834,42 @@ class MultiKeyringScene: SKScene {
         }
     }
 
-    private func createBodyNode(image: UIImage, templateId: String?) -> SKSpriteNode {
+    private func createBodyNode(image: UIImage, templateId: String?, isGyroscope: Bool = false) -> SKSpriteNode {
+        // 자이로 템플릿: 셰이더 적용 바디 생성
+        if isGyroscope {
+            let bundleScale = KeyringScale.bundleKeyringScale(for: carabinerId)
+            let displaySize = KeyringScale.maxSize(for: templateId ?? "")
+            let scaledSize = CGSize(
+                width: displaySize.width * bundleScale,
+                height: displaySize.height * bundleScale
+            )
+
+            let texture = SKTexture(image: image)
+            texture.filteringMode = .linear
+            let spriteNode = SKSpriteNode(texture: texture, size: scaledSize)
+
+            // 셰이더 로드 + uniform 설정
+            if let shaderPath = Bundle.main.path(forResource: "LenticularShader", ofType: "fsh"),
+               let shaderSource = try? String(contentsOfFile: shaderPath, encoding: .utf8) {
+                let shader = SKShader(source: shaderSource)
+                shader.uniforms = [
+                    SKUniform(name: "u_tilt", float: 0.0),
+                    SKUniform(name: "u_direction", float: 0.35)
+                ]
+                spriteNode.shader = shader
+            }
+
+            let physicsBody = SKPhysicsBody(rectangleOf: scaledSize)
+            physicsBody.mass = 1.5
+            physicsBody.friction = 0.5
+            physicsBody.restitution = 0.2
+            physicsBody.linearDamping = 0.8
+            physicsBody.angularDamping = 0.95
+            spriteNode.physicsBody = physicsBody
+
+            return spriteNode
+        }
+
         let maxSize = KeyringScale.maxSize(for: templateId ?? "")
         let originalSize = image.size
 
@@ -1051,6 +1105,23 @@ class MultiKeyringScene: SKScene {
             // Hamburger 타입에서만 Ring을 static으로 설정
             ring.physicsBody?.isDynamic = false
         }
+    }
+
+    // MARK: - 매 프레임 업데이트
+    override func update(_ currentTime: TimeInterval) {
+        super.update(currentTime)
+
+        // 자이로: 셰이더 u_tilt 갱신 + 햅틱
+        guard hasGyroscopeKeyrings else { return }
+        let tilt = LenticularMotionManager.shared.tilt
+
+        for (index, data) in keyringDataList.enumerated() where data.isGyroscope {
+            if let body = bodyNodes[data.index] as? SKSpriteNode,
+               let shader = body.shader {
+                shader.uniformNamed("u_tilt")?.floatValue = Float(tilt)
+            }
+        }
+        lenticularHaptic?.update(tilt: tilt)
     }
 
     /// 모든 키링이 완성된 후 물리 시뮬레이션 활성화

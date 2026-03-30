@@ -58,7 +58,8 @@ extension KeyringInfoInputView {
         // hookOffsetY는 0이 아니면 사용, 0이면 nil로 전달
         let hookOffsetY: CGFloat? = viewModel.hookOffsetY != 0 ? viewModel.hookOffsetY : nil
         let templateId = viewModel.templateId
-        
+        let isGyroscope = viewModel.isGyroscope
+
         self.createKeyring(
             uid: uid,
             name: self.viewModel.nameText,
@@ -72,7 +73,8 @@ extension KeyringInfoInputView {
             selectedChain: "basic",
             chainLength: self.viewModel.chainLength,
             isNew: true,
-            hookOffsetY: hookOffsetY
+            hookOffsetY: hookOffsetY,
+            isGyroscope: isGyroscope
         ) { success, keyringId in
             // 백그라운드로 위젯용 이미지 캡처 및 저장
             if success, let keyringId = keyringId {
@@ -82,7 +84,7 @@ extension KeyringInfoInputView {
                 // viewModel이 reset되기 전에 이름과 hookOffsetY, chainLength를 미리 캡처
                 let keyringName = self.viewModel.nameText
                 let chainLength = self.viewModel.chainLength
-                
+
                 Task {
                     // 위젯 캐싱 완료 대기
                     await self.captureAndCacheKeyring(
@@ -94,6 +96,7 @@ extension KeyringInfoInputView {
                         chainType: .basic,
                         hookOffsetY: hookOffsetY,
                         chainLength: chainLength,
+                        isGyroscope: isGyroscope,
                         createdAt: Date()
                     )
                     
@@ -191,6 +194,7 @@ extension KeyringInfoInputView {
         chainLength: Int,
         isNew: Bool,
         hookOffsetY: CGFloat? = nil,
+        isGyroscope: Bool = false,
         completion: @escaping (Bool, String?) -> Void
     ) {
         let newKeyring = Keyring(
@@ -207,7 +211,8 @@ extension KeyringInfoInputView {
             selectedChain: selectedChain,
             chainLength: chainLength,
             isNew: isNew,
-            hookOffsetY: hookOffsetY
+            hookOffsetY: hookOffsetY,
+            isGyroscope: isGyroscope
         )
         
         let keyringData = newKeyring.toDictionary()
@@ -366,6 +371,7 @@ extension KeyringInfoInputView {
         chainType: ChainType,
         hookOffsetY: CGFloat?,
         chainLength: Int,
+        isGyroscope: Bool = false,
         createdAt: Date
     ) async {
         await withCheckedContinuation { continuation in
@@ -378,6 +384,7 @@ extension KeyringInfoInputView {
                 chainType: chainType,
                 bodyImage: bodyImage,
                 templateId: templateId,
+                isGyroscope: isGyroscope,
                 targetSize: CGSize(width: 175, height: 233),
                 customBackgroundColor: .clear,
                 zoomScale: 2.0,

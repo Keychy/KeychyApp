@@ -71,6 +71,7 @@ struct BundleKeyringCellView: View {
             chainType: ChainType.fromID(keyring.selectedChain),
             bodyImage: keyring.bodyImage,
             templateId: keyring.selectedTemplate,
+            isGyroscope: keyring.isGyroscope,
             targetSize: CGSize(width: 175, height: 233),
             zoomScale: 2.0,
             hookOffsetY: keyring.hookOffsetY,

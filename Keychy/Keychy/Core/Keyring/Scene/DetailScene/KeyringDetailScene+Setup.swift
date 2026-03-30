@@ -265,6 +265,16 @@ extension KeyringDetailScene {
     
     // MARK: - Mini Body 생성 (KeyringScale 사용)
     private func createMiniImageBody(image: UIImage) -> SKSpriteNode {
+        // 자이로 템플릿: 셰이더 적용 바디 생성
+        if isGyroscope {
+            let node = KeyringBodyComponent.createLenticularBody(
+                atlasImage: image,
+                templateId: templateId ?? "Lenticular"
+            )
+            node.physicsBody?.mass = 2.0
+            return node
+        }
+
         let maxSize = KeyringScale.maxSize(for: templateId ?? "")
         let originalSize = image.size
 

@@ -67,6 +67,7 @@ struct KeyringSceneView<VM: KeyringViewModelProtocol>: View {
             ringType: .basic,
             chainType: .basic,
             templateId: viewModel.templateId,
+            isGyroscope: viewModel.isGyroscope,
             screen: screen,
             bodyImage: viewModel.bodyImage,
             backgroundColor: backgroundColor,

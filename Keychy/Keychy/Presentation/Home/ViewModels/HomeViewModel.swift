@@ -177,7 +177,8 @@ class HomeViewModel {
                 customSoundURL: customSoundURL,
                 particleId: keyringInfo.particleId,
                 hookOffsetY: keyringInfo.hookOffsetY,
-                chainLength: keyringInfo.chainLength
+                chainLength: keyringInfo.chainLength,
+                isGyroscope: keyringInfo.isGyroscope
             )
             dataList.append(data)
         }
@@ -205,6 +206,7 @@ class HomeViewModel {
             let hookOffsetY = data["hookOffsetY"] as? CGFloat ?? 0.0
             let chainLength = data["chainLength"] as? Int ?? 5
             let selectedTemplate = data["selectedTemplate"] as? String
+            let isGyroscope = data["isGyroscope"] as? Bool ?? false
 
             return KeyringInfo(
                 id: keyringId,
@@ -213,7 +215,8 @@ class HomeViewModel {
                 soundId: soundId,
                 particleId: particleId,
                 hookOffsetY: hookOffsetY,
-                chainLength: chainLength
+                chainLength: chainLength,
+                isGyroscope: isGyroscope
             )
         } catch {
             return nil

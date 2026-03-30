@@ -53,6 +53,7 @@ struct KeyringDetailSceneView: View {
             chainType: chainType,
             bodyImage: keyring.bodyImage,
             templateId: keyring.selectedTemplate,
+            isGyroscope: keyring.isGyroscope,
             hookOffsetY: keyring.hookOffsetY,
             chainLength: keyring.chainLength,
             onLoadingComplete: nil

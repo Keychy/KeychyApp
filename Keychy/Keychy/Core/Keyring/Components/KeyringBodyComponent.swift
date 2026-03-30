@@ -15,9 +15,10 @@ struct KeyringBodyComponent {
     static func createNode(
         from bodyImage: UIImage,
         templateId: String,
+        isGyroscope: Bool = false,
         completion: @escaping (SKNode?) -> Void
     ) {
-        let node = createImageBody(image: bodyImage, templateId: templateId)
+        let node = createImageBody(image: bodyImage, templateId: templateId, isGyroscope: isGyroscope)
         completion(node)
     }
 
@@ -25,6 +26,7 @@ struct KeyringBodyComponent {
     static func createNode(
         from bodyImageURL: String,
         templateId: String,
+        isGyroscope: Bool = false,
         completion: @escaping (SKNode?) -> Void
     ) {
         Task {
@@ -32,7 +34,7 @@ struct KeyringBodyComponent {
                 let image = try await StorageManager.shared.getImage(path: bodyImageURL)
 
                 await MainActor.run {
-                    let node = createImageBody(image: image, templateId: templateId)
+                    let node = createImageBody(image: image, templateId: templateId, isGyroscope: isGyroscope)
                     completion(node)
                 }
             } catch {
@@ -47,12 +49,12 @@ struct KeyringBodyComponent {
     }
 
     // MARK: - BodyType으로 노드 생성
-    static func createNode(from bodyType: BodyType, templateId: String) -> SKNode {
+    static func createNode(from bodyType: BodyType, templateId: String, isGyroscope: Bool = false) -> SKNode {
         switch bodyType {
         case .basic:
             return createBasicBody()
         case .customImage(let image):
-            return createImageBody(image: image, templateId: templateId)
+            return createImageBody(image: image, templateId: templateId, isGyroscope: isGyroscope)
         }
     }
 
@@ -82,9 +84,9 @@ struct KeyringBodyComponent {
     }
 
     // MARK: - Image Body (KeyringScale 사용)
-    private static func createImageBody(image: UIImage, templateId: String) -> SKNode {
-        // 렌티큘러: 아틀라스(600×390)를 300×390으로 강제 표시 + 셰이더 적용
-        if templateId == "Lenticular" {
+    private static func createImageBody(image: UIImage, templateId: String, isGyroscope: Bool = false) -> SKNode {
+        // 자이로 템플릿: 아틀라스를 셰이더 적용 바디로 생성
+        if isGyroscope {
             return createLenticularBody(atlasImage: image, templateId: templateId)
         }
 

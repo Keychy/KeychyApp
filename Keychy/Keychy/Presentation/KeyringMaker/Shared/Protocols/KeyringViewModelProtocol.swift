@@ -56,6 +56,9 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
     /// 체인 길이 (기본값 5)
     var chainLength: Int { get }
 
+    /// 자이로 인터랙션 사용 여부 (렌티큘러 등)
+    var isGyroscope: Bool { get }
+
     /// 템플릿 ID
     var templateId: String { get }
 
@@ -154,6 +157,9 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
 extension KeyringViewModelProtocol {
     /// 기본 체인 길이 (5)
     var chainLength: Int { 5 }
+
+    /// 기본값: 자이로 비사용
+    var isGyroscope: Bool { false }
 
     /// 기본 구현: 아무것도 하지 않음 (필요한 템플릿에서 override)
     func onModeChanged(from oldMode: CustomizingMode, to newMode: CustomizingMode) {}

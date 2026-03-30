@@ -41,7 +41,8 @@ extension BundleCreateView {
                 customSoundURL: customSoundURL,
                 particleId: keyring.particleId,
                 hookOffsetY: keyring.hookOffsetY,
-                chainLength: keyring.chainLength
+                chainLength: keyring.chainLength,
+                isGyroscope: keyring.isGyroscope
             )
             dataList.append(data)
         }

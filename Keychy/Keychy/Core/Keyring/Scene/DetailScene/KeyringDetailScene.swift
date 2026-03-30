@@ -13,6 +13,7 @@ class KeyringDetailScene: SKScene {
     // MARK: - Properties
     var bodyImage: String?
     var templateId: String?  // 템플릿 ID (옵션)
+    var isGyroscope: Bool  // 자이로 인터랙션 사용 여부
     var hookOffsetY: CGFloat?
     var chainLength: Int = 5  // 체인 링크 개수 (기본값 5)
     var onLoadingComplete: (() -> Void)?
@@ -59,6 +60,7 @@ class KeyringDetailScene: SKScene {
         chainType: ChainType,
         bodyImage: String? = nil,
         templateId: String? = nil,
+        isGyroscope: Bool = false,
         hookOffsetY: CGFloat? = nil,
         chainLength: Int = 5,
         onLoadingComplete: (() -> Void)? = nil
@@ -67,6 +69,7 @@ class KeyringDetailScene: SKScene {
         self.currentChainType = chainType
         self.bodyImage = bodyImage
         self.templateId = templateId
+        self.isGyroscope = isGyroscope
         self.hookOffsetY = hookOffsetY
         self.chainLength = chainLength
         self.onLoadingComplete = onLoadingComplete
@@ -89,8 +92,8 @@ class KeyringDetailScene: SKScene {
 
         setupKeyring()
 
-        // 렌티큘러: 자이로 시작 + 햅틱 매니저 생성
-        if templateId == "Lenticular" {
+        // 자이로 시작 + 햅틱 매니저 생성
+        if isGyroscope {
             LenticularMotionManager.shared.start()
             lenticularHaptic = LenticularHapticManager()
         }
@@ -100,8 +103,8 @@ class KeyringDetailScene: SKScene {
     override func update(_ currentTime: TimeInterval) {
         super.update(currentTime)
 
-        // 렌티큘러: 셰이더 u_tilt 갱신 + 햅틱
-        if templateId == "Lenticular",
+        // 자이로: 셰이더 u_tilt 갱신 + 햅틱
+        if isGyroscope,
            let body = bodyNode as? SKSpriteNode,
            let shader = body.shader {
             let tilt = LenticularMotionManager.shared.tilt
@@ -117,8 +120,8 @@ class KeyringDetailScene: SKScene {
     
     // MARK: - 메모리 정리
     private func cleanup() {
-        // 렌티큘러: 자이로 정지
-        if templateId == "Lenticular" {
+        // 자이로 정지
+        if isGyroscope {
             LenticularMotionManager.shared.stop()
             lenticularHaptic = nil
         }

@@ -153,6 +153,7 @@ class KeyringCacheManager {
                 chainType: chainType,
                 bodyImage: keyring.bodyImage,
                 templateId: keyring.selectedTemplate,
+                isGyroscope: keyring.isGyroscope,
                 targetSize: CGSize(width: 175, height: 233),
                 customBackgroundColor: .clear,
                 zoomScale: 2.0,

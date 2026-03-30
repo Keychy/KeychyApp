@@ -287,8 +287,8 @@ extension KeyringCellScene {
     
     // MARK: - Mini Body 생성 (KeyringScale 사용)
     private func createMiniImageBody(image: UIImage) -> SKSpriteNode {
-        // 렌티큘러: 셰이더 적용 + tilt=0 고정 (이미지 A만 표시)
-        if templateId == "Lenticular" {
+        // 자이로 템플릿: 셰이더 적용 + tilt=0 고정 (이미지 A만 표시)
+        if isGyroscope {
             let node = KeyringBodyComponent.createLenticularBody(
                 atlasImage: image,
                 templateId: templateId ?? "Lenticular"

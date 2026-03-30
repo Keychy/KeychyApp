@@ -19,6 +19,7 @@ class KeyringScene: SKScene {
     var bodyImage: UIImage? // UIImage용
     var bodyImageURL: String? // Firebase URL용
     var templateId: String // 템플릿 ID (KeyringScale용)
+    var isGyroscope: Bool // 자이로 인터랙션 사용 여부
     var screen: KeyringScale.Screen // 화면 종류 (zoomScale용)
     var customSoundURL: URL? // 커스텀 녹음 파일 URL
     var hookOffsetY: CGFloat? // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
@@ -63,6 +64,7 @@ class KeyringScene: SKScene {
         ringType: RingType,
         chainType: ChainType,
         templateId: String,
+        isGyroscope: Bool = false,
         screen: KeyringScale.Screen = .customizing,
         bodyImage: UIImage? = nil,
         bodyImageURL: String? = nil,
@@ -73,6 +75,7 @@ class KeyringScene: SKScene {
         self.currentRingType = ringType
         self.currentChainType = chainType
         self.templateId = templateId
+        self.isGyroscope = isGyroscope
         self.screen = screen
         self.bodyImageURL = bodyImageURL
         self.customBackgroundColor = backgroundColor
@@ -98,8 +101,8 @@ class KeyringScene: SKScene {
         guard !isCleaningUp else { return }
         isCleaningUp = true
 
-        // 렌티큘러: 자이로 정지
-        if templateId == "Lenticular" {
+        // 자이로 정지
+        if isGyroscope {
             LenticularMotionManager.shared.stop()
             lenticularHaptic = nil
         }
@@ -164,8 +167,8 @@ class KeyringScene: SKScene {
 
         setupKeyring()
 
-        // 렌티큘러: 자이로 시작 + 햅틱 매니저 생성
-        if templateId == "Lenticular" {
+        // 자이로 시작 + 햅틱 매니저 생성
+        if isGyroscope {
             LenticularMotionManager.shared.start()
             lenticularHaptic = LenticularHapticManager()
         }
@@ -175,8 +178,8 @@ class KeyringScene: SKScene {
     override func update(_ currentTime: TimeInterval) {
         super.update(currentTime)
 
-        // 렌티큘러: 셰이더 u_tilt 갱신 + 햅틱
-        if templateId == "Lenticular",
+        // 자이로: 셰이더 u_tilt 갱신 + 햅틱
+        if isGyroscope,
            let body = bodyNode as? SKSpriteNode,
            let shader = body.shader {
             let tilt = LenticularMotionManager.shared.tilt
