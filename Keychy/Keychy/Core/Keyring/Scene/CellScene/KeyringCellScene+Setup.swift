@@ -287,6 +287,18 @@ extension KeyringCellScene {
     
     // MARK: - Mini Body 생성 (KeyringScale 사용)
     private func createMiniImageBody(image: UIImage) -> SKSpriteNode {
+        // 렌티큘러: 셰이더 적용 + tilt=0 고정 (이미지 A만 표시)
+        if templateId == "Lenticular" {
+            let node = KeyringBodyComponent.createLenticularBody(
+                atlasImage: image,
+                templateId: templateId ?? "Lenticular"
+            )
+            // 셀에서는 자이로 안 씀 — tilt=0 고정으로 이미지 A만 보임
+            node.shader?.uniformNamed("u_tilt")?.floatValue = 0.0
+            node.physicsBody?.mass = 3.0
+            return node
+        }
+
         let maxSize = KeyringScale.maxSize(for: templateId ?? "")
         let originalSize = image.size
 

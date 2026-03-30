@@ -45,6 +45,9 @@ class KeyringDetailScene: SKScene {
     
     // MARK: - 터치 인터랙션 활성화 여부
     var isTouchEnabled: Bool = true
+
+    // MARK: - 렌티큘러 햅틱
+    private var lenticularHaptic: LenticularHapticManager?
     
     // TODO: originalSize을 실행 중인 기기 사이즈로 설정 필요
     let originalSize = CGSize(width: 393, height: 852)
@@ -83,8 +86,28 @@ class KeyringDetailScene: SKScene {
     override func didMove(to view: SKView) {
         backgroundColor = .clear
         physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
-        
+
         setupKeyring()
+
+        // 렌티큘러: 자이로 시작 + 햅틱 매니저 생성
+        if templateId == "Lenticular" {
+            LenticularMotionManager.shared.start()
+            lenticularHaptic = LenticularHapticManager()
+        }
+    }
+
+    // MARK: - 매 프레임 업데이트
+    override func update(_ currentTime: TimeInterval) {
+        super.update(currentTime)
+
+        // 렌티큘러: 셰이더 u_tilt 갱신 + 햅틱
+        if templateId == "Lenticular",
+           let body = bodyNode as? SKSpriteNode,
+           let shader = body.shader {
+            let tilt = LenticularMotionManager.shared.tilt
+            shader.uniformNamed("u_tilt")?.floatValue = Float(tilt)
+            lenticularHaptic?.update(tilt: tilt)
+        }
     }
     
     override func willMove(from view: SKView) {
@@ -94,6 +117,12 @@ class KeyringDetailScene: SKScene {
     
     // MARK: - 메모리 정리
     private func cleanup() {
+        // 렌티큘러: 자이로 정지
+        if templateId == "Lenticular" {
+            LenticularMotionManager.shared.stop()
+            lenticularHaptic = nil
+        }
+
         // 콜백 제거
         onLoadingComplete = nil
         onPlayParticleEffect = nil

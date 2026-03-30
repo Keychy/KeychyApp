@@ -52,6 +52,9 @@ class KeyringScene: SKScene {
     // MARK: - 씬 정리 상태
     var isCleaningUp = false
 
+    // MARK: - 렌티큘러 햅틱
+    private var lenticularHaptic: LenticularHapticManager?
+
     // MARK: - 배경색 설정
     var customBackgroundColor: UIColor = .gray50
 
@@ -94,6 +97,12 @@ class KeyringScene: SKScene {
     func cleanup() {
         guard !isCleaningUp else { return }
         isCleaningUp = true
+
+        // 렌티큘러: 자이로 정지
+        if templateId == "Lenticular" {
+            LenticularMotionManager.shared.stop()
+            lenticularHaptic = nil
+        }
 
         // 콜백 무효화
         onPlayParticleEffect = nil
@@ -154,6 +163,26 @@ class KeyringScene: SKScene {
         setupCamera()
 
         setupKeyring()
+
+        // 렌티큘러: 자이로 시작 + 햅틱 매니저 생성
+        if templateId == "Lenticular" {
+            LenticularMotionManager.shared.start()
+            lenticularHaptic = LenticularHapticManager()
+        }
+    }
+
+    // MARK: - 매 프레임 업데이트
+    override func update(_ currentTime: TimeInterval) {
+        super.update(currentTime)
+
+        // 렌티큘러: 셰이더 u_tilt 갱신 + 햅틱
+        if templateId == "Lenticular",
+           let body = bodyNode as? SKSpriteNode,
+           let shader = body.shader {
+            let tilt = LenticularMotionManager.shared.tilt
+            shader.uniformNamed("u_tilt")?.floatValue = Float(tilt)
+            lenticularHaptic?.update(tilt: tilt)
+        }
     }
 
     /// 카메라 설정 - zoomScale 적용
