@@ -242,7 +242,9 @@ extension LenticularFusionView {
         let sceneSize = KeyringScale.maxSize(for: templateId)
         let scene = SKScene(size: sceneSize)
         scene.backgroundColor = .clear
-        scene.scaleMode = .resizeFill
+        // .aspectFill 필수 — Scene 비율(245:300)과 cardAspectRatio(300/245)가 일치해야 함
+        // .resizeFill을 쓰면 좌표계가 변경되어 셰이더 SDF 테두리가 편향됨
+        scene.scaleMode = .aspectFill
 
         let bodyNode = KeyringBodyComponent.createLenticularBody(
             atlasImage: bodyImage,
@@ -255,11 +257,16 @@ extension LenticularFusionView {
 
         LenticularMotionManager.shared.start()
 
+        // 햅틱 매니저 생성 — tilt 끝점 도달 시 진동
+        let haptic = LenticularHapticManager()
+        lenticularHaptic = haptic
+
         let frameInterval: TimeInterval = 1.0 / 60.0
         let updateAction = SKAction.repeatForever(SKAction.customAction(withDuration: frameInterval) { node, _ in
             if let sprite = node as? SKSpriteNode {
-                let tilt = Float(LenticularMotionManager.shared.tilt)
-                sprite.shader?.uniformNamed("u_tilt")?.floatValue = tilt
+                let tilt = LenticularMotionManager.shared.tilt
+                sprite.shader?.uniformNamed("u_tilt")?.floatValue = Float(tilt)
+                haptic.update(tilt: tilt)
             }
         })
         bodyNode.run(updateAction)
@@ -269,6 +276,7 @@ extension LenticularFusionView {
 
     func cleanupScene() {
         LenticularMotionManager.shared.stop()
+        lenticularHaptic = nil
         previewScene?.removeAllChildren()
         previewScene?.removeAllActions()
         previewScene = nil

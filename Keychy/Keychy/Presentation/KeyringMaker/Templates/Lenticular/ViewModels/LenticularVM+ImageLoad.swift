@@ -113,8 +113,7 @@ extension LenticularVM {
         bodyImage = TextureComposer.compose(
             imageA: croppedA,
             imageB: croppedB,
-            targetSize: targetSize,
-            cornerRadius: 20
+            targetSize: targetSize
         )
     }
 

@@ -14,7 +14,7 @@ struct LenticularImageSelectView: View {
 
     // MARK: - Card Layout
     private let cardWidthRatio: CGFloat = 0.80
-    private let cardAspectRatio: CGFloat = 390.0 / 300.0
+    private let cardAspectRatio: CGFloat = 300.0 / 245.0
     private let backCardOffset: CGFloat = 36
     private let backCardScale: CGFloat = 0.93
 

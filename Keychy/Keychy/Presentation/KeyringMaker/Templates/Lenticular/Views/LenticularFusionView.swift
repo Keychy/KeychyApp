@@ -12,12 +12,12 @@ import SpriteKit
 
 enum FusionLayout {
     static let cardWidthRatio: CGFloat = 0.75
-    static let cardAspectRatio: CGFloat = 390.0 / 300.0
+    static let cardAspectRatio: CGFloat = 300.0 / 245.0
     static let thumbScale: CGFloat = 0.38
     static let cardCornerRadius: CGFloat = 16
     static let thumbCornerRadius: CGFloat = 12
-    static let tiltMultiplier: Double = 20
-    static let tiltPerspective: CGFloat = 0.6
+    static let tiltMultiplier: Double = KeyringScale.lenticularTiltMultiplier
+    static let tiltPerspective: CGFloat = KeyringScale.lenticularTiltPerspective
     static let ringPulseSize: CGFloat = 300
     static let particleCount = 12
     static let hintBottomPadding: CGFloat = 30
@@ -68,6 +68,9 @@ struct LenticularFusionView: View {
     @State var ringScale: CGFloat = 0.0
     @State var ringOpacity: CGFloat = 0.0
     @State var particleSeeds: [ParticleSeed] = []
+
+    // MARK: - 렌티큘러 햅틱
+    @State var lenticularHaptic: LenticularHapticManager?
 
     // MARK: - 쉬머 (힌트 텍스트)
     @State var shimmerPhase: CGFloat = -0.5

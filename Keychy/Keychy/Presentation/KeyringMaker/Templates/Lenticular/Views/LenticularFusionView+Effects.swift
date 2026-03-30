@@ -144,11 +144,6 @@ extension LenticularFusionView {
                 if let scene = previewScene {
                     SpriteView(scene: scene, options: [.allowsTransparency])
                         .frame(width: cardWidth, height: cardHeight)
-                        .clipShape(RoundedRectangle(cornerRadius: FusionLayout.cardCornerRadius))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: FusionLayout.cardCornerRadius)
-                                .stroke(.black.opacity(0.15), lineWidth: 1.5)
-                        )
                 }
             }
             .rotation3DEffect(
@@ -209,7 +204,11 @@ extension LenticularFusionView {
 
     var customToolbar: some View {
         CustomNavigationBar {
-            EmptyView()
+            BackToolbarButton {
+                cleanupScene()
+                viewModel.bodyImage = nil
+                router.pop()
+            }
         } center: {
             EmptyView()
         } trailing: {
