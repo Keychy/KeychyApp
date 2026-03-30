@@ -399,6 +399,13 @@
 		4C7E95EA2F754A0400C8B109 /* LenticularVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E95E02F754A0400C8B109 /* LenticularVM.swift */; };
 		4C7E96172F7A0E6D00C8B109 /* LenticularImageSelectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E96162F7A0E6D00C8B109 /* LenticularImageSelectView.swift */; };
 		4C7E96192F7A0F3300C8B109 /* LenticularVM+ImageLoad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E96182F7A0F3300C8B109 /* LenticularVM+ImageLoad.swift */; };
+		4C7E961F2F7A249900C8B109 /* LenticularMotionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E961B2F7A249900C8B109 /* LenticularMotionManager.swift */; };
+		4C7E96202F7A249900C8B109 /* TextureComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E961D2F7A249900C8B109 /* TextureComposer.swift */; };
+		4C7E96212F7A249900C8B109 /* LenticularHapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E961A2F7A249900C8B109 /* LenticularHapticManager.swift */; };
+		4C7E96222F7A249900C8B109 /* LenticularShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 4C7E961C2F7A249900C8B109 /* LenticularShader.fsh */; };
+		4C7E96242F7A264100C8B109 /* LenticularFusionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E96232F7A264100C8B109 /* LenticularFusionView.swift */; };
+		4C7E96272F7A427E00C8B109 /* LenticularFusionView+Effects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E96262F7A427E00C8B109 /* LenticularFusionView+Effects.swift */; };
+		4C7E96282F7A427E00C8B109 /* LenticularFusionView+Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E96252F7A427E00C8B109 /* LenticularFusionView+Animation.swift */; };
 		4C8426602ED3585A0050B6FE /* gulimche-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */; };
 		4C8426642ED375840050B6FE /* ColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8426632ED375840050B6FE /* ColorPalette.swift */; };
 		4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A596832EAFEAA20003D712 /* ProfileSetupView.swift */; };
@@ -1003,6 +1010,13 @@
 		4C7E95E42F754A0400C8B109 /* LenticularPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LenticularPreview.swift; sourceTree = "<group>"; };
 		4C7E96162F7A0E6D00C8B109 /* LenticularImageSelectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LenticularImageSelectView.swift; sourceTree = "<group>"; };
 		4C7E96182F7A0F3300C8B109 /* LenticularVM+ImageLoad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LenticularVM+ImageLoad.swift"; sourceTree = "<group>"; };
+		4C7E961A2F7A249900C8B109 /* LenticularHapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LenticularHapticManager.swift; sourceTree = "<group>"; };
+		4C7E961B2F7A249900C8B109 /* LenticularMotionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LenticularMotionManager.swift; sourceTree = "<group>"; };
+		4C7E961C2F7A249900C8B109 /* LenticularShader.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = LenticularShader.fsh; sourceTree = "<group>"; };
+		4C7E961D2F7A249900C8B109 /* TextureComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureComposer.swift; sourceTree = "<group>"; };
+		4C7E96232F7A264100C8B109 /* LenticularFusionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LenticularFusionView.swift; sourceTree = "<group>"; };
+		4C7E96252F7A427E00C8B109 /* LenticularFusionView+Animation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LenticularFusionView+Animation.swift"; sourceTree = "<group>"; };
+		4C7E96262F7A427E00C8B109 /* LenticularFusionView+Effects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LenticularFusionView+Effects.swift"; sourceTree = "<group>"; };
 		4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "gulimche-Regular.ttf"; sourceTree = "<group>"; };
 		4C8426632ED375840050B6FE /* ColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPalette.swift; sourceTree = "<group>"; };
 		4C86A6112F25C0B10023AA2D /* WorkshopBundleGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopBundleGridView.swift; sourceTree = "<group>"; };
@@ -1530,6 +1544,7 @@
 		4C2525F02F3B27B3003CC5AD /* Keyring */ = {
 			isa = PBXGroup;
 			children = (
+				4C7E961E2F7A249900C8B109 /* Lenticular */,
 				4C2525EC2F3B27B3003CC5AD /* Scene */,
 				4C2525EF2F3B27B3003CC5AD /* View */,
 				4C2525E12F3B27B3003CC5AD /* Components */,
@@ -2253,6 +2268,9 @@
 			children = (
 				4C7E95E42F754A0400C8B109 /* LenticularPreview.swift */,
 				4C7E96162F7A0E6D00C8B109 /* LenticularImageSelectView.swift */,
+				4C7E96232F7A264100C8B109 /* LenticularFusionView.swift */,
+				4C7E96262F7A427E00C8B109 /* LenticularFusionView+Effects.swift */,
+				4C7E96252F7A427E00C8B109 /* LenticularFusionView+Animation.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -2262,6 +2280,17 @@
 			children = (
 				4C7E95E32F754A0400C8B109 /* ViewModels */,
 				4C7E95E52F754A0400C8B109 /* Views */,
+			);
+			path = Lenticular;
+			sourceTree = "<group>";
+		};
+		4C7E961E2F7A249900C8B109 /* Lenticular */ = {
+			isa = PBXGroup;
+			children = (
+				4C7E961C2F7A249900C8B109 /* LenticularShader.fsh */,
+				4C7E961A2F7A249900C8B109 /* LenticularHapticManager.swift */,
+				4C7E961B2F7A249900C8B109 /* LenticularMotionManager.swift */,
+				4C7E961D2F7A249900C8B109 /* TextureComposer.swift */,
 			);
 			path = Lenticular;
 			sourceTree = "<group>";
@@ -3136,6 +3165,7 @@
 				4C5D12362F5DB83800242703 /* chain5_frame22.png in Resources */,
 				4C5D12372F5DB83800242703 /* chain5_frame05.png in Resources */,
 				4C5D12382F5DB83800242703 /* chain1_frame11.png in Resources */,
+				4C7E96222F7A249900C8B109 /* LenticularShader.fsh in Resources */,
 				4C5D12392F5DB83800242703 /* chain3_frame24.png in Resources */,
 				4C5D123A2F5DB83800242703 /* chain3_frame21.png in Resources */,
 				4C5D123B2F5DB83800242703 /* chain1_frame18.png in Resources */,
@@ -3247,6 +3277,9 @@
 				C6C4028F2EB27458006B58DF /* Particle.swift in Sources */,
 				AA0A54B72EC053E4007B5413 /* CarabinerType.swift in Sources */,
 				4CEC61E52EAE08C00099ECEE /* KeyringBundle.swift in Sources */,
+				4C7E961F2F7A249900C8B109 /* LenticularMotionManager.swift in Sources */,
+				4C7E96202F7A249900C8B109 /* TextureComposer.swift in Sources */,
+				4C7E96212F7A249900C8B109 /* LenticularHapticManager.swift in Sources */,
 				4C004FAD2F177F2600D9063E /* BundleDetailView+VideoGen.swift in Sources */,
 				386102462F10F9CE0045C529 /* KeyringReceiveView+Alerts.swift in Sources */,
 				4C65306C2EBC889B000F8154 /* ChangeNameView.swift in Sources */,
@@ -3257,6 +3290,8 @@
 				388E72942EF341F200AE1F1B /* CollectionViewModel+UserData.swift in Sources */,
 				4CEBB14D2EFAA52F00CF53E2 /* DeepLinkHandler.swift in Sources */,
 				38818DC02F3CBE2E00B0A49C /* CheckerBoardRect.swift in Sources */,
+				4C7E96272F7A427E00C8B109 /* LenticularFusionView+Effects.swift in Sources */,
+				4C7E96282F7A427E00C8B109 /* LenticularFusionView+Animation.swift in Sources */,
 				4CEBB14E2EFAA52F00CF53E2 /* DeepLinkManager.swift in Sources */,
 				4CEC61E62EAE08C00099ECEE /* Keyring.swift in Sources */,
 				4CEC61F12EAE08C40099ECEE /* KeychyApp.swift in Sources */,
@@ -3354,6 +3389,7 @@
 				4C2526312F3C95EA003CC5AD /* LottieItemView.swift in Sources */,
 				4CC3D3C82EC8A47E0009D376 /* OutlineText.swift in Sources */,
 				385425C32EB2C35E00A06C02 /* WidgetSettingView.swift in Sources */,
+				4C7E96242F7A264100C8B109 /* LenticularFusionView.swift in Sources */,
 				3851D49B2F5FD1A50013C052 /* CrossStitchVM.swift in Sources */,
 				4CEC622B2EAE08DA0099ECEE /* Font+Styles.swift in Sources */,
 				386B17522ECCDFBA00CCCC23 /* KeyringCollectView.swift in Sources */,

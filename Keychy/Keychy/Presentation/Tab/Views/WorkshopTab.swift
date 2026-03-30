@@ -260,7 +260,7 @@ struct WorkshopTab: View {
         case .lenticularImageSelect:
             LenticularImageSelectView(router: router, viewModel: getLenticularVM())
         case .lenticularFusion:
-            EmptyView() // Phase 3에서 구현
+            LenticularFusionView(router: router, viewModel: getLenticularVM())
         case .lenticularCustomizing:
             KeyringCustomizingView(
                 router: router,
