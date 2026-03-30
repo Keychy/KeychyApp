@@ -33,6 +33,15 @@ class LenticularVM: KeyringViewModelProtocol {
     /// 사용자가 선택한 이미지 B (렌티큘러 우측)
     var imageB: UIImage?
 
+    // MARK: - 이미지 로딩 상태
+    var isLoadingImage = false
+
+    // MARK: - Photo Transform State (핀치/드래그 크롭용)
+    var photoScaleA: CGFloat = 1.0
+    var photoOffsetA: CGSize = .zero
+    var photoScaleB: CGFloat = 1.0
+    var photoOffsetB: CGSize = .zero
+
     // MARK: - Body Image
     /// A+B 가로 합성 아틀라스 (셰이더가 UV로 좌/우 분리 샘플링)
     var bodyImage: UIImage? = nil
@@ -109,6 +118,10 @@ class LenticularVM: KeyringViewModelProtocol {
         downloadProgress.removeAll()
         imageA = nil
         imageB = nil
+        photoScaleA = 1.0
+        photoOffsetA = .zero
+        photoScaleB = 1.0
+        photoOffsetB = .zero
         bodyImage = nil
     }
 
