@@ -28,6 +28,7 @@ enum DisplayType: String, AppEnum {
 struct KeyringEntity: AppEntity {
     let id: String
     let name: String
+    let isGyroscope: Bool
 
     static var typeDisplayRepresentation: TypeDisplayRepresentation = "키링"
 
@@ -43,14 +44,14 @@ struct KeyringEntityQuery: EntityQuery {
         let keyrings = KeyringImageCache.shared.loadWidgetKeyrings()
         return identifiers.compactMap { id in
             keyrings.first(where: { $0.id == id })
-                .map { KeyringEntity(id: $0.id, name: $0.name) }
+                .map { KeyringEntity(id: $0.id, name: $0.name, isGyroscope: $0.isGyroscope) }
         }
     }
 
     func suggestedEntities() async throws -> [KeyringEntity] {
         KeyringImageCache.shared.loadWidgetKeyrings()
             .sorted { $0.createdAt > $1.createdAt }
-            .map { KeyringEntity(id: $0.id, name: $0.name) }
+            .map { KeyringEntity(id: $0.id, name: $0.name, isGyroscope: $0.isGyroscope) }
     }
 
     func defaultResult() async -> KeyringEntity? { nil }
