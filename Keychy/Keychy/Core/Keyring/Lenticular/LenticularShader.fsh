@@ -50,5 +50,28 @@ void main() {
     shimmer *= SHIMMER_PEAK * transitionIntensity;
     color.rgb += vec3(shimmer);
 
+    // Rounded rect SDF — 코너 클리핑 + 메탈릭 테두리를 하나의 SDF로 처리
+    // sdf < 0: 내부, sdf > 0: 외부, sdf == 0: 경계선
+    float BORDER_WIDTH = 3.0;   // 테두리 두께 (px)
+
+    vec2 halfSize = u_sprite_size * 0.5;
+    vec2 p = abs(uv * u_sprite_size - halfSize) - halfSize + vec2(u_cornerRadius);
+    float sdf = length(max(p, vec2(0.0))) + min(max(p.x, p.y), 0.0) - u_cornerRadius;
+
+    // 코너 밖 투명 (anti-alias 1px)
+    float cornerAlpha = 1.0 - smoothstep(-0.75, 0.75, sdf);
+
+    // 테두리 영역: sdf가 -BORDER_WIDTH ~ 0 사이
+    float borderMask = smoothstep(-BORDER_WIDTH - 0.75, -BORDER_WIDTH + 0.75, sdf) * cornerAlpha;
+
+    // 메탈릭 실버 — 기울일수록 밝게 반짝이는 효과
+    float tiltEdge = abs(u_tilt * 2.0 - 1.0);
+    float borderBrightness = 0.72 + 0.23 * tiltEdge;
+    vec3 borderColor = vec3(borderBrightness);
+
+    // 테두리 합성 후 코너 클리핑 (premultiplied alpha)
+    color.rgb = mix(color.rgb, borderColor, borderMask);
+    color *= cornerAlpha;
+
     gl_FragColor = color;
 }

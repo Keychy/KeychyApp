@@ -123,6 +123,7 @@ struct KeyringBodyComponent {
     // MARK: - Lenticular Body (셰이더 적용)
     /// 아틀라스 텍스처를 maxSize로 강제 표시하고 LenticularShader 적용
     /// - 셰이더가 UV 좌/우 절반을 분리 샘플링하여 렌티큘러 효과 생성
+    /// - 라운드 코너 + 메탈릭 실버 테두리 + tilt 연동 밝기 변화 전부 셰이더에서 처리
     static func createLenticularBody(atlasImage: UIImage, templateId: String) -> SKSpriteNode {
         let displaySize = KeyringScale.maxSize(for: templateId)
 
@@ -132,12 +133,17 @@ struct KeyringBodyComponent {
         spriteNode.zPosition = -1
 
         // 셰이더 로드 + uniform 설정
+        // 라운드 코너, 테두리 모두 셰이더 SDF로 처리 (별도 노드 없음)
         if let shaderPath = Bundle.main.path(forResource: "LenticularShader", ofType: "fsh"),
            let shaderSource = try? String(contentsOfFile: shaderPath, encoding: .utf8) {
             let shader = SKShader(source: shaderSource)
             shader.uniforms = [
                 SKUniform(name: "u_tilt", float: 0.0),
-                SKUniform(name: "u_direction", float: 0.35)  // 사선 쉬머
+                SKUniform(name: "u_direction", float: 0.35),
+                SKUniform(name: "u_sprite_size", vectorFloat2: vector_float2(
+                    Float(displaySize.width), Float(displaySize.height)
+                )),
+                SKUniform(name: "u_cornerRadius", float: 12.0)
             ]
             spriteNode.shader = shader
         }
