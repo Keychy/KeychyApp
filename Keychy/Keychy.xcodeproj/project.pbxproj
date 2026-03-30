@@ -397,6 +397,8 @@
 		4C7E95E82F754A0400C8B109 /* LenticularVM+Firebase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E95E22F754A0400C8B109 /* LenticularVM+Firebase.swift */; };
 		4C7E95E92F754A0400C8B109 /* LenticularVM+Effect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E95E12F754A0400C8B109 /* LenticularVM+Effect.swift */; };
 		4C7E95EA2F754A0400C8B109 /* LenticularVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E95E02F754A0400C8B109 /* LenticularVM.swift */; };
+		4C7E96172F7A0E6D00C8B109 /* LenticularImageSelectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E96162F7A0E6D00C8B109 /* LenticularImageSelectView.swift */; };
+		4C7E96192F7A0F3300C8B109 /* LenticularVM+ImageLoad.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E96182F7A0F3300C8B109 /* LenticularVM+ImageLoad.swift */; };
 		4C8426602ED3585A0050B6FE /* gulimche-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */; };
 		4C8426642ED375840050B6FE /* ColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8426632ED375840050B6FE /* ColorPalette.swift */; };
 		4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A596832EAFEAA20003D712 /* ProfileSetupView.swift */; };
@@ -999,6 +1001,8 @@
 		4C7E95E12F754A0400C8B109 /* LenticularVM+Effect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LenticularVM+Effect.swift"; sourceTree = "<group>"; };
 		4C7E95E22F754A0400C8B109 /* LenticularVM+Firebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LenticularVM+Firebase.swift"; sourceTree = "<group>"; };
 		4C7E95E42F754A0400C8B109 /* LenticularPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LenticularPreview.swift; sourceTree = "<group>"; };
+		4C7E96162F7A0E6D00C8B109 /* LenticularImageSelectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LenticularImageSelectView.swift; sourceTree = "<group>"; };
+		4C7E96182F7A0F3300C8B109 /* LenticularVM+ImageLoad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LenticularVM+ImageLoad.swift"; sourceTree = "<group>"; };
 		4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "gulimche-Regular.ttf"; sourceTree = "<group>"; };
 		4C8426632ED375840050B6FE /* ColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPalette.swift; sourceTree = "<group>"; };
 		4C86A6112F25C0B10023AA2D /* WorkshopBundleGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopBundleGridView.swift; sourceTree = "<group>"; };
@@ -2239,6 +2243,7 @@
 				4C7E95E02F754A0400C8B109 /* LenticularVM.swift */,
 				4C7E95E12F754A0400C8B109 /* LenticularVM+Effect.swift */,
 				4C7E95E22F754A0400C8B109 /* LenticularVM+Firebase.swift */,
+				4C7E96182F7A0F3300C8B109 /* LenticularVM+ImageLoad.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -2247,6 +2252,7 @@
 			isa = PBXGroup;
 			children = (
 				4C7E95E42F754A0400C8B109 /* LenticularPreview.swift */,
+				4C7E96162F7A0E6D00C8B109 /* LenticularImageSelectView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -3581,6 +3587,7 @@
 				C6C35F3A2ED2A3C2009642F4 /* FestivalViewModel.swift in Sources */,
 				3851D48C2F5F2F950013C052 /* PixelSizeSelection.swift in Sources */,
 				AAEB46AF2EC1D648002B13E5 /* BundleNameEditView.swift in Sources */,
+				4C7E96192F7A0F3300C8B109 /* LenticularVM+ImageLoad.swift in Sources */,
 				AA9B2E892EB001AA0004D31C /* Background.swift in Sources */,
 				4C5D0B1C2F56A8D200242703 /* WidgetPopup.swift in Sources */,
 				C6C35F3C2ED2A7BD009642F4 /* Showcase25BoardView.swift in Sources */,
@@ -3635,6 +3642,7 @@
 				4CEC61EC2EAE08C00099ECEE /* BodyType.swift in Sources */,
 				C6C361E22ED4AC49009642F4 /* SubmitCompleteAlert.swift in Sources */,
 				C6C361442ED44EF1009642F4 /* Showcase25BoardView+Detail.swift in Sources */,
+				4C7E96172F7A0E6D00C8B109 /* LenticularImageSelectView.swift in Sources */,
 				BC0001072F35F00100000007 /* BundleCreateView+SelectSheet.swift in Sources */,
 				BC0001082F35F00100000008 /* BundleCreateView+Alert.swift in Sources */,
 				BC0001092F35F00100000009 /* BundleCreateView+Purchase.swift in Sources */,

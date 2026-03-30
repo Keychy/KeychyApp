@@ -258,7 +258,7 @@ struct WorkshopTab: View {
         case .lenticularPreview:
             LenticularPreview(router: router, viewModel: getLenticularVM())
         case .lenticularImageSelect:
-            EmptyView() // Phase 2에서 구현
+            LenticularImageSelectView(router: router, viewModel: getLenticularVM())
         case .lenticularFusion:
             EmptyView() // Phase 3에서 구현
         case .lenticularCustomizing:
