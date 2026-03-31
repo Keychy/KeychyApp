@@ -142,14 +142,47 @@ extension KeyringScene {
         // Body 중심 Y 계산: 체인 끝에서 body 절반만큼 내리고, 구멍 위치만큼 올림
         let bodyCenterY = lastChainBottomY - bodyHalfHeight + actualHookOffsetY + 4 // 4는 조절값
 
-        body.position = CGPoint(x: centerX, y: bodyCenterY)
+        // 렌티큘러: SKTransformNode로 래핑 (바디만 3D 회전 적용)
+        let finalBody: SKNode
+        if isGyroscope, let spriteBody = body as? SKSpriteNode {
+            // Container: 물리 바디 + 터치 영역 담당
+            let container = SKSpriteNode(color: .clear, size: spriteBody.size)
 
-        body.zPosition = -1  // Body는 체인 아래
-        addChild(body)
-        bodyNode = body
+            // 새 물리 바디 생성 (이전 방식은 SpriteKit에서 소유권 이전이 불안정)
+            let newPhysics = SKPhysicsBody(rectangleOf: spriteBody.size)
+            if let original = spriteBody.physicsBody {
+                newPhysics.isDynamic = original.isDynamic
+                newPhysics.affectedByGravity = original.affectedByGravity
+                newPhysics.allowsRotation = original.allowsRotation
+                newPhysics.mass = original.mass
+                newPhysics.friction = original.friction
+                newPhysics.restitution = original.restitution
+                newPhysics.linearDamping = original.linearDamping
+                newPhysics.angularDamping = original.angularDamping
+            }
+            container.physicsBody = newPhysics
+            spriteBody.physicsBody = nil
+
+            // SKTransformNode: Y축 3D 회전만 담당 (렌더링 전용)
+            let transformNode = SKTransformNode()
+            transformNode.name = "lenticularTransform"
+            spriteBody.name = "lenticularVisual"
+            spriteBody.position = .zero
+
+            transformNode.addChild(spriteBody)
+            container.addChild(transformNode)
+            finalBody = container
+        } else {
+            finalBody = body
+        }
+
+        finalBody.position = CGPoint(x: centerX, y: bodyCenterY)
+        finalBody.zPosition = -1  // Body는 체인 아래
+        addChild(finalBody)
+        bodyNode = finalBody
 
         // 조인트 연결
-        connectComponents(ring: ring, chains: chains, body: body)
+        connectComponents(ring: ring, chains: chains, body: finalBody)
 
         // Setup 완료 알림 (Body까지 완전히 생성됨)
         onSetupComplete?()

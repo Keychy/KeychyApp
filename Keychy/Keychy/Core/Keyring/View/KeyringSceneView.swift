@@ -106,24 +106,13 @@ struct KeyringSceneView<VM: KeyringViewModelProtocol>: View {
 
 extension KeyringSceneView {
     /// SpriteKit Scene 표시 뷰
+    /// 3D 회전은 SKTransformNode가 바디 노드 레벨에서 처리 (고리/체인 영향 없음)
     private var sceneView: some View {
         Group {
             if let scene {
-                let base = SpriteView(scene: scene, options: [.allowsTransparency])
+                SpriteView(scene: scene, options: [.allowsTransparency])
                     .contentShape(Rectangle())
                     .frame(maxWidth: .infinity)
-
-                if viewModel.isGyroscope {
-                    base
-                        .rotation3DEffect(
-                            .degrees(Double(LenticularMotionManager.shared.signedTilt) * KeyringScale.lenticularTiltMultiplier),
-                            axis: (x: 0, y: 1, z: 0),
-                            perspective: KeyringScale.lenticularTiltPerspective
-                        )
-                        .animation(.interactiveSpring(response: 0.15, dampingFraction: 0.8), value: LenticularMotionManager.shared.signedTilt)
-                } else {
-                    base
-                }
             }
         }
     }
