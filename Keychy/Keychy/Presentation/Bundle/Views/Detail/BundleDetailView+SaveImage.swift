@@ -115,7 +115,8 @@ extension BundleDetailView {
                     bodyImageURL: keyringInfo.bodyImage,
                     templateId: keyringInfo.selectedTemplate ?? "",
                     hookOffsetY: keyringInfo.hookOffsetY,
-                    chainLength: keyringInfo.chainLength
+                    chainLength: keyringInfo.chainLength,
+                    isGyroscope: keyringInfo.isGyroscope
                 )
             )
         }
