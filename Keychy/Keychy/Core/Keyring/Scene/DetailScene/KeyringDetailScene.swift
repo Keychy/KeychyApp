@@ -103,12 +103,22 @@ class KeyringDetailScene: SKScene {
     override func update(_ currentTime: TimeInterval) {
         super.update(currentTime)
 
-        // 자이로: 셰이더 u_tilt 갱신 + 햅틱
-        if isGyroscope,
-           let body = bodyNode as? SKSpriteNode,
-           let shader = body.shader {
+        // 자이로: SKTransformNode로 바디만 Y축 3D 회전 + 셰이더 u_tilt 갱신 + 햅틱
+        if isGyroscope {
             let tilt = LenticularMotionManager.shared.tilt
-            shader.uniformNamed("u_tilt")?.floatValue = Float(tilt)
+            let signedTilt = LenticularMotionManager.shared.signedTilt
+            let signedPitch = LenticularMotionManager.shared.signedPitch
+
+            if let body = bodyNode,
+               let transform = body.childNode(withName: "lenticularTransform") as? SKTransformNode {
+                transform.yRotation = CGFloat(signedTilt) * KeyringScale.lenticularYRotationMax
+                transform.xRotation = CGFloat(signedPitch) * KeyringScale.lenticularXRotationMax
+
+                if let visual = transform.childNode(withName: "lenticularVisual") as? SKSpriteNode,
+                   let shader = visual.shader {
+                    shader.uniformNamed("u_tilt")?.floatValue = Float(tilt)
+                }
+            }
             lenticularHaptic?.update(tilt: tilt)
         }
     }

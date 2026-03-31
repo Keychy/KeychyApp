@@ -812,22 +812,57 @@ class MultiKeyringScene: SKScene {
 
             let bodyCenterY = lastChainBottomY - bodyHalfHeight + actualHookOffsetY + 4
 
-            body.position = CGPoint(x: spriteKitPosition.x, y: bodyCenterY)
-            body.zPosition = baseZPosition - 2
-            body.physicsBody?.isDynamic = false
-            body.physicsBody?.categoryBitMask = categoryBitMask
-            body.physicsBody?.collisionBitMask = collisionBitMask
-            body.physicsBody?.contactTestBitMask = 0
+            // 렌티큘러: SKTransformNode로 래핑 (바디만 3D 회전 적용)
+            let finalBody: SKNode
+            if data.isGyroscope, let spriteBody = body as? SKSpriteNode {
+                let container = SKSpriteNode(color: .clear, size: spriteBody.size)
 
-            self.addChild(body)
-            if let spriteBody = body as? SKSpriteNode {
+                let newPhysics = SKPhysicsBody(rectangleOf: spriteBody.size)
+                if let original = spriteBody.physicsBody {
+                    newPhysics.isDynamic = original.isDynamic
+                    newPhysics.affectedByGravity = original.affectedByGravity
+                    newPhysics.allowsRotation = original.allowsRotation
+                    newPhysics.mass = original.mass
+                    newPhysics.friction = original.friction
+                    newPhysics.restitution = original.restitution
+                    newPhysics.linearDamping = original.linearDamping
+                    newPhysics.angularDamping = original.angularDamping
+                }
+                container.physicsBody = newPhysics
+                spriteBody.physicsBody = nil
+
+                let transformNode = SKTransformNode()
+                transformNode.name = "lenticularTransform"
+                spriteBody.name = "lenticularVisual"
+                spriteBody.position = .zero
+
+                transformNode.addChild(spriteBody)
+                container.addChild(transformNode)
+
+                // 그림자는 실제 텍스처가 있는 비주얼 노드에 적용 (container는 투명)
                 self.addShadowToNode(spriteBody, offsetX: 8, offsetY: -8)
+
+                finalBody = container
+            } else {
+                finalBody = body
+                if let spriteBody = body as? SKSpriteNode {
+                    self.addShadowToNode(spriteBody, offsetX: 8, offsetY: -8)
+                }
             }
 
-            self.bodyNodes[data.index] = body
+            finalBody.position = CGPoint(x: spriteKitPosition.x, y: bodyCenterY)
+            finalBody.zPosition = baseZPosition - 2
+            finalBody.physicsBody?.isDynamic = false
+            finalBody.physicsBody?.categoryBitMask = categoryBitMask
+            finalBody.physicsBody?.collisionBitMask = collisionBitMask
+            finalBody.physicsBody?.contactTestBitMask = 0
+
+            self.addChild(finalBody)
+
+            self.bodyNodes[data.index] = finalBody
 
             // 4. 조인트 연결
-            self.connectComponents(ring: ring, chains: chains, body: body)
+            self.connectComponents(ring: ring, chains: chains, body: finalBody)
 
             // 키링 완성 완료 - 성공
             completion(true)
@@ -1111,14 +1146,22 @@ class MultiKeyringScene: SKScene {
     override func update(_ currentTime: TimeInterval) {
         super.update(currentTime)
 
-        // 자이로: 셰이더 u_tilt 갱신 + 햅틱
+        // 자이로: SKTransformNode로 바디만 Y축 3D 회전 + 셰이더 u_tilt 갱신 + 햅틱
         guard hasGyroscopeKeyrings else { return }
         let tilt = LenticularMotionManager.shared.tilt
+        let signedTilt = LenticularMotionManager.shared.signedTilt
+        let signedPitch = LenticularMotionManager.shared.signedPitch
 
-        for (index, data) in keyringDataList.enumerated() where data.isGyroscope {
-            if let body = bodyNodes[data.index] as? SKSpriteNode,
-               let shader = body.shader {
-                shader.uniformNamed("u_tilt")?.floatValue = Float(tilt)
+        for data in keyringDataList where data.isGyroscope {
+            if let body = bodyNodes[data.index],
+               let transform = body.childNode(withName: "lenticularTransform") as? SKTransformNode {
+                transform.yRotation = CGFloat(signedTilt) * KeyringScale.lenticularYRotationMax
+                transform.xRotation = CGFloat(signedPitch) * KeyringScale.lenticularXRotationMax
+
+                if let visual = transform.childNode(withName: "lenticularVisual") as? SKSpriteNode,
+                   let shader = visual.shader {
+                    shader.uniformNamed("u_tilt")?.floatValue = Float(tilt)
+                }
             }
         }
         lenticularHaptic?.update(tilt: tilt)

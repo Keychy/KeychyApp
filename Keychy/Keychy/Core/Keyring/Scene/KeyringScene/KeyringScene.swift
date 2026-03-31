@@ -178,12 +178,25 @@ class KeyringScene: SKScene {
     override func update(_ currentTime: TimeInterval) {
         super.update(currentTime)
 
-        // 자이로: 셰이더 u_tilt 갱신 + 햅틱
-        if isGyroscope,
-           let body = bodyNode as? SKSpriteNode,
-           let shader = body.shader {
+        // 자이로: SKTransformNode로 바디만 Y축 3D 회전 + 셰이더 u_tilt 갱신 + 햅틱
+        if isGyroscope {
             let tilt = LenticularMotionManager.shared.tilt
-            shader.uniformNamed("u_tilt")?.floatValue = Float(tilt)
+            let signedTilt = LenticularMotionManager.shared.signedTilt
+            let signedPitch = LenticularMotionManager.shared.signedPitch
+
+            if let body = bodyNode,
+               let transform = body.childNode(withName: "lenticularTransform") as? SKTransformNode {
+                // 바디만 3D 회전 (고리/체인은 영향 없음)
+                transform.yRotation = CGFloat(signedTilt) * KeyringScale.lenticularYRotationMax
+                transform.xRotation = CGFloat(signedPitch) * KeyringScale.lenticularXRotationMax
+
+                // 셰이더 업데이트 (렌티큘러 A↔B 전환)
+                if let visual = transform.childNode(withName: "lenticularVisual") as? SKSpriteNode,
+                   let shader = visual.shader {
+                    shader.uniformNamed("u_tilt")?.floatValue = Float(tilt)
+                }
+            }
+            // 햅틱은 transform 존재 여부와 무관하게 항상 동작
             lenticularHaptic?.update(tilt: tilt)
         }
     }

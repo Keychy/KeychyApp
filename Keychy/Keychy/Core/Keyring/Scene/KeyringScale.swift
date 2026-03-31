@@ -103,10 +103,19 @@ enum KeyringScale {
     ]
 
     // MARK: - 렌티큘러 3D 회전 상수
-    /// rotation3DEffect에 사용되는 틸트 배율 (signedTilt × multiplier = 회전 각도°)
+    /// FusionView rotation3DEffect용 (SwiftUI 레벨)
     static let lenticularTiltMultiplier: Double = 20
-    /// rotation3DEffect perspective 값
+    /// FusionView rotation3DEffect perspective 값
     static let lenticularTiltPerspective: CGFloat = 0.6
+
+    /// SKTransformNode yRotation 최대 각도 (라디안)
+    /// signedTilt(-1~+1) × lenticularYRotationMax = 실제 회전 각도
+    /// 기본값 35° = 0.611 rad (디바이스 테스트 후 조정 가능)
+    static let lenticularYRotationMax: CGFloat = 35 * .pi / 180
+
+    /// SKTransformNode xRotation 최대 각도 (라디안) — 수직 기울기용
+    /// 체인이 앞뒤로 안 움직이므로 은근한 입체감 수준으로 제한
+    static let lenticularXRotationMax: CGFloat = 12 * .pi / 180
 
     // MARK: - 기본값
     private static let defaultMaxSize = CGSize(width: 210, height: 210)

@@ -22,13 +22,19 @@ final class LenticularMotionManager {
     /// 부호 유지 (-1.0~+1.0) — 햅틱/3D 회전에 활용
     private(set) var signedTilt: CGFloat = 0.0
 
+    /// 수직(pitch) 부호 유지 (-1.0~+1.0) — X축 3D 회전용
+    private(set) var signedPitch: CGFloat = 0.0
+
     // MARK: - Private
 
     private let manager = CMMotionManager()
-    private var calibrationRoll: Double = 0.0
+    private var calibrationGX: Double = 0.0
+    private var calibrationGY: Double = 0.0
+    private var isCalibrated = false
 
-    /// 0~range 라디안을 0~1로 매핑 (~50°)
-    private let range: Double = 0.87
+    /// gravity 성분 정규화 범위 (sin(30°) = 0.5)
+    /// ~30° 기울임으로 최대치 도달 — 기존 attitude.roll 대비 동일 체감 감도
+    private let range: Double = 0.5
     private let updateInterval: TimeInterval = 1.0 / 60.0
 
     /// 참조 카운팅: 0이면 센서 정지, 1 이상이면 센서 가동
@@ -55,7 +61,10 @@ final class LenticularMotionManager {
 
     /// 현재 자세를 기준점으로 재설정
     func recalibrate() {
-        calibrationRoll = manager.deviceMotion?.attitude.roll ?? 0.0
+        guard let gravity = manager.deviceMotion?.gravity else { return }
+        calibrationGX = gravity.x
+        calibrationGY = gravity.y
+        isCalibrated = true
     }
 
     // MARK: - 센서 제어
@@ -68,17 +77,24 @@ final class LenticularMotionManager {
         manager.startDeviceMotionUpdates(to: .main) { [weak self] motion, _ in
             guard let self, let motion else { return }
 
-            let roll = motion.attitude.roll
+            let gx = motion.gravity.x  // 좌우 기울기 (직교)
+            let gy = motion.gravity.y  // 앞뒤 기울기 (직교)
 
             // 최초 캘리브레이션
-            if self.calibrationRoll == 0.0 {
-                self.calibrationRoll = roll
+            if !self.isCalibrated {
+                self.calibrationGX = gx
+                self.calibrationGY = gy
+                self.isCalibrated = true
             }
 
-            // 좌우(roll) 고정 — 키링이 체인에 매달려 좌우로 흔들리는 것과 동기
-            let normalized = (roll - self.calibrationRoll) / self.range
-            self.tilt = CGFloat(min(abs(normalized), 1.0))
-            self.signedTilt = CGFloat(max(min(normalized, 1.0), -1.0))
+            // 좌우(gravity.x) — 렌티큘러 A↔B 전환 + Y축 3D 회전
+            let deltaX = (gx - self.calibrationGX) / self.range
+            self.tilt = CGFloat(min(abs(deltaX), 1.0))
+            self.signedTilt = CGFloat(max(min(deltaX, 1.0), -1.0))
+
+            // 앞뒤(gravity.y) — X축 3D 회전용 (셰이더 전환과 무관)
+            let deltaY = (gy - self.calibrationGY) / self.range
+            self.signedPitch = CGFloat(max(min(deltaY, 1.0), -1.0))
         }
     }
 
@@ -87,5 +103,6 @@ final class LenticularMotionManager {
         isRunning = false
         tilt = 0.0
         signedTilt = 0.0
+        signedPitch = 0.0
     }
 }
