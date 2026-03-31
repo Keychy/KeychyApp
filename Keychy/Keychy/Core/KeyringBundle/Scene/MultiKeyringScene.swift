@@ -297,8 +297,11 @@ class MultiKeyringScene: SKScene {
         // 원본 노드를 복제해서 그림자로 사용
         guard let shadowNode = node.copy() as? SKSpriteNode else { return }
 
+        // 커스텀 셰이더 제거 (셰이더가 colorBlendFactor를 무시하므로)
+        shadowNode.shader = nil
+
         // 그림자 설정 (살짝 더 진하게)
-        shadowNode.alpha = 0.25
+        shadowNode.alpha = 0.15
         shadowNode.color = .black
         shadowNode.colorBlendFactor = 1.0
 
@@ -324,7 +327,17 @@ class MultiKeyringScene: SKScene {
             effectNode.filter = blurFilter
         }
 
-        effectNode.addChild(shadowNode)
+        // 셰이더가 코너를 깎는 노드(렌티큘러)는 그림자도 둥근 모서리로 크롭
+        if node.shader != nil {
+            let maskNode = SKShapeNode(rectOf: node.size, cornerRadius: 12)
+            maskNode.fillColor = .white
+            let cropNode = SKCropNode()
+            cropNode.maskNode = maskNode
+            cropNode.addChild(shadowNode)
+            effectNode.addChild(cropNode)
+        } else {
+            effectNode.addChild(shadowNode)
+        }
         node.addChild(effectNode)
     }
 
@@ -889,7 +902,11 @@ class MultiKeyringScene: SKScene {
                 let shader = SKShader(source: shaderSource)
                 shader.uniforms = [
                     SKUniform(name: "u_tilt", float: 0.0),
-                    SKUniform(name: "u_direction", float: 0.35)
+                    SKUniform(name: "u_direction", float: 0.35),
+                    SKUniform(name: "u_sprite_size", vectorFloat2: vector_float2(
+                        Float(scaledSize.width), Float(scaledSize.height)
+                    )),
+                    SKUniform(name: "u_cornerRadius", float: 12.0)
                 ]
                 spriteNode.shader = shader
             }
@@ -1369,7 +1386,7 @@ class MultiKeyringScene: SKScene {
             let distance = hypot(location.x - bodyCenter.x, location.y - bodyCenter.y)
 
             // Body 근처에서만 힘 적용 (거리가 가까울수록 강한 힘)
-            if distance < 50 {
+            if distance < 80 {
                 // 스케일이 작을수록 impulse도 비례하여 줄여 과도한 회전/이탈 방지
                 let bundleScale = KeyringScale.bundleKeyringScale(for: carabinerId)
                 let multiplier: CGFloat = 0.3 * bundleScale
