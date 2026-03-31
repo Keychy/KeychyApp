@@ -49,6 +49,7 @@ class KeyringDetailScene: SKScene {
 
     // MARK: - 렌티큘러 햅틱
     private var lenticularHaptic: LenticularHapticManager?
+    private var isCleaningUp = false
     
     // TODO: originalSize을 실행 중인 기기 사이즈로 설정 필요
     let originalSize = CGSize(width: 393, height: 852)
@@ -130,6 +131,9 @@ class KeyringDetailScene: SKScene {
     
     // MARK: - 메모리 정리
     private func cleanup() {
+        guard !isCleaningUp else { return }
+        isCleaningUp = true
+
         // 자이로 정지
         if isGyroscope {
             LenticularMotionManager.shared.stop()
