@@ -154,6 +154,8 @@ extension MultiKeyringSceneView {
             if let scene {
                 SpriteView(scene: scene, options: [.allowsTransparency])
                     .ignoresSafeArea()
+                    .onAppear { scene.isPaused = false }
+                    .onDisappear { scene.isPaused = true }
             } else {
                 Text("뭉치가 하나도 없어요!")
             }
