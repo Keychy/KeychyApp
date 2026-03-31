@@ -46,7 +46,7 @@ enum KeyringScale {
         "WishHorse26": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.85, .video: 0.8],
         "DuZzonKu": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.8, .video: 0.8],
         "CrossStitch": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.9, .video: 0.8],
-        "Lenticular": [.customizing: 0.85, .infoInput: 0.85, .complete: 0.7, .video: 0.7]
+        "Lenticular": [.customizing: 0.85, .infoInput: 0.85, .complete: 0.7, .video: 0.8]
     ]
 
     // MARK: - 카라비너별 뭉치 키링 스케일
