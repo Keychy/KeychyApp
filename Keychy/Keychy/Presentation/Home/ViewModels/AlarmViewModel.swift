@@ -258,6 +258,8 @@ class AlarmViewModel {
                 zoomScale: 1.9,
                 hookOffsetY: keyring.hookOffsetY,
                 chainLength: keyring.chainLength,
+                shimmerColorId: keyring.shimmerColorId,
+                borderColorId: keyring.borderColorId,
                 onLoadingComplete: {
                     loadingCompleted = true
                 }

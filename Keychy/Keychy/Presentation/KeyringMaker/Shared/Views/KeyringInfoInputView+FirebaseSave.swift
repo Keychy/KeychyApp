@@ -111,6 +111,8 @@ extension KeyringInfoInputView {
                         hookOffsetY: hookOffsetY,
                         chainLength: chainLength,
                         isGyroscope: isGyroscope,
+                        shimmerColorId: shimmerColorId,
+                        borderColorId: borderColorId,
                         createdAt: Date()
                     )
                     
@@ -390,12 +392,14 @@ extension KeyringInfoInputView {
         hookOffsetY: CGFloat?,
         chainLength: Int,
         isGyroscope: Bool = false,
+        shimmerColorId: String? = nil,
+        borderColorId: String? = nil,
         createdAt: Date
     ) async {
         await withCheckedContinuation { continuation in
             // 이미지 로딩 완료 콜백
             var loadingCompleted = false
-            
+
             // Scene 생성 (onLoadingComplete 콜백 추가, 투명 배경)
             let scene = KeyringCellScene(
                 ringType: ringType,
@@ -408,6 +412,8 @@ extension KeyringInfoInputView {
                 zoomScale: 2.0,
                 hookOffsetY: hookOffsetY,
                 chainLength: chainLength,
+                shimmerColorId: shimmerColorId,
+                borderColorId: borderColorId,
                 onLoadingComplete: {
                     loadingCompleted = true
                 }
