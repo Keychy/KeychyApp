@@ -172,6 +172,8 @@ struct CollectionCellView: View {
             zoomScale: 2.0,
             hookOffsetY: keyring.hookOffsetY,
             chainLength: keyring.chainLength,
+            shimmerColorId: keyring.shimmerColorId,
+            borderColorId: keyring.borderColorId,
             onLoadingComplete: {
                 DispatchQueue.main.async {
                     withAnimation {

@@ -195,7 +195,9 @@ extension BundleGridItem {
                 templateId: keyringInfo.templateId,
                 hookOffsetY: keyringInfo.hookOffsetY,
                 chainLength: keyringInfo.chainLength,
-                isGyroscope: keyringInfo.isGyroscope
+                isGyroscope: keyringInfo.isGyroscope,
+                shimmerColorId: keyringInfo.shimmerColorId,
+                borderColorId: keyringInfo.borderColorId
             )
             keyringDataList.append(data)
         }
@@ -294,8 +296,10 @@ extension BundleGridItem {
             let hookOffsetY = data["hookOffsetY"] as? CGFloat ?? 0.0
             let chainLength = data["chainLength"] as? Int ?? 5
             let isGyroscope = data["isGyroscope"] as? Bool ?? false
+            let shimmerColorId = data["shimmerColorId"] as? String
+            let borderColorId = data["borderColorId"] as? String
 
-            return KeyringCaptureInfo(id: keyringId, bodyImage: bodyImage, templateId: templateId, hookOffsetY: hookOffsetY, chainLength: chainLength, isGyroscope: isGyroscope)
+            return KeyringCaptureInfo(id: keyringId, bodyImage: bodyImage, templateId: templateId, hookOffsetY: hookOffsetY, chainLength: chainLength, isGyroscope: isGyroscope, shimmerColorId: shimmerColorId, borderColorId: borderColorId)
         } catch {
             print("[BundleItem] 키링 정보 로드 실패: \(keyringId) - \(error.localizedDescription)")
             return nil
@@ -311,5 +315,7 @@ struct KeyringCaptureInfo {
     let hookOffsetY: CGFloat?
     let chainLength: Int
     let isGyroscope: Bool
+    let shimmerColorId: String?
+    let borderColorId: String?
 }
 

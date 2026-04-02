@@ -289,9 +289,15 @@ extension KeyringCellScene {
     private func createMiniImageBody(image: UIImage) -> SKSpriteNode {
         // 자이로 템플릿: 셰이더 적용 + tilt=0 고정 (이미지 A만 표시)
         if isGyroscope {
+            let shimmer = KeyringAppearanceColor.from(id: shimmerColorId)
+            let border = KeyringAppearanceColor.from(id: borderColorId ?? shimmerColorId)
             let node = KeyringBodyComponent.createLenticularBody(
                 atlasImage: image,
-                templateId: templateId ?? "Lenticular"
+                templateId: templateId ?? "Lenticular",
+                shimmerColor: shimmer.shaderColor,
+                shimmerMode: shimmer.shaderMode,
+                borderColor: border.shaderColor,
+                borderMode: border.shaderMode
             )
             // 셀에서는 자이로 안 씀 — tilt=0 고정으로 이미지 A만 보임
             node.shader?.uniformNamed("u_tilt")?.floatValue = 0.0

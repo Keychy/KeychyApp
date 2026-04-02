@@ -116,7 +116,9 @@ extension BundleDetailView {
                     templateId: keyringInfo.selectedTemplate ?? "",
                     hookOffsetY: keyringInfo.hookOffsetY,
                     chainLength: keyringInfo.chainLength,
-                    isGyroscope: keyringInfo.isGyroscope
+                    isGyroscope: keyringInfo.isGyroscope,
+                    shimmerColorId: keyringInfo.shimmerColorId,
+                    borderColorId: keyringInfo.borderColorId
                 )
             )
         }

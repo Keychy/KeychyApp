@@ -21,8 +21,10 @@ class MultiKeyringCaptureScene: SKScene {
         let hookOffsetY: CGFloat?  // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
         let chainLength: Int  // 체인 길이 (기본값 5)
         let isGyroscope: Bool  // 자이로 인터랙션 사용 여부 (렌티큘러 등)
+        let shimmerColorId: String?  // 시머 색상 프리셋 ID (렌티큘러용)
+        let borderColorId: String?  // 테두리 색상 ID (nil이면 shimmerColorId 사용)
 
-        init(index: Int, position: CGPoint, bodyImageURL: String, templateId: String, hookOffsetY: CGFloat? = nil, chainLength: Int = 5, isGyroscope: Bool = false) {
+        init(index: Int, position: CGPoint, bodyImageURL: String, templateId: String, hookOffsetY: CGFloat? = nil, chainLength: Int = 5, isGyroscope: Bool = false, shimmerColorId: String? = nil, borderColorId: String? = nil) {
             self.index = index
             self.position = position
             self.bodyImageURL = bodyImageURL
@@ -30,6 +32,8 @@ class MultiKeyringCaptureScene: SKScene {
             self.hookOffsetY = hookOffsetY
             self.chainLength = chainLength
             self.isGyroscope = isGyroscope
+            self.shimmerColorId = shimmerColorId
+            self.borderColorId = borderColorId
         }
     }
 
@@ -305,7 +309,9 @@ class MultiKeyringCaptureScene: SKScene {
                     hookOffsetY: data.hookOffsetY,
                     chainLength: data.chainLength,
                     baseZPosition: baseZPosition,
-                    isGyroscope: data.isGyroscope
+                    isGyroscope: data.isGyroscope,
+                    shimmerColorId: data.shimmerColorId,
+                    borderColorId: data.borderColorId
                 )
             }
             return
@@ -356,7 +362,9 @@ class MultiKeyringCaptureScene: SKScene {
                 chainLength: data.chainLength,
                 baseZPosition: baseZPosition,
                 carabinerType: carabinerType,
-                isGyroscope: data.isGyroscope
+                isGyroscope: data.isGyroscope,
+                shimmerColorId: data.shimmerColorId,
+                borderColorId: data.borderColorId
             )
         }
     }
@@ -371,7 +379,9 @@ class MultiKeyringCaptureScene: SKScene {
         chainLength: Int,
         baseZPosition: CGFloat,
         carabinerType: CarabinerType? = nil,
-        isGyroscope: Bool = false
+        isGyroscope: Bool = false,
+        shimmerColorId: String? = nil,
+        borderColorId: String? = nil
     ) {
         // 뭉치용 키링 스케일
         let bundleScale = KeyringScale.bundleKeyringScale(for: carabinerId)
@@ -426,7 +436,9 @@ class MultiKeyringCaptureScene: SKScene {
                 hookOffsetY: hookOffsetY,
                 baseZPosition: baseZPosition,
                 carabinerType: carabinerType,
-                isGyroscope: isGyroscope
+                isGyroscope: isGyroscope,
+                shimmerColorId: shimmerColorId,
+                borderColorId: borderColorId
             )
         }
     }
@@ -442,9 +454,11 @@ class MultiKeyringCaptureScene: SKScene {
         hookOffsetY: CGFloat?,
         baseZPosition: CGFloat,
         carabinerType: CarabinerType? = nil,
-        isGyroscope: Bool = false
+        isGyroscope: Bool = false,
+        shimmerColorId: String? = nil,
+        borderColorId: String? = nil
     ) {
-        KeyringBodyComponent.createNode(from: bodyImageURL, templateId: templateId, isGyroscope: isGyroscope) { [weak self] body in
+        KeyringBodyComponent.createNode(from: bodyImageURL, templateId: templateId, isGyroscope: isGyroscope, shimmerColorId: shimmerColorId, borderColorId: borderColorId) { [weak self] body in
             guard let self = self, let body = body else {
                 self?.checkLoadingComplete()
                 return

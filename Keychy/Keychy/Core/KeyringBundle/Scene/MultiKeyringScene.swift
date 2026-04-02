@@ -27,8 +27,10 @@ class MultiKeyringScene: SKScene {
         let hookOffsetY: CGFloat?   // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
         let chainLength: Int        // 체인 길이 (기본값 5)
         let isGyroscope: Bool       // 자이로 인터랙션 사용 여부
+        let shimmerColorId: String? // 시머 색상 프리셋 ID (렌티큘러용)
+        let borderColorId: String?  // 테두리 색상 ID (nil이면 shimmerColorId 사용)
 
-        init(index: Int, position: CGPoint, bodyImageURL: String, templateId: String? = nil, soundId: String, customSoundURL: URL? = nil, particleId: String, hookOffsetY: CGFloat? = nil, chainLength: Int = 5, isGyroscope: Bool = false) {
+        init(index: Int, position: CGPoint, bodyImageURL: String, templateId: String? = nil, soundId: String, customSoundURL: URL? = nil, particleId: String, hookOffsetY: CGFloat? = nil, chainLength: Int = 5, isGyroscope: Bool = false, shimmerColorId: String? = nil, borderColorId: String? = nil) {
             self.index = index
             self.position = position
             self.bodyImageURL = bodyImageURL
@@ -39,6 +41,8 @@ class MultiKeyringScene: SKScene {
             self.hookOffsetY = hookOffsetY
             self.chainLength = chainLength
             self.isGyroscope = isGyroscope
+            self.shimmerColorId = shimmerColorId
+            self.borderColorId = borderColorId
         }
     }
 
@@ -807,7 +811,7 @@ class MultiKeyringScene: SKScene {
             // 3. Body 생성
             let body: SKNode
             if let bodyImage = images.body {
-                body = self.createBodyNode(image: bodyImage, templateId: data.templateId, isGyroscope: data.isGyroscope)
+                body = self.createBodyNode(image: bodyImage, templateId: data.templateId, isGyroscope: data.isGyroscope, shimmerColorId: data.shimmerColorId, borderColorId: data.borderColorId)
             } else {
                 body = self.createBasicBodyNode()
             }
@@ -882,7 +886,7 @@ class MultiKeyringScene: SKScene {
         }
     }
 
-    private func createBodyNode(image: UIImage, templateId: String?, isGyroscope: Bool = false) -> SKSpriteNode {
+    private func createBodyNode(image: UIImage, templateId: String?, isGyroscope: Bool = false, shimmerColorId: String? = nil, borderColorId: String? = nil) -> SKSpriteNode {
         // 자이로 템플릿: 셰이더 적용 바디 생성
         if isGyroscope {
             let bundleScale = KeyringScale.bundleKeyringScale(for: carabinerId)
@@ -900,13 +904,21 @@ class MultiKeyringScene: SKScene {
             if let shaderPath = Bundle.main.path(forResource: "LenticularShader", ofType: "fsh"),
                let shaderSource = try? String(contentsOfFile: shaderPath, encoding: .utf8) {
                 let shader = SKShader(source: shaderSource)
+                let shimmer = KeyringAppearanceColor.from(id: shimmerColorId)
+                let border = KeyringAppearanceColor.from(id: borderColorId ?? shimmerColorId)
+                let sc = shimmer.shaderColor
+                let bc = border.shaderColor
                 shader.uniforms = [
                     SKUniform(name: "u_tilt", float: 0.0),
                     SKUniform(name: "u_direction", float: 0.35),
                     SKUniform(name: "u_sprite_size", vectorFloat2: vector_float2(
                         Float(scaledSize.width), Float(scaledSize.height)
                     )),
-                    SKUniform(name: "u_cornerRadius", float: 12.0)
+                    SKUniform(name: "u_cornerRadius", float: 12.0),
+                    SKUniform(name: "u_shimmer_color", vectorFloat3: vector_float3(sc.r, sc.g, sc.b)),
+                    SKUniform(name: "u_shimmer_mode", float: shimmer.shaderMode),
+                    SKUniform(name: "u_border_color", vectorFloat3: vector_float3(bc.r, bc.g, bc.b)),
+                    SKUniform(name: "u_border_mode", float: border.shaderMode)
                 ]
                 spriteNode.shader = shader
             }

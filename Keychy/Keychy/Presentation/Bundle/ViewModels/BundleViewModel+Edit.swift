@@ -56,7 +56,9 @@ extension BundleViewModel {
                 particleId: keyring.particleId,
                 hookOffsetY: keyring.hookOffsetY,
                 chainLength: keyring.chainLength,
-                isGyroscope: keyring.isGyroscope
+                isGyroscope: keyring.isGyroscope,
+                shimmerColorId: keyring.shimmerColorId,
+                borderColorId: keyring.borderColorId
             )
             dataList.append(data)
         }

@@ -394,6 +394,8 @@ extension CollectionViewModel {
                 zoomScale: 2.0,
                 hookOffsetY: keyring.hookOffsetY,
                 chainLength: keyring.chainLength,
+                shimmerColorId: keyring.shimmerColorId,
+                borderColorId: keyring.borderColorId,
                 onLoadingComplete: {
                     loadingCompleted = true
                 }

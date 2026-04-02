@@ -24,7 +24,9 @@ extension CollectionKeyringDetailView {
             customBackgroundColor: UIColor.clear,
             zoomScale: 2.0,
             hookOffsetY: keyring.hookOffsetY,
-            chainLength: keyring.chainLength
+            chainLength: keyring.chainLength,
+            shimmerColorId: keyring.shimmerColorId,
+            borderColorId: keyring.borderColorId
         )
         scene.scaleMode = .aspectFill
 

@@ -246,9 +246,15 @@ extension LenticularFusionView {
         // .resizeFill을 쓰면 좌표계가 변경되어 셰이더 SDF 테두리가 편향됨
         scene.scaleMode = .aspectFill
 
+        let shimmerPreset = viewModel.selectedShimmerColor
+        let borderPreset = viewModel.selectedBorderColor
         let bodyNode = KeyringBodyComponent.createLenticularBody(
             atlasImage: bodyImage,
-            templateId: templateId
+            templateId: templateId,
+            shimmerColor: shimmerPreset.shaderColor,
+            shimmerMode: shimmerPreset.shaderMode,
+            borderColor: borderPreset.shaderColor,
+            borderMode: borderPreset.shaderMode
         )
         bodyNode.position = CGPoint(x: sceneSize.width / 2, y: sceneSize.height / 2)
         bodyNode.physicsBody = nil

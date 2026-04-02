@@ -16,6 +16,8 @@ class KeyringDetailScene: SKScene {
     var isGyroscope: Bool  // 자이로 인터랙션 사용 여부
     var hookOffsetY: CGFloat?
     var chainLength: Int = 5  // 체인 링크 개수 (기본값 5)
+    var shimmerColorId: String?  // 시머 색상 프리셋 ID (nil이면 silver 기본값)
+    var borderColorId: String?   // 테두리 색상 ID (nil이면 shimmerColorId 사용)
     var onLoadingComplete: (() -> Void)?
     var cachedImages: KeyringImages?
     var isReady: Bool = false
@@ -64,6 +66,8 @@ class KeyringDetailScene: SKScene {
         isGyroscope: Bool = false,
         hookOffsetY: CGFloat? = nil,
         chainLength: Int = 5,
+        shimmerColorId: String? = nil,
+        borderColorId: String? = nil,
         onLoadingComplete: (() -> Void)? = nil
     ) {
         self.currentRingType = ringType
@@ -73,6 +77,8 @@ class KeyringDetailScene: SKScene {
         self.isGyroscope = isGyroscope
         self.hookOffsetY = hookOffsetY
         self.chainLength = chainLength
+        self.shimmerColorId = shimmerColorId
+        self.borderColorId = borderColorId
         self.onLoadingComplete = onLoadingComplete
 
         super.init(size: .zero)

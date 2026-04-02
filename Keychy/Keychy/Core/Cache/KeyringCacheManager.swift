@@ -159,12 +159,14 @@ class KeyringCacheManager {
                 zoomScale: 2.0,
                 hookOffsetY: keyring.hookOffsetY,
                 chainLength: keyring.chainLength,
+                shimmerColorId: keyring.shimmerColorId,
+                borderColorId: keyring.borderColorId,
                 onLoadingComplete: {
                     loadingCompleted = true
                 }
             )
             scene.scaleMode = .aspectFill
-            
+
             let view = SKView(frame: CGRect(origin: .zero, size: scene.size))
             view.allowsTransparency = true
             view.presentScene(scene)

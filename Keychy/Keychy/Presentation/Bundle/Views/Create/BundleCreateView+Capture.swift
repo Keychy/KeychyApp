@@ -42,7 +42,9 @@ extension BundleCreateView {
                 particleId: keyring.particleId,
                 hookOffsetY: keyring.hookOffsetY,
                 chainLength: keyring.chainLength,
-                isGyroscope: keyring.isGyroscope
+                isGyroscope: keyring.isGyroscope,
+                shimmerColorId: keyring.shimmerColorId,
+                borderColorId: keyring.borderColorId
             )
             dataList.append(data)
         }
@@ -94,7 +96,9 @@ extension BundleCreateView {
                 templateId: keyring.selectedTemplate,
                 hookOffsetY: keyring.hookOffsetY,
                 chainLength: keyring.chainLength,
-                isGyroscope: keyring.isGyroscope
+                isGyroscope: keyring.isGyroscope,
+                shimmerColorId: keyring.shimmerColorId,
+                borderColorId: keyring.borderColorId
             )
             keyringDataList.append(data)
         }

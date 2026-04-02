@@ -60,6 +60,18 @@ extension KeyringInfoInputView {
         let templateId = viewModel.templateId
         let isGyroscope = viewModel.isGyroscope
 
+        // 렌티큘러 VM이면 시머/테두리 색상 ID 추출 (기본값 silver면 nil로 저장하여 용량 절약)
+        let shimmerColorId: String? = (viewModel as? LenticularVM)
+            .flatMap { vm -> String? in
+                let id = vm.selectedShimmerColor.firestoreId
+                return id == "silver" ? nil : id
+            }
+        let borderColorId: String? = (viewModel as? LenticularVM)
+            .flatMap { vm -> String? in
+                let id = vm.selectedBorderColor.firestoreId
+                return id == "silver" ? nil : id
+            }
+
         self.createKeyring(
             uid: uid,
             name: self.viewModel.nameText,
@@ -74,7 +86,9 @@ extension KeyringInfoInputView {
             chainLength: self.viewModel.chainLength,
             isNew: true,
             hookOffsetY: hookOffsetY,
-            isGyroscope: isGyroscope
+            isGyroscope: isGyroscope,
+            shimmerColorId: shimmerColorId,
+            borderColorId: borderColorId
         ) { success, keyringId in
             // 백그라운드로 위젯용 이미지 캡처 및 저장
             if success, let keyringId = keyringId {
@@ -195,6 +209,8 @@ extension KeyringInfoInputView {
         isNew: Bool,
         hookOffsetY: CGFloat? = nil,
         isGyroscope: Bool = false,
+        shimmerColorId: String? = nil,
+        borderColorId: String? = nil,
         completion: @escaping (Bool, String?) -> Void
     ) {
         let newKeyring = Keyring(
@@ -212,7 +228,9 @@ extension KeyringInfoInputView {
             chainLength: chainLength,
             isNew: isNew,
             hookOffsetY: hookOffsetY,
-            isGyroscope: isGyroscope
+            isGyroscope: isGyroscope,
+            shimmerColorId: shimmerColorId,
+            borderColorId: borderColorId
         )
         
         let keyringData = newKeyring.toDictionary()

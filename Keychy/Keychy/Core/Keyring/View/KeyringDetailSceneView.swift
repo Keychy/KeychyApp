@@ -56,6 +56,8 @@ struct KeyringDetailSceneView: View {
             isGyroscope: keyring.isGyroscope,
             hookOffsetY: keyring.hookOffsetY,
             chainLength: keyring.chainLength,
+            shimmerColorId: keyring.shimmerColorId,
+            borderColorId: keyring.borderColorId,
             onLoadingComplete: nil
         )
         

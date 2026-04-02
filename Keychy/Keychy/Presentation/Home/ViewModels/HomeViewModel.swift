@@ -178,7 +178,9 @@ class HomeViewModel {
                 particleId: keyringInfo.particleId,
                 hookOffsetY: keyringInfo.hookOffsetY,
                 chainLength: keyringInfo.chainLength,
-                isGyroscope: keyringInfo.isGyroscope
+                isGyroscope: keyringInfo.isGyroscope,
+                shimmerColorId: keyringInfo.shimmerColorId,
+                borderColorId: keyringInfo.borderColorId
             )
             dataList.append(data)
         }
@@ -207,6 +209,8 @@ class HomeViewModel {
             let chainLength = data["chainLength"] as? Int ?? 5
             let selectedTemplate = data["selectedTemplate"] as? String
             let isGyroscope = data["isGyroscope"] as? Bool ?? false
+            let shimmerColorId = data["shimmerColorId"] as? String
+            let borderColorId = data["borderColorId"] as? String
 
             return KeyringInfo(
                 id: keyringId,
@@ -216,7 +220,9 @@ class HomeViewModel {
                 particleId: particleId,
                 hookOffsetY: hookOffsetY,
                 chainLength: chainLength,
-                isGyroscope: isGyroscope
+                isGyroscope: isGyroscope,
+                shimmerColorId: shimmerColorId,
+                borderColorId: borderColorId
             )
         } catch {
             return nil

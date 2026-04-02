@@ -29,7 +29,9 @@ extension KeyringCompleteView {
             customBackgroundColor: .clear,
             zoomScale: 2.0,
             hookOffsetY: viewModel.hookOffsetY != 0 ? viewModel.hookOffsetY : nil,
-            chainLength: viewModel.chainLength
+            chainLength: viewModel.chainLength,
+            shimmerColorId: (viewModel as? LenticularVM)?.selectedShimmerColor.firestoreId,
+            borderColorId: (viewModel as? LenticularVM)?.selectedBorderColor.firestoreId
         )
         scene.scaleMode = .aspectFill
 
