@@ -75,7 +75,6 @@ struct KeyringSceneView<VM: KeyringViewModelProtocol>: View {
             chainLength: viewModel.chainLength
         )
         newScene.scaleMode = .resizeFill
-        newScene.bind(to: viewModel)
 
         // 파티클 효과 콜백 설정 (씬 생성 시 즉시 설정)
         newScene.onPlayParticleEffect = { effectName in
@@ -87,6 +86,7 @@ struct KeyringSceneView<VM: KeyringViewModelProtocol>: View {
         }
 
         // Setup 완료 콜백 설정 (Body까지 완전히 생성된 시점)
+        // bind(to:) 전에 설정해야 bind가 이 콜백을 래핑하여 스타일 초기값 적용 가능
         newScene.onSetupComplete = { [weak newScene] in
             DispatchQueue.main.async {
                 onSceneReady?()
@@ -99,6 +99,9 @@ struct KeyringSceneView<VM: KeyringViewModelProtocol>: View {
                 }
             }
         }
+
+        // VM 바인딩 (onSetupComplete 래핑 + styleSubject 구독)
+        newScene.bind(to: viewModel)
 
         scene = newScene
     }
