@@ -105,11 +105,13 @@ nonisolated enum KeyringFrameCompositor {
     ///   - bodyImage: 사용자 바디이미지
     ///   - chainLength: 체인 길이 (1, 3, 5)
     ///   - template: 템플릿 ID — 바디 크기 및 Y 보정에 사용
+    ///   - isGyroscope: 렌티큘러(자이로) 키링 여부 — true면 아틀라스 A|B 블렌딩 적용
     /// - Returns: 편도 30장 + 역순 28장 = 총 58장 PNG Data 배열
     static func generateFrames(
         from bodyImage: UIImage,
         chainLength: Int,
-        template: String
+        template: String,
+        isGyroscope: Bool = false
     ) -> [Data]? {
         guard let config = chainConfigs[chainLength] ?? chainConfigs[5] else {
             return nil
@@ -127,9 +129,29 @@ nonisolated enum KeyringFrameCompositor {
         let bodyClampScale = min(maxAllowed / bodyMaxDim, 1.0)
 
         guard let source = bodyImage.cgImage else { return nil }
-        guard let resized = centerCropAndResize(source, width: bodyWidth, height: bodyHeight) else {
-            return nil
+
+        // 렌티큘러: 아틀라스(A|B 가로 합성)를 좌/우로 분리 후 각각 리사이즈
+        // 일반: 단일 이미지를 그대로 리사이즈
+        let imageA: CGImage
+        let imageB: CGImage?
+
+        if isGyroscope, let (left, right) = splitAtlas(source) {
+            guard let resizedA = centerCropAndResize(left, width: bodyWidth, height: bodyHeight),
+                  let resizedB = centerCropAndResize(right, width: bodyWidth, height: bodyHeight) else {
+                return nil
+            }
+            imageA = resizedA
+            imageB = resizedB
+        } else {
+            guard let resized = centerCropAndResize(source, width: bodyWidth, height: bodyHeight) else {
+                return nil
+            }
+            imageA = resized
+            imageB = nil
         }
+
+        // 프레임 0의 rotation°으로 최대 회전각 결정 (tilt 정규화용)
+        let maxRotation = abs(config.transforms[0].rotation)
 
         // 1) 편도 프레임 합성 (0→29)
         var frames = [Data]()
@@ -142,9 +164,32 @@ nonisolated enum KeyringFrameCompositor {
 
             let transform = config.transforms[i]
 
+            // 렌티큘러: rotation → tilt로 A/B 블렌딩 + 메탈 테두리
+            let userImage: CGImage
+            if let imgB = imageB {
+                let tilt = rotationToTilt(transform.rotation, maxRotation: maxRotation)
+                guard let blended = blendImages(
+                    imageA: imageA,
+                    imageB: imgB,
+                    tilt: tilt,
+                    width: bodyWidth,
+                    height: bodyHeight
+                ) else { return nil }
+                // 라운드 코너 + 메탈릭 실버 테두리 적용
+                guard let bordered = applyLenticularBorder(
+                    blended,
+                    width: bodyWidth,
+                    height: bodyHeight,
+                    tilt: tilt
+                ) else { return nil }
+                userImage = bordered
+            } else {
+                userImage = imageA
+            }
+
             guard let composited = composite(
                 keyring: keyringFrame,
-                userImage: resized,
+                userImage: userImage,
                 bodyWidth: bodyWidth,
                 bodyHeight: bodyHeight,
                 bodyOffsetY: bodyOffsetY,
@@ -239,6 +284,123 @@ nonisolated enum KeyringFrameCompositor {
 
         // 2) 키링 프레임 (상단 레이어) — frameScale 적용, 캔버스 위쪽 정렬
         ctx.draw(keyring, in: CGRect(x: frameOriginX, y: frameOriginY, width: scaledFrameSize, height: scaledFrameSize))
+
+        return ctx.makeImage()
+    }
+
+    // MARK: - 렌티큘러 블렌딩
+
+    /// 아틀라스(A|B 가로 합성 이미지)를 좌측 A, 우측 B로 분리
+    ///
+    /// 렌티큘러 바디이미지는 600×390처럼 가로로 두 장이 이어붙은 형태.
+    /// `CGImage.cropping(to:)`로 좌/우 절반을 각각 잘라낸다.
+    private static func splitAtlas(_ atlas: CGImage) -> (left: CGImage, right: CGImage)? {
+        let halfWidth = atlas.width / 2
+        let height = atlas.height
+
+        // CGImage.cropping(to:)는 픽셀 좌표 사용 (좌상단 원점)
+        let leftRect = CGRect(x: 0, y: 0, width: halfWidth, height: height)
+        let rightRect = CGRect(x: halfWidth, y: 0, width: halfWidth, height: height)
+
+        guard let left = atlas.cropping(to: leftRect),
+              let right = atlas.cropping(to: rightRect) else {
+            return nil
+        }
+        return (left, right)
+    }
+
+    /// rotation°를 0.0~1.0 tilt로 정규화
+    ///
+    /// - rotation이 +maxRotation(좌측 끝)이면 tilt = 0.0 → 이미지 A
+    /// - rotation이 0(중앙)이면 tilt = 0.5 → A+B 블렌딩
+    /// - rotation이 -maxRotation(우측 끝)이면 tilt = 1.0 → 이미지 B
+    private static func rotationToTilt(_ rotation: CGFloat, maxRotation: CGFloat) -> CGFloat {
+        guard maxRotation > 0 else { return 0.5 }
+        let normalized = (-rotation / maxRotation + 1.0) / 2.0
+        return min(max(normalized, 0.0), 1.0)
+    }
+
+    /// 이미지 A와 B를 tilt 비율로 alpha 크로스페이드 블렌딩
+    ///
+    /// Core Graphics의 `setAlpha()` + `draw()` 2회로 구현.
+    /// tilt=0.0이면 A만, tilt=1.0이면 B만, 중간값이면 혼합.
+    private static func blendImages(
+        imageA: CGImage,
+        imageB: CGImage,
+        tilt: CGFloat,
+        width: Int,
+        height: Int
+    ) -> CGImage? {
+        guard let ctx = CGContext(
+            data: nil, width: width, height: height,
+            bitsPerComponent: 8, bytesPerRow: 0,
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        ) else { return nil }
+
+        let rect = CGRect(x: 0, y: 0, width: width, height: height)
+
+        // 하단 레이어: 이미지 A (알파 = 1-tilt)
+        ctx.setAlpha(1.0 - tilt)
+        ctx.draw(imageA, in: rect)
+
+        // 상단 레이어: 이미지 B (알파 = tilt)
+        ctx.setAlpha(tilt)
+        ctx.draw(imageB, in: rect)
+
+        return ctx.makeImage()
+    }
+
+    // MARK: - 렌티큘러 바디 테두리
+
+    /// 블렌딩된 바디이미지에 라운드 코너 + 메탈릭 실버 테두리 적용
+    ///
+    /// 셰이더 기준값(cornerRadius=12, borderWidth=3)을 sceneToFrameScale(×3)로 변환.
+    /// tilt에 따른 밝기 변화: 끝점(tilt 0/1)에서 밝고, 중앙(0.5)에서 어두움.
+    private static func applyLenticularBorder(
+        _ image: CGImage,
+        width: Int,
+        height: Int,
+        tilt: CGFloat
+    ) -> CGImage? {
+        let w = CGFloat(width)
+        let h = CGFloat(height)
+        let cornerRadius: CGFloat = 12.0 * sceneToFrameScale
+        let borderWidth: CGFloat = 3.0 * sceneToFrameScale
+
+        guard let ctx = CGContext(
+            data: nil, width: width, height: height,
+            bitsPerComponent: 8, bytesPerRow: 0,
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        ) else { return nil }
+
+        let fullRect = CGRect(x: 0, y: 0, width: w, height: h)
+        let roundedPath = CGPath(roundedRect: fullRect, cornerWidth: cornerRadius, cornerHeight: cornerRadius, transform: nil)
+
+        // 1) 라운드 코너 클리핑 후 바디이미지 드로잉
+        ctx.saveGState()
+        ctx.addPath(roundedPath)
+        ctx.clip()
+        ctx.interpolationQuality = .high
+        ctx.draw(image, in: fullRect)
+        ctx.restoreGState()
+
+        // 2) 메탈릭 실버 테두리 — tilt 연동 밝기
+        let tiltEdge = abs(tilt * 2.0 - 1.0)
+        let brightness = 0.72 + 0.23 * tiltEdge
+        guard let borderColor = CGColor(
+            colorSpace: CGColorSpaceCreateDeviceRGB(),
+            components: [brightness, brightness, brightness, 1.0]
+        ) else { return nil }
+
+        let insetRect = fullRect.insetBy(dx: borderWidth / 2, dy: borderWidth / 2)
+        let borderPath = CGPath(roundedRect: insetRect, cornerWidth: cornerRadius - borderWidth / 2, cornerHeight: cornerRadius - borderWidth / 2, transform: nil)
+
+        ctx.setStrokeColor(borderColor)
+        ctx.setLineWidth(borderWidth)
+        ctx.addPath(borderPath)
+        ctx.strokePath()
 
         return ctx.makeImage()
     }

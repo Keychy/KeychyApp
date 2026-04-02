@@ -41,7 +41,10 @@ extension BundleCreateView {
                 customSoundURL: customSoundURL,
                 particleId: keyring.particleId,
                 hookOffsetY: keyring.hookOffsetY,
-                chainLength: keyring.chainLength
+                chainLength: keyring.chainLength,
+                isGyroscope: keyring.isGyroscope,
+                shimmerColorId: keyring.shimmerColorId,
+                borderColorId: keyring.borderColorId
             )
             dataList.append(data)
         }
@@ -92,7 +95,10 @@ extension BundleCreateView {
                 bodyImageURL: keyring.bodyImage,
                 templateId: keyring.selectedTemplate,
                 hookOffsetY: keyring.hookOffsetY,
-                chainLength: keyring.chainLength
+                chainLength: keyring.chainLength,
+                isGyroscope: keyring.isGyroscope,
+                shimmerColorId: keyring.shimmerColorId,
+                borderColorId: keyring.borderColorId
             )
             keyringDataList.append(data)
         }

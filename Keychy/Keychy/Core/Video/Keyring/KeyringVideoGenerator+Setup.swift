@@ -26,6 +26,7 @@ extension KeyringVideoGenerator {
             ringType: .basic,
             chainType: .basic,
             templateId: viewModel.templateId,
+            isGyroscope: viewModel.isGyroscope,
             screen: .video,
             bodyImage: viewModel.bodyImage,
             backgroundColor: .clear,

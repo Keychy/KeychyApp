@@ -57,7 +57,8 @@ extension CollectionViewModel {
                                 id: documentId,
                                 name: name,
                                 imagePath: existing.imagePath,
-                                createdAt: existing.createdAt
+                                createdAt: existing.createdAt,
+                                isGyroscope: existing.isGyroscope
                             )
                             KeyringImageCache.shared.saveWidgetKeyrings(widgetKeyrings)
 

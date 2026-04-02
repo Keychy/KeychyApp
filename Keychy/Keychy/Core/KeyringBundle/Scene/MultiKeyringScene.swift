@@ -26,8 +26,11 @@ class MultiKeyringScene: SKScene {
         let particleId: String      // 파티클 ID
         let hookOffsetY: CGFloat?   // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
         let chainLength: Int        // 체인 길이 (기본값 5)
+        let isGyroscope: Bool       // 자이로 인터랙션 사용 여부
+        let shimmerColorId: String? // 시머 색상 프리셋 ID (렌티큘러용)
+        let borderColorId: String?  // 테두리 색상 ID (nil이면 shimmerColorId 사용)
 
-        init(index: Int, position: CGPoint, bodyImageURL: String, templateId: String? = nil, soundId: String, customSoundURL: URL? = nil, particleId: String, hookOffsetY: CGFloat? = nil, chainLength: Int = 5) {
+        init(index: Int, position: CGPoint, bodyImageURL: String, templateId: String? = nil, soundId: String, customSoundURL: URL? = nil, particleId: String, hookOffsetY: CGFloat? = nil, chainLength: Int = 5, isGyroscope: Bool = false, shimmerColorId: String? = nil, borderColorId: String? = nil) {
             self.index = index
             self.position = position
             self.bodyImageURL = bodyImageURL
@@ -37,6 +40,9 @@ class MultiKeyringScene: SKScene {
             self.particleId = particleId
             self.hookOffsetY = hookOffsetY
             self.chainLength = chainLength
+            self.isGyroscope = isGyroscope
+            self.shimmerColorId = shimmerColorId
+            self.borderColorId = borderColorId
         }
     }
 
@@ -74,6 +80,10 @@ class MultiKeyringScene: SKScene {
 
     // MARK: - 씬 정리 상태
     private var isCleaningUp = false
+
+    // MARK: - 자이로 (렌티큘러 등)
+    private var hasGyroscopeKeyrings = false  // 자이로 키링이 하나라도 있는지
+    private var lenticularHaptic: LenticularHapticManager?
 
     // MARK: - 선택된 타입들
     var currentCarabinerType: CarabinerType?
@@ -154,7 +164,13 @@ class MultiKeyringScene: SKScene {
     func cleanup() {
         guard !isCleaningUp else { return }
         isCleaningUp = true
-        
+
+        // 자이로 정지
+        if hasGyroscopeKeyrings {
+            LenticularMotionManager.shared.stop()
+            lenticularHaptic = nil
+        }
+
         // 콜백 무효화
         onPlayParticleEffect = nil
         onSetupComplete = nil
@@ -187,6 +203,13 @@ class MultiKeyringScene: SKScene {
         backgroundColor = customBackgroundColor
         // 물리 시뮬레이션을 처음에는 비활성화
         physicsWorld.gravity = CGVector(dx: 0, dy: 0)  // 중력 0으로 설정
+
+        // 자이로 키링 존재 여부 확인 및 시작
+        hasGyroscopeKeyrings = keyringDataList.contains { $0.isGyroscope }
+        if hasGyroscopeKeyrings {
+            LenticularMotionManager.shared.start()
+            lenticularHaptic = LenticularHapticManager()
+        }
 
         // 카메라 설정 (carabinerScale 적용)
         setupCamera()
@@ -278,8 +301,11 @@ class MultiKeyringScene: SKScene {
         // 원본 노드를 복제해서 그림자로 사용
         guard let shadowNode = node.copy() as? SKSpriteNode else { return }
 
+        // 커스텀 셰이더 제거 (셰이더가 colorBlendFactor를 무시하므로)
+        shadowNode.shader = nil
+
         // 그림자 설정 (살짝 더 진하게)
-        shadowNode.alpha = 0.25
+        shadowNode.alpha = 0.15
         shadowNode.color = .black
         shadowNode.colorBlendFactor = 1.0
 
@@ -305,7 +331,17 @@ class MultiKeyringScene: SKScene {
             effectNode.filter = blurFilter
         }
 
-        effectNode.addChild(shadowNode)
+        // 셰이더가 코너를 깎는 노드(렌티큘러)는 그림자도 둥근 모서리로 크롭
+        if node.shader != nil {
+            let maskNode = SKShapeNode(rectOf: node.size, cornerRadius: 12)
+            maskNode.fillColor = .white
+            let cropNode = SKCropNode()
+            cropNode.maskNode = maskNode
+            cropNode.addChild(shadowNode)
+            effectNode.addChild(cropNode)
+        } else {
+            effectNode.addChild(shadowNode)
+        }
         node.addChild(effectNode)
     }
 
@@ -775,7 +811,7 @@ class MultiKeyringScene: SKScene {
             // 3. Body 생성
             let body: SKNode
             if let bodyImage = images.body {
-                body = self.createBodyNode(image: bodyImage, templateId: data.templateId)
+                body = self.createBodyNode(image: bodyImage, templateId: data.templateId, isGyroscope: data.isGyroscope, shimmerColorId: data.shimmerColorId, borderColorId: data.borderColorId)
             } else {
                 body = self.createBasicBodyNode()
             }
@@ -788,34 +824,116 @@ class MultiKeyringScene: SKScene {
             let lastChainBottomY = lastChainY - 15
 
             var hookOffsetYRatio = data.hookOffsetY ?? 0.0
-            if data.templateId == "PixelKeyring" { hookOffsetYRatio += 0.03 }
+            if data.templateId == "PixelKeyring" || data.templateId == "Lenticular" { hookOffsetYRatio += 0.03 }
             let actualHookOffsetY = hookOffsetYRatio * bodyFrame.height
 
             let bodyCenterY = lastChainBottomY - bodyHalfHeight + actualHookOffsetY + 4
 
-            body.position = CGPoint(x: spriteKitPosition.x, y: bodyCenterY)
-            body.zPosition = baseZPosition - 2
-            body.physicsBody?.isDynamic = false
-            body.physicsBody?.categoryBitMask = categoryBitMask
-            body.physicsBody?.collisionBitMask = collisionBitMask
-            body.physicsBody?.contactTestBitMask = 0
+            // 렌티큘러: SKTransformNode로 래핑 (바디만 3D 회전 적용)
+            let finalBody: SKNode
+            if data.isGyroscope, let spriteBody = body as? SKSpriteNode {
+                let container = SKSpriteNode(color: .clear, size: spriteBody.size)
 
-            self.addChild(body)
-            if let spriteBody = body as? SKSpriteNode {
+                let newPhysics = SKPhysicsBody(rectangleOf: spriteBody.size)
+                if let original = spriteBody.physicsBody {
+                    newPhysics.isDynamic = original.isDynamic
+                    newPhysics.affectedByGravity = original.affectedByGravity
+                    newPhysics.allowsRotation = original.allowsRotation
+                    newPhysics.mass = original.mass
+                    newPhysics.friction = original.friction
+                    newPhysics.restitution = original.restitution
+                    newPhysics.linearDamping = original.linearDamping
+                    newPhysics.angularDamping = original.angularDamping
+                }
+                container.physicsBody = newPhysics
+                spriteBody.physicsBody = nil
+
+                let transformNode = SKTransformNode()
+                transformNode.name = "lenticularTransform"
+                spriteBody.name = "lenticularVisual"
+                spriteBody.position = .zero
+
+                transformNode.addChild(spriteBody)
+                container.addChild(transformNode)
+
+                // 그림자는 실제 텍스처가 있는 비주얼 노드에 적용 (container는 투명)
                 self.addShadowToNode(spriteBody, offsetX: 8, offsetY: -8)
+
+                finalBody = container
+            } else {
+                finalBody = body
+                if let spriteBody = body as? SKSpriteNode {
+                    self.addShadowToNode(spriteBody, offsetX: 8, offsetY: -8)
+                }
             }
 
-            self.bodyNodes[data.index] = body
+            finalBody.position = CGPoint(x: spriteKitPosition.x, y: bodyCenterY)
+            finalBody.zPosition = baseZPosition - 2
+            finalBody.physicsBody?.isDynamic = false
+            finalBody.physicsBody?.categoryBitMask = categoryBitMask
+            finalBody.physicsBody?.collisionBitMask = collisionBitMask
+            finalBody.physicsBody?.contactTestBitMask = 0
+
+            self.addChild(finalBody)
+
+            self.bodyNodes[data.index] = finalBody
 
             // 4. 조인트 연결
-            self.connectComponents(ring: ring, chains: chains, body: body)
+            self.connectComponents(ring: ring, chains: chains, body: finalBody)
 
             // 키링 완성 완료 - 성공
             completion(true)
         }
     }
 
-    private func createBodyNode(image: UIImage, templateId: String?) -> SKSpriteNode {
+    private func createBodyNode(image: UIImage, templateId: String?, isGyroscope: Bool = false, shimmerColorId: String? = nil, borderColorId: String? = nil) -> SKSpriteNode {
+        // 자이로 템플릿: 셰이더 적용 바디 생성
+        if isGyroscope {
+            let bundleScale = KeyringScale.bundleKeyringScale(for: carabinerId)
+            let displaySize = KeyringScale.maxSize(for: templateId ?? "")
+            let scaledSize = CGSize(
+                width: displaySize.width * bundleScale,
+                height: displaySize.height * bundleScale
+            )
+
+            let texture = SKTexture(image: image)
+            texture.filteringMode = .linear
+            let spriteNode = SKSpriteNode(texture: texture, size: scaledSize)
+
+            // 셰이더 로드 + uniform 설정
+            if let shaderPath = Bundle.main.path(forResource: "LenticularShader", ofType: "fsh"),
+               let shaderSource = try? String(contentsOfFile: shaderPath, encoding: .utf8) {
+                let shader = SKShader(source: shaderSource)
+                let shimmer = KeyringAppearanceColor.from(id: shimmerColorId)
+                let border = KeyringAppearanceColor.from(id: borderColorId ?? shimmerColorId)
+                let sc = shimmer.shaderColor
+                let bc = border.shaderColor
+                shader.uniforms = [
+                    SKUniform(name: "u_tilt", float: 0.0),
+                    SKUniform(name: "u_direction", float: 0.35),
+                    SKUniform(name: "u_sprite_size", vectorFloat2: vector_float2(
+                        Float(scaledSize.width), Float(scaledSize.height)
+                    )),
+                    SKUniform(name: "u_cornerRadius", float: 12.0),
+                    SKUniform(name: "u_shimmer_color", vectorFloat3: vector_float3(sc.r, sc.g, sc.b)),
+                    SKUniform(name: "u_shimmer_mode", float: shimmer.shaderMode),
+                    SKUniform(name: "u_border_color", vectorFloat3: vector_float3(bc.r, bc.g, bc.b)),
+                    SKUniform(name: "u_border_mode", float: border.shaderMode)
+                ]
+                spriteNode.shader = shader
+            }
+
+            let physicsBody = SKPhysicsBody(rectangleOf: scaledSize)
+            physicsBody.mass = 1.5
+            physicsBody.friction = 0.5
+            physicsBody.restitution = 0.2
+            physicsBody.linearDamping = 0.8
+            physicsBody.angularDamping = 0.95
+            spriteNode.physicsBody = physicsBody
+
+            return spriteNode
+        }
+
         let maxSize = KeyringScale.maxSize(for: templateId ?? "")
         let originalSize = image.size
 
@@ -1055,6 +1173,31 @@ class MultiKeyringScene: SKScene {
         }
     }
 
+    // MARK: - 매 프레임 업데이트
+    override func update(_ currentTime: TimeInterval) {
+        super.update(currentTime)
+
+        // 자이로: SKTransformNode로 바디만 Y축 3D 회전 + 셰이더 u_tilt 갱신 + 햅틱
+        guard hasGyroscopeKeyrings else { return }
+        let tilt = LenticularMotionManager.shared.tilt
+        let signedTilt = LenticularMotionManager.shared.signedTilt
+        let signedPitch = LenticularMotionManager.shared.signedPitch
+
+        for data in keyringDataList where data.isGyroscope {
+            if let body = bodyNodes[data.index],
+               let transform = body.childNode(withName: "lenticularTransform") as? SKTransformNode {
+                transform.yRotation = CGFloat(signedTilt) * KeyringScale.lenticularYRotationMax
+                transform.xRotation = CGFloat(signedPitch) * KeyringScale.lenticularXRotationMax
+
+                if let visual = transform.childNode(withName: "lenticularVisual") as? SKSpriteNode,
+                   let shader = visual.shader {
+                    shader.uniformNamed("u_tilt")?.floatValue = Float(tilt)
+                }
+            }
+        }
+        lenticularHaptic?.update(tilt: tilt)
+    }
+
     /// 모든 키링이 완성된 후 물리 시뮬레이션 활성화
     private func enablePhysics() {
         // 정리 중이면 중단
@@ -1257,7 +1400,7 @@ class MultiKeyringScene: SKScene {
             let distance = hypot(location.x - bodyCenter.x, location.y - bodyCenter.y)
 
             // Body 근처에서만 힘 적용 (거리가 가까울수록 강한 힘)
-            if distance < 50 {
+            if distance < 80 {
                 // 스케일이 작을수록 impulse도 비례하여 줄여 과도한 회전/이탈 방지
                 let bundleScale = KeyringScale.bundleKeyringScale(for: carabinerId)
                 let multiplier: CGFloat = 0.3 * bundleScale

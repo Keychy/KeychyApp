@@ -284,29 +284,29 @@ class KeyringImageCache {
     // MARK: - 동기화 메서드
     
     /// 키링 추가 또는 업데이트 (이미지 + 메타데이터)
-    func syncKeyring(id: String, name: String, imageData: Data, createdAt: Date) {
+    func syncKeyring(id: String, name: String, imageData: Data, createdAt: Date, isGyroscope: Bool = false) {
         // 1. 이미지 저장 (썸네일)
         save(pngData: imageData, for: id, type: .thumbnail)
-        
+
         // 2. 위젯용 이미지 저장 (더 큰 사이즈)
         if let widgetData = resizeImageData(imageData, to: ImageType.widget.size) {
             save(pngData: widgetData, for: id, type: .widget)
         }
-        
+
         // 3. 메타데이터 업데이트 (위젯용 이미지 경로 사용)
         var keyrings = loadWidgetKeyrings()
         let imagePath = "\(id)_widget.png"
-        
+
         if let index = keyrings.firstIndex(where: { $0.id == id }) {
             // 기존 키링 업데이트
-            keyrings[index] = WidgetKeyring(id: id, name: name, imagePath: imagePath, createdAt: createdAt)
+            keyrings[index] = WidgetKeyring(id: id, name: name, imagePath: imagePath, createdAt: createdAt, isGyroscope: isGyroscope)
         } else {
             // 새 키링 추가
-            keyrings.append(WidgetKeyring(id: id, name: name, imagePath: imagePath, createdAt: createdAt))
+            keyrings.append(WidgetKeyring(id: id, name: name, imagePath: imagePath, createdAt: createdAt, isGyroscope: isGyroscope))
         }
-        
+
         saveWidgetKeyrings(keyrings)
-        
+
         // 4. 위젯 타임라인 새로고침
         reloadWidgets()
     }
@@ -314,23 +314,23 @@ class KeyringImageCache {
     /// 위젯 선택지에 키링 추가
     /// - syncKeyring()에서 위젯 관련 로직만 분리한 함수
     /// - 썸넬 이미지 데이터를 위젯용 크기로 리사이즈하여 저장, 메타데이터에 추가
-    func addToKeyringWidget(id: String, name: String, imageData: Data, createdAt: Date) {
+    func addToKeyringWidget(id: String, name: String, imageData: Data, createdAt: Date, isGyroscope: Bool = false) {
         if let widgetData = resizeImageData(imageData, to: ImageType.widget.size) {
             save(pngData: widgetData, for: id, type: .widget)
         }
-        
+
         // 메타데이터에 추가
         var keyrings = loadWidgetKeyrings()
         let imagePath = "\(id)_widget.png"
-        
+
         if let index = keyrings.firstIndex(where: { $0.id == id }) {
-            keyrings[index] = WidgetKeyring(id: id, name: name, imagePath: imagePath, createdAt: createdAt)
+            keyrings[index] = WidgetKeyring(id: id, name: name, imagePath: imagePath, createdAt: createdAt, isGyroscope: isGyroscope)
         } else {
-            keyrings.append(WidgetKeyring(id: id, name: name, imagePath: imagePath, createdAt: createdAt))
+            keyrings.append(WidgetKeyring(id: id, name: name, imagePath: imagePath, createdAt: createdAt, isGyroscope: isGyroscope))
         }
-        
+
         saveWidgetKeyrings(keyrings)
-        
+
         // 위젯 타임라인 새로고침
         reloadWidgets()
     }

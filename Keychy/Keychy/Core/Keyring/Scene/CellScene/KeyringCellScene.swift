@@ -14,9 +14,12 @@ class KeyringCellScene: SKScene {
     var bodyImage: String?
     var bodyUIImage: UIImage?  // UIImage 직접 전달용 (URL 다운로드 스킵)
     var templateId: String?  // 템플릿 ID (옵션)
+    var isGyroscope: Bool  // 자이로 인터랙션 사용 여부
     var onLoadingComplete: (() -> Void)?
     var hookOffsetY: CGFloat?  // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
     var chainLength: Int = 5  // 체인 링크 개수 (기본값 5)
+    var shimmerColorId: String?  // 시머 색상 프리셋 ID
+    var borderColorId: String?   // 테두리 색상 ID
 
     // MARK: - 선택된 타입들
     var currentRingType: RingType
@@ -40,11 +43,14 @@ class KeyringCellScene: SKScene {
         bodyImage: String? = nil,
         bodyUIImage: UIImage? = nil,
         templateId: String? = nil,
+        isGyroscope: Bool = false,
         targetSize: CGSize,
         customBackgroundColor: UIColor = .gray50,
         zoomScale: CGFloat = 1.5,
         hookOffsetY: CGFloat? = nil,
         chainLength: Int = 5,
+        shimmerColorId: String? = nil,
+        borderColorId: String? = nil,
         onLoadingComplete: (() -> Void)? = nil
     ) {
         self.currentRingType = ringType
@@ -52,8 +58,11 @@ class KeyringCellScene: SKScene {
         self.bodyImage = bodyImage
         self.bodyUIImage = bodyUIImage
         self.templateId = templateId
+        self.isGyroscope = isGyroscope
         self.hookOffsetY = hookOffsetY
         self.chainLength = chainLength
+        self.shimmerColorId = shimmerColorId
+        self.borderColorId = borderColorId
         self.onLoadingComplete = onLoadingComplete
         self.customBackgroundColor = customBackgroundColor
 

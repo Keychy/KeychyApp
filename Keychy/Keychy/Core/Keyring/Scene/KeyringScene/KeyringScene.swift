@@ -19,6 +19,7 @@ class KeyringScene: SKScene {
     var bodyImage: UIImage? // UIImage용
     var bodyImageURL: String? // Firebase URL용
     var templateId: String // 템플릿 ID (KeyringScale용)
+    var isGyroscope: Bool // 자이로 인터랙션 사용 여부
     var screen: KeyringScale.Screen // 화면 종류 (zoomScale용)
     var customSoundURL: URL? // 커스텀 녹음 파일 URL
     var hookOffsetY: CGFloat? // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
@@ -52,6 +53,9 @@ class KeyringScene: SKScene {
     // MARK: - 씬 정리 상태
     var isCleaningUp = false
 
+    // MARK: - 렌티큘러 햅틱
+    private var lenticularHaptic: LenticularHapticManager?
+
     // MARK: - 배경색 설정
     var customBackgroundColor: UIColor = .gray50
 
@@ -60,6 +64,7 @@ class KeyringScene: SKScene {
         ringType: RingType,
         chainType: ChainType,
         templateId: String,
+        isGyroscope: Bool = false,
         screen: KeyringScale.Screen = .customizing,
         bodyImage: UIImage? = nil,
         bodyImageURL: String? = nil,
@@ -70,6 +75,7 @@ class KeyringScene: SKScene {
         self.currentRingType = ringType
         self.currentChainType = chainType
         self.templateId = templateId
+        self.isGyroscope = isGyroscope
         self.screen = screen
         self.bodyImageURL = bodyImageURL
         self.customBackgroundColor = backgroundColor
@@ -94,6 +100,12 @@ class KeyringScene: SKScene {
     func cleanup() {
         guard !isCleaningUp else { return }
         isCleaningUp = true
+
+        // 자이로 정지
+        if isGyroscope {
+            LenticularMotionManager.shared.stop()
+            lenticularHaptic = nil
+        }
 
         // 콜백 무효화
         onPlayParticleEffect = nil
@@ -143,6 +155,41 @@ class KeyringScene: SKScene {
                 }
             }
             .store(in: &cancellables)
+
+        // 렌티큘러 VM인 경우 styleSubject 구독 → 시머/테두리 독립 실시간 업데이트
+        if let lenticularVM = viewModel as? LenticularVM {
+            // Setup 완료 후 초기 스타일 적용 (bodyNode 생성 이후)
+            let initialShimmer = lenticularVM.selectedShimmerColor
+            let initialBorder = lenticularVM.selectedBorderColor
+            let originalSetupComplete = self.onSetupComplete
+            self.onSetupComplete = { [weak self] in
+                self?.updateStyleUniforms(shimmer: initialShimmer, border: initialBorder)
+                originalSetupComplete?()
+            }
+
+            lenticularVM.styleSubject
+                .sink { [weak self] update in
+                    self?.updateStyleUniforms(shimmer: update.shimmer, border: update.border)
+                }
+                .store(in: &cancellables)
+        }
+    }
+
+    // MARK: - 스타일 셰이더 Uniform 실시간 업데이트
+    /// bodyNode 내부의 lenticularVisual 셰이더에 시머/테두리 색상 독립 적용
+    func updateStyleUniforms(shimmer: KeyringAppearanceColor, border: KeyringAppearanceColor) {
+        guard let body = bodyNode,
+              let transform = body.childNode(withName: "lenticularTransform") as? SKTransformNode,
+              let visual = transform.childNode(withName: "lenticularVisual") as? SKSpriteNode,
+              let shader = visual.shader else { return }
+
+        let sc = shimmer.shaderColor
+        shader.uniformNamed("u_shimmer_color")?.vectorFloat3Value = vector_float3(sc.r, sc.g, sc.b)
+        shader.uniformNamed("u_shimmer_mode")?.floatValue = shimmer.shaderMode
+
+        let bc = border.shaderColor
+        shader.uniformNamed("u_border_color")?.vectorFloat3Value = vector_float3(bc.r, bc.g, bc.b)
+        shader.uniformNamed("u_border_mode")?.floatValue = border.shaderMode
     }
 
     // MARK: - Scene Lifecycle
@@ -154,6 +201,39 @@ class KeyringScene: SKScene {
         setupCamera()
 
         setupKeyring()
+
+        // 자이로 시작 + 햅틱 매니저 생성
+        if isGyroscope {
+            LenticularMotionManager.shared.start()
+            lenticularHaptic = LenticularHapticManager()
+        }
+    }
+
+    // MARK: - 매 프레임 업데이트
+    override func update(_ currentTime: TimeInterval) {
+        super.update(currentTime)
+
+        // 자이로: SKTransformNode로 바디만 Y축 3D 회전 + 셰이더 u_tilt 갱신 + 햅틱
+        if isGyroscope {
+            let tilt = LenticularMotionManager.shared.tilt
+            let signedTilt = LenticularMotionManager.shared.signedTilt
+            let signedPitch = LenticularMotionManager.shared.signedPitch
+
+            if let body = bodyNode,
+               let transform = body.childNode(withName: "lenticularTransform") as? SKTransformNode {
+                // 바디만 3D 회전 (고리/체인은 영향 없음)
+                transform.yRotation = CGFloat(signedTilt) * KeyringScale.lenticularYRotationMax
+                transform.xRotation = CGFloat(signedPitch) * KeyringScale.lenticularXRotationMax
+
+                // 셰이더 업데이트 (렌티큘러 A↔B 전환)
+                if let visual = transform.childNode(withName: "lenticularVisual") as? SKSpriteNode,
+                   let shader = visual.shader {
+                    shader.uniformNamed("u_tilt")?.floatValue = Float(tilt)
+                }
+            }
+            // 햅틱은 transform 존재 여부와 무관하게 항상 동작
+            lenticularHaptic?.update(tilt: tilt)
+        }
     }
 
     /// 카메라 설정 - zoomScale 적용

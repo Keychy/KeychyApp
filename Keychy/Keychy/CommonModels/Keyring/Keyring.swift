@@ -35,6 +35,9 @@ struct Keyring: Identifiable, Equatable, Hashable {
     var senderId: String?
     var receivedAt: Date?
     var hookOffsetY: CGFloat?  // 템플릿에서 받아온 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
+    var isGyroscope: Bool  // 자이로 인터랙션 사용 여부 (렌티큘러 등)
+    var shimmerColorId: String?  // 시머(광택) 색상 ID (nil이면 "silver" 기본값)
+    var borderColorId: String?   // 테두리 색상 ID (nil이면 shimmerColorId와 동일)
 
     // MARK: - Firestore 변환
     func toDictionary() -> [String: Any] {
@@ -54,7 +57,8 @@ struct Keyring: Identifiable, Equatable, Hashable {
             "isPackaged": isPackaged,
             "isPublished": isPublished,
             "chainLength": chainLength,
-            "isNew": isNew
+            "isNew": isNew,
+            "isGyroscope": isGyroscope
         ]
         
         // Optional 필드 처리
@@ -75,6 +79,12 @@ struct Keyring: Identifiable, Equatable, Hashable {
         }
         if let hookOffsetY = hookOffsetY {
             dict["hookOffsetY"] = hookOffsetY
+        }
+        if let shimmerColorId = shimmerColorId {
+            dict["shimmerColorId"] = shimmerColorId
+        }
+        if let borderColorId = borderColorId {
+            dict["borderColorId"] = borderColorId
         }
 
         return dict
@@ -118,6 +128,9 @@ struct Keyring: Identifiable, Equatable, Hashable {
         self.chainLength = data["chainLength"] as? Int ?? 5
         self.isNew = data["isNew"] as? Bool ?? true
         self.hookOffsetY = data["hookOffsetY"] as? CGFloat
+        self.isGyroscope = data["isGyroscope"] as? Bool ?? false  // 기존 키링은 모두 false
+        self.shimmerColorId = data["shimmerColorId"] as? String  // nil이면 silver 기본값
+        self.borderColorId = data["borderColorId"] as? String  // nil이면 shimmerColorId 사용
 
         // Optional 필드
         self.memo = data["memo"] as? String
@@ -150,7 +163,10 @@ struct Keyring: Identifiable, Equatable, Hashable {
          isNew: Bool = true,
          senderId: String? = nil,
          receivedAt: Date? = nil,
-         hookOffsetY: CGFloat? = nil
+         hookOffsetY: CGFloat? = nil,
+         isGyroscope: Bool = false,
+         shimmerColorId: String? = nil,
+         borderColorId: String? = nil
     ) {
         self.name = name
         self.bodyImage = bodyImage
@@ -174,5 +190,8 @@ struct Keyring: Identifiable, Equatable, Hashable {
         self.senderId = senderId
         self.receivedAt = receivedAt
         self.hookOffsetY = hookOffsetY
+        self.isGyroscope = isGyroscope
+        self.shimmerColorId = shimmerColorId
+        self.borderColorId = borderColorId
     }
 }

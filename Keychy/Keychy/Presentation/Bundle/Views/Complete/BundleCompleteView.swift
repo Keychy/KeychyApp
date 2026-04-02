@@ -187,7 +187,10 @@ extension BundleCompleteView {
                 customSoundURL: customSoundURL,
                 particleId: keyring.particleId,
                 hookOffsetY: keyring.hookOffsetY,
-                chainLength: keyring.chainLength
+                chainLength: keyring.chainLength,
+                isGyroscope: keyring.isGyroscope,
+                shimmerColorId: keyring.shimmerColorId,
+                borderColorId: keyring.borderColorId
             )
             dataList.append(data)
         }

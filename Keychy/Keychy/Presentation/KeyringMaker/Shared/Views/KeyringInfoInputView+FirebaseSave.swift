@@ -58,7 +58,20 @@ extension KeyringInfoInputView {
         // hookOffsetY는 0이 아니면 사용, 0이면 nil로 전달
         let hookOffsetY: CGFloat? = viewModel.hookOffsetY != 0 ? viewModel.hookOffsetY : nil
         let templateId = viewModel.templateId
-        
+        let isGyroscope = viewModel.isGyroscope
+
+        // 렌티큘러 VM이면 시머/테두리 색상 ID 추출 (기본값 silver면 nil로 저장하여 용량 절약)
+        let shimmerColorId: String? = (viewModel as? LenticularVM)
+            .flatMap { vm -> String? in
+                let id = vm.selectedShimmerColor.firestoreId
+                return id == "silver" ? nil : id
+            }
+        let borderColorId: String? = (viewModel as? LenticularVM)
+            .flatMap { vm -> String? in
+                let id = vm.selectedBorderColor.firestoreId
+                return id == "silver" ? nil : id
+            }
+
         self.createKeyring(
             uid: uid,
             name: self.viewModel.nameText,
@@ -72,7 +85,10 @@ extension KeyringInfoInputView {
             selectedChain: "basic",
             chainLength: self.viewModel.chainLength,
             isNew: true,
-            hookOffsetY: hookOffsetY
+            hookOffsetY: hookOffsetY,
+            isGyroscope: isGyroscope,
+            shimmerColorId: shimmerColorId,
+            borderColorId: borderColorId
         ) { success, keyringId in
             // 백그라운드로 위젯용 이미지 캡처 및 저장
             if success, let keyringId = keyringId {
@@ -82,7 +98,7 @@ extension KeyringInfoInputView {
                 // viewModel이 reset되기 전에 이름과 hookOffsetY, chainLength를 미리 캡처
                 let keyringName = self.viewModel.nameText
                 let chainLength = self.viewModel.chainLength
-                
+
                 Task {
                     // 위젯 캐싱 완료 대기
                     await self.captureAndCacheKeyring(
@@ -94,6 +110,9 @@ extension KeyringInfoInputView {
                         chainType: .basic,
                         hookOffsetY: hookOffsetY,
                         chainLength: chainLength,
+                        isGyroscope: isGyroscope,
+                        shimmerColorId: shimmerColorId,
+                        borderColorId: borderColorId,
                         createdAt: Date()
                     )
                     
@@ -191,6 +210,9 @@ extension KeyringInfoInputView {
         chainLength: Int,
         isNew: Bool,
         hookOffsetY: CGFloat? = nil,
+        isGyroscope: Bool = false,
+        shimmerColorId: String? = nil,
+        borderColorId: String? = nil,
         completion: @escaping (Bool, String?) -> Void
     ) {
         let newKeyring = Keyring(
@@ -207,7 +229,10 @@ extension KeyringInfoInputView {
             selectedChain: selectedChain,
             chainLength: chainLength,
             isNew: isNew,
-            hookOffsetY: hookOffsetY
+            hookOffsetY: hookOffsetY,
+            isGyroscope: isGyroscope,
+            shimmerColorId: shimmerColorId,
+            borderColorId: borderColorId
         )
         
         let keyringData = newKeyring.toDictionary()
@@ -366,23 +391,29 @@ extension KeyringInfoInputView {
         chainType: ChainType,
         hookOffsetY: CGFloat?,
         chainLength: Int,
+        isGyroscope: Bool = false,
+        shimmerColorId: String? = nil,
+        borderColorId: String? = nil,
         createdAt: Date
     ) async {
         await withCheckedContinuation { continuation in
             // 이미지 로딩 완료 콜백
             var loadingCompleted = false
-            
+
             // Scene 생성 (onLoadingComplete 콜백 추가, 투명 배경)
             let scene = KeyringCellScene(
                 ringType: ringType,
                 chainType: chainType,
                 bodyImage: bodyImage,
                 templateId: templateId,
+                isGyroscope: isGyroscope,
                 targetSize: CGSize(width: 175, height: 233),
                 customBackgroundColor: .clear,
                 zoomScale: 2.0,
                 hookOffsetY: hookOffsetY,
                 chainLength: chainLength,
+                shimmerColorId: shimmerColorId,
+                borderColorId: borderColorId,
                 onLoadingComplete: {
                     loadingCompleted = true
                 }

@@ -111,6 +111,10 @@ private class KeyringAdapter: KeyringViewModelProtocol {
         keyring.selectedTemplate
     }
 
+    var isGyroscope: Bool {
+        keyring.isGyroscope
+    }
+
     var availableCustomizingModes: [CustomizingMode] {
         [.effect]
     }

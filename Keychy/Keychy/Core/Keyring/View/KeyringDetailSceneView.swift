@@ -53,8 +53,11 @@ struct KeyringDetailSceneView: View {
             chainType: chainType,
             bodyImage: keyring.bodyImage,
             templateId: keyring.selectedTemplate,
+            isGyroscope: keyring.isGyroscope,
             hookOffsetY: keyring.hookOffsetY,
             chainLength: keyring.chainLength,
+            shimmerColorId: keyring.shimmerColorId,
+            borderColorId: keyring.borderColorId,
             onLoadingComplete: nil
         )
         
@@ -112,18 +115,15 @@ struct KeyringDetailSceneView: View {
 
 extension KeyringDetailSceneView {
     /// SpriteKit Scene 표시 뷰
+    /// 3D 회전은 SKTransformNode가 바디 노드 레벨에서 처리 (고리/체인 영향 없음)
     private var sceneView: some View {
         Group {
             if let scene {
                 SpriteView(scene: scene, options: [.allowsTransparency])
                     .contentShape(Rectangle())
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                    .onAppear {
-                        scene.isPaused = false
-                    }
-                    .onDisappear {
-                        scene.isPaused = true
-                    }
+                    .onAppear { scene.isPaused = false }
+                    .onDisappear { scene.isPaused = true }
             } else {
                 Color.gray.opacity(0.1)
             }

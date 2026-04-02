@@ -23,6 +23,8 @@ nonisolated enum AnimationFrameStorage {
     static let baseFrameCount = 30
     /// 왕복 포함 총 프레임 수 (0→29→28→...→1)
     static let totalFrameCount = baseFrameCount * 2 - 2
+    /// 렌티큘러 키링의 정지 프레임 인덱스 (이미지 A가 선명하면서 자연스러운 위치)
+    static let lenticularRestFrameIndex = 2
     private static let appGroupID = "group.keychy.app"
     private static let rootDirName = "AnimatedFrames"
 
