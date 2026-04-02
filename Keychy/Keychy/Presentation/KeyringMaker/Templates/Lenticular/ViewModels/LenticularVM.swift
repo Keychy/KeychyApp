@@ -104,13 +104,9 @@ class LenticularVM: KeyringViewModelProtocol {
 
     // MARK: - View Providers
     func sceneView(for mode: CustomizingMode, onSceneReady: @escaping () -> Void) -> AnyView {
-        switch mode {
-        case .style, .effect:
-            // 시머/이펙트 모두 동일한 KeyringSceneView 사용
-            return AnyView(KeyringSceneView(viewModel: self, onSceneReady: onSceneReady))
-        default:
-            return AnyView(EmptyView())
-        }
+        // 렌티큘러 VM의 availableCustomizingModes = [.style, .effect]
+        // 두 모드 모두 동일한 KeyringSceneView 사용
+        return AnyView(KeyringSceneView(viewModel: self, onSceneReady: onSceneReady))
     }
 
     func bottomContentView(
@@ -124,18 +120,16 @@ class LenticularVM: KeyringViewModelProtocol {
         case .effect:
             return AnyView(EffectSelectorView(viewModel: self, cartItems: cartItems))
         default:
+            assertionFailure("렌티큘러 VM에서 지원하지 않는 커스터마이징 모드: \(mode)")
             return AnyView(EmptyView())
         }
     }
 
     func bottomViewHeightRatio(for mode: CustomizingMode) -> CGFloat {
         switch mode {
-        case .style:
-            return 0.35
-        case .effect:
-            return 0.3
-        default:
-            return 0.35
+        case .style:  return 0.35
+        case .effect: return 0.3
+        default:      return 0.35
         }
     }
 

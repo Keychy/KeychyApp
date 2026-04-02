@@ -406,8 +406,9 @@
 		4C7E96242F7A264100C8B109 /* LenticularFusionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E96232F7A264100C8B109 /* LenticularFusionView.swift */; };
 		4C7E96272F7A427E00C8B109 /* LenticularFusionView+Effects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E96262F7A427E00C8B109 /* LenticularFusionView+Effects.swift */; };
 		4C7E96282F7A427E00C8B109 /* LenticularFusionView+Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E96252F7A427E00C8B109 /* LenticularFusionView+Animation.swift */; };
-		4C7E96382F7D0E9300C8B109 /* ShimmerColorPreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E96372F7D0E9300C8B109 /* ShimmerColorPreset.swift */; };
-		4C7E963A2F7D0EAB00C8B109 /* ShimmerColorSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E96392F7D0EAB00C8B109 /* ShimmerColorSelectorView.swift */; };
+		4C7E96382F7D0E9300C8B109 /* KeyringStylePreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E96372F7D0E9300C8B109 /* KeyringStylePreset.swift */; };
+		4C7E963A2F7D0EAB00C8B109 /* StyleSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E96392F7D0EAB00C8B109 /* StyleSelectorView.swift */; };
+		4C0A00032F7E000000000002 /* StyleSelectorView+Previews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0A00022F7E000000000002 /* StyleSelectorView+Previews.swift */; };
 		4C7E963C2F7D267900C8B109 /* KeyringAppearanceColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E963B2F7D267900C8B109 /* KeyringAppearanceColor.swift */; };
 		4C8426602ED3585A0050B6FE /* gulimche-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */; };
 		4C8426642ED375840050B6FE /* ColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8426632ED375840050B6FE /* ColorPalette.swift */; };
@@ -475,6 +476,7 @@
 		4CEC621D2EAE08DA0099ECEE /* HomeRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62072EAE08DA0099ECEE /* HomeRoute.swift */; };
 		4CEC62202EAE08DA0099ECEE /* View+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62172EAE08DA0099ECEE /* View+Extension.swift */; };
 		4CEC62212EAE08DA0099ECEE /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62162EAE08DA0099ECEE /* UIImage+Extension.swift */; };
+		4C0A00012F7E000000000001 /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0A00002F7E000000000001 /* UIColor+Extension.swift */; };
 		4CEC62222EAE08DA0099ECEE /* CollectionRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62082EAE08DA0099ECEE /* CollectionRoute.swift */; };
 		4CEC62252EAE08DA0099ECEE /* WorkshopRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62092EAE08DA0099ECEE /* WorkshopRoute.swift */; };
 		4CEC62262EAE08DA0099ECEE /* Radius.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62132EAE08DA0099ECEE /* Radius.swift */; };
@@ -1020,8 +1022,9 @@
 		4C7E96232F7A264100C8B109 /* LenticularFusionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LenticularFusionView.swift; sourceTree = "<group>"; };
 		4C7E96252F7A427E00C8B109 /* LenticularFusionView+Animation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LenticularFusionView+Animation.swift"; sourceTree = "<group>"; };
 		4C7E96262F7A427E00C8B109 /* LenticularFusionView+Effects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LenticularFusionView+Effects.swift"; sourceTree = "<group>"; };
-		4C7E96372F7D0E9300C8B109 /* ShimmerColorPreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShimmerColorPreset.swift; sourceTree = "<group>"; };
-		4C7E96392F7D0EAB00C8B109 /* ShimmerColorSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShimmerColorSelectorView.swift; sourceTree = "<group>"; };
+		4C7E96372F7D0E9300C8B109 /* KeyringStylePreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringStylePreset.swift; sourceTree = "<group>"; };
+		4C7E96392F7D0EAB00C8B109 /* StyleSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyleSelectorView.swift; sourceTree = "<group>"; };
+		4C0A00022F7E000000000002 /* StyleSelectorView+Previews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StyleSelectorView+Previews.swift"; sourceTree = "<group>"; };
 		4C7E963B2F7D267900C8B109 /* KeyringAppearanceColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringAppearanceColor.swift; sourceTree = "<group>"; };
 		4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "gulimche-Regular.ttf"; sourceTree = "<group>"; };
 		4C8426632ED375840050B6FE /* ColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPalette.swift; sourceTree = "<group>"; };
@@ -1097,6 +1100,7 @@
 		4CEC62132EAE08DA0099ECEE /* Radius.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Radius.swift; sourceTree = "<group>"; };
 		4CEC62142EAE08DA0099ECEE /* Spacing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spacing.swift; sourceTree = "<group>"; };
 		4CEC62162EAE08DA0099ECEE /* UIImage+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
+		4C0A00002F7E000000000001 /* UIColor+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
 		4CEC62172EAE08DA0099ECEE /* View+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extension.swift"; sourceTree = "<group>"; };
 		4CEC623E2EAE08DF0099ECEE /* CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionView.swift; sourceTree = "<group>"; };
 		4CEC62442EAE08DF0099ECEE /* FestivalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FestivalView.swift; sourceTree = "<group>"; };
@@ -2277,7 +2281,8 @@
 				4C7E96232F7A264100C8B109 /* LenticularFusionView.swift */,
 				4C7E96262F7A427E00C8B109 /* LenticularFusionView+Effects.swift */,
 				4C7E96252F7A427E00C8B109 /* LenticularFusionView+Animation.swift */,
-				4C7E96392F7D0EAB00C8B109 /* ShimmerColorSelectorView.swift */,
+				4C7E96392F7D0EAB00C8B109 /* StyleSelectorView.swift */,
+				4C0A00022F7E000000000002 /* StyleSelectorView+Previews.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -2509,7 +2514,7 @@
 				4CEC61E02EAE08C00099ECEE /* RingType.swift */,
 				4CEC61E12EAE08C00099ECEE /* ChainType.swift */,
 				4CEC61E22EAE08C00099ECEE /* BodyType.swift */,
-				4C7E96372F7D0E9300C8B109 /* ShimmerColorPreset.swift */,
+				4C7E96372F7D0E9300C8B109 /* KeyringStylePreset.swift */,
 				4C7E963B2F7D267900C8B109 /* KeyringAppearanceColor.swift */,
 			);
 			path = Keyring;
@@ -2658,6 +2663,7 @@
 				4CF2A9692F0B94EA00BA9FDA /* View+PullToRefresh.swift */,
 				4CA9C6A72EC9DB5300CA546B /* View+SafeAreaBottom.swift */,
 				4CEC62162EAE08DA0099ECEE /* UIImage+Extension.swift */,
+				4C0A00002F7E000000000001 /* UIColor+Extension.swift */,
 				4CEC62172EAE08DA0099ECEE /* View+Extension.swift */,
 				AA3909452EC9F29500D87EEC /* UIApplication+Extension.swift */,
 				386B17632ECD142600CCCC23 /* String+Extension.swift */,
@@ -3350,6 +3356,7 @@
 				4C7E963C2F7D267900C8B109 /* KeyringAppearanceColor.swift in Sources */,
 				385425BE2EB2989400A06C02 /* CollectionCellView.swift in Sources */,
 				4CEC62212EAE08DA0099ECEE /* UIImage+Extension.swift in Sources */,
+				4C0A00012F7E000000000001 /* UIColor+Extension.swift in Sources */,
 				4CEC62222EAE08DA0099ECEE /* CollectionRoute.swift in Sources */,
 				AA3909462EC9F29500D87EEC /* UIApplication+Extension.swift in Sources */,
 				4CC8D0252EF11CD200317467 /* HomeViewModel.swift in Sources */,
@@ -3535,7 +3542,7 @@
 				4C2526052F3B27B3003CC5AD /* KeyringChainComponent.swift in Sources */,
 				4C2526072F3B27B3003CC5AD /* KeyringBodyComponent.swift in Sources */,
 				4C25260A2F3B27B3003CC5AD /* KeyringRingComponent.swift in Sources */,
-				4C7E96382F7D0E9300C8B109 /* ShimmerColorPreset.swift in Sources */,
+				4C7E96382F7D0E9300C8B109 /* KeyringStylePreset.swift in Sources */,
 				4C25260C2F3B27B3003CC5AD /* KeyringSceneView.swift in Sources */,
 				3851D49D2F5FD56D0013C052 /* CrossStitchVM+Effect.swift in Sources */,
 				4C4733282F1FA2AB005D2376 /* WorkshopTemplatesView.swift in Sources */,
@@ -3575,7 +3582,8 @@
 				4C25259C2F303745003CC5AD /* WidgetBundleModel.swift in Sources */,
 				3828F54B2EC4D0C500F1B040 /* CollectionView+Handlers.swift in Sources */,
 				4CF2A96A2F0B94EA00BA9FDA /* View+PullToRefresh.swift in Sources */,
-				4C7E963A2F7D0EAB00C8B109 /* ShimmerColorSelectorView.swift in Sources */,
+				4C7E963A2F7D0EAB00C8B109 /* StyleSelectorView.swift in Sources */,
+				4C0A00032F7E000000000002 /* StyleSelectorView+Previews.swift in Sources */,
 				4C86A61F2F29E52D0023AA2D /* PurchaseHistoryView.swift in Sources */,
 				4C7A9EC72F2B0567008B520C /* KeyringPackageManager.swift in Sources */,
 				38C147BB2EB13B2F00A8E511 /* CircleGlassButton.swift in Sources */,

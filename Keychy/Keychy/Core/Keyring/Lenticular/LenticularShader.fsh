@@ -280,20 +280,6 @@ void main() {
         vec3 pulseHL = mix(u_border_color, vec3(1.0), 0.75);
         borderBase = mix(u_border_color * 0.30, pulseHL, pulseVal);
 
-    } else if (u_border_mode > 1.5) {
-        // 얼룩: 크롬 반사 테두리 (shimmer 전용, border UI에선 미사용)
-        float ce1 = sin(axis * 25.0 + u_time * 3.0 + u_tilt * 5.0) * 0.5 + 0.5;
-        float ce2 = sin(axis * 17.0 - u_time * 2.0 + u_tilt * 3.0 + 1.5) * 0.5 + 0.5;
-        float ce3 = sin(axis * 40.0 + u_time * 5.0 + 2.0) * 0.5 + 0.5;
-
-        float bChrome = ce1 * ce2 * 0.7 + ce3 * 0.3;
-        bChrome = smoothstep(0.25, 0.75, bChrome);
-        bChrome = bChrome * bChrome;
-
-        vec3 bHighlight = mix(u_border_color, vec3(1.0), 0.7);
-        vec3 bShadow = u_border_color * 0.12;
-        borderBase = mix(bShadow, bHighlight, bChrome);
-
     } else if (u_border_mode > 0.5) {
         // 홀로그램: 무지개 × 틴트 + 빠른 흐름
         float hue = fract(axis * 2.0 + u_tilt + u_time * 0.5);

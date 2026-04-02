@@ -8,18 +8,18 @@
 import SwiftUI
 
 // MARK: - 시머/테두리 색상 통합 모델
-/// 프리셋(ShimmerColorPreset) + 프리셋 모드를 유지한 커스텀 틴트를 표현
+/// 프리셋(KeyringStylePreset) + 프리셋 모드를 유지한 커스텀 틴트를 표현
 /// - `.preset(.silver)` → 메탈릭 기본색 (mode=0)
 /// - `.customTint(mode: .matrix, r, g, b)` → 매트릭스 모드(mode=4) + 커스텀 색상
 enum KeyringAppearanceColor: Equatable, Identifiable {
-    case preset(ShimmerColorPreset)
-    case customTint(mode: ShimmerColorPreset, r: Float, g: Float, b: Float)
+    case preset(KeyringStylePreset)
+    case customTint(mode: KeyringStylePreset, r: Float, g: Float, b: Float)
 
     var id: String { firestoreId }
 
     // MARK: - 현재 활성 프리셋 (모드 결정용)
     /// `.preset(.matrix)` → `.matrix`, `.customTint(mode: .matrix, ...)` → `.matrix`
-    var activePreset: ShimmerColorPreset {
+    var activePreset: KeyringStylePreset {
         switch self {
         case .preset(let p): return p
         case .customTint(let mode, _, _, _): return mode
@@ -44,7 +44,7 @@ enum KeyringAppearanceColor: Equatable, Identifiable {
         guard let id else { return .preset(.silver) }
 
         // "preset_RRGGBB" 형식 (예: "silver_D2D6E0", "matrix_00D94D")
-        for preset in ShimmerColorPreset.allCases {
+        for preset in KeyringStylePreset.allCases {
             let prefix = preset.rawValue + "_"
             if id.hasPrefix(prefix) {
                 let hex = String(id.dropFirst(prefix.count))
@@ -58,7 +58,7 @@ enum KeyringAppearanceColor: Equatable, Identifiable {
         }
 
         // 프리셋 매칭 (정확한 rawValue)
-        if let p = ShimmerColorPreset(rawValue: id) {
+        if let p = KeyringStylePreset(rawValue: id) {
             return .preset(p)
         }
 
@@ -76,7 +76,7 @@ enum KeyringAppearanceColor: Equatable, Identifiable {
         }
 
         // 레거시 하위 호환
-        let legacyMap: [String: ShimmerColorPreset] = [
+        let legacyMap: [String: KeyringStylePreset] = [
             "gold": .silver,
             "roseGold": .silver,
             "goldHolo": .silver,
