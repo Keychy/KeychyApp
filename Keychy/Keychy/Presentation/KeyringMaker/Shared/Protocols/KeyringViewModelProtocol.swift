@@ -13,18 +13,25 @@ enum CustomizingMode: String, CaseIterable, Identifiable {
     case effect = "이펙트"
     case drawing = "그리기"
     case frame = "프레임"
+    case style = "스타일"
 
     var id: String { rawValue }
 
-    /// 버튼 이미지 (활성화/비활성화 상태에 따라 다른 이미지)
-    func btnImage(isSelected: Bool) -> String {
+    /// 버튼 이미지 뷰
+    /// - .style만 에셋이 없어서 SF Symbol 사용, 나머지는 에셋 카탈로그 이미지
+    @ViewBuilder
+    func btnImageView(isSelected: Bool) -> some View {
         switch self {
         case .effect:
-            return isSelected ? "effectMode_active" : "effectMode_inactive"
+            Image(isSelected ? "effectMode_active" : "effectMode_inactive")
         case .drawing:
-            return isSelected ? "drawing_active" : "drawing_inactive"
+            Image(isSelected ? "drawing_active" : "drawing_inactive")
         case .frame:
-            return isSelected ? "frameMode_active" : "frameMode_inactive"
+            Image(isSelected ? "frameMode_active" : "frameMode_inactive")
+        case .style:
+            Image(systemName: "paintbrush.pointed.fill")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(isSelected ? .white : .gray)
         }
     }
 }

@@ -27,6 +27,19 @@ class LenticularVM: KeyringViewModelProtocol {
     var particleId: String = "none"
     let effectSubject = PassthroughSubject<(soundId: String, particleId: String, type: KeyringUpdateType), Never>()
 
+    // MARK: - Style Data (시머 + 테두리 분리)
+    /// 선택된 시머(광택) 색상
+    var selectedShimmerColor: KeyringAppearanceColor = .preset(.silver)
+    /// 선택된 테두리 색상
+    var selectedBorderColor: KeyringAppearanceColor = .preset(.silver)
+
+    /// Scene에 스타일 변경을 전달하는 Subject
+    struct StyleUpdate {
+        let shimmer: KeyringAppearanceColor
+        let border: KeyringAppearanceColor
+    }
+    let styleSubject = PassthroughSubject<StyleUpdate, Never>()
+
     // MARK: - Lenticular Image Data
     /// 사용자가 선택한 이미지 A (렌티큘러 좌측)
     var imageA: UIImage?
@@ -68,18 +81,32 @@ class LenticularVM: KeyringViewModelProtocol {
     var isGyroscope: Bool { template?.interactions.contains("tilt") ?? true }
 
     // MARK: - Customizing Modes
-    /// 렌티큘러는 바디 편집 불가 (아틀라스) → 이펙트만
-    var availableCustomizingModes: [CustomizingMode] { [.effect] }
+    /// 렌티큘러: 시머 색상 선택 + 이펙트
+    var availableCustomizingModes: [CustomizingMode] { [.style, .effect] }
 
     // MARK: - 초기화
     init(userManager: UserManager = UserManager.shared) {
         self.userManager = userManager
     }
 
+    // MARK: - Style Update (시머/테두리)
+    /// 시머(광택) 색상 변경 → Scene에 실시간 반영
+    func updateShimmerColor(_ color: KeyringAppearanceColor) {
+        selectedShimmerColor = color
+        styleSubject.send(StyleUpdate(shimmer: selectedShimmerColor, border: selectedBorderColor))
+    }
+
+    /// 테두리 색상 변경 → Scene에 실시간 반영
+    func updateBorderColor(_ color: KeyringAppearanceColor) {
+        selectedBorderColor = color
+        styleSubject.send(StyleUpdate(shimmer: selectedShimmerColor, border: selectedBorderColor))
+    }
+
     // MARK: - View Providers
     func sceneView(for mode: CustomizingMode, onSceneReady: @escaping () -> Void) -> AnyView {
         switch mode {
-        case .effect:
+        case .style, .effect:
+            // 시머/이펙트 모두 동일한 KeyringSceneView 사용
             return AnyView(KeyringSceneView(viewModel: self, onSceneReady: onSceneReady))
         default:
             return AnyView(EmptyView())
@@ -92,6 +119,8 @@ class LenticularVM: KeyringViewModelProtocol {
         cartItems: Binding<[EffectItem]>
     ) -> AnyView {
         switch mode {
+        case .style:
+            return AnyView(StyleSelectorView(viewModel: self))
         case .effect:
             return AnyView(EffectSelectorView(viewModel: self, cartItems: cartItems))
         default:
@@ -101,6 +130,8 @@ class LenticularVM: KeyringViewModelProtocol {
 
     func bottomViewHeightRatio(for mode: CustomizingMode) -> CGFloat {
         switch mode {
+        case .style:
+            return 0.35
         case .effect:
             return 0.3
         default:
@@ -124,6 +155,8 @@ class LenticularVM: KeyringViewModelProtocol {
         photoScaleB = 1.0
         photoOffsetB = .zero
         bodyImage = nil
+        selectedShimmerColor = .preset(.silver)
+        selectedBorderColor = .preset(.silver)
     }
 
     func resetInfoData() {
