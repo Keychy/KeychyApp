@@ -155,6 +155,41 @@ class KeyringScene: SKScene {
                 }
             }
             .store(in: &cancellables)
+
+        // 렌티큘러 VM인 경우 styleSubject 구독 → 시머/테두리 독립 실시간 업데이트
+        if let lenticularVM = viewModel as? LenticularVM {
+            // Setup 완료 후 초기 스타일 적용 (bodyNode 생성 이후)
+            let initialShimmer = lenticularVM.selectedShimmerColor
+            let initialBorder = lenticularVM.selectedBorderColor
+            let originalSetupComplete = self.onSetupComplete
+            self.onSetupComplete = { [weak self] in
+                self?.updateStyleUniforms(shimmer: initialShimmer, border: initialBorder)
+                originalSetupComplete?()
+            }
+
+            lenticularVM.styleSubject
+                .sink { [weak self] update in
+                    self?.updateStyleUniforms(shimmer: update.shimmer, border: update.border)
+                }
+                .store(in: &cancellables)
+        }
+    }
+
+    // MARK: - 스타일 셰이더 Uniform 실시간 업데이트
+    /// bodyNode 내부의 lenticularVisual 셰이더에 시머/테두리 색상 독립 적용
+    func updateStyleUniforms(shimmer: KeyringAppearanceColor, border: KeyringAppearanceColor) {
+        guard let body = bodyNode,
+              let transform = body.childNode(withName: "lenticularTransform") as? SKTransformNode,
+              let visual = transform.childNode(withName: "lenticularVisual") as? SKSpriteNode,
+              let shader = visual.shader else { return }
+
+        let sc = shimmer.shaderColor
+        shader.uniformNamed("u_shimmer_color")?.vectorFloat3Value = vector_float3(sc.r, sc.g, sc.b)
+        shader.uniformNamed("u_shimmer_mode")?.floatValue = shimmer.shaderMode
+
+        let bc = border.shaderColor
+        shader.uniformNamed("u_border_color")?.vectorFloat3Value = vector_float3(bc.r, bc.g, bc.b)
+        shader.uniformNamed("u_border_mode")?.floatValue = border.shaderMode
     }
 
     // MARK: - Scene Lifecycle
