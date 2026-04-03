@@ -821,7 +821,7 @@ class MultiKeyringScene: SKScene {
             let bodyHalfHeight = bodyFrame.height / 2
 
             let lastChainY = chainStartY - CGFloat(max(chains.count - 1, 0)) * chainSpacing
-            let lastChainBottomY = lastChainY - 15
+            let lastChainBottomY = lastChainY - 10.5
 
             var hookOffsetYRatio = data.hookOffsetY ?? 0.0
             if data.templateId == "PixelKeyring" || data.templateId == "Lenticular" { hookOffsetYRatio += 0.03 }
