@@ -130,6 +130,8 @@
 		4C004FB52F18D98C00D9063E /* ReviewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C004FB42F18D98C00D9063E /* ReviewManager.swift */; };
 		4C004FBB2F19F1FE00D9063E /* RootViewModel+ReviewCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C004FBA2F19F1FE00D9063E /* RootViewModel+ReviewCheck.swift */; };
 		4C07024C2ECF10760026D6DC /* EffectSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C07024A2ECF10760026D6DC /* EffectSyncManager.swift */; };
+		4C0A00012F7E000000000001 /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0A00002F7E000000000001 /* UIColor+Extension.swift */; };
+		4C0A00032F7E000000000002 /* StyleSelectorView+Previews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0A00022F7E000000000002 /* StyleSelectorView+Previews.swift */; };
 		4C25259C2F303745003CC5AD /* WidgetBundleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C25259B2F303745003CC5AD /* WidgetBundleModel.swift */; };
 		4C25259D2F3037CD003CC5AD /* WidgetBundleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C25259B2F303745003CC5AD /* WidgetBundleModel.swift */; };
 		4C25259E2F3037D6003CC5AD /* BundleImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B5707E2EC206CD0049F969 /* BundleImageCache.swift */; };
@@ -408,7 +410,6 @@
 		4C7E96282F7A427E00C8B109 /* LenticularFusionView+Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E96252F7A427E00C8B109 /* LenticularFusionView+Animation.swift */; };
 		4C7E96382F7D0E9300C8B109 /* KeyringStylePreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E96372F7D0E9300C8B109 /* KeyringStylePreset.swift */; };
 		4C7E963A2F7D0EAB00C8B109 /* StyleSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E96392F7D0EAB00C8B109 /* StyleSelectorView.swift */; };
-		4C0A00032F7E000000000002 /* StyleSelectorView+Previews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0A00022F7E000000000002 /* StyleSelectorView+Previews.swift */; };
 		4C7E963C2F7D267900C8B109 /* KeyringAppearanceColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E963B2F7D267900C8B109 /* KeyringAppearanceColor.swift */; };
 		4C8426602ED3585A0050B6FE /* gulimche-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */; };
 		4C8426642ED375840050B6FE /* ColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8426632ED375840050B6FE /* ColorPalette.swift */; };
@@ -476,7 +477,6 @@
 		4CEC621D2EAE08DA0099ECEE /* HomeRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62072EAE08DA0099ECEE /* HomeRoute.swift */; };
 		4CEC62202EAE08DA0099ECEE /* View+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62172EAE08DA0099ECEE /* View+Extension.swift */; };
 		4CEC62212EAE08DA0099ECEE /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62162EAE08DA0099ECEE /* UIImage+Extension.swift */; };
-		4C0A00012F7E000000000001 /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0A00002F7E000000000001 /* UIColor+Extension.swift */; };
 		4CEC62222EAE08DA0099ECEE /* CollectionRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62082EAE08DA0099ECEE /* CollectionRoute.swift */; };
 		4CEC62252EAE08DA0099ECEE /* WorkshopRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62092EAE08DA0099ECEE /* WorkshopRoute.swift */; };
 		4CEC62262EAE08DA0099ECEE /* Radius.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEC62132EAE08DA0099ECEE /* Radius.swift */; };
@@ -752,6 +752,8 @@
 		4C004FB42F18D98C00D9063E /* ReviewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewManager.swift; sourceTree = "<group>"; };
 		4C004FBA2F19F1FE00D9063E /* RootViewModel+ReviewCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RootViewModel+ReviewCheck.swift"; sourceTree = "<group>"; };
 		4C07024A2ECF10760026D6DC /* EffectSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectSyncManager.swift; sourceTree = "<group>"; };
+		4C0A00002F7E000000000001 /* UIColor+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
+		4C0A00022F7E000000000002 /* StyleSelectorView+Previews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StyleSelectorView+Previews.swift"; sourceTree = "<group>"; };
 		4C25259B2F303745003CC5AD /* WidgetBundleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetBundleModel.swift; sourceTree = "<group>"; };
 		4C2525D92F35B2A7003CC5AD /* BundleSheetFilterBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleSheetFilterBar.swift; sourceTree = "<group>"; };
 		4C2525DE2F3B27B3003CC5AD /* KeyringBodyComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringBodyComponent.swift; sourceTree = "<group>"; };
@@ -1024,7 +1026,6 @@
 		4C7E96262F7A427E00C8B109 /* LenticularFusionView+Effects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LenticularFusionView+Effects.swift"; sourceTree = "<group>"; };
 		4C7E96372F7D0E9300C8B109 /* KeyringStylePreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringStylePreset.swift; sourceTree = "<group>"; };
 		4C7E96392F7D0EAB00C8B109 /* StyleSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyleSelectorView.swift; sourceTree = "<group>"; };
-		4C0A00022F7E000000000002 /* StyleSelectorView+Previews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StyleSelectorView+Previews.swift"; sourceTree = "<group>"; };
 		4C7E963B2F7D267900C8B109 /* KeyringAppearanceColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringAppearanceColor.swift; sourceTree = "<group>"; };
 		4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "gulimche-Regular.ttf"; sourceTree = "<group>"; };
 		4C8426632ED375840050B6FE /* ColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPalette.swift; sourceTree = "<group>"; };
@@ -1100,7 +1101,6 @@
 		4CEC62132EAE08DA0099ECEE /* Radius.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Radius.swift; sourceTree = "<group>"; };
 		4CEC62142EAE08DA0099ECEE /* Spacing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spacing.swift; sourceTree = "<group>"; };
 		4CEC62162EAE08DA0099ECEE /* UIImage+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
-		4C0A00002F7E000000000001 /* UIColor+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
 		4CEC62172EAE08DA0099ECEE /* View+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extension.swift"; sourceTree = "<group>"; };
 		4CEC623E2EAE08DF0099ECEE /* CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionView.swift; sourceTree = "<group>"; };
 		4CEC62442EAE08DF0099ECEE /* FestivalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FestivalView.swift; sourceTree = "<group>"; };
@@ -3973,7 +3973,7 @@
 				CODE_SIGN_ENTITLEMENTS = WidgetKeychy/WidgetKeychyExtension.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = BUKGH5MWAT;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -4016,7 +4016,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = BUKGH5MWAT;
 				GENERATE_INFOPLIST_FILE = YES;
