@@ -67,7 +67,9 @@ extension LenticularVM {
     }
 
     /// 핀치 제스처 종료 시 스케일 적용 + 오프셋 재클램핑
+    /// - cardSize는 composeAtlas의 좌표계 변환을 위해 VM에도 저장됨
     func applyScale(_ gestureScale: CGFloat, target: ImageTarget, cardSize: CGSize) {
+        sourceCardSize = cardSize
         switch target {
         case .a:
             photoScaleA = min(max(photoScaleA * gestureScale, 1.0), 3.0)
@@ -81,7 +83,9 @@ extension LenticularVM {
     }
 
     /// 드래그 제스처 종료 시 오프셋 적용 (클램핑 포함)
+    /// - cardSize는 composeAtlas의 좌표계 변환을 위해 VM에도 저장됨
     func applyOffset(_ translation: CGSize, target: ImageTarget, cardSize: CGSize) {
+        sourceCardSize = cardSize
         switch target {
         case .a:
             let maxOff = maxOffset(for: .a, scale: photoScaleA, cardSize: cardSize)
@@ -103,12 +107,21 @@ extension LenticularVM {
     // MARK: - 아틀라스 합성
 
     /// 사용자 크롭(스케일/오프셋) 적용 후 A+B 아틀라스 합성 → bodyImage에 저장
+    ///
+    /// offset이 `sourceCardSize` 좌표계 기준이므로 `targetSize` 좌표계로 변환이 필요하다.
+    /// `sourceCardSize`는 `applyScale`/`applyOffset` 호출 시 VM이 자동으로 기록한다.
+    /// - Precondition: 호출 전에 사용자가 최소 한 번 이상 카드를 편집했어야 한다 (sourceCardSize 기록).
     func composeAtlas() {
         guard let a = imageA, let b = imageB else { return }
-        let targetSize = KeyringScale.maxSize(for: "Lenticular") // 300×390
+        assert(sourceCardSize != .zero, "composeAtlas 호출 전 sourceCardSize가 기록되지 않음 — applyScale/applyOffset이 먼저 호출되어야 함")
+        let targetSize = KeyringScale.maxSize(for: templateId)
 
         let croppedA = cropImage(a, scale: photoScaleA, offset: photoOffsetA, targetSize: targetSize)
         let croppedB = cropImage(b, scale: photoScaleB, offset: photoOffsetB, targetSize: targetSize)
+
+        // 썸네일 등 편집 결과를 보여주는 뷰에서 재사용
+        croppedImageA = croppedA
+        croppedImageB = croppedB
 
         bodyImage = TextureComposer.compose(
             imageA: croppedA,
@@ -118,6 +131,10 @@ extension LenticularVM {
     }
 
     /// 이미지에 사용자 크롭(스케일/오프셋)을 적용하여 targetSize로 렌더링
+    ///
+    /// 핵심: 사용자의 offset은 `sourceCardSize` 좌표계에서 캡처된 값이므로,
+    /// `targetSize` 좌표계로 그릴 때는 두 fillScale의 비율만큼 변환해야 한다.
+    /// 변환 공식: `convertedOffset = offset × (fillScale_target / fillScale_source)`
     private func cropImage(
         _ image: UIImage,
         scale: CGFloat,
@@ -126,15 +143,29 @@ extension LenticularVM {
     ) -> UIImage {
         let renderer = UIGraphicsImageRenderer(size: targetSize)
         return renderer.image { _ in
+            // target 좌표계의 fillScale (실제 그리기에 사용)
             let fillScale = max(targetSize.width / image.size.width,
                                 targetSize.height / image.size.height)
             let drawSize = CGSize(
                 width: image.size.width * fillScale * scale,
                 height: image.size.height * fillScale * scale
             )
+
+            // source 좌표계의 fillScale (사용자 offset이 기반으로 하는 좌표계)
+            let sourceFillScale = max(sourceCardSize.width / image.size.width,
+                                      sourceCardSize.height / image.size.height)
+            // 두 좌표계 비율 — source → target 변환 계수
+            // sourceCardSize가 아직 기록되지 않았으면 변환 없이 원점에 그림 (이 경우 offset은 .zero일 것)
+            let ratio = sourceFillScale > 0 ? (fillScale / sourceFillScale) : 1.0
+
+            let convertedOffset = CGSize(
+                width: offset.width * ratio,
+                height: offset.height * ratio
+            )
+
             let drawOrigin = CGPoint(
-                x: (targetSize.width - drawSize.width) / 2 + offset.width,
-                y: (targetSize.height - drawSize.height) / 2 + offset.height
+                x: (targetSize.width - drawSize.width) / 2 + convertedOffset.width,
+                y: (targetSize.height - drawSize.height) / 2 + convertedOffset.height
             )
             image.draw(in: CGRect(origin: drawOrigin, size: drawSize))
         }

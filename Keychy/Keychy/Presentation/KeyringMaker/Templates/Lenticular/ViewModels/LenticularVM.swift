@@ -55,10 +55,21 @@ class LenticularVM: KeyringViewModelProtocol {
     var photoScaleB: CGFloat = 1.0
     var photoOffsetB: CGSize = .zero
 
+    /// 편집 뷰에서 제스처가 기반으로 하는 카드 크기
+    /// `applyScale`/`applyOffset`이 호출될 때 자동 갱신되며,
+    /// `composeAtlas`가 targetSize 좌표계로 변환할 때 사용한다.
+    var sourceCardSize: CGSize = .zero
+
     // MARK: - Body Image
     /// A+B 가로 합성 아틀라스 (셰이더가 UV로 좌/우 분리 샘플링)
     var bodyImage: UIImage? = nil
     var hookOffsetY: CGFloat = 0.0
+
+    // MARK: - Cropped Images (사용자 편집 반영본)
+    /// 사용자가 선택/편집한 A/B를 아틀라스용으로 크롭한 결과
+    /// FusionView 썸네일 등 편집 결과를 보여줘야 하는 곳에서 사용
+    var croppedImageA: UIImage?
+    var croppedImageB: UIImage?
 
     // MARK: - Info Data
     var nameText: String = ""
@@ -156,7 +167,10 @@ class LenticularVM: KeyringViewModelProtocol {
         photoOffsetA = .zero
         photoScaleB = 1.0
         photoOffsetB = .zero
+        sourceCardSize = .zero
         bodyImage = nil
+        croppedImageA = nil
+        croppedImageB = nil
         selectedShimmerColor = .preset(.silver)
         selectedBorderColor = .preset(.silver)
     }
