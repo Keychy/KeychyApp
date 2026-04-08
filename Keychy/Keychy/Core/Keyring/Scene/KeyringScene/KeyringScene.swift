@@ -156,17 +156,22 @@ class KeyringScene: SKScene {
             }
             .store(in: &cancellables)
 
-        // 렌티큘러 VM인 경우 styleSubject 구독 → 시머/테두리 독립 실시간 업데이트
-        if let lenticularVM = viewModel as? LenticularVM {
-            // Setup 완료 후 초기 스타일 적용 (bodyNode 생성 이후)
-            let initialShimmer = lenticularVM.selectedShimmerColor
-            let initialBorder = lenticularVM.selectedBorderColor
+        // 렌티큘러 등 자이로 템플릿: 초기 스타일(시머/테두리) 적용
+        // - 편집 중(LenticularVM): selectedShimmerColor.firestoreId 반환
+        // - 영상 생성 시(KeyringAdapter): 저장된 Keyring 모델의 ID 반환
+        // 어느 경로든 `KeyringAppearanceColor.from(id:)`로 nil-safe 복원 가능
+        if viewModel.isGyroscope {
+            let initialShimmer = KeyringAppearanceColor.from(id: viewModel.shimmerColorId)
+            let initialBorder = KeyringAppearanceColor.from(id: viewModel.borderColorId)
             let originalSetupComplete = self.onSetupComplete
             self.onSetupComplete = { [weak self] in
                 self?.updateStyleUniforms(shimmer: initialShimmer, border: initialBorder)
                 originalSetupComplete?()
             }
+        }
 
+        // LenticularVM 전용: styleSubject 구독 → 편집 중 시머/테두리 실시간 업데이트
+        if let lenticularVM = viewModel as? LenticularVM {
             lenticularVM.styleSubject
                 .sink { [weak self] update in
                     self?.updateStyleUniforms(shimmer: update.shimmer, border: update.border)

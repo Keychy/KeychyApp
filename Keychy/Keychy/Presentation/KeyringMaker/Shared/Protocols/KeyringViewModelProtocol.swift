@@ -66,6 +66,13 @@ protocol KeyringViewModelProtocol: AnyObject, Observable {
     /// 자이로 인터랙션 사용 여부 (렌티큘러 등)
     var isGyroscope: Bool { get }
 
+    /// 시머(광택) 색상 ID (렌티큘러 등 스타일이 있는 템플릿용, 없으면 nil)
+    /// KeyringScene이 `KeyringAppearanceColor.from(id:)`로 변환하여 셰이더에 적용
+    var shimmerColorId: String? { get }
+
+    /// 테두리 색상 ID (렌티큘러 등 스타일이 있는 템플릿용, 없으면 nil)
+    var borderColorId: String? { get }
+
     /// 템플릿 ID
     var templateId: String { get }
 
@@ -167,6 +174,12 @@ extension KeyringViewModelProtocol {
 
     /// 기본값: 자이로 비사용
     var isGyroscope: Bool { false }
+
+    /// 기본값: 시머 색상 미지정 (렌티큘러가 아닌 템플릿은 nil 반환)
+    var shimmerColorId: String? { nil }
+
+    /// 기본값: 테두리 색상 미지정 (렌티큘러가 아닌 템플릿은 nil 반환)
+    var borderColorId: String? { nil }
 
     /// 기본 구현: 아무것도 하지 않음 (필요한 템플릿에서 override)
     func onModeChanged(from oldMode: CustomizingMode, to newMode: CustomizingMode) {}

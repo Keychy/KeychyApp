@@ -80,6 +80,14 @@ class LenticularVM: KeyringViewModelProtocol {
     var chainLength: Int { template?.chainLength ?? 3 }
     var isGyroscope: Bool { template?.interactions.contains("tilt") ?? true }
 
+    // MARK: - KeyringViewModelProtocol: Style ID (렌티큘러 전용)
+    /// 시머 색상 ID — KeyringScene이 초기 스타일 적용 시 참조
+    /// 실시간 편집 업데이트는 `styleSubject`를 통해 별도로 처리됨
+    var shimmerColorId: String? { selectedShimmerColor.firestoreId }
+
+    /// 테두리 색상 ID — KeyringScene이 초기 스타일 적용 시 참조
+    var borderColorId: String? { selectedBorderColor.firestoreId }
+
     // MARK: - Customizing Modes
     /// 렌티큘러: 시머 색상 선택 + 이펙트
     var availableCustomizingModes: [CustomizingMode] { [.style, .effect] }

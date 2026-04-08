@@ -228,7 +228,10 @@ extension CollectionViewModel {
                     originalId: baseOriginalId,
                     chainLength: keyring.chainLength,
                     isNew: true,
-                    hookOffsetY: keyring.hookOffsetY
+                    hookOffsetY: keyring.hookOffsetY,
+                    isGyroscope: keyring.isGyroscope,
+                    shimmerColorId: keyring.shimmerColorId,
+                    borderColorId: keyring.borderColorId
                 )
 
                 // Firestore에 저장
