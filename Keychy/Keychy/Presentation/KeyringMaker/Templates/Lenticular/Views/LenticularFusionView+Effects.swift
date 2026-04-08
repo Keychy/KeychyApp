@@ -91,7 +91,8 @@ extension LenticularFusionView {
             let thumbWidth = cardWidth * FusionLayout.thumbScale
             let thumbHeight = cardHeight * FusionLayout.thumbScale
 
-            if let imageA = viewModel.imageA {
+            // 사용자 편집이 반영된 크롭 이미지만 사용 (원본 폴백 금지 — 기존 버그 재현 방지)
+            if let imageA = viewModel.croppedImageA {
                 Image(uiImage: imageA)
                     .resizable()
                     .scaledToFill()
@@ -105,7 +106,7 @@ extension LenticularFusionView {
                     .opacity(phase == .merge ? 0.0 : (aScale > 0 ? 1.0 : 0.0))
             }
 
-            if let imageB = viewModel.imageB {
+            if let imageB = viewModel.croppedImageB {
                 Image(uiImage: imageB)
                     .resizable()
                     .scaledToFill()
