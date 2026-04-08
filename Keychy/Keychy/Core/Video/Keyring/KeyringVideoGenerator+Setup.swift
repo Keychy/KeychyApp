@@ -26,6 +26,7 @@ extension KeyringVideoGenerator {
             ringType: .basic,
             chainType: .basic,
             templateId: viewModel.templateId,
+            isGyroscope: viewModel.isGyroscope,
             screen: .video,
             bodyImage: viewModel.bodyImage,
             backgroundColor: .clear,
@@ -34,7 +35,6 @@ extension KeyringVideoGenerator {
         )
         scene.scaleMode = .aspectFill
         scene.size = CGSize(width: sceneWidth, height: sceneHeight)
-        scene.bind(to: viewModel)
 
         // 배경 이미지 추가 (scene보다 여유 있게 배치)
         if let bgImage = backgroundImage {
@@ -45,10 +45,14 @@ extension KeyringVideoGenerator {
             scene.addChild(backgroundNode)
         }
 
-        // Setup 완료 콜백 설정
+        // Setup 완료 콜백 설정 (bind 전에 설정해야 bind가 이 콜백을 래핑하여
+        // 렌티큘러 스타일 초기값을 적용할 수 있음)
         scene.onSetupComplete = {
             setupComplete()
         }
+
+        // VM 바인딩 (onSetupComplete 래핑 + 렌티큘러 스타일 초기 적용)
+        scene.bind(to: viewModel)
 
         return scene
     }

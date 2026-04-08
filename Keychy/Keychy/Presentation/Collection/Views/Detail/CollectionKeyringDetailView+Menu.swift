@@ -150,7 +150,8 @@ extension CollectionKeyringDetailView {
                     KeyringFrameCompositor.generateFrames(
                         from: bodyImage,
                         chainLength: keyring.chainLength,
-                        template: keyring.selectedTemplate
+                        template: keyring.selectedTemplate,
+                        isGyroscope: keyring.isGyroscope
                     )
                 }).value else {
                     await showWidgetAddFail()
@@ -171,7 +172,8 @@ extension CollectionKeyringDetailView {
                         id: documentId,
                         name: keyring.name,
                         imageData: imageData,
-                        createdAt: keyring.createdAt
+                        createdAt: keyring.createdAt,
+                        isGyroscope: keyring.isGyroscope
                     )
 
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {

@@ -57,7 +57,8 @@ extension CollectionViewModel {
                                 id: documentId,
                                 name: name,
                                 imagePath: existing.imagePath,
-                                createdAt: existing.createdAt
+                                createdAt: existing.createdAt,
+                                isGyroscope: existing.isGyroscope
                             )
                             KeyringImageCache.shared.saveWidgetKeyrings(widgetKeyrings)
 
@@ -227,7 +228,10 @@ extension CollectionViewModel {
                     originalId: baseOriginalId,
                     chainLength: keyring.chainLength,
                     isNew: true,
-                    hookOffsetY: keyring.hookOffsetY
+                    hookOffsetY: keyring.hookOffsetY,
+                    isGyroscope: keyring.isGyroscope,
+                    shimmerColorId: keyring.shimmerColorId,
+                    borderColorId: keyring.borderColorId
                 )
 
                 // Firestore에 저장

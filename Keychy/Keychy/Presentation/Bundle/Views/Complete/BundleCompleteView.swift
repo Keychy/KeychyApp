@@ -147,11 +147,24 @@ extension BundleCompleteView {
 
         // BundleCreateView에서 설정한 selectedKeyringsForBundle 사용
         let selectedKeyrings = bundleVM.selectedKeyringsForBundle
+        let keyringOrder = bundleVM.keyringOrderForBundle
 
-        // 키링 데이터 생성 (Firebase 호출 없이 로컬 데이터 사용)
+        // 장착 순서 기반 정렬, 없으면 슬롯 index 순 fallback
+        let orderedEntries: [(slotIndex: Int, keyring: Keyring)]
+        if !keyringOrder.isEmpty {
+            orderedEntries = keyringOrder.compactMap { slotIndex in
+                guard let keyring = selectedKeyrings[slotIndex] else { return nil }
+                return (slotIndex, keyring)
+            }
+        } else {
+            orderedEntries = selectedKeyrings
+                .sorted(by: { $0.key < $1.key })
+                .map { ($0.key, $0.value) }
+        }
+
         var dataList: [MultiKeyringScene.KeyringData] = []
-
-        for (index, keyring) in selectedKeyrings.sorted(by: { $0.key < $1.key }) {
+        
+        for (index, keyring) in orderedEntries {
             guard index < carabiner.maxKeyringCount else { continue }
 
             let soundId = keyring.soundId
@@ -174,14 +187,16 @@ extension BundleCompleteView {
                 customSoundURL: customSoundURL,
                 particleId: keyring.particleId,
                 hookOffsetY: keyring.hookOffsetY,
-                chainLength: keyring.chainLength
+                chainLength: keyring.chainLength,
+                isGyroscope: keyring.isGyroscope,
+                shimmerColorId: keyring.shimmerColorId,
+                borderColorId: keyring.borderColorId
             )
             dataList.append(data)
         }
 
         keyringDataList = dataList
 
-        // 키링이 없으면 바로 준비 완료
         if dataList.isEmpty {
             isSceneReady = true
         }
@@ -282,6 +297,7 @@ extension BundleCompleteView {
         ToolbarItem(placement: .topBarLeading) {
             Button {
                 cleanupCachedVideo()
+                bundleVM.resetCreateState()
                 bundleVM.restoreMainBundle()
                 TabBarManager.switchTo(.workshop)
                 TabBarManager.show()
@@ -319,6 +335,7 @@ extension BundleCompleteView {
 
     private func navigateToInventory() {
         cleanupCachedVideo()
+        bundleVM.resetCreateState()
         bundleVM.restoreMainBundle()
         CollectionViewModel.shouldStartWithBundleTab = true
         TabBarManager.switchTo(.collection)

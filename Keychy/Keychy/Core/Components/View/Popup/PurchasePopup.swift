@@ -45,19 +45,20 @@ struct PurchasePopup: View {
                     Image(.myCoinMini)
                         .resizable()
                         .frame(width: 22, height: 22)
-                    
+
                     Text("\(price)")
                         .typography(.nanum18EB)
                         .foregroundColor(.white100)
                         .padding(.top, 2)
-                 }
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12.5)
+                .background(
+                    RoundedRectangle(cornerRadius: 100)
+                        .fill(.black80)
+                )
+                .contentShape(RoundedRectangle(cornerRadius: 100))
             }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 12.5)
-            .background(
-                RoundedRectangle(cornerRadius: 100)
-                    .fill(.black80)
-            )
             .buttonStyle(.plain)
 
         }

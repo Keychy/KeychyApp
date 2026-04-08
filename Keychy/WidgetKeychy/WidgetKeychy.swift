@@ -49,11 +49,14 @@ struct KeyringWidgetProvider: AppIntentTimelineProvider {
                             animationFrames: frames,
                             animationStartDate: startTime
                         )
-                        // 정지 엔트리 (stopDate에 자동 전환) — 중앙 프레임만 유지
+                        // 정지 엔트리 (stopDate에 자동 전환) — 렌티큘러는 0번 근처, 일반은 중앙 프레임
+                        let restIndex = keyring.isGyroscope
+                            ? AnimationFrameStorage.lenticularRestFrameIndex
+                            : AnimationFrameStorage.baseFrameCount / 2
                         let stopEntry = KeyringWidgetEntry(
                             date: stopDate,
                             configuration: configuration,
-                            animationFrames: frames.map { [$0[AnimationFrameStorage.baseFrameCount / 2]] }
+                            animationFrames: frames.map { [$0[min(restIndex, $0.count - 1)]] }
                         )
                         return Timeline(entries: [animEntry, stopEntry], policy: .never)
                     } else {
@@ -137,7 +140,11 @@ struct KeyringWidgetEntryView: View {
                         startDate: startDate
                     )
                 } else {
-                    Image(uiImage: frames[min(AnimationFrameStorage.baseFrameCount / 2, frames.count - 1)])
+                    // 렌티큘러: 이미지 A가 선명한 프레임 / 일반: 중앙 프레임
+                    let restIdx = keyring.isGyroscope
+                        ? AnimationFrameStorage.lenticularRestFrameIndex
+                        : AnimationFrameStorage.baseFrameCount / 2
+                    Image(uiImage: frames[min(restIdx, frames.count - 1)])
                         .resizable()
                         .scaledToFill()
                         .frame(width: size, height: size)

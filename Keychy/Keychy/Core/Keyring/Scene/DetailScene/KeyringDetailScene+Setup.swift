@@ -156,13 +156,44 @@ extension KeyringDetailScene {
         // Body 중심 Y 계산: 체인 끝에서 body 절반만큼 내리고, 구멍 위치만큼 올림
         let bodyCenterY = lastChainBottomY - bodyHalfHeight + actualHookOffsetY + 4 // 4는 조절값
 
-        body.position = CGPoint(x: centerX, y: bodyCenterY)
-        body.zPosition = -1  // Body는 체인 아래
-        addChild(body)
-        self.bodyNode = body
-        
+        // 렌티큘러: SKTransformNode로 래핑 (바디만 3D 회전 적용)
+        let finalBody: SKNode
+        if isGyroscope, let spriteBody = body as? SKSpriteNode {
+            let container = SKSpriteNode(color: .clear, size: spriteBody.size)
+
+            let newPhysics = SKPhysicsBody(rectangleOf: spriteBody.size)
+            if let original = spriteBody.physicsBody {
+                newPhysics.isDynamic = original.isDynamic
+                newPhysics.affectedByGravity = original.affectedByGravity
+                newPhysics.allowsRotation = original.allowsRotation
+                newPhysics.mass = original.mass
+                newPhysics.friction = original.friction
+                newPhysics.restitution = original.restitution
+                newPhysics.linearDamping = original.linearDamping
+                newPhysics.angularDamping = original.angularDamping
+            }
+            container.physicsBody = newPhysics
+            spriteBody.physicsBody = nil
+
+            let transformNode = SKTransformNode()
+            transformNode.name = "lenticularTransform"
+            spriteBody.name = "lenticularVisual"
+            spriteBody.position = .zero
+
+            transformNode.addChild(spriteBody)
+            container.addChild(transformNode)
+            finalBody = container
+        } else {
+            finalBody = body
+        }
+
+        finalBody.position = CGPoint(x: centerX, y: bodyCenterY)
+        finalBody.zPosition = -1  // Body는 체인 아래
+        addChild(finalBody)
+        self.bodyNode = finalBody
+
         // 4. 조인트 연결
-        connectComponents(ring: ring, chains: chains, body: body)
+        connectComponents(ring: ring, chains: chains, body: finalBody)
         
         self.isReady = true
         
@@ -265,6 +296,22 @@ extension KeyringDetailScene {
     
     // MARK: - Mini Body 생성 (KeyringScale 사용)
     private func createMiniImageBody(image: UIImage) -> SKSpriteNode {
+        // 자이로 템플릿: 셰이더 적용 바디 생성
+        if isGyroscope {
+            let shimmer = KeyringAppearanceColor.from(id: shimmerColorId)
+            let border = KeyringAppearanceColor.from(id: borderColorId ?? shimmerColorId)
+            let node = KeyringBodyComponent.createLenticularBody(
+                atlasImage: image,
+                templateId: templateId ?? "Lenticular",
+                shimmerColor: shimmer.shaderColor,
+                shimmerMode: shimmer.shaderMode,
+                borderColor: border.shaderColor,
+                borderMode: border.shaderMode
+            )
+            node.physicsBody?.mass = 2.0
+            return node
+        }
+
         let maxSize = KeyringScale.maxSize(for: templateId ?? "")
         let originalSize = image.size
 

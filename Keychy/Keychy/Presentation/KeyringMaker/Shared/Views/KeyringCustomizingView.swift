@@ -385,7 +385,7 @@ extension KeyringCustomizingView {
                     .shadow(color: .black.opacity(0.25), radius: 3.83)
 
                 VStack(spacing: 0) {
-                    Image(mode.btnImage(isSelected: selectedMode == mode))
+                    mode.btnImageView(isSelected: selectedMode == mode)
                     Text(mode.rawValue)
                         .typography(.suit9B)
                         .foregroundStyle(selectedMode == mode ? .white100 : .gray400)

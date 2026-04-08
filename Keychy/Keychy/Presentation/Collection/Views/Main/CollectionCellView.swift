@@ -167,10 +167,13 @@ struct CollectionCellView: View {
             chainType: chainType,
             bodyImage: keyring.bodyImage,
             templateId: keyring.selectedTemplate,
+            isGyroscope: keyring.isGyroscope,
             targetSize: CGSize(width: 175, height: 233),
             zoomScale: 2.0,
             hookOffsetY: keyring.hookOffsetY,
             chainLength: keyring.chainLength,
+            shimmerColorId: keyring.shimmerColorId,
+            borderColorId: keyring.borderColorId,
             onLoadingComplete: {
                 DispatchQueue.main.async {
                     withAnimation {
@@ -267,11 +270,14 @@ struct CollectionCellView: View {
                 chainType: chainType,
                 bodyImage: keyring.bodyImage,
                 templateId: keyring.selectedTemplate,
+                isGyroscope: keyring.isGyroscope,
                 targetSize: CGSize(width: 175, height: 233),
                 customBackgroundColor: .clear,
                 zoomScale: 2.0,
                 hookOffsetY: keyring.hookOffsetY,
                 chainLength: keyring.chainLength,
+                shimmerColorId: keyring.shimmerColorId,
+                borderColorId: keyring.borderColorId,
                 onLoadingComplete: {
                     loadingCompleted = true
                 }

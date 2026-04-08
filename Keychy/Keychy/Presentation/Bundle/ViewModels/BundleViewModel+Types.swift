@@ -37,4 +37,7 @@ struct KeyringInfo {
     let particleId: String
     let hookOffsetY: CGFloat?
     let chainLength: Int
+    let isGyroscope: Bool
+    let shimmerColorId: String?
+    let borderColorId: String?
 }

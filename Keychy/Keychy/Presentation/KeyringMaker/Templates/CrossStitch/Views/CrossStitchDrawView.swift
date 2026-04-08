@@ -13,6 +13,10 @@ struct CrossStitchDrawView: View {
 
     @State private var showResetAlert = false
     @State private var isResetting = false
+    @State private var swipeDisabled = false
+
+    /// "다음" 버튼 다중 탭 방지
+    @State private var isProcessingNext = false
 
     /// 줌/패닝 상태
     @State private var scale: CGFloat = 1.0
@@ -67,11 +71,26 @@ struct CrossStitchDrawView: View {
 
                 // MARK: - 커스텀 네비게이션
                 customNavigationBar
+
+                // MARK: - 로딩 오버레이
+                if isProcessingNext {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                    LoadingAlert(type: .short40, message: nil)
+                }
             }
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(true)
+        .swipeBackGesture(enabled: !swipeDisabled)
+        .onAppear {
+            // sheet 닫힘 후 Preview의 swipeBackGesture(enabled: true)가
+            // 덮어쓰는 타이밍 이슈 방지를 위해 onAppear에서 state 변경으로 재트리거
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                swipeDisabled = true
+            }
+        }
         .alert("작업을 취소하시겠습니까?", isPresented: $showResetAlert) {
             Button("취소", role: .cancel) { }
             Button("확인", role: .destructive) {
@@ -342,11 +361,15 @@ extension CrossStitchDrawView {
             Text("자수를 놓아주세요")
         } trailing: {
             NextToolbarButton {
+                guard !isProcessingNext else { return }
+                isProcessingNext = true
                 Task {
                     await viewModel.updateBodyImage()
                     router.push(.crossStitchCustomizing)
+                    isProcessingNext = false
                 }
             }
+            .disabled(isProcessingNext)
             .frame(width: 44, height: 44)
             .offset(x: -4)
         }

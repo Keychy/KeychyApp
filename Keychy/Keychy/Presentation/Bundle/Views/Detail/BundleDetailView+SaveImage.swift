@@ -82,33 +82,43 @@ extension BundleDetailView {
             return
         }
         
-        // 캡쳐용 키링 데이터 생성 - Firebase에서 키링 정보 가져오기
+        // 장착 순서 기반으로 슬롯 index 목록 결정
+        // keyringOrder가 있으면 장착 순서대로, 없으면 슬롯 index 순 fallback (구버전 데이터)
+        let orderedIndices: [Int]
+        if !bundle.keyringOrder.isEmpty {
+            orderedIndices = bundle.keyringOrder
+        } else {
+            orderedIndices = bundle.keyrings.indices
+                .filter { bundle.keyrings[$0] != "none" && !bundle.keyrings[$0].isEmpty }
+                .sorted()
+        }
+
+        // 캡처용 키링 데이터 생성 - 장착 순서대로 배열 구성
         var keyringDataList: [MultiKeyringCaptureScene.KeyringData] = []
         
-        for (index, keyringId) in bundle.keyrings.enumerated() {
-            // 유효하지 않은 키링 ID 필터링
-            guard index < cb.maxKeyringCount,
-                  keyringId != "none",
-                  !keyringId.isEmpty else { 
-                continue 
-            }
-            
-            // Firebase에서 키링 정보 가져오기
-            guard let keyringInfo = await bundleVM.fetchKeyringInfo(keyringId: keyringId) else {
-                continue
-            }
-            
+        for slotIndex in orderedIndices {
+            guard slotIndex < cb.maxKeyringCount,
+                  slotIndex < bundle.keyrings.count else { continue }
+
+            let keyringId = bundle.keyrings[slotIndex]
+            guard keyringId != "none", !keyringId.isEmpty else { continue }
+
+            guard let keyringInfo = await bundleVM.fetchKeyringInfo(keyringId: keyringId) else { continue }
+
             keyringDataList.append(
                 MultiKeyringCaptureScene.KeyringData(
-                    index: index,
+                    index: slotIndex,
                     position: CGPoint(
-                        x: cb.keyringXPosition[index],
-                        y: cb.keyringYPosition[index]
+                        x: cb.keyringXPosition[slotIndex],
+                        y: cb.keyringYPosition[slotIndex]
                     ),
                     bodyImageURL: keyringInfo.bodyImage,
                     templateId: keyringInfo.selectedTemplate ?? "",
                     hookOffsetY: keyringInfo.hookOffsetY,
-                    chainLength: keyringInfo.chainLength
+                    chainLength: keyringInfo.chainLength,
+                    isGyroscope: keyringInfo.isGyroscope,
+                    shimmerColorId: keyringInfo.shimmerColorId,
+                    borderColorId: keyringInfo.borderColorId
                 )
             )
         }

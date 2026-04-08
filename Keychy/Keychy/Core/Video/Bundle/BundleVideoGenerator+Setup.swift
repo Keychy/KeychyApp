@@ -46,7 +46,8 @@ extension BundleVideoGenerator {
                 customSoundURL: data.customSoundURL,
                 particleId: data.particleId,
                 hookOffsetY: data.hookOffsetY,
-                chainLength: data.chainLength
+                chainLength: data.chainLength,
+                isGyroscope: data.isGyroscope
             )
         }
 

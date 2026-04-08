@@ -14,7 +14,8 @@ struct PixelDrawView: View {
     /// 팔레트 표시 여부 (그리기 모드일 때만 표시)
     @State private var showPalette: Bool = true
     @State private var showResetAlert = false
-    
+    @State private var swipeDisabled = false
+
     /// 화면 사라지기 전 그리드 렌더링 막기용 파라미터
     @State private var isResetting = false
     
@@ -24,6 +25,9 @@ struct PixelDrawView: View {
     @State private var offset: CGSize = .zero
     @State private var lastOffset: CGSize = .zero
     
+    /// "다음" 버튼 다중 탭 방지
+    @State private var isProcessingNext = false
+
     /// GlassEffect 애니메이션을 위한 네임스페이스
     @Namespace private var unionNamespace
 
@@ -77,11 +81,24 @@ struct PixelDrawView: View {
                 
                 // MARK: - 커스텀 네비게이션
                 customNavigationBar
+
+                // MARK: - 로딩 오버레이
+                if isProcessingNext {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                    LoadingAlert(type: .short40, message: nil)
+                }
             }
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(true)
+        .swipeBackGesture(enabled: !swipeDisabled)
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                swipeDisabled = true
+            }
+        }
         .alert("작업을 취소하시겠습니까?", isPresented: $showResetAlert) {
             Button("취소", role: .cancel) { }
             Button("확인", role: .destructive) {
@@ -363,11 +380,15 @@ extension PixelDrawView {
             Text("그림을 그려주세요")
         } trailing: {
             NextToolbarButton {
+                guard !isProcessingNext else { return }
+                isProcessingNext = true
                 Task {
                     await viewModel.updateBodyImage()
                     router.push(.pixelCustomizing)
+                    isProcessingNext = false
                 }
             }
+            .disabled(isProcessingNext)
             .frame(width: 44, height: 44)
             .offset(x: -4)
         }

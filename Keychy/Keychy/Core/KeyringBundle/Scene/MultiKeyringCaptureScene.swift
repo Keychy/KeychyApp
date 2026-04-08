@@ -20,14 +20,20 @@ class MultiKeyringCaptureScene: SKScene {
         let templateId: String  // 템플릿 ID (KeyringScale용)
         let hookOffsetY: CGFloat?  // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
         let chainLength: Int  // 체인 길이 (기본값 5)
+        let isGyroscope: Bool  // 자이로 인터랙션 사용 여부 (렌티큘러 등)
+        let shimmerColorId: String?  // 시머 색상 프리셋 ID (렌티큘러용)
+        let borderColorId: String?  // 테두리 색상 ID (nil이면 shimmerColorId 사용)
 
-        init(index: Int, position: CGPoint, bodyImageURL: String, templateId: String, hookOffsetY: CGFloat? = nil, chainLength: Int = 5) {
+        init(index: Int, position: CGPoint, bodyImageURL: String, templateId: String, hookOffsetY: CGFloat? = nil, chainLength: Int = 5, isGyroscope: Bool = false, shimmerColorId: String? = nil, borderColorId: String? = nil) {
             self.index = index
             self.position = position
             self.bodyImageURL = bodyImageURL
             self.templateId = templateId
             self.hookOffsetY = hookOffsetY
             self.chainLength = chainLength
+            self.isGyroscope = isGyroscope
+            self.shimmerColorId = shimmerColorId
+            self.borderColorId = borderColorId
         }
     }
 
@@ -253,10 +259,11 @@ class MultiKeyringCaptureScene: SKScene {
     // MARK: - Setup
 
     /// 모든 키링 정적 배치
+    /// keyringDataList는 이미 장착 순서대로 정렬된 배열이므로
+    /// enumerated()의 order(0,1,2...)를 baseZPosition으로 사용하여 레이어 순서 보장
     private func setupKeyrings() {
-        for data in keyringDataList {
-            // data.index가 원본 인덱스, 이를 그대로 사용하여 정확한 위치에 배치
-            setupSingleKeyring(data: data, order: data.index)
+        for (order, data) in keyringDataList.enumerated() {
+            setupSingleKeyring(data: data, order: order)
         }
     }
 
@@ -301,7 +308,10 @@ class MultiKeyringCaptureScene: SKScene {
                     templateId: data.templateId,
                     hookOffsetY: data.hookOffsetY,
                     chainLength: data.chainLength,
-                    baseZPosition: baseZPosition
+                    baseZPosition: baseZPosition,
+                    isGyroscope: data.isGyroscope,
+                    shimmerColorId: data.shimmerColorId,
+                    borderColorId: data.borderColorId
                 )
             }
             return
@@ -351,7 +361,10 @@ class MultiKeyringCaptureScene: SKScene {
                 hookOffsetY: data.hookOffsetY,
                 chainLength: data.chainLength,
                 baseZPosition: baseZPosition,
-                carabinerType: carabinerType
+                carabinerType: carabinerType,
+                isGyroscope: data.isGyroscope,
+                shimmerColorId: data.shimmerColorId,
+                borderColorId: data.borderColorId
             )
         }
     }
@@ -365,7 +378,10 @@ class MultiKeyringCaptureScene: SKScene {
         hookOffsetY: CGFloat?,
         chainLength: Int,
         baseZPosition: CGFloat,
-        carabinerType: CarabinerType? = nil
+        carabinerType: CarabinerType? = nil,
+        isGyroscope: Bool = false,
+        shimmerColorId: String? = nil,
+        borderColorId: String? = nil
     ) {
         // 뭉치용 키링 스케일
         let bundleScale = KeyringScale.bundleKeyringScale(for: carabinerId)
@@ -378,11 +394,11 @@ class MultiKeyringCaptureScene: SKScene {
 
         // chainLength를 기본으로 사용하되, 카라비너 타입에 따라 조정
         let chainCount: Int = {
-            if let carabinerType = currentCarabinerType {
-                // 카라비너가 있으면 plain은 chainLength - 1, 그 외는 chainLength 사용
-                return carabinerType == .plain ? max(chainLength - 1, 1) : chainLength
+            if let carabinerType = currentCarabinerType, carabinerType == .plain {
+                // plain 카라비너: 체인 1개 감소, 단 1개짜리는 2개로 증가 (0개 방지)
+                return chainLength <= 1 ? chainLength + 1 : chainLength - 1
             }
-            return chainLength  // 전달받은 chainLength 사용
+            return chainLength
         }()
 
         // 햄버거 타입에서도 기본 baseZPosition 사용 (카라비너 앞면 -800보다 위)
@@ -419,7 +435,10 @@ class MultiKeyringCaptureScene: SKScene {
                 templateId: templateId,
                 hookOffsetY: hookOffsetY,
                 baseZPosition: baseZPosition,
-                carabinerType: carabinerType
+                carabinerType: carabinerType,
+                isGyroscope: isGyroscope,
+                shimmerColorId: shimmerColorId,
+                borderColorId: borderColorId
             )
         }
     }
@@ -434,9 +453,12 @@ class MultiKeyringCaptureScene: SKScene {
         templateId: String,
         hookOffsetY: CGFloat?,
         baseZPosition: CGFloat,
-        carabinerType: CarabinerType? = nil
+        carabinerType: CarabinerType? = nil,
+        isGyroscope: Bool = false,
+        shimmerColorId: String? = nil,
+        borderColorId: String? = nil
     ) {
-        KeyringBodyComponent.createNode(from: bodyImageURL, templateId: templateId) { [weak self] body in
+        KeyringBodyComponent.createNode(from: bodyImageURL, templateId: templateId, isGyroscope: isGyroscope, shimmerColorId: shimmerColorId, borderColorId: borderColorId) { [weak self] body in
             guard let self = self, let body = body else {
                 self?.checkLoadingComplete()
                 return
@@ -444,7 +466,8 @@ class MultiKeyringCaptureScene: SKScene {
 
             // 뭉치용 키링 스케일 적용
             let bundleScale = KeyringScale.bundleKeyringScale(for: self.carabinerId)
-            body.setScale(bundleScale)
+            let bodyScale = KeyringScale.bundleBodyScale(for: templateId)
+            body.setScale(bundleScale * bodyScale)
 
             let bodyFrame = body.calculateAccumulatedFrame()
             let bodyHalfHeight = bodyFrame.height / 2
@@ -457,7 +480,8 @@ class MultiKeyringCaptureScene: SKScene {
             // hookOffsetYRatio: 원본 이미지(아크릴 효과 전) 높이 대비 구멍 위치 비율 (0.0 ~ 1.0)
             //                   0.0 = 이미지 상단, 1.0 = 이미지 하단
             // actualHookOffsetY: Scene의 실제 body 크기에 맞게 변환된 픽셀 값
-            let hookOffsetYRatio = hookOffsetY ?? 0.0
+            var hookOffsetYRatio = hookOffsetY ?? 0.0
+            if templateId == "PixelKeyring" { hookOffsetYRatio += 0.03 }
             let actualHookOffsetY = hookOffsetYRatio * bodyFrame.height
 
             // Body 중심 Y 계산: 체인 끝에서 body 절반만큼 내리고, 구멍 위치만큼 올림

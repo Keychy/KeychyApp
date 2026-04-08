@@ -111,6 +111,20 @@ private class KeyringAdapter: KeyringViewModelProtocol {
         keyring.selectedTemplate
     }
 
+    var isGyroscope: Bool {
+        keyring.isGyroscope
+    }
+
+    /// 렌티큘러 스타일 ID — 저장된 Keyring 모델의 값을 그대로 전달
+    /// KeyringScene이 `KeyringAppearanceColor.from(id:)`로 복원하여 셰이더에 적용
+    var shimmerColorId: String? {
+        keyring.shimmerColorId
+    }
+
+    var borderColorId: String? {
+        keyring.borderColorId
+    }
+
     var availableCustomizingModes: [CustomizingMode] {
         [.effect]
     }

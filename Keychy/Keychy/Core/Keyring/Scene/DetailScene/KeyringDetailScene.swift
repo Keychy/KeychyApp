@@ -13,8 +13,11 @@ class KeyringDetailScene: SKScene {
     // MARK: - Properties
     var bodyImage: String?
     var templateId: String?  // 템플릿 ID (옵션)
+    var isGyroscope: Bool  // 자이로 인터랙션 사용 여부
     var hookOffsetY: CGFloat?
     var chainLength: Int = 5  // 체인 링크 개수 (기본값 5)
+    var shimmerColorId: String?  // 시머 색상 프리셋 ID (nil이면 silver 기본값)
+    var borderColorId: String?   // 테두리 색상 ID (nil이면 shimmerColorId 사용)
     var onLoadingComplete: (() -> Void)?
     var cachedImages: KeyringImages?
     var isReady: Bool = false
@@ -45,6 +48,10 @@ class KeyringDetailScene: SKScene {
     
     // MARK: - 터치 인터랙션 활성화 여부
     var isTouchEnabled: Bool = true
+
+    // MARK: - 렌티큘러 햅틱
+    private var lenticularHaptic: LenticularHapticManager?
+    private var isCleaningUp = false
     
     // TODO: originalSize을 실행 중인 기기 사이즈로 설정 필요
     let originalSize = CGSize(width: 393, height: 852)
@@ -56,16 +63,22 @@ class KeyringDetailScene: SKScene {
         chainType: ChainType,
         bodyImage: String? = nil,
         templateId: String? = nil,
+        isGyroscope: Bool = false,
         hookOffsetY: CGFloat? = nil,
         chainLength: Int = 5,
+        shimmerColorId: String? = nil,
+        borderColorId: String? = nil,
         onLoadingComplete: (() -> Void)? = nil
     ) {
         self.currentRingType = ringType
         self.currentChainType = chainType
         self.bodyImage = bodyImage
         self.templateId = templateId
+        self.isGyroscope = isGyroscope
         self.hookOffsetY = hookOffsetY
         self.chainLength = chainLength
+        self.shimmerColorId = shimmerColorId
+        self.borderColorId = borderColorId
         self.onLoadingComplete = onLoadingComplete
 
         super.init(size: .zero)
@@ -83,8 +96,38 @@ class KeyringDetailScene: SKScene {
     override func didMove(to view: SKView) {
         backgroundColor = .clear
         physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
-        
+
         setupKeyring()
+
+        // 자이로 시작 + 햅틱 매니저 생성
+        if isGyroscope {
+            LenticularMotionManager.shared.start()
+            lenticularHaptic = LenticularHapticManager()
+        }
+    }
+
+    // MARK: - 매 프레임 업데이트
+    override func update(_ currentTime: TimeInterval) {
+        super.update(currentTime)
+
+        // 자이로: SKTransformNode로 바디만 Y축 3D 회전 + 셰이더 u_tilt 갱신 + 햅틱
+        if isGyroscope {
+            let tilt = LenticularMotionManager.shared.tilt
+            let signedTilt = LenticularMotionManager.shared.signedTilt
+            let signedPitch = LenticularMotionManager.shared.signedPitch
+
+            if let body = bodyNode,
+               let transform = body.childNode(withName: "lenticularTransform") as? SKTransformNode {
+                transform.yRotation = CGFloat(signedTilt) * KeyringScale.lenticularYRotationMax
+                transform.xRotation = CGFloat(signedPitch) * KeyringScale.lenticularXRotationMax
+
+                if let visual = transform.childNode(withName: "lenticularVisual") as? SKSpriteNode,
+                   let shader = visual.shader {
+                    shader.uniformNamed("u_tilt")?.floatValue = Float(tilt)
+                }
+            }
+            lenticularHaptic?.update(tilt: tilt)
+        }
     }
     
     override func willMove(from view: SKView) {
@@ -94,6 +137,15 @@ class KeyringDetailScene: SKScene {
     
     // MARK: - 메모리 정리
     private func cleanup() {
+        guard !isCleaningUp else { return }
+        isCleaningUp = true
+
+        // 자이로 정지
+        if isGyroscope {
+            LenticularMotionManager.shared.stop()
+            lenticularHaptic = nil
+        }
+
         // 콜백 제거
         onLoadingComplete = nil
         onPlayParticleEffect = nil

@@ -49,7 +49,7 @@ extension PixelVM {
     /// 픽셀 이미지와 프레임 이미지를 합성
     func composeWithFrame(pixelImage: UIImage, frameImage: UIImage) -> UIImage {
         // 캔버스 크기를 키워서 프레임 이동 시 잘리지 않도록
-        let targetSize: CGFloat = 200
+        let targetSize: CGFloat = 277
         let frameOffsetX: CGFloat = 2.0 // 프레임을 오른쪽으로 2 이동
         let canvasWidth: CGFloat = targetSize + frameOffsetX // 오른쪽만 여유
         let finalSize = CGSize(width: canvasWidth, height: targetSize)
