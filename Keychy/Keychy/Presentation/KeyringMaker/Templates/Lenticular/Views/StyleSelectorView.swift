@@ -28,7 +28,7 @@ struct StyleSelectorView: View {
                 presets: KeyringStylePreset.shimmerPresets,
                 selected: viewModel.selectedShimmerEffect,
                 tintBinding: shimmerTintBinding(),
-                onSelect: { handleShimmerSelect(preset: $0) }
+                onSelect: { viewModel.selectShimmerEffect(preset: $0, cartItems: $cartItems) }
             )
 
             styleSection(
@@ -37,7 +37,7 @@ struct StyleSelectorView: View {
                 presets: KeyringStylePreset.borderPresets,
                 selected: viewModel.selectedBorderEffect,
                 tintBinding: borderTintBinding(),
-                onSelect: { handleBorderSelect(preset: $0) }
+                onSelect: { viewModel.selectBorderEffect(preset: $0, cartItems: $cartItems) }
             )
 
             Spacer()
@@ -61,87 +61,19 @@ struct StyleSelectorView: View {
         }
     }
 
-    // MARK: - 시머/테두리 선택 핸들러 (3-way 분기)
-    /// 시머 프리셋 선택: 무료/보유 → 즉시 적용 / 미보유 유료 → 카트 추가
-    private func handleShimmerSelect(preset: KeyringStylePreset) {
-        let isOwned = StylePresetManager.shared.isOwned(
-            preset: preset,
-            in: .shimmer,
-            userManager: viewModel.userManager
-        )
-        let isUsable = preset.isFree || isOwned
-        let isCurrentlySelected = viewModel.selectedShimmerEffect.activePreset == preset
-
-        if isUsable {
-            // 무료 or 보유 → 즉시 적용 + 카트에서 시머 제거
-            viewModel.updateShimmerEffect(.preset(preset))
-            cartItems.removeAll { $0.type == .shimmerEffect }
-        } else if isCurrentlySelected {
-            // 미보유 유료 + 이미 선택된 상태 → 선택 해제 (silver로 폴백 + 카트 제거)
-            viewModel.updateShimmerEffect(.preset(.silver))
-            cartItems.removeAll { $0.type == .shimmerEffect }
-        } else {
-            // 미보유 유료 + 미선택 → 카트 추가 + 미리보기 적용
-            let price = StylePresetManager.shared.price(for: preset, in: .shimmer)
-            cartItems.removeAll { $0.type == .shimmerEffect }
-            cartItems.append(EffectItem(shimmerEffect: preset, price: price))
-            viewModel.updateShimmerEffect(.preset(preset))
-        }
-    }
-
-    /// 테두리 프리셋 선택: 무료/보유 → 즉시 적용 / 미보유 유료 → 카트 추가
-    private func handleBorderSelect(preset: KeyringStylePreset) {
-        let isOwned = StylePresetManager.shared.isOwned(
-            preset: preset,
-            in: .border,
-            userManager: viewModel.userManager
-        )
-        let isUsable = preset.isFree || isOwned
-        let isCurrentlySelected = viewModel.selectedBorderEffect.activePreset == preset
-
-        if isUsable {
-            viewModel.updateBorderEffect(.preset(preset))
-            cartItems.removeAll { $0.type == .borderEffect }
-        } else if isCurrentlySelected {
-            viewModel.updateBorderEffect(.preset(.silver))
-            cartItems.removeAll { $0.type == .borderEffect }
-        } else {
-            let price = StylePresetManager.shared.price(for: preset, in: .border)
-            cartItems.removeAll { $0.type == .borderEffect }
-            cartItems.append(EffectItem(borderEffect: preset, price: price))
-            viewModel.updateBorderEffect(.preset(preset))
-        }
-    }
-
-    // MARK: - 틴트 색상 바인딩
-    /// ColorPicker ↔ VM 연결: get은 현재 셰이더 색상, set은 .customTint 생성
+    // MARK: - 틴트 색상 바인딩 (VM 메서드를 래핑한 SwiftUI Binding)
+    /// ColorPicker ↔ VM 연결: get/set 모두 VM 메서드 호출만 함
     private func shimmerTintBinding() -> Binding<Color> {
         Binding(
-            get: {
-                let c = viewModel.selectedShimmerEffect.shaderColor
-                return Color(red: Double(c.r), green: Double(c.g), blue: Double(c.b))
-            },
-            set: { newColor in
-                let mode = viewModel.selectedShimmerEffect.activePreset
-                guard mode != .hologram else { return }
-                let c = UIColor(newColor).rgbComponents
-                viewModel.updateShimmerEffect(.customTint(mode: mode, r: c.r, g: c.g, b: c.b))
-            }
+            get: { viewModel.shimmerTintColor() },
+            set: { viewModel.updateShimmerTint(color: $0) }
         )
     }
 
     private func borderTintBinding() -> Binding<Color> {
         Binding(
-            get: {
-                let c = viewModel.selectedBorderEffect.shaderColor
-                return Color(red: Double(c.r), green: Double(c.g), blue: Double(c.b))
-            },
-            set: { newColor in
-                let mode = viewModel.selectedBorderEffect.activePreset
-                guard mode != .hologram else { return }
-                let c = UIColor(newColor).rgbComponents
-                viewModel.updateBorderEffect(.customTint(mode: mode, r: c.r, g: c.g, b: c.b))
-            }
+            get: { viewModel.borderTintColor() },
+            set: { viewModel.updateBorderTint(color: $0) }
         )
     }
 }
@@ -197,7 +129,7 @@ extension StyleSelectorView {
         }
     }
 
-    /// presetCell 래퍼 — Manager 호출로 소유 상태를 계산해 셀에 주입
+    /// presetCell 래퍼 — VM에 소유 상태를 위임하고 셀에 주입
     @ViewBuilder
     private func presetCellWrapper(
         preset: KeyringStylePreset,
@@ -205,11 +137,9 @@ extension StyleSelectorView {
         isSelected: Bool,
         onSelect: @escaping (KeyringStylePreset) -> Void
     ) -> some View {
-        let isOwned = StylePresetManager.shared.isOwned(
-            preset: preset,
-            in: section,
-            userManager: viewModel.userManager
-        )
+        let isOwned = section == .shimmer
+            ? viewModel.isShimmerOwned(preset)
+            : viewModel.isBorderOwned(preset)
 
         presetCell(
             preset: preset,

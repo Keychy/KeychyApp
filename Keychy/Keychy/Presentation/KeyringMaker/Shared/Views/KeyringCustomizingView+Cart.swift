@@ -29,28 +29,6 @@ extension KeyringCustomizingView {
         cartItems.append(item)
     }
 
-    /// 렌티큘러 시머 효과를 장바구니에 추가 (시머는 1개만 담을 수 있음)
-    func addShimmerEffectToCart(_ preset: KeyringStylePreset, price: Int) {
-        cartItems.removeAll { $0.type == .shimmerEffect }
-        cartItems.append(EffectItem(shimmerEffect: preset, price: price))
-    }
-
-    /// 렌티큘러 테두리 효과를 장바구니에 추가 (테두리는 1개만 담을 수 있음)
-    func addBorderEffectToCart(_ preset: KeyringStylePreset, price: Int) {
-        cartItems.removeAll { $0.type == .borderEffect }
-        cartItems.append(EffectItem(borderEffect: preset, price: price))
-    }
-
-    /// 장바구니에서 시머 효과 제거
-    func removeShimmerEffectFromCart() {
-        cartItems.removeAll { $0.type == .shimmerEffect }
-    }
-
-    /// 장바구니에서 테두리 효과 제거
-    func removeBorderEffectFromCart() {
-        cartItems.removeAll { $0.type == .borderEffect }
-    }
-
     /// 장바구니에서 아이템 제거
     func removeFromCart(_ itemId: String) {
         cartItems.removeAll { $0.id == itemId }
