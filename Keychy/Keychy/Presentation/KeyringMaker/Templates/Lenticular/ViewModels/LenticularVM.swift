@@ -28,10 +28,10 @@ class LenticularVM: KeyringViewModelProtocol {
     let effectSubject = PassthroughSubject<(soundId: String, particleId: String, type: KeyringUpdateType), Never>()
 
     // MARK: - Style Data (시머 + 테두리 분리)
-    /// 선택된 시머(광택) 색상
-    var selectedShimmerColor: KeyringAppearanceColor = .preset(.silver)
-    /// 선택된 테두리 색상
-    var selectedBorderColor: KeyringAppearanceColor = .preset(.silver)
+    /// 선택된 시머(광택) 효과
+    var selectedShimmerEffect: KeyringAppearanceColor = .preset(.silver)
+    /// 선택된 테두리 효과
+    var selectedBorderEffect: KeyringAppearanceColor = .preset(.silver)
 
     /// Scene에 스타일 변경을 전달하는 Subject
     struct StyleUpdate {
@@ -92,12 +92,14 @@ class LenticularVM: KeyringViewModelProtocol {
     var isGyroscope: Bool { template?.interactions.contains("tilt") ?? true }
 
     // MARK: - KeyringViewModelProtocol: Style ID (렌티큘러 전용)
-    /// 시머 색상 ID — KeyringScene이 초기 스타일 적용 시 참조
+    /// 시머 효과 ID — KeyringScene이 초기 스타일 적용 시 참조
     /// 실시간 편집 업데이트는 `styleSubject`를 통해 별도로 처리됨
-    var shimmerColorId: String? { selectedShimmerColor.firestoreId }
+    /// (이름이 `Color`인 이유: `Keyring.shimmerColorId` Firestore 필드와 라벨을 맞추기 위함)
+    var shimmerColorId: String? { selectedShimmerEffect.firestoreId }
 
-    /// 테두리 색상 ID — KeyringScene이 초기 스타일 적용 시 참조
-    var borderColorId: String? { selectedBorderColor.firestoreId }
+    /// 테두리 효과 ID — KeyringScene이 초기 스타일 적용 시 참조
+    /// (이름이 `Color`인 이유: `Keyring.borderColorId` Firestore 필드와 라벨을 맞추기 위함)
+    var borderColorId: String? { selectedBorderEffect.firestoreId }
 
     // MARK: - Customizing Modes
     /// 렌티큘러: 시머 색상 선택 + 이펙트
@@ -109,16 +111,16 @@ class LenticularVM: KeyringViewModelProtocol {
     }
 
     // MARK: - Style Update (시머/테두리)
-    /// 시머(광택) 색상 변경 → Scene에 실시간 반영
-    func updateShimmerColor(_ color: KeyringAppearanceColor) {
-        selectedShimmerColor = color
-        styleSubject.send(StyleUpdate(shimmer: selectedShimmerColor, border: selectedBorderColor))
+    /// 시머(광택) 효과 변경 → Scene에 실시간 반영
+    func updateShimmerEffect(_ effect: KeyringAppearanceColor) {
+        selectedShimmerEffect = effect
+        styleSubject.send(StyleUpdate(shimmer: selectedShimmerEffect, border: selectedBorderEffect))
     }
 
-    /// 테두리 색상 변경 → Scene에 실시간 반영
-    func updateBorderColor(_ color: KeyringAppearanceColor) {
-        selectedBorderColor = color
-        styleSubject.send(StyleUpdate(shimmer: selectedShimmerColor, border: selectedBorderColor))
+    /// 테두리 효과 변경 → Scene에 실시간 반영
+    func updateBorderEffect(_ effect: KeyringAppearanceColor) {
+        selectedBorderEffect = effect
+        styleSubject.send(StyleUpdate(shimmer: selectedShimmerEffect, border: selectedBorderEffect))
     }
 
     // MARK: - View Providers
@@ -135,7 +137,7 @@ class LenticularVM: KeyringViewModelProtocol {
     ) -> AnyView {
         switch mode {
         case .style:
-            return AnyView(StyleSelectorView(viewModel: self))
+            return AnyView(StyleSelectorView(viewModel: self, cartItems: cartItems))
         case .effect:
             return AnyView(EffectSelectorView(viewModel: self, cartItems: cartItems))
         default:
@@ -171,8 +173,8 @@ class LenticularVM: KeyringViewModelProtocol {
         bodyImage = nil
         croppedImageA = nil
         croppedImageB = nil
-        selectedShimmerColor = .preset(.silver)
-        selectedBorderColor = .preset(.silver)
+        selectedShimmerEffect = .preset(.silver)
+        selectedBorderEffect = .preset(.silver)
     }
 
     func resetInfoData() {

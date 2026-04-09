@@ -246,8 +246,8 @@ extension LenticularFusionView {
         // .resizeFill을 쓰면 좌표계가 변경되어 셰이더 SDF 테두리가 편향됨
         scene.scaleMode = .aspectFill
 
-        let shimmerPreset = viewModel.selectedShimmerColor
-        let borderPreset = viewModel.selectedBorderColor
+        let shimmerPreset = viewModel.selectedShimmerEffect
+        let borderPreset = viewModel.selectedBorderEffect
         let bodyNode = KeyringBodyComponent.createLenticularBody(
             atlasImage: bodyImage,
             templateId: templateId,

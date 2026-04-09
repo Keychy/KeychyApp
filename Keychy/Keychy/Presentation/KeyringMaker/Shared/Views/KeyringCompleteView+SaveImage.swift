@@ -30,8 +30,8 @@ extension KeyringCompleteView {
             zoomScale: 2.0,
             hookOffsetY: viewModel.hookOffsetY != 0 ? viewModel.hookOffsetY : nil,
             chainLength: viewModel.chainLength,
-            shimmerColorId: (viewModel as? LenticularVM)?.selectedShimmerColor.firestoreId,
-            borderColorId: (viewModel as? LenticularVM)?.selectedBorderColor.firestoreId
+            shimmerColorId: (viewModel as? LenticularVM)?.selectedShimmerEffect.firestoreId,
+            borderColorId: (viewModel as? LenticularVM)?.selectedBorderEffect.firestoreId
         )
         scene.scaleMode = .aspectFill
 
