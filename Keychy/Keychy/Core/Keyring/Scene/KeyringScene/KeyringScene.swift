@@ -157,7 +157,7 @@ class KeyringScene: SKScene {
             .store(in: &cancellables)
 
         // 렌티큘러 등 자이로 템플릿: 초기 스타일(시머/테두리) 적용
-        // - 편집 중(LenticularVM): selectedShimmerColor.firestoreId 반환
+        // - 편집 중(LenticularVM): selectedShimmerEffect.firestoreId 반환
         // - 영상 생성 시(KeyringAdapter): 저장된 Keyring 모델의 ID 반환
         // 어느 경로든 `KeyringAppearanceColor.from(id:)`로 nil-safe 복원 가능
         if viewModel.isGyroscope {

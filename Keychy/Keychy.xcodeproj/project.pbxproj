@@ -411,6 +411,7 @@
 		4C7E96382F7D0E9300C8B109 /* KeyringStylePreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E96372F7D0E9300C8B109 /* KeyringStylePreset.swift */; };
 		4C7E963A2F7D0EAB00C8B109 /* StyleSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E96392F7D0EAB00C8B109 /* StyleSelectorView.swift */; };
 		4C7E963C2F7D267900C8B109 /* KeyringAppearanceColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E963B2F7D267900C8B109 /* KeyringAppearanceColor.swift */; };
+		4C7E963E2F878FDE00C8B109 /* LenticularVM+Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E963D2F878FDE00C8B109 /* LenticularVM+Style.swift */; };
 		4C8426602ED3585A0050B6FE /* gulimche-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */; };
 		4C8426642ED375840050B6FE /* ColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8426632ED375840050B6FE /* ColorPalette.swift */; };
 		4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A596832EAFEAA20003D712 /* ProfileSetupView.swift */; };
@@ -500,6 +501,7 @@
 		4F350E459E3B47DA93E2FFF4 /* BundleSheetToggleButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82FD6112F9442AAAD58DB97 /* BundleSheetToggleButtons.swift */; };
 		8LLA4688ZY3G5NGU9R4ET5A6 /* BundleViewModel+Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = U828QC8U2RENQFVCV7ANT8I1 /* BundleViewModel+Types.swift */; };
 		917971D262384EC5AF4D5965 /* BundlePurchaseCartItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E036016318043AC801A19DA /* BundlePurchaseCartItem.swift */; };
+		A73B3E7AC6294154A2605306 /* StylePresetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B1A7479E29D45FF9DA9CACA /* StylePresetManager.swift */; };
 		AA0000022F17000100000001 /* BundleSwitchPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000012F17000100000001 /* BundleSwitchPopup.swift */; };
 		AA0213F12F0E000000000001 /* TemplateImageSlideshow.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0213F02F0E000000000001 /* TemplateImageSlideshow.swift */; };
 		AA0219DE2EB1C041006EF269 /* BundleNameInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0219DD2EB1C041006EF269 /* BundleNameInputView.swift */; };
@@ -635,6 +637,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2B1A7479E29D45FF9DA9CACA /* StylePresetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StylePresetManager.swift; sourceTree = "<group>"; };
 		38173D072EB8AD3900E36F7E /* CollectionViewModel+Tags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Tags.swift"; sourceTree = "<group>"; };
 		38173D092EB8AD7900E36F7E /* CategoryTabBarWithLongPress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTabBarWithLongPress.swift; sourceTree = "<group>"; };
 		38173D0B2EB8AD8800E36F7E /* CategoryContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryContextMenu.swift; sourceTree = "<group>"; };
@@ -1027,6 +1030,7 @@
 		4C7E96372F7D0E9300C8B109 /* KeyringStylePreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringStylePreset.swift; sourceTree = "<group>"; };
 		4C7E96392F7D0EAB00C8B109 /* StyleSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyleSelectorView.swift; sourceTree = "<group>"; };
 		4C7E963B2F7D267900C8B109 /* KeyringAppearanceColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringAppearanceColor.swift; sourceTree = "<group>"; };
+		4C7E963D2F878FDE00C8B109 /* LenticularVM+Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LenticularVM+Style.swift"; sourceTree = "<group>"; };
 		4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "gulimche-Regular.ttf"; sourceTree = "<group>"; };
 		4C8426632ED375840050B6FE /* ColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPalette.swift; sourceTree = "<group>"; };
 		4C86A6112F25C0B10023AA2D /* WorkshopBundleGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopBundleGridView.swift; sourceTree = "<group>"; };
@@ -2266,6 +2270,7 @@
 			isa = PBXGroup;
 			children = (
 				4C7E95E02F754A0400C8B109 /* LenticularVM.swift */,
+				4C7E963D2F878FDE00C8B109 /* LenticularVM+Style.swift */,
 				4C7E95E12F754A0400C8B109 /* LenticularVM+Effect.swift */,
 				4C7E95E22F754A0400C8B109 /* LenticularVM+Firebase.swift */,
 				4C7E96182F7A0F3300C8B109 /* LenticularVM+ImageLoad.swift */,
@@ -2979,6 +2984,7 @@
 			children = (
 				4C25262E2F3C95DA003CC5AD /* LottieItemManager.swift */,
 				C68931CC2EB7B94B00C5F083 /* EffectManager.swift */,
+				2B1A7479E29D45FF9DA9CACA /* StylePresetManager.swift */,
 				AA9123AE2ED4BC490070A9F9 /* LocationManager.swift */,
 				38C3C27D2EC08794003C5DE1 /* PopupManager.swift */,
 			);
@@ -3340,6 +3346,7 @@
 				4CC8D00D2EF030E300317467 /* CollectionViewModel.swift in Sources */,
 				AA8C9B982F10E6D500A352D2 /* BundleViewModel.swift in Sources */,
 				38C3C2882EC1D761003C5DE1 /* CollectionKeyringDetailView+Menu.swift in Sources */,
+				4C7E963E2F878FDE00C8B109 /* LenticularVM+Style.swift in Sources */,
 				4CEC621C2EAE08DA0099ECEE /* BackgroundCell.swift in Sources */,
 				3828F5472EC4CCDC00F1B040 /* CollectionView+NormalMode.swift in Sources */,
 				4CEBB1612EFAD3F800CF53E2 /* MainTabView.swift in Sources */,
@@ -3361,6 +3368,7 @@
 				AA3909462EC9F29500D87EEC /* UIApplication+Extension.swift in Sources */,
 				4CC8D0252EF11CD200317467 /* HomeViewModel.swift in Sources */,
 				C68931CE2EB7B94B00C5F083 /* EffectManager.swift in Sources */,
+				A73B3E7AC6294154A2605306 /* StylePresetManager.swift in Sources */,
 				C6B56F202EBF72130049F969 /* ItemPurchaseManager.swift in Sources */,
 				4C5D0BD02F595F5200242703 /* AnimationFrameStorage.swift in Sources */,
 				38818DBC2F3C444300B0A49C /* DuZzonKuVM+Firebase.swift in Sources */,

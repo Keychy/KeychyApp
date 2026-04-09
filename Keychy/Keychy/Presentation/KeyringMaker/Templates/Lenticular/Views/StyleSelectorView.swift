@@ -11,8 +11,10 @@ import SwiftUI
 /// 커스터마이징 하단 영역: "광택 효과" + "테두리" 2섹션
 /// - 왼쪽 ColorPicker: 선택된 프리셋의 틴트 색상 조절 (홀로그램일 때 비활성화)
 /// - 오른쪽 스크롤: 프리셋 선택 (메탈릭 | 홀로그램 | 매트릭스 등)
+/// - 비-silver 프리셋은 유료 → 미보유 시 카트에 추가됨
 struct StyleSelectorView: View {
     @Bindable var viewModel: LenticularVM
+    @Binding var cartItems: [EffectItem]
 
     // 애니메이션 (매트릭스/글리터 미리보기용, +Previews에서 접근)
     @State var matrixPhase: Double = 0
@@ -22,18 +24,20 @@ struct StyleSelectorView: View {
         VStack(alignment: .leading, spacing: 24) {
             styleSection(
                 title: "광택 효과",
+                section: .shimmer,
                 presets: KeyringStylePreset.shimmerPresets,
-                selected: viewModel.selectedShimmerColor,
+                selected: viewModel.selectedShimmerEffect,
                 tintBinding: shimmerTintBinding(),
-                onSelect: { viewModel.updateShimmerColor($0) }
+                onSelect: { viewModel.selectShimmerEffect(preset: $0, cartItems: $cartItems) }
             )
 
             styleSection(
                 title: "테두리",
+                section: .border,
                 presets: KeyringStylePreset.borderPresets,
-                selected: viewModel.selectedBorderColor,
+                selected: viewModel.selectedBorderEffect,
                 tintBinding: borderTintBinding(),
-                onSelect: { viewModel.updateBorderColor($0) }
+                onSelect: { viewModel.selectBorderEffect(preset: $0, cartItems: $cartItems) }
             )
 
             Spacer()
@@ -57,35 +61,19 @@ struct StyleSelectorView: View {
         }
     }
 
-    // MARK: - 틴트 색상 바인딩
-    /// ColorPicker ↔ VM 연결: get은 현재 셰이더 색상, set은 .customTint 생성
+    // MARK: - 틴트 색상 바인딩 (VM 메서드를 래핑한 SwiftUI Binding)
+    /// ColorPicker ↔ VM 연결: get/set 모두 VM 메서드 호출만 함
     private func shimmerTintBinding() -> Binding<Color> {
         Binding(
-            get: {
-                let c = viewModel.selectedShimmerColor.shaderColor
-                return Color(red: Double(c.r), green: Double(c.g), blue: Double(c.b))
-            },
-            set: { newColor in
-                let mode = viewModel.selectedShimmerColor.activePreset
-                guard mode != .hologram else { return }
-                let c = UIColor(newColor).rgbComponents
-                viewModel.updateShimmerColor(.customTint(mode: mode, r: c.r, g: c.g, b: c.b))
-            }
+            get: { viewModel.shimmerTintColor() },
+            set: { viewModel.updateShimmerTint(color: $0) }
         )
     }
 
     private func borderTintBinding() -> Binding<Color> {
         Binding(
-            get: {
-                let c = viewModel.selectedBorderColor.shaderColor
-                return Color(red: Double(c.r), green: Double(c.g), blue: Double(c.b))
-            },
-            set: { newColor in
-                let mode = viewModel.selectedBorderColor.activePreset
-                guard mode != .hologram else { return }
-                let c = UIColor(newColor).rgbComponents
-                viewModel.updateBorderColor(.customTint(mode: mode, r: c.r, g: c.g, b: c.b))
-            }
+            get: { viewModel.borderTintColor() },
+            set: { viewModel.updateBorderTint(color: $0) }
         )
     }
 }
@@ -93,12 +81,13 @@ struct StyleSelectorView: View {
 // MARK: - 섹션 뷰
 extension StyleSelectorView {
     @ViewBuilder
-    private func styleSection(
+    func styleSection(
         title: String,
+        section: StyleSection,
         presets: [KeyringStylePreset],
         selected: KeyringAppearanceColor,
         tintBinding: Binding<Color>,
-        onSelect: @escaping (KeyringAppearanceColor) -> Void
+        onSelect: @escaping (KeyringStylePreset) -> Void
     ) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title)
@@ -124,8 +113,9 @@ extension StyleSelectorView {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 14) {
                         ForEach(presets) { preset in
-                            presetCell(
+                            presetCellWrapper(
                                 preset: preset,
+                                section: section,
                                 isSelected: selected.activePreset == preset,
                                 onSelect: onSelect
                             )
@@ -139,7 +129,27 @@ extension StyleSelectorView {
         }
     }
 
-    /// 틴트 색상 피커 — 홀로그램 선택 시 비활성화
+    /// presetCell 래퍼 — VM에 소유 상태를 위임하고 셀에 주입
+    @ViewBuilder
+    private func presetCellWrapper(
+        preset: KeyringStylePreset,
+        section: StyleSection,
+        isSelected: Bool,
+        onSelect: @escaping (KeyringStylePreset) -> Void
+    ) -> some View {
+        let isOwned = section == .shimmer
+            ? viewModel.isShimmerOwned(preset)
+            : viewModel.isBorderOwned(preset)
+
+        presetCell(
+            preset: preset,
+            isSelected: isSelected,
+            isOwned: isOwned,
+            onSelect: onSelect
+        )
+    }
+
+    /// 틴트 색상 피커 — 홀로그램 선택 시 비활성화 (silver만 보유해도 항상 활성화)
     @ViewBuilder
     private func tintPickerView(
         selected: KeyringAppearanceColor,
@@ -177,5 +187,3 @@ extension StyleSelectorView {
         }
     }
 }
-
-

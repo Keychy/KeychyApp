@@ -32,7 +32,7 @@ extension KeyringCustomizingView {
             /// 장바구니 리스트 (스크롤 가능)
             ScrollView {
                 VStack(spacing: 20) {
-                    ForEach(cartItems) { item in
+                    ForEach(cartItems, id: \.uniqueId) { item in
                         purchaseItemRow(item: item)
                     }
                 }

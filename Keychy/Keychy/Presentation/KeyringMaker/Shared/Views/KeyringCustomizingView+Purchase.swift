@@ -46,14 +46,23 @@ extension KeyringCustomizingView {
             return
         }
 
-        // 3. Firebase 트랜잭션 처리
+        // 3. UI 피드백 먼저: 시트 닫고 프로그레스 즉시 등장
+        // -> 트랜잭션/영수증 저장 전에 띄워야 클릭 → 로딩 사이의 체감 텀이 사라짐
+        await MainActor.run {
+            showPurchaseSheet = false
+            showPurchaseProgress = true
+        }
+
+        // 4. Firebase 트랜잭션 처리
         let db = Firestore.firestore()
         let userRef = db.collection("User").document(userId)
 
         do {
-            // 장바구니 아이템을 사운드/파티클로 분리
+            // 장바구니 아이템을 타입별로 분리
             let soundIds = cartItems.filter { $0.type == .sound }.map { $0.id }
             let particleIds = cartItems.filter { $0.type == .particle }.map { $0.id }
+            let shimmerEffectIds = cartItems.filter { $0.type == .shimmerEffect }.map { $0.id }
+            let borderEffectIds = cartItems.filter { $0.type == .borderEffect }.map { $0.id }
 
             // 배치 업데이트 (원자성 보장)
             try await db.runTransaction { (transaction, errorPointer) -> Any? in
@@ -92,20 +101,39 @@ extension KeyringCustomizingView {
                     updates["particleEffects"] = FieldValue.arrayUnion(particleIds)
                 }
 
+                // 렌티큘러 시머 효과 소유 목록 추가
+                if !shimmerEffectIds.isEmpty {
+                    updates["ownedShimmerEffects"] = FieldValue.arrayUnion(shimmerEffectIds)
+                }
+
+                // 렌티큘러 테두리 효과 소유 목록 추가
+                if !borderEffectIds.isEmpty {
+                    updates["ownedBorderEffects"] = FieldValue.arrayUnion(borderEffectIds)
+                }
+
                 // 한 번에 업데이트!
                 transaction.updateData(updates, forDocument: userRef)
 
                 return "success"
             }
 
-            // 4. 시트 닫고 구매 중 프로그레스 표시
-            await MainActor.run {
-                showPurchaseSheet = false
-                showPurchaseProgress = true
+            // 5. 트랜잭션 성공 → 영수증을 batch로 한 번의 네트워크 왕복에 묶어서 저장
+            // ⚠️ 영수증 저장 실패는 결제 실패로 처리하지 않음 (트랜잭션은 이미 커밋됨)
+            // try?로 silently 무시 — 추적성은 잃지만 사용자 결제 성공은 깨지지 않음
+            // (ItemPurchaseManager.saveReceipt와 동일한 정책)
+            let batch = db.batch()
+            for item in cartItems {
+                let receiptRef = userRef.collection("Receipts").document()
+                let receiptData: [String: Any] = [
+                    "itemID":      item.id,
+                    "itemName":    item.name,
+                    "itemType":    item.type.rawValue,
+                    "price":       item.price,
+                    "purchasedAt": Timestamp(date: Date())
+                ]
+                batch.setData(receiptData, forDocument: receiptRef)
             }
-
-            // 5. Firebase 커밋이 완전히 완료될 때까지 대기
-            try? await Task.sleep(nanoseconds: 1_000_000_000)
+            try? await batch.commit()
 
             // 6. UserManager만 갱신 (fetchEffects 호출하지 않음)
             // -> fetchEffects()를 호출하면 소유/미소유로 리스트가 재배열되어 ForEach가 재구성됨
@@ -113,8 +141,8 @@ extension KeyringCustomizingView {
             // -> UserManager만 갱신하면 isOwned() 체크만 업데이트되어 UI 스타일만 변경됨
             UserManager.shared.loadUserInfo(uid: userId) { _ in }
 
-            // 7. UserManager 갱신 완료 대기
-            try? await Task.sleep(nanoseconds: 500_000_000)
+            // 7. UserManager 갱신 settle 대기 (loadUserInfo는 콜백 기반이라 짧게 대기)
+            try? await Task.sleep(nanoseconds: 300_000_000)
 
             // 8. UI 업데이트 (프로그레스 닫고 성공 Alert 표시 및 장바구니 비우기)
             await MainActor.run {

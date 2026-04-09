@@ -38,6 +38,11 @@ struct KeychyApp: App {
 
         // 위젯 자동 등록 → 수동 등록 전환 마이그레이션
         KeyringImageCache.shared.migrateToManualWidgetSelectionIfNeeded()
+
+        // 렌티큘러 스타일 프리셋 가격 로드 (Firestore → 메모리)
+        Task {
+            await StylePresetManager.shared.loadPrices()
+        }
     }
     
     // MARK: - Body

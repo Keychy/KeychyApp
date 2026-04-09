@@ -60,15 +60,15 @@ extension KeyringInfoInputView {
         let templateId = viewModel.templateId
         let isGyroscope = viewModel.isGyroscope
 
-        // 렌티큘러 VM이면 시머/테두리 색상 ID 추출 (기본값 silver면 nil로 저장하여 용량 절약)
+        // 렌티큘러 VM이면 시머/테두리 효과 ID 추출 (기본값 silver면 nil로 저장하여 용량 절약)
         let shimmerColorId: String? = (viewModel as? LenticularVM)
             .flatMap { vm -> String? in
-                let id = vm.selectedShimmerColor.firestoreId
+                let id = vm.selectedShimmerEffect.firestoreId
                 return id == "silver" ? nil : id
             }
         let borderColorId: String? = (viewModel as? LenticularVM)
             .flatMap { vm -> String? in
-                let id = vm.selectedBorderColor.firestoreId
+                let id = vm.selectedBorderEffect.firestoreId
                 return id == "silver" ? nil : id
             }
 
