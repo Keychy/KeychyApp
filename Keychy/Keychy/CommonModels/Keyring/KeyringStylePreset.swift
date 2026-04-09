@@ -71,3 +71,29 @@ enum KeyringStylePreset: String, CaseIterable, Identifiable {
         [.silver, .hologram, .pulse, .cosmos]
     }
 }
+
+// MARK: - 스타일 섹션 구분
+/// 시머/테두리 섹션을 구분하는 enum
+/// - 같은 프리셋이라도 섹션마다 가격이 다를 수 있음 (예: hologram 시머는 1000, 테두리는 500)
+enum StyleSection {
+    case shimmer
+    case border
+}
+
+// MARK: - 가격 / 무료 여부
+extension KeyringStylePreset {
+    /// silver(메탈릭)는 항상 무료
+    var isFree: Bool { self == .silver }
+
+    /// Firestore 가격 로드 실패 시 fallback 가격
+    /// - hologram만 시머/테두리 가격이 다름 (시머 1000, 테두리 500)
+    /// - 그 외 비-silver 프리셋은 모두 500코인
+    func defaultPrice(in section: StyleSection) -> Int {
+        if isFree { return 0 }
+        switch (self, section) {
+        case (.hologram, .shimmer): return 1000
+        case (.hologram, .border):  return 500
+        default:                    return 500
+        }
+    }
+}
