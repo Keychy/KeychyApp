@@ -25,6 +25,7 @@ struct KeychyUser: Identifiable {
     var particleEffects: [String]
     var ownedShimmerEffects: [String]  // 구매한 렌티큘러 시머 효과 프리셋 ID 배열
     var ownedBorderEffects: [String]   // 구매한 렌티큘러 테두리 효과 프리셋 ID 배열
+    var ownedUniformFrames: [String] = []  // 구매한 유니폼 프레임 ID
     var backgrounds: [String]
     var carabiners: [String]
     var tags: [String]
@@ -50,6 +51,7 @@ struct KeychyUser: Identifiable {
             "particleEffects": particleEffects,
             "ownedShimmerEffects": ownedShimmerEffects,
             "ownedBorderEffects": ownedBorderEffects,
+            "ownedUniformFrames": ownedUniformFrames,
             "backgrounds": backgrounds,
             "carabiners": carabiners,
             "tags": tags,
@@ -83,6 +85,7 @@ struct KeychyUser: Identifiable {
         self.particleEffects = data["particleEffects"] as? [String] ?? []
         self.ownedShimmerEffects = data["ownedShimmerEffects"] as? [String] ?? []
         self.ownedBorderEffects = data["ownedBorderEffects"] as? [String] ?? []
+        self.ownedUniformFrames = data["ownedUniformFrames"] as? [String] ?? []
         self.backgrounds = data["backgrounds"] as? [String] ?? []
         self.carabiners = data["carabiners"] as? [String] ?? []
         self.tags = data["tags"] as? [String] ?? []
@@ -109,6 +112,7 @@ struct KeychyUser: Identifiable {
         self.particleEffects = []
         self.ownedShimmerEffects = []
         self.ownedBorderEffects = []
+        self.ownedUniformFrames = []
         self.backgrounds = []
         self.carabiners = []
         self.tags = []

@@ -19,6 +19,15 @@ struct Frame: Identifiable, Codable, Hashable {
     var checkerBoardURL: String? // DuZzonKu 프레임에 맞는 체커보드
     var checkerBoardRects: [CheckerBoardRect]?
 
+    // 유니폼 전용
+    var numberOffsetY: CGFloat?     // 등번호 Y 오프셋
+    var nameOffsetY: CGFloat?       // 이름 Y 오프셋
+    var numberFontSize: CGFloat?    // 등번호 폰트 크기
+    var nameFontSize: CGFloat?      // 이름 폰트 크기
+
+    // 가격 (유료/무료 프레임 구분)
+    var price: Int?                 // 0 = 무료, nil = 무료, 양수 = 유료
+
     enum CodingKeys: String, CodingKey {
         case id
         case frameURL
@@ -29,5 +38,10 @@ struct Frame: Identifiable, Codable, Hashable {
         case textOffsetY
         case checkerBoardURL
         case checkerBoardRects
+        case numberOffsetY
+        case nameOffsetY
+        case numberFontSize
+        case nameFontSize
+        case price
     }
 }

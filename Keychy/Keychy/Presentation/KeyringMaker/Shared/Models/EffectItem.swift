@@ -59,6 +59,15 @@ struct EffectItem: Identifiable, Equatable {
         self.price = price
         self.thumbnailURL = ""
     }
+
+    /// 유니폼 프레임에서 EffectItem 생성
+    init(uniformFrame frame: Frame, price: Int) {
+        self.id = frame.id ?? ""
+        self.name = frame.name
+        self.type = .uniformFrame
+        self.price = price
+        self.thumbnailURL = frame.thumbnailURL
+    }
 }
 
 /// 이펙트 타입 (Receipt itemType으로도 사용됨)
@@ -67,4 +76,5 @@ enum EffectType: String {
     case particle = "파티클"
     case shimmerEffect = "렌티큘러 광택"
     case borderEffect = "렌티큘러 테두리"
+    case uniformFrame = "유니폼 프레임"
 }
