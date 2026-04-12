@@ -33,10 +33,10 @@ extension UniformVM {
         case .effect:
             return AnyView(KeyringSceneView(viewModel: self, onSceneReady: onSceneReady))
         case .frame:
-            return AnyView(UniformFramePreviewView(viewModel: self, onSceneReady: onSceneReady))
+            return AnyView(UniformCompositionView(viewModel: self, onSceneReady: onSceneReady))
         case .marking:
             // 마킹 탭에서도 유니폼 프리뷰 표시 (색상 변경 실시간 반영)
-            return AnyView(UniformFramePreviewView(viewModel: self, onSceneReady: onSceneReady))
+            return AnyView(UniformCompositionView(viewModel: self, onSceneReady: onSceneReady))
         default:
             return AnyView(EmptyView())
         }
@@ -51,7 +51,7 @@ extension UniformVM {
         case .effect:
             return AnyView(EffectSelectorView(viewModel: self, cartItems: cartItems))
         case .frame:
-            return AnyView(UniformFrameSelectorView(viewModel: self, cartItems: cartItems))
+            return AnyView(UniformFrameTabView(viewModel: self, cartItems: cartItems))
         case .marking:
             // 마킹 탭 하단 UI (나중에 구현, 현재는 빈 뷰)
             return AnyView(EmptyView())

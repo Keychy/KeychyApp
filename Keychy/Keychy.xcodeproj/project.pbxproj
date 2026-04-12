@@ -514,8 +514,8 @@
 		AA20000000000000000004 /* UniformVM+Firebase.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000000000000000004 /* UniformVM+Firebase.swift */; };
 		AA20000000000000000005 /* UniformVM+Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000000000000000005 /* UniformVM+Frame.swift */; };
 		AA20000000000000000006 /* UniformPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000000000000000006 /* UniformPreview.swift */; };
-		AA20000000000000000007 /* UniformFramePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000000000000000007 /* UniformFramePreviewView.swift */; };
-		AA20000000000000000008 /* UniformFrameSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000000000000000008 /* UniformFrameSelectorView.swift */; };
+		AA20000000000000000007 /* UniformCompositionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000000000000000007 /* UniformCompositionView.swift */; };
+		AA20000000000000000008 /* UniformFrameTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000000000000000008 /* UniformFrameTabView.swift */; };
 		AA2146AF2F15D0160048D40E /* BundleEditView+Purchase.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146AE2F15D0160048D40E /* BundleEditView+Purchase.swift */; };
 		AA2146B12F15D43C0048D40E /* BundleEditView+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146B02F15D43C0048D40E /* BundleEditView+Alert.swift */; };
 		AA2146B52F15D8490048D40E /* KeyringCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146B42F15D8490048D40E /* KeyringCell.swift */; };
@@ -1142,8 +1142,8 @@
 		AA10000000000000000004 /* UniformVM+Firebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UniformVM+Firebase.swift"; sourceTree = "<group>"; };
 		AA10000000000000000005 /* UniformVM+Frame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UniformVM+Frame.swift"; sourceTree = "<group>"; };
 		AA10000000000000000006 /* UniformPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniformPreview.swift; sourceTree = "<group>"; };
-		AA10000000000000000007 /* UniformFramePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniformFramePreviewView.swift; sourceTree = "<group>"; };
-		AA10000000000000000008 /* UniformFrameSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniformFrameSelectorView.swift; sourceTree = "<group>"; };
+		AA10000000000000000007 /* UniformCompositionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniformCompositionView.swift; sourceTree = "<group>"; };
+		AA10000000000000000008 /* UniformFrameTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniformFrameTabView.swift; sourceTree = "<group>"; };
 		AA2146AE2F15D0160048D40E /* BundleEditView+Purchase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleEditView+Purchase.swift"; sourceTree = "<group>"; };
 		AA2146B02F15D43C0048D40E /* BundleEditView+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleEditView+Alert.swift"; sourceTree = "<group>"; };
 		AA2146B42F15D8490048D40E /* KeyringCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringCell.swift; sourceTree = "<group>"; };
@@ -2924,8 +2924,8 @@
 			isa = PBXGroup;
 			children = (
 				AA10000000000000000006 /* UniformPreview.swift */,
-				AA10000000000000000007 /* UniformFramePreviewView.swift */,
-				AA10000000000000000008 /* UniformFrameSelectorView.swift */,
+				AA10000000000000000007 /* UniformCompositionView.swift */,
+				AA10000000000000000008 /* UniformFrameTabView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -3565,8 +3565,8 @@
 				AA20000000000000000004 /* UniformVM+Firebase.swift in Sources */,
 				AA20000000000000000005 /* UniformVM+Frame.swift in Sources */,
 				AA20000000000000000006 /* UniformPreview.swift in Sources */,
-				AA20000000000000000007 /* UniformFramePreviewView.swift in Sources */,
-				AA20000000000000000008 /* UniformFrameSelectorView.swift in Sources */,
+				AA20000000000000000007 /* UniformCompositionView.swift in Sources */,
+				AA20000000000000000008 /* UniformFrameTabView.swift in Sources */,
 				4C4733D52F1FA388005D2376 /* AcrylicPhotoVM+CropBoxDrag.swift in Sources */,
 				4C4733D62F1FA388005D2376 /* SpeechBubbleVM+Customizing.swift in Sources */,
 				4C4733D72F1FA388005D2376 /* AcrylicPhotoVM+Crop.swift in Sources */,

@@ -1,17 +1,17 @@
 //
-//  UniformFramePreviewView.swift
+//  UniformCompositionView.swift
 //  Keychy
 //
 //  Created by 길지훈 on 2026-04-10.
 //
-//  유니폼 프레임 위에 등번호/이름 TextField 오버레이 (핵심 뷰)
+//  유니폼 5레이어 mask 합성 프리뷰 (프레임/마킹 탭 공용)
 //
 
 import SwiftUI
 import NukeUI
 import Nuke
 
-struct UniformFramePreviewView: View {
+struct UniformCompositionView: View {
     @Bindable var viewModel: UniformVM
     let onSceneReady: () -> Void
 
@@ -67,7 +67,6 @@ struct UniformFramePreviewView: View {
                     Image("\(uniformType)_arcylic")
                         .resizable()
                         .frame(width: 302.03, height: 254.16)
-                        .offset(y: -0.5)
 
                     // 2~5: 유니폼 레이어 (고정 크기로 아크릴 위에 정렬)
                     let layerSize = CGSize(width: 280, height: 205.5)
@@ -107,7 +106,7 @@ struct UniformFramePreviewView: View {
                         uniformTextOverlay(frame: frame)
                     }
                     .frame(width: layerSize.width, height: layerSize.height)
-                    .offset(y: 14.5)
+                    .offset(y: 14)
                     .offset(x: -2)
                 }
                 .onDisappear {

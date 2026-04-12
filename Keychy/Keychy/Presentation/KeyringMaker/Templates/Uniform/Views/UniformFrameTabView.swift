@@ -1,17 +1,17 @@
 //
-//  UniformFrameSelectorView.swift
+//  UniformFrameTabView.swift
 //  Keychy
 //
 //  Created by 길지훈 on 2026-04-10.
 //
-//  유니폼 프레임 선택 뷰 (하단 영역)
+//  프레임 탭 하단 컨트롤 (프레임 선택 + 컬러 선택)
 //  유료 프레임은 가격 뱃지 표시, 미보유 시 카트에 추가
 //
 
 import SwiftUI
 import NukeUI
 
-struct UniformFrameSelectorView: View {
+struct UniformFrameTabView: View {
     @Bindable var viewModel: UniformVM
     @Binding var cartItems: [EffectItem]
 
@@ -26,7 +26,7 @@ struct UniformFrameSelectorView: View {
                     .foregroundStyle(.black100)
                     .padding(.leading, 20)
                     .padding(.top, 30)
-                
+
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 12) {
                         ForEach(viewModel.availableFrames) { frame in

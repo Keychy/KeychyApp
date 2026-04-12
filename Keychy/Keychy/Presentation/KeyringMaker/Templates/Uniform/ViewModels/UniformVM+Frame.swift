@@ -44,52 +44,44 @@ extension UniformVM {
             return
         }
 
-        // arcylic 기준으로 캔버스 크기 결정 (324pt 높이 기준)
-        let targetHeight: CGFloat = 324
-        let aspect = arcylicImage.size.width / arcylicImage.size.height
-        let targetWidth = targetHeight * aspect
-        let targetSize = CGSize(width: targetWidth, height: targetHeight)
-        let drawRect = CGRect(origin: .zero, size: targetSize)
+        // 프리뷰와 동일한 크기 비율 (arcylic > 나머지 레이어)
+        let arcylicSize = CGSize(width: 302.03, height: 254.16)
+        let layerSize = CGSize(width: 280, height: 205.5)
 
-        let renderer = UIGraphicsImageRenderer(size: targetSize)
+        // 캔버스 = 아크릴 크기 (고리가 y=0부터 시작하므로 잘림 없음)
+        let canvasSize = arcylicSize
+        let arcylicRect = CGRect(x: 1, y: 0, width: arcylicSize.width, height: arcylicSize.height)
+
+        // 레이어 위치 (아크릴 기준 상대 배치)
+        let layerX = (arcylicSize.width - layerSize.width) / 2 - 1.0
+        let layerY = (arcylicSize.height - layerSize.height) / 2 + 14.5
+        let layerRect = CGRect(x: layerX, y: layerY, width: layerSize.width, height: layerSize.height)
+
+        let renderer = UIGraphicsImageRenderer(size: canvasSize)
 
         let composedImage = renderer.image { context in
-            let cgContext = context.cgContext
-
             // 1. 아크릴 (입체감/그림자)
-            arcylicImage.draw(in: drawRect)
+            arcylicImage.draw(in: arcylicRect)
 
             // 2. Color2 + base mask
-            if let baseCG = baseMaskImage.cgImage {
-                cgContext.saveGState()
-                // CGContext의 clip(to:mask:)는 mask 이미지의 밝기를 기준으로 클리핑
-                // 흰색(밝은) 부분 = 표시, 검은색(어두운) 부분 = 숨김
-                cgContext.clip(to: drawRect, mask: baseCG)
-                UIColor(uniformColor2).setFill()
-                cgContext.fill(drawRect)
-                cgContext.restoreGState()
-            }
+            let baseMasked = maskedColorImage(color: uniformColor2, mask: baseMaskImage, size: layerSize)
+            baseMasked.draw(in: layerRect)
 
             // 3. Color1 + pattern mask (Firebase)
-            if let patternCG = patternMaskImage.cgImage {
-                cgContext.saveGState()
-                cgContext.clip(to: drawRect, mask: patternCG)
-                UIColor(uniformColor1).setFill()
-                cgContext.fill(drawRect)
-                cgContext.restoreGState()
-            }
+            let patternMasked = maskedColorImage(color: uniformColor1, mask: patternMaskImage, size: layerSize)
+            patternMasked.draw(in: layerRect)
 
             // 4. stroke (외곽선)
-            strokeImage.draw(in: drawRect)
+            strokeImage.draw(in: layerRect)
 
             // 5. 등번호 그리기
             if !numberText.isEmpty {
-                drawNumberText(in: drawRect, frame: frame)
+                drawNumberText(in: layerRect, frame: frame)
             }
 
             // 6. 이름 그리기
             if !playerNameText.isEmpty {
-                drawPlayerNameText(in: drawRect, frame: frame)
+                drawPlayerNameText(in: layerRect, frame: frame)
             }
         }
 
@@ -182,6 +174,24 @@ extension UniformVM {
 
         attrString.draw(in: textRect)
         NSAttributedString(string: playerNameText, attributes: fillAttributes).draw(in: textRect)
+    }
+
+    // MARK: - Helper: 색상 + mask 합성 이미지 생성
+
+    /// 단색을 mask 이미지 모양으로 잘라낸 UIImage 반환
+    /// UIImage.draw() + .destinationIn blend mode 사용 → CG 좌표계 뒤집힘 문제 없음
+    private func maskedColorImage(color: Color, mask: UIImage, size: CGSize) -> UIImage {
+        let rect = CGRect(origin: .zero, size: size)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { ctx in
+            // 먼저 단색으로 전체 채움
+            UIColor(color).setFill()
+            ctx.fill(rect)
+            // destinationIn: mask의 불투명 영역만 색상을 남기고 나머지 투명 처리
+            // mask를 1pt 크게 그려서 하단 보간 아티팩트가 캔버스 밖으로 클리핑되도록
+            let maskRect = CGRect(x: 0, y: 0, width: size.width, height: size.height + 1)
+            mask.draw(in: maskRect, blendMode: .destinationIn, alpha: 1.0)
+        }
     }
 
     // MARK: - 유니폼 프레임 소유 여부 확인
