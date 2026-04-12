@@ -34,7 +34,7 @@ enum KeyringScale {
         "DuZzonKu": CGSize(width: 376, height: 376),
         "CrossStitch": CGSize(width: 258, height: 258),
         "Lenticular": CGSize(width: 220, height: 270),
-        "Uniform": CGSize(width: 252, height: 300)
+        "Uniform": CGSize(width: 310, height: 260)
     ]
 
     // MARK: - 템플릿 × 화면별 zoomScale
