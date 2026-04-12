@@ -414,6 +414,8 @@
 		4C7E963E2F878FDE00C8B109 /* LenticularVM+Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E963D2F878FDE00C8B109 /* LenticularVM+Style.swift */; };
 		4C7E964F2F89212100C8B109 /* ColorPaletteRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E964E2F89212100C8B109 /* ColorPaletteRow.swift */; };
 		4C7E96502F89212100C8B109 /* ColorChipSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E964D2F89212100C8B109 /* ColorChipSelector.swift */; };
+		4C7E96622F8BD98F00C8B109 /* BMDOHYEON_otf.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C7E96602F8BD98F00C8B109 /* BMDOHYEON_otf.otf */; };
+		4C7E96632F8BD98F00C8B109 /* esamanru OTF Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C7E96612F8BD98F00C8B109 /* esamanru OTF Medium.otf */; };
 		4C8426602ED3585A0050B6FE /* gulimche-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */; };
 		4C8426642ED375840050B6FE /* ColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8426632ED375840050B6FE /* ColorPalette.swift */; };
 		4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A596832EAFEAA20003D712 /* ProfileSetupView.swift */; };
@@ -1043,6 +1045,8 @@
 		4C7E963D2F878FDE00C8B109 /* LenticularVM+Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LenticularVM+Style.swift"; sourceTree = "<group>"; };
 		4C7E964D2F89212100C8B109 /* ColorChipSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorChipSelector.swift; sourceTree = "<group>"; };
 		4C7E964E2F89212100C8B109 /* ColorPaletteRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPaletteRow.swift; sourceTree = "<group>"; };
+		4C7E96602F8BD98F00C8B109 /* BMDOHYEON_otf.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = BMDOHYEON_otf.otf; sourceTree = "<group>"; };
+		4C7E96612F8BD98F00C8B109 /* esamanru OTF Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "esamanru OTF Medium.otf"; sourceTree = "<group>"; };
 		4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "gulimche-Regular.ttf"; sourceTree = "<group>"; };
 		4C8426632ED375840050B6FE /* ColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPalette.swift; sourceTree = "<group>"; };
 		4C86A6112F25C0B10023AA2D /* WorkshopBundleGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopBundleGridView.swift; sourceTree = "<group>"; };
@@ -2335,6 +2339,15 @@
 			path = Lenticular;
 			sourceTree = "<group>";
 		};
+		4C7E965F2F8BD98600C8B109 /* Uniform */ = {
+			isa = PBXGroup;
+			children = (
+				4C7E96602F8BD98F00C8B109 /* BMDOHYEON_otf.otf */,
+				4C7E96612F8BD98F00C8B109 /* esamanru OTF Medium.otf */,
+			);
+			path = Uniform;
+			sourceTree = "<group>";
+		};
 		4C84265E2ED358520050B6FE /* Gulim */ = {
 			isa = PBXGroup;
 			children = (
@@ -2855,6 +2868,7 @@
 		4CEC62902EAE08F70099ECEE /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				4C7E965F2F8BD98600C8B109 /* Uniform */,
 				4C84265E2ED358520050B6FE /* Gulim */,
 				4C3688102EC08A1D00C64E75 /* HancomMalangMalang */,
 				4C3687FD2EC07C3800C64E75 /* NotoSansKR */,
@@ -3308,6 +3322,8 @@
 				4C5D12792F5DB83800242703 /* chain1_frame24.png in Resources */,
 				4C5D127A2F5DB83800242703 /* chain1_frame26.png in Resources */,
 				4C5D127B2F5DB83800242703 /* chain3_frame19.png in Resources */,
+				4C7E96622F8BD98F00C8B109 /* BMDOHYEON_otf.otf in Resources */,
+				4C7E96632F8BD98F00C8B109 /* esamanru OTF Medium.otf in Resources */,
 				4C5D127C2F5DB83800242703 /* chain1_frame02.png in Resources */,
 				4C5D127D2F5DB83800242703 /* chain3_frame20.png in Resources */,
 				4C5D127E2F5DB83800242703 /* chain3_frame17.png in Resources */,
