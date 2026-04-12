@@ -31,6 +31,10 @@ class UniformVM: KeyringViewModelProtocol {
     var availableFrames: [Frame] = []
     var selectedFrame: Frame? = nil
 
+    // MARK: - Uniform Color Data
+    var uniformColor1: Color = .black    // 패턴(mask) 영역 색상
+    var uniformColor2: Color = .white    // 베이스 영역 색상
+
     // MARK: - Uniform Text Data (등번호 + 이름)
     var numberText: String = ""        // 등번호 (0~99)
     var playerNameText: String = ""    // 이름 (한글/영문, 8자)
@@ -85,6 +89,8 @@ class UniformVM: KeyringViewModelProtocol {
         downloadingItemIds.removeAll()
         downloadProgress.removeAll()
         selectedFrame = nil
+        uniformColor1 = .black
+        uniformColor2 = .white
         numberText = ""
         playerNameText = ""
         numberInnerColor = .white

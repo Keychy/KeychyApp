@@ -12,7 +12,8 @@ extension UniformVM {
 
     // MARK: - Frame Composition
 
-    /// 등번호 + 이름을 유니폼 프레임에 합성하여 bodyImage로 저장
+    /// 5레이어 mask 합성으로 유니폼 bodyImage 생성
+    /// 레이어 순서: arcylic → color2+base → color1+pattern → stroke → 텍스트
     func composeUniformWithText() async {
         guard let frame = selectedFrame,
               let frameURL = URL(string: frame.frameURL) else {
@@ -29,114 +30,158 @@ extension UniformVM {
             }
         }
 
-        // 프레임 이미지 다운로드
-        guard let originalFrameImage = await downloadFrameImage(from: frameURL) else {
+        let uniformType = frame.uniformType ?? "base"
+
+        // 패턴 mask 이미지 다운로드 (Firebase)
+        guard let patternMaskImage = await downloadFrameImage(from: frameURL) else {
             return
         }
 
-        // 프레임 크기 조정 (324pt 높이 기준)
-        let targetFrameHeight: CGFloat = 324
-        let frameAspect = originalFrameImage.size.width / originalFrameImage.size.height
-        let targetFrameWidth = targetFrameHeight * frameAspect
-        let targetFrameSize = CGSize(width: targetFrameWidth, height: targetFrameHeight)
+        // 로컬 에셋 로드
+        guard let arcylicImage = UIImage(named: "\(uniformType)_arcylic"),
+              let baseMaskImage = UIImage(named: "\(uniformType)_base"),
+              let strokeImage = UIImage(named: "\(uniformType)_stroke") else {
+            return
+        }
 
-        let renderer = UIGraphicsImageRenderer(size: targetFrameSize)
+        // arcylic 기준으로 캔버스 크기 결정 (324pt 높이 기준)
+        let targetHeight: CGFloat = 324
+        let aspect = arcylicImage.size.width / arcylicImage.size.height
+        let targetWidth = targetHeight * aspect
+        let targetSize = CGSize(width: targetWidth, height: targetHeight)
+        let drawRect = CGRect(origin: .zero, size: targetSize)
+
+        let renderer = UIGraphicsImageRenderer(size: targetSize)
 
         let composedImage = renderer.image { context in
-            // 1. 프레임 이미지 그리기 (배경)
-            originalFrameImage.draw(in: CGRect(origin: .zero, size: targetFrameSize))
+            let cgContext = context.cgContext
 
-            // 2. 등번호 그리기
-            if !numberText.isEmpty {
-                let numberFontSize = frame.numberFontSize ?? 60
-                let numberOffsetY = frame.numberOffsetY ?? -20
+            // 1. 아크릴 (입체감/그림자)
+            arcylicImage.draw(in: drawRect)
 
-                let numberParagraphStyle = NSMutableParagraphStyle()
-                numberParagraphStyle.alignment = .center
-
-                // 등번호 테두리 (strokeWidth 양수 = stroke만, 음수 = fill+stroke)
-                let numberStrokeAttributes: [NSAttributedString.Key: Any] = [
-                    .font: UIFont.systemFont(ofSize: numberFontSize, weight: .bold),
-                    .foregroundColor: UIColor(numberOutlineColor),
-                    .strokeColor: UIColor(numberOutlineColor),
-                    .strokeWidth: -4.0,
-                    .paragraphStyle: numberParagraphStyle
-                ]
-
-                let numberFillAttributes: [NSAttributedString.Key: Any] = [
-                    .font: UIFont.systemFont(ofSize: numberFontSize, weight: .bold),
-                    .foregroundColor: UIColor(numberInnerColor),
-                    .paragraphStyle: numberParagraphStyle
-                ]
-
-                let numberString = NSAttributedString(string: numberText, attributes: numberStrokeAttributes)
-                let numberSize = numberString.boundingRect(
-                    with: CGSize(width: targetFrameSize.width, height: .greatestFiniteMagnitude),
-                    options: [.usesLineFragmentOrigin],
-                    context: nil
-                ).size
-
-                let numberX = (targetFrameSize.width - numberSize.width) / 2
-                let numberY = (targetFrameSize.height - numberSize.height) / 2 + numberOffsetY
-
-                let numberRect = CGRect(x: numberX, y: numberY, width: numberSize.width, height: numberSize.height)
-
-                // 테두리 먼저 그리고 내부 색상 덮기
-                numberString.draw(in: numberRect)
-                NSAttributedString(string: numberText, attributes: numberFillAttributes).draw(in: numberRect)
+            // 2. Color2 + base mask
+            if let baseCG = baseMaskImage.cgImage {
+                cgContext.saveGState()
+                // CGContext의 clip(to:mask:)는 mask 이미지의 밝기를 기준으로 클리핑
+                // 흰색(밝은) 부분 = 표시, 검은색(어두운) 부분 = 숨김
+                cgContext.clip(to: drawRect, mask: baseCG)
+                UIColor(uniformColor2).setFill()
+                cgContext.fill(drawRect)
+                cgContext.restoreGState()
             }
 
-            // 3. 이름 그리기
+            // 3. Color1 + pattern mask (Firebase)
+            if let patternCG = patternMaskImage.cgImage {
+                cgContext.saveGState()
+                cgContext.clip(to: drawRect, mask: patternCG)
+                UIColor(uniformColor1).setFill()
+                cgContext.fill(drawRect)
+                cgContext.restoreGState()
+            }
+
+            // 4. stroke (외곽선)
+            strokeImage.draw(in: drawRect)
+
+            // 5. 등번호 그리기
+            if !numberText.isEmpty {
+                drawNumberText(in: drawRect, frame: frame)
+            }
+
+            // 6. 이름 그리기
             if !playerNameText.isEmpty {
-                let baseFontSize = frame.nameFontSize ?? 24
-                let nameOffsetY = frame.nameOffsetY ?? 40
-
-                // 이름 길이에 따라 폰트 크기 자동 축소
-                let adjustedFontSize: CGFloat
-                let charCount = playerNameText.count
-                if charCount <= 4 {
-                    adjustedFontSize = baseFontSize
-                } else if charCount <= 6 {
-                    adjustedFontSize = baseFontSize * 0.85
-                } else {
-                    adjustedFontSize = baseFontSize * 0.7
-                }
-
-                let nameParagraphStyle = NSMutableParagraphStyle()
-                nameParagraphStyle.alignment = .center
-
-                let nameStrokeAttributes: [NSAttributedString.Key: Any] = [
-                    .font: UIFont.systemFont(ofSize: adjustedFontSize, weight: .bold),
-                    .foregroundColor: UIColor(nameOutlineColor),
-                    .strokeColor: UIColor(nameOutlineColor),
-                    .strokeWidth: -3.0,
-                    .paragraphStyle: nameParagraphStyle
-                ]
-
-                let nameFillAttributes: [NSAttributedString.Key: Any] = [
-                    .font: UIFont.systemFont(ofSize: adjustedFontSize, weight: .bold),
-                    .foregroundColor: UIColor(nameInnerColor),
-                    .paragraphStyle: nameParagraphStyle
-                ]
-
-                let nameString = NSAttributedString(string: playerNameText, attributes: nameStrokeAttributes)
-                let nameSize = nameString.boundingRect(
-                    with: CGSize(width: targetFrameSize.width, height: .greatestFiniteMagnitude),
-                    options: [.usesLineFragmentOrigin],
-                    context: nil
-                ).size
-
-                let nameX = (targetFrameSize.width - nameSize.width) / 2
-                let nameY = (targetFrameSize.height - nameSize.height) / 2 + nameOffsetY
-
-                let nameRect = CGRect(x: nameX, y: nameY, width: nameSize.width, height: nameSize.height)
-
-                nameString.draw(in: nameRect)
-                NSAttributedString(string: playerNameText, attributes: nameFillAttributes).draw(in: nameRect)
+                drawPlayerNameText(in: drawRect, frame: frame)
             }
         }
 
         bodyImage = composedImage
+    }
+
+    // MARK: - 등번호 텍스트 렌더링
+
+    private func drawNumberText(in targetRect: CGRect, frame: Frame) {
+        let numberFontSize = frame.numberFontSize ?? 60
+        let numberOffsetY = frame.numberOffsetY ?? -20
+
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+
+        let strokeAttributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: numberFontSize, weight: .bold),
+            .foregroundColor: UIColor(numberOutlineColor),
+            .strokeColor: UIColor(numberOutlineColor),
+            .strokeWidth: -4.0,
+            .paragraphStyle: paragraphStyle
+        ]
+
+        let fillAttributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: numberFontSize, weight: .bold),
+            .foregroundColor: UIColor(numberInnerColor),
+            .paragraphStyle: paragraphStyle
+        ]
+
+        let attrString = NSAttributedString(string: numberText, attributes: strokeAttributes)
+        let textSize = attrString.boundingRect(
+            with: CGSize(width: targetRect.width, height: .greatestFiniteMagnitude),
+            options: [.usesLineFragmentOrigin],
+            context: nil
+        ).size
+
+        let x = (targetRect.width - textSize.width) / 2
+        let y = (targetRect.height - textSize.height) / 2 + numberOffsetY
+        let textRect = CGRect(x: x, y: y, width: textSize.width, height: textSize.height)
+
+        // 테두리 → 내부 색상 순서로 그리기
+        attrString.draw(in: textRect)
+        NSAttributedString(string: numberText, attributes: fillAttributes).draw(in: textRect)
+    }
+
+    // MARK: - 이름 텍스트 렌더링
+
+    private func drawPlayerNameText(in targetRect: CGRect, frame: Frame) {
+        let baseFontSize = frame.nameFontSize ?? 24
+        let nameOffsetY = frame.nameOffsetY ?? 40
+
+        // 이름 길이에 따라 폰트 크기 자동 축소
+        let charCount = playerNameText.count
+        let adjustedFontSize: CGFloat
+        if charCount <= 4 {
+            adjustedFontSize = baseFontSize
+        } else if charCount <= 6 {
+            adjustedFontSize = baseFontSize * 0.85
+        } else {
+            adjustedFontSize = baseFontSize * 0.7
+        }
+
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+
+        let strokeAttributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: adjustedFontSize, weight: .bold),
+            .foregroundColor: UIColor(nameOutlineColor),
+            .strokeColor: UIColor(nameOutlineColor),
+            .strokeWidth: -3.0,
+            .paragraphStyle: paragraphStyle
+        ]
+
+        let fillAttributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: adjustedFontSize, weight: .bold),
+            .foregroundColor: UIColor(nameInnerColor),
+            .paragraphStyle: paragraphStyle
+        ]
+
+        let attrString = NSAttributedString(string: playerNameText, attributes: strokeAttributes)
+        let textSize = attrString.boundingRect(
+            with: CGSize(width: targetRect.width, height: .greatestFiniteMagnitude),
+            options: [.usesLineFragmentOrigin],
+            context: nil
+        ).size
+
+        let x = (targetRect.width - textSize.width) / 2
+        let y = (targetRect.height - textSize.height) / 2 + nameOffsetY
+        let textRect = CGRect(x: x, y: y, width: textSize.width, height: textSize.height)
+
+        attrString.draw(in: textRect)
+        NSAttributedString(string: playerNameText, attributes: fillAttributes).draw(in: textRect)
     }
 
     // MARK: - 유니폼 프레임 소유 여부 확인

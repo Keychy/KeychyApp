@@ -20,6 +20,7 @@ struct Frame: Identifiable, Codable, Hashable {
     var checkerBoardRects: [CheckerBoardRect]?
 
     // 유니폼 전용
+    var uniformType: String?        // 로컬 에셋 타입 ("base", "basket" 등)
     var numberOffsetY: CGFloat?     // 등번호 Y 오프셋
     var nameOffsetY: CGFloat?       // 이름 Y 오프셋
     var numberFontSize: CGFloat?    // 등번호 폰트 크기
@@ -38,6 +39,7 @@ struct Frame: Identifiable, Codable, Hashable {
         case textOffsetY
         case checkerBoardURL
         case checkerBoardRects
+        case uniformType
         case numberOffsetY
         case nameOffsetY
         case numberFontSize

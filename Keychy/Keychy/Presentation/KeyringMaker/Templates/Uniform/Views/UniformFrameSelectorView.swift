@@ -15,9 +15,6 @@ struct UniformFrameSelectorView: View {
     @Bindable var viewModel: UniformVM
     @Binding var cartItems: [EffectItem]
 
-    // 임시 @State — 나중에 VM 프로퍼티로 교체 예정
-    @State private var uniformColor1: Color = .black
-    @State private var uniformColor2: Color = .white
     @State private var selectedColorIndex: Int = 0
 
     var body: some View {
@@ -50,8 +47,8 @@ struct UniformFrameSelectorView: View {
                 // 컬러 칩 토글 (컬러 1 / 컬러 2)
                 ColorChipSelector(
                     chips: [
-                        .init(label: "컬러 1", color: $uniformColor1),
-                        .init(label: "컬러 2", color: $uniformColor2)
+                        .init(label: "컬러 1", color: $viewModel.uniformColor1),
+                        .init(label: "컬러 2", color: $viewModel.uniformColor2)
                     ],
                     selectedIndex: $selectedColorIndex
                 )
@@ -59,8 +56,8 @@ struct UniformFrameSelectorView: View {
                 // 프리셋 팔레트
                 ColorPaletteRow(
                     selectedColor: selectedColorIndex == 0
-                        ? $uniformColor1
-                        : $uniformColor2
+                        ? $viewModel.uniformColor1
+                        : $viewModel.uniformColor2
                 )
             }
 
@@ -85,7 +82,7 @@ struct UniformFrameSelectorView: View {
         let price = frame.price ?? 0
         let isOwned = viewModel.isFrameOwned(frame)
         let isPaid = price > 0 && !isOwned
-        let showCoinBadge = isPaid && !isSelected
+        let showCoinBadge = isPaid
 
         Button {
             selectFrame(frame)
@@ -95,7 +92,11 @@ struct UniformFrameSelectorView: View {
                     if let image = state.image {
                         ZStack {
                             Color.gray50
-                            image.padding(5)
+                            image
+                                .resizable()
+                                .scaledToFit()
+                                .padding(.vertical, 5)
+                                .padding(.horizontal, 2)
                         }
                         .frame(width: 80, height: 80)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -115,8 +116,8 @@ struct UniformFrameSelectorView: View {
                 .overlay(alignment: .topTrailing) {
                     if showCoinBadge {
                         Image(.myCoinMini)
-                            .padding(2)
-                            .offset(x: 4, y: -4)
+                            .padding(.top, 7.84)
+                            .padding(.trailing, 8.49)
                     }
                 }
             }

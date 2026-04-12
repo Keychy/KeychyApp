@@ -23,7 +23,7 @@ extension StyleSelectorView {
         // 시각 분기 (EffectSelectorView 패턴 차용)
         let isPaid = !preset.isFree && !isOwned
         let isPaidUnownedSelected = isPaid && isSelected   // 카트 대기 상태
-        let showCoinBadge = isPaid && !isSelected          // 미선택 유료 → 코인 아이콘 표시
+        let showCoinBadge = isPaid
 
         Button {
             onSelect(preset)
