@@ -202,16 +202,10 @@ extension UniformVM {
             return UIImage(named: imageName)
         }
 
-        return await withCheckedContinuation { continuation in
-            Task {
-                do {
-                    let imageRequest = ImageRequest(url: url)
-                    let response = try await ImagePipeline.shared.image(for: imageRequest)
-                    continuation.resume(returning: response)
-                } catch {
-                    continuation.resume(returning: nil)
-                }
-            }
+        do {
+            return try await ImagePipeline.shared.image(for: ImageRequest(url: url))
+        } catch {
+            return nil
         }
     }
 }
