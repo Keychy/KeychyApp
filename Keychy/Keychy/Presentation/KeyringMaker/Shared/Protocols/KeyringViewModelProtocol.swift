@@ -14,6 +14,7 @@ enum CustomizingMode: String, CaseIterable, Identifiable {
     case drawing = "그리기"
     case frame = "프레임"
     case style = "스타일"
+    case marking = "마킹"
 
     var id: String { rawValue }
 
@@ -32,6 +33,8 @@ enum CustomizingMode: String, CaseIterable, Identifiable {
             Image(systemName: "paintbrush.pointed.fill")
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundStyle(isSelected ? .white : .gray)
+        case .marking:
+            Image(isSelected ? "uniformMarkingTapped" : "uniformMarking")
         }
     }
 }

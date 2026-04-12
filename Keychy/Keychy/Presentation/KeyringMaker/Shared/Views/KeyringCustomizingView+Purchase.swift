@@ -63,6 +63,7 @@ extension KeyringCustomizingView {
             let particleIds = cartItems.filter { $0.type == .particle }.map { $0.id }
             let shimmerEffectIds = cartItems.filter { $0.type == .shimmerEffect }.map { $0.id }
             let borderEffectIds = cartItems.filter { $0.type == .borderEffect }.map { $0.id }
+            let uniformFrameIds = cartItems.filter { $0.type == .uniformFrame }.map { $0.id }
 
             // 배치 업데이트 (원자성 보장)
             try await db.runTransaction { (transaction, errorPointer) -> Any? in
@@ -109,6 +110,11 @@ extension KeyringCustomizingView {
                 // 렌티큘러 테두리 효과 소유 목록 추가
                 if !borderEffectIds.isEmpty {
                     updates["ownedBorderEffects"] = FieldValue.arrayUnion(borderEffectIds)
+                }
+
+                // 유니폼 프레임 소유 목록 추가
+                if !uniformFrameIds.isEmpty {
+                    updates["ownedUniformFrames"] = FieldValue.arrayUnion(uniformFrameIds)
                 }
 
                 // 한 번에 업데이트!

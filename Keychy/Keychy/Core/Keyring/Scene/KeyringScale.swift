@@ -33,7 +33,8 @@ enum KeyringScale {
         "WishHorse26": CGSize(width: 280, height: 310),
         "DuZzonKu": CGSize(width: 376, height: 376),
         "CrossStitch": CGSize(width: 258, height: 258),
-        "Lenticular": CGSize(width: 220, height: 270)
+        "Lenticular": CGSize(width: 220, height: 270),
+        "Uniform": CGSize(width: 252, height: 300)
     ]
 
     // MARK: - 템플릿 × 화면별 zoomScale
@@ -46,7 +47,8 @@ enum KeyringScale {
         "WishHorse26": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.85, .video: 0.8],
         "DuZzonKu": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.8, .video: 0.8],
         "CrossStitch": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.9, .video: 0.8],
-        "Lenticular": [.customizing: 0.85, .infoInput: 0.85, .complete: 0.7, .video: 0.8]
+        "Lenticular": [.customizing: 0.85, .infoInput: 0.85, .complete: 0.7, .video: 0.8],
+        "Uniform": [.customizing: 1.0, .infoInput: 1.0, .complete: 0.9, .video: 1.0]
     ]
 
     // MARK: - 카라비너별 뭉치 키링 스케일
@@ -77,7 +79,8 @@ enum KeyringScale {
         "SpeechBubble": 1.0,
         "WishHorse26":  1.0,
         "DuZzonKu":     0.9,
-        "CrossStitch":  0.7
+        "CrossStitch":  0.7,
+        "Uniform":      0.9
     ]
 
     // MARK: - 위젯 출력 크기 (템플릿별)
@@ -111,7 +114,8 @@ enum KeyringScale {
         "WishHorse26": -110,
         "DuZzonKu": -40,
         "CrossStitch": -30,
-        "Lenticular": -30
+        "Lenticular": -30,
+        "Uniform": -60
     ]
 
     // MARK: - 렌티큘러 3D 회전 상수

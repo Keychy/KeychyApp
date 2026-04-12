@@ -21,6 +21,7 @@ struct WorkshopTab: View {
     @State private var duZzonKuVM: DuZzonKuVM?
     @State private var crossStitchVM: CrossStitchVM?
     @State private var lenticularVM: LenticularVM?
+    @State private var uniformVM: UniformVM?
     @State private var workshopViewModel = WorkshopViewModel(userManager: UserManager.shared)
 
     var body: some View {
@@ -280,6 +281,28 @@ struct WorkshopTab: View {
                 navigationTitle: "키링이 완성되었어요!"
             )
 
+        // MARK: - Uniform
+        case .uniformPreview:
+            UniformPreview(router: router, viewModel: getUniformVM())
+        case .uniformCustomizing:
+            KeyringCustomizingView(
+                router: router,
+                viewModel: getUniformVM(),
+                nextRoute: .uniformInfoInput
+            )
+        case .uniformInfoInput:
+            KeyringInfoInputView(
+                router: router,
+                viewModel: getUniformVM(),
+                nextRoute: .uniformComplete
+            )
+        case .uniformComplete:
+            KeyringCompleteView(
+                router: router,
+                viewModel: getUniformVM(),
+                navigationTitle: "키링이 완성되었어요!"
+            )
+
         // MARK: - 선물 포장 완료
         case .packageComplete(let keyringDocumentId, let postOfficeId, let templateId, let shareLink):
             KeyringPackageCompleteView(
@@ -390,6 +413,15 @@ struct WorkshopTab: View {
         return viewModel
     }
 
+    private func getUniformVM() -> UniformVM {
+        guard let viewModel = uniformVM else {
+            let newViewModel = UniformVM()
+            uniformVM = newViewModel
+            return newViewModel
+        }
+        return viewModel
+    }
+
     // MARK: - ViewModel by TemplateId
     private func getViewModelForTemplate(_ templateId: String) -> any KeyringViewModelProtocol {
         switch templateId {
@@ -407,6 +439,8 @@ struct WorkshopTab: View {
             return getDuZzonKuVM()
         case "Lenticular":
             return getLenticularVM()
+        case "Uniform":
+            return getUniformVM()
         default:
             return getPolaroidVM()
         }
@@ -431,5 +465,9 @@ struct WorkshopTab: View {
 
     func resetSpeechBubbleVM() {
         speechBubbleVM = nil
+    }
+
+    func resetUniformVM() {
+        uniformVM = nil
     }
 }

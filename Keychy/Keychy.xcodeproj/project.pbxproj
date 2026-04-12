@@ -412,6 +412,8 @@
 		4C7E963A2F7D0EAB00C8B109 /* StyleSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E96392F7D0EAB00C8B109 /* StyleSelectorView.swift */; };
 		4C7E963C2F7D267900C8B109 /* KeyringAppearanceColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E963B2F7D267900C8B109 /* KeyringAppearanceColor.swift */; };
 		4C7E963E2F878FDE00C8B109 /* LenticularVM+Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E963D2F878FDE00C8B109 /* LenticularVM+Style.swift */; };
+		4C7E964F2F89212100C8B109 /* ColorPaletteRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E964E2F89212100C8B109 /* ColorPaletteRow.swift */; };
+		4C7E96502F89212100C8B109 /* ColorChipSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E964D2F89212100C8B109 /* ColorChipSelector.swift */; };
 		4C8426602ED3585A0050B6FE /* gulimche-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */; };
 		4C8426642ED375840050B6FE /* ColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8426632ED375840050B6FE /* ColorPalette.swift */; };
 		4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A596832EAFEAA20003D712 /* ProfileSetupView.swift */; };
@@ -506,6 +508,14 @@
 		AA0213F12F0E000000000001 /* TemplateImageSlideshow.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0213F02F0E000000000001 /* TemplateImageSlideshow.swift */; };
 		AA0219DE2EB1C041006EF269 /* BundleNameInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0219DD2EB1C041006EF269 /* BundleNameInputView.swift */; };
 		AA0A54B72EC053E4007B5413 /* CarabinerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0A54B62EC053E4007B5413 /* CarabinerType.swift */; };
+		AA20000000000000000001 /* UniformVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000000000000000001 /* UniformVM.swift */; };
+		AA20000000000000000002 /* UniformVM+Customizing.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000000000000000002 /* UniformVM+Customizing.swift */; };
+		AA20000000000000000003 /* UniformVM+Effect.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000000000000000003 /* UniformVM+Effect.swift */; };
+		AA20000000000000000004 /* UniformVM+Firebase.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000000000000000004 /* UniformVM+Firebase.swift */; };
+		AA20000000000000000005 /* UniformVM+Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000000000000000005 /* UniformVM+Frame.swift */; };
+		AA20000000000000000006 /* UniformPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000000000000000006 /* UniformPreview.swift */; };
+		AA20000000000000000007 /* UniformFramePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000000000000000007 /* UniformFramePreviewView.swift */; };
+		AA20000000000000000008 /* UniformFrameSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000000000000000008 /* UniformFrameSelectorView.swift */; };
 		AA2146AF2F15D0160048D40E /* BundleEditView+Purchase.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146AE2F15D0160048D40E /* BundleEditView+Purchase.swift */; };
 		AA2146B12F15D43C0048D40E /* BundleEditView+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146B02F15D43C0048D40E /* BundleEditView+Alert.swift */; };
 		AA2146B52F15D8490048D40E /* KeyringCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146B42F15D8490048D40E /* KeyringCell.swift */; };
@@ -1031,6 +1041,8 @@
 		4C7E96392F7D0EAB00C8B109 /* StyleSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyleSelectorView.swift; sourceTree = "<group>"; };
 		4C7E963B2F7D267900C8B109 /* KeyringAppearanceColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringAppearanceColor.swift; sourceTree = "<group>"; };
 		4C7E963D2F878FDE00C8B109 /* LenticularVM+Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LenticularVM+Style.swift"; sourceTree = "<group>"; };
+		4C7E964D2F89212100C8B109 /* ColorChipSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorChipSelector.swift; sourceTree = "<group>"; };
+		4C7E964E2F89212100C8B109 /* ColorPaletteRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPaletteRow.swift; sourceTree = "<group>"; };
 		4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "gulimche-Regular.ttf"; sourceTree = "<group>"; };
 		4C8426632ED375840050B6FE /* ColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPalette.swift; sourceTree = "<group>"; };
 		4C86A6112F25C0B10023AA2D /* WorkshopBundleGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopBundleGridView.swift; sourceTree = "<group>"; };
@@ -1124,6 +1136,14 @@
 		AA0213F02F0E000000000001 /* TemplateImageSlideshow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateImageSlideshow.swift; sourceTree = "<group>"; };
 		AA0219DD2EB1C041006EF269 /* BundleNameInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleNameInputView.swift; sourceTree = "<group>"; };
 		AA0A54B62EC053E4007B5413 /* CarabinerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerType.swift; sourceTree = "<group>"; };
+		AA10000000000000000001 /* UniformVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniformVM.swift; sourceTree = "<group>"; };
+		AA10000000000000000002 /* UniformVM+Customizing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UniformVM+Customizing.swift"; sourceTree = "<group>"; };
+		AA10000000000000000003 /* UniformVM+Effect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UniformVM+Effect.swift"; sourceTree = "<group>"; };
+		AA10000000000000000004 /* UniformVM+Firebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UniformVM+Firebase.swift"; sourceTree = "<group>"; };
+		AA10000000000000000005 /* UniformVM+Frame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UniformVM+Frame.swift"; sourceTree = "<group>"; };
+		AA10000000000000000006 /* UniformPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniformPreview.swift; sourceTree = "<group>"; };
+		AA10000000000000000007 /* UniformFramePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniformFramePreviewView.swift; sourceTree = "<group>"; };
+		AA10000000000000000008 /* UniformFrameSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniformFrameSelectorView.swift; sourceTree = "<group>"; };
 		AA2146AE2F15D0160048D40E /* BundleEditView+Purchase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleEditView+Purchase.swift"; sourceTree = "<group>"; };
 		AA2146B02F15D43C0048D40E /* BundleEditView+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleEditView+Alert.swift"; sourceTree = "<group>"; };
 		AA2146B42F15D8490048D40E /* KeyringCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringCell.swift; sourceTree = "<group>"; };
@@ -1755,11 +1775,13 @@
 			isa = PBXGroup;
 			children = (
 				4C4733352F1FA388005D2376 /* Recording */,
-				4C4733F82F226143005D2376 /* TemplateActionButton.swift */,
 				4C4733362F1FA388005D2376 /* CameraPicker.swift */,
-				4C4733372F1FA388005D2376 /* CinematicAppearanceModifier.swift */,
 				4C4733382F1FA388005D2376 /* PreviewGuiding.swift */,
+				4C4733F82F226143005D2376 /* TemplateActionButton.swift */,
+				4C4733372F1FA388005D2376 /* CinematicAppearanceModifier.swift */,
 				4C4733392F1FA388005D2376 /* TemplatePreviewComponents.swift */,
+				4C7E964D2F89212100C8B109 /* ColorChipSelector.swift */,
+				4C7E964E2F89212100C8B109 /* ColorPaletteRow.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -1983,6 +2005,7 @@
 				38818DAE2F3C42AF00B0A49C /* DuZzonKu */,
 				3851D48F2F5FD0D90013C052 /* CrossStitch */,
 				4C7E95E62F754A0400C8B109 /* Lenticular */,
+				AA30000000000000000001 /* Uniform */,
 			);
 			path = Templates;
 			sourceTree = "<group>";
@@ -2876,6 +2899,37 @@
 			path = Create;
 			sourceTree = "<group>";
 		};
+		AA30000000000000000001 /* Uniform */ = {
+			isa = PBXGroup;
+			children = (
+				AA30000000000000000002 /* ViewModels */,
+				AA30000000000000000003 /* Views */,
+			);
+			path = Uniform;
+			sourceTree = "<group>";
+		};
+		AA30000000000000000002 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				AA10000000000000000001 /* UniformVM.swift */,
+				AA10000000000000000002 /* UniformVM+Customizing.swift */,
+				AA10000000000000000003 /* UniformVM+Effect.swift */,
+				AA10000000000000000004 /* UniformVM+Firebase.swift */,
+				AA10000000000000000005 /* UniformVM+Frame.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		AA30000000000000000003 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AA10000000000000000006 /* UniformPreview.swift */,
+				AA10000000000000000007 /* UniformFramePreviewView.swift */,
+				AA10000000000000000008 /* UniformFrameSelectorView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		AA8C9B932F10E67200A352D2 /* Bundle */ = {
 			isa = PBXGroup;
 			children = (
@@ -3479,6 +3533,8 @@
 				4C4733BB2F1FA388005D2376 /* CameraPicker.swift in Sources */,
 				4C4733BC2F1FA388005D2376 /* PixelVM+ImageConversion.swift in Sources */,
 				4C4733BD2F1FA388005D2376 /* AcrylicPhotoGuiding.swift in Sources */,
+				4C7E964F2F89212100C8B109 /* ColorPaletteRow.swift in Sources */,
+				4C7E96502F89212100C8B109 /* ColorChipSelector.swift in Sources */,
 				4C4733BE2F1FA388005D2376 /* PolaroidVM+Effect.swift in Sources */,
 				38818DB42F3C43DC00B0A49C /* DuZzonKuPreview.swift in Sources */,
 				4C4733BF2F1FA388005D2376 /* PolaroidVM.swift in Sources */,
@@ -3503,6 +3559,14 @@
 				4C4733D22F1FA388005D2376 /* ClearSketchDrawingCanvasView.swift in Sources */,
 				4C4733D32F1FA388005D2376 /* FramePreviewView.swift in Sources */,
 				4C4733D42F1FA388005D2376 /* SpeechBubbleVM.swift in Sources */,
+				AA20000000000000000001 /* UniformVM.swift in Sources */,
+				AA20000000000000000002 /* UniformVM+Customizing.swift in Sources */,
+				AA20000000000000000003 /* UniformVM+Effect.swift in Sources */,
+				AA20000000000000000004 /* UniformVM+Firebase.swift in Sources */,
+				AA20000000000000000005 /* UniformVM+Frame.swift in Sources */,
+				AA20000000000000000006 /* UniformPreview.swift in Sources */,
+				AA20000000000000000007 /* UniformFramePreviewView.swift in Sources */,
+				AA20000000000000000008 /* UniformFrameSelectorView.swift in Sources */,
 				4C4733D52F1FA388005D2376 /* AcrylicPhotoVM+CropBoxDrag.swift in Sources */,
 				4C4733D62F1FA388005D2376 /* SpeechBubbleVM+Customizing.swift in Sources */,
 				4C4733D72F1FA388005D2376 /* AcrylicPhotoVM+Crop.swift in Sources */,
@@ -3883,7 +3947,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = BUKGH5MWAT;
 				ENABLE_PREVIEWS = YES;
@@ -3932,7 +3996,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = BUKGH5MWAT;
 				ENABLE_PREVIEWS = YES;
@@ -3981,7 +4045,7 @@
 				CODE_SIGN_ENTITLEMENTS = WidgetKeychy/WidgetKeychyExtension.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = BUKGH5MWAT;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -4024,7 +4088,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = BUKGH5MWAT;
 				GENERATE_INFOPLIST_FILE = YES;
