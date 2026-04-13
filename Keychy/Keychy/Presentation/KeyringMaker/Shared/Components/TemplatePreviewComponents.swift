@@ -157,6 +157,12 @@ struct TemplatePreviewBody: View {
 
 // MARK: - TemplatePreviewBody Extensions
 extension TemplatePreviewBody {
+    /// 화면 높이에 비례하는 프리뷰 이미지 크기
+    /// SE3(667pt) → ~333, iPhone 16 Pro(852pt) → 386 (cap)
+    private var previewImageSize: CGFloat {
+        min(386, UIScreen.main.bounds.height * 0.5)
+    }
+
     /// 템플릿 프리뷰 이미지
     private var templatePreview: some View {
         VStack {
@@ -169,17 +175,17 @@ extension TemplatePreviewBody {
                         localFirstImageName: "preview_\(template.id ?? "")"
                     )
                         .scaledToFit()
-                        .frame(width: 386, height: 386)
+                        .frame(width: previewImageSize, height: previewImageSize)
                 } else if template.previewURL.contains(".gif") {
                     // GIF URL인 경우 애니메이션 재생 (렌티큘러 등)
                     // Firebase Storage URL은 쿼리 파라미터가 붙어 hasSuffix 불가 → contains 사용
                     SimpleAnimatedImage(url: template.previewURL, maxSize: CGSize(width: 400, height: 400))
                         .scaledToFit()
-                        .frame(width: 386, height: 386)
+                        .frame(width: previewImageSize, height: previewImageSize)
                 } else {
                     ItemDetailImage(itemURL: template.previewURL)
                         .scaledToFit()
-                        .frame(width: 386, height: 386)
+                        .frame(width: previewImageSize, height: previewImageSize)
                 }
             }
         }
