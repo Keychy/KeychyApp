@@ -416,6 +416,7 @@
 		4C7E96502F89212100C8B109 /* ColorChipSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E964D2F89212100C8B109 /* ColorChipSelector.swift */; };
 		4C7E96622F8BD98F00C8B109 /* BMDOHYEON_otf.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C7E96602F8BD98F00C8B109 /* BMDOHYEON_otf.otf */; };
 		4C7E96632F8BD98F00C8B109 /* esamanru OTF Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C7E96612F8BD98F00C8B109 /* esamanru OTF Medium.otf */; };
+		4C7E96682F8CFA3000C8B109 /* TemplatePreviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E96662F8CFA3000C8B109 /* TemplatePreviewViewModel.swift */; };
 		4C8426602ED3585A0050B6FE /* gulimche-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */; };
 		4C8426642ED375840050B6FE /* ColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8426632ED375840050B6FE /* ColorPalette.swift */; };
 		4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A596832EAFEAA20003D712 /* ProfileSetupView.swift */; };
@@ -1048,6 +1049,7 @@
 		4C7E964E2F89212100C8B109 /* ColorPaletteRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPaletteRow.swift; sourceTree = "<group>"; };
 		4C7E96602F8BD98F00C8B109 /* BMDOHYEON_otf.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = BMDOHYEON_otf.otf; sourceTree = "<group>"; };
 		4C7E96612F8BD98F00C8B109 /* esamanru OTF Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "esamanru OTF Medium.otf"; sourceTree = "<group>"; };
+		4C7E96662F8CFA3000C8B109 /* TemplatePreviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplatePreviewViewModel.swift; sourceTree = "<group>"; };
 		4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "gulimche-Regular.ttf"; sourceTree = "<group>"; };
 		4C8426632ED375840050B6FE /* ColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPalette.swift; sourceTree = "<group>"; };
 		4C86A6112F25C0B10023AA2D /* WorkshopBundleGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopBundleGridView.swift; sourceTree = "<group>"; };
@@ -1829,6 +1831,7 @@
 				4C47333A2F1FA388005D2376 /* Components */,
 				4C47333C2F1FA388005D2376 /* Models */,
 				4C47334B2F1FA388005D2376 /* Views */,
+				4C7E96672F8CFA3000C8B109 /* ViewModels */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -2348,6 +2351,14 @@
 				4C7E96612F8BD98F00C8B109 /* esamanru OTF Medium.otf */,
 			);
 			path = Uniform;
+			sourceTree = "<group>";
+		};
+		4C7E96672F8CFA3000C8B109 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				4C7E96662F8CFA3000C8B109 /* TemplatePreviewViewModel.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		4C84265E2ED358520050B6FE /* Gulim */ = {
@@ -3608,6 +3619,7 @@
 				3822DDC22EBBC712003125BE /* KeyringEditView.swift in Sources */,
 				4CF2A9662F0B8C5800BA9FDA /* PullToRefreshIndicator.swift in Sources */,
 				4C4734002F22615D005D2376 /* WorkshopItemCard.swift in Sources */,
+				4C7E96682F8CFA3000C8B109 /* TemplatePreviewViewModel.swift in Sources */,
 				4C4734012F22615D005D2376 /* WorkshopFilterBar.swift in Sources */,
 				4C4734022F22615D005D2376 /* WorkshopFilterChip.swift in Sources */,
 				4C4734032F22615D005D2376 /* WorkshopItemActionButton.swift in Sources */,

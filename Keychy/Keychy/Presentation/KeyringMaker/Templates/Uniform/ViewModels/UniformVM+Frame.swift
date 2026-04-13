@@ -124,11 +124,11 @@ extension UniformVM {
         if charCount <= 4 {
             adjustedFontSize = baseFontSize
         } else if charCount <= 6 {
-            adjustedFontSize = baseFontSize * 0.8
+            adjustedFontSize = baseFontSize * 0.85
         } else if charCount <= 8 {
-            adjustedFontSize = baseFontSize * 0.65
+            adjustedFontSize = baseFontSize * 0.72
         } else {
-            adjustedFontSize = baseFontSize * 0.55
+            adjustedFontSize = baseFontSize * 0.62
         }
 
         let nameFont = UIFont(name: FontFamily.esamanruMedium.fontName, size: adjustedFontSize)
@@ -138,7 +138,7 @@ extension UniformVM {
         let normalized = (textCurvature - 0.16) / (0.84 - 0.16)
 
         // 중간 이상 곡률에서 이름을 위로 올려 등번호와 겹침 방지
-        let nameUpshift: CGFloat = max(normalized - 0.3, 0) / 0.7 * 10.0
+        let nameUpshift: CGFloat = max(normalized - 0.3, 0) / 0.7 * 14.0
         let adjustedNameOffsetY = nameOffsetY - nameUpshift
 
         if normalized < 0.01 {
