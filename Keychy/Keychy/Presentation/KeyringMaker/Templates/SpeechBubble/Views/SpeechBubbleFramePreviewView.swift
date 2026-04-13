@@ -69,11 +69,17 @@ struct SpeechBubbleFramePreviewView: View {
 
     // MARK: - Composition View
 
+    // MARK: - 프레임 크기 상수
+    /// SpriteKit templateMaxSizes 높이(249)와 원본 프레임 높이(324) 비율
+    private static let templateHeight: CGFloat = 249
+    private static let originalFrameHeight: CGFloat = 324
+    private static let frameScaleRatio: CGFloat = templateHeight / originalFrameHeight
+
     /// 프레임 + 텍스트 합성 미리보기
     @ViewBuilder
     private var compositionView: some View {
         // SpriteKit templateMaxSizes 높이(249)에 맞춰서 이펙트탭과 크기 일치
-        let targetFrameHeight: CGFloat = 249 * previewScale
+        let targetFrameHeight: CGFloat = Self.templateHeight * previewScale
 
         ZStack(alignment: .center) {
             if let frame = viewModel.selectedFrame {
@@ -89,7 +95,7 @@ struct SpeechBubbleFramePreviewView: View {
                             // 2. 텍스트 입력 필드 (중앙에 오버레이)
                             // 프레임 축소(324→249)에 맞춰 텍스트도 비례 축소
                             textInputField
-                                .scaleEffect(249.0 / 324.0)
+                                .scaleEffect(Self.frameScaleRatio)
                                 .offset(y: (frame.textOffsetY ?? 0) * previewScale)
                         }
                         .onAppear {

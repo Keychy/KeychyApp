@@ -81,7 +81,6 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                         }
                     )
                     .background(Color.gray50.ignoresSafeArea())
-                    .offset(y: 0)
                     .opacity(isSceneReady ? 1.0 : 0.0)
                     .blur(radius: showPurchaseProgress || showPurchaseSuccessAlert || showPurchaseFailAlert ? 15 : 0)
 

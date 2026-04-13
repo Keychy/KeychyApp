@@ -40,7 +40,7 @@ struct WishHorse26FramePreviewView: View {
                                 .frame(height: 115 * previewScale)
 
                             compositionView
-                                .offset(y: -3)
+                                .offset(y: -5 * previewScale)
                         }
 
                         // frameChain 이미지 (위에 겹침)

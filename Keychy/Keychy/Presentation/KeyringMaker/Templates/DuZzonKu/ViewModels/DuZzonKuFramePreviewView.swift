@@ -54,7 +54,7 @@ struct DuZzonKuFramePreviewView: View {
                                 .frame(height: 135 * previewScale)
 
                             compositionView
-                                .offset(x: -0.5, y: -2)
+                                .offset(x: -0.5 * previewScale, y: -2 * previewScale)
                         }
 
                         // frameChain 이미지 (위에 겹침)
@@ -281,9 +281,6 @@ struct DuZzonKuFramePreviewView: View {
                     isFrameLoaded = false
                 }
                 .offset(x: 2)
-                .onAppear {
-                    print("checkerBoardRects:", frame.checkerBoardRects ?? [])
-                }
             }
         }
     }
