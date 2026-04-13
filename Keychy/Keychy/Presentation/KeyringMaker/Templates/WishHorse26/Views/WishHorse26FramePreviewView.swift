@@ -12,10 +12,12 @@ struct WishHorse26FramePreviewView: View {
     @Bindable var viewModel: WishHorse26VM
     let onSceneReady: () -> Void
 
+    @Environment(\.previewScaleFactor) private var previewScale
+    @Environment(\.previewTopPadding) private var topPadding
     @State private var isFrameLoaded: Bool = false
-    
-    // 크기 설정
-    private let targetFrameHeight: CGFloat = 269
+
+    // 크기 설정 (previewScale 적용)
+    private var targetFrameHeight: CGFloat { 269 * previewScale }
     
     // MARK: - 프레임 타입에 따른 변환 여부
     private var shouldApplyTransform: Bool {
@@ -35,23 +37,23 @@ struct WishHorse26FramePreviewView: View {
                         // 프레임 + 안장 + 갈기 합성 영역
                         VStack {
                             Spacer()
-                                .frame(height: 115)
+                                .frame(height: 115 * previewScale)
 
                             compositionView
+                                .offset(y: -3)
                         }
 
                         // frameChain 이미지 (위에 겹침)
                         Image(.frameChain)
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 90)
-                            .offset(y: 5)
+                            .frame(width: 90 * previewScale)
                     }
 
                     Spacer()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(.top, 168)
+                .padding(.top, topPadding)
                 .opacity(isFrameLoaded ? 1 : 0)
 
                 // 로딩 중일 때
@@ -121,8 +123,8 @@ struct WishHorse26FramePreviewView: View {
                         // MARK: - type "A"일 때만 변환 적용
                         .rotationEffect(.degrees(shouldApplyTransform ? 20 : 0))
                         .offset(
-                            x: shouldApplyTransform ? 15.39 : -0.1,
-                            y: shouldApplyTransform ? 37.34 : 0
+                            x: shouldApplyTransform ? 15.39 * previewScale : -0.1,
+                            y: shouldApplyTransform ? 37.34 * previewScale : 0
                         )
                         .onAppear {
                             isFrameLoaded = true

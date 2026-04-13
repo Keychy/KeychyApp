@@ -15,6 +15,8 @@ struct SpeechBubbleFramePreviewView: View {
     @Bindable var viewModel: SpeechBubbleVM
     let onSceneReady: () -> Void
 
+    @Environment(\.previewScaleFactor) private var previewScale
+    @Environment(\.previewTopPadding) private var topPadding
     @FocusState private var isTextFieldFocused: Bool
     @State private var isFrameLoaded: Bool = false
 
@@ -27,23 +29,23 @@ struct SpeechBubbleFramePreviewView: View {
                         // 프레임 + 텍스트 영역
                         VStack {
                             Spacer()
-                                .frame(height: 119)  // 126 → 95
+                                .frame(height: 119 * previewScale)
 
                             compositionView
+                                .offset(y: 40 * previewScale)
                         }
 
                         // frameChain 이미지 (위에 겹침)
                         Image(.frameChain2)
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 90)
-                            .offset(y: -40)
+                            .frame(width: 90 * previewScale)
                     }
 
                     Spacer()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(.top, 168)
+                .padding(.top, topPadding)
                 .opacity(isFrameLoaded ? 1 : 0)
 
                 // 로딩 중일 때
@@ -70,19 +72,25 @@ struct SpeechBubbleFramePreviewView: View {
     /// 프레임 + 텍스트 합성 미리보기
     @ViewBuilder
     private var compositionView: some View {
+        // SpriteKit templateMaxSizes 높이(249)에 맞춰서 이펙트탭과 크기 일치
+        let targetFrameHeight: CGFloat = 249 * previewScale
+
         ZStack(alignment: .center) {
             if let frame = viewModel.selectedFrame {
                 LazyImage(url: URL(string: frame.frameURL)) { state in
                     if let image = state.image {
                         ZStack(alignment: .center) {
-                            // 1. 프레임 이미지 (원본 크기)
+                            // 1. 프레임 이미지
                             image
                                 .resizable()
                                 .scaledToFit()
+                                .frame(height: targetFrameHeight)
 
                             // 2. 텍스트 입력 필드 (중앙에 오버레이)
+                            // 프레임 축소(324→249)에 맞춰 텍스트도 비례 축소
                             textInputField
-                                .offset(y: frame.textOffsetY ?? 0)
+                                .scaleEffect(249.0 / 324.0)
+                                .offset(y: (frame.textOffsetY ?? 0) * previewScale)
                         }
                         .onAppear {
                             isFrameLoaded = true
