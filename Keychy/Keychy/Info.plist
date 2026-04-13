@@ -13,6 +13,8 @@
 	</array>
 	<key>UIAppFonts</key>
 	<array>
+		<string>BMDOHYEON_otf.otf</string>
+		<string>esamanru OTF Medium.otf</string>
 		<string>SUIT-Bold.otf</string>
 		<string>SUIT-ExtraBold.otf</string>
 		<string>SUIT-ExtraLight.otf</string>
