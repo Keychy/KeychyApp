@@ -74,7 +74,12 @@ struct KeyringSceneView<VM: KeyringViewModelProtocol>: View {
             backgroundColor: backgroundColor,
             hookOffsetY: viewModel.hookOffsetY != 0 ? viewModel.hookOffsetY : nil,
             chainLength: viewModel.chainLength,
-            previewScale: previewScale
+            previewScale: previewScale,
+            hasDynamicIsland: {
+                guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                      let window = scene.windows.first else { return true }
+                return window.safeAreaInsets.bottom > 0
+            }()
         )
         newScene.scaleMode = .resizeFill
 

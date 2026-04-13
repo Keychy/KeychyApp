@@ -25,6 +25,7 @@ class KeyringScene: SKScene {
     var hookOffsetY: CGFloat? // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
     var chainLength: Int = 5 // 체인 링크 개수 (기본값 5)
     var previewScale: CGFloat = 1.0 // 기기별 프리뷰 스케일 (카메라 줌에 반영)
+    var hasDynamicIsland: Bool = true // DI 기기 여부 (링 위치 분기용)
     var cancellables = Set<AnyCancellable>()
     var currentSoundId: String = "none"
     var currentParticleId: String = "none"
@@ -72,7 +73,8 @@ class KeyringScene: SKScene {
         backgroundColor: UIColor = .gray50,
         hookOffsetY: CGFloat? = nil,
         chainLength: Int = 5,
-        previewScale: CGFloat = 1.0
+        previewScale: CGFloat = 1.0,
+        hasDynamicIsland: Bool = true
     ) {
         self.currentRingType = ringType
         self.currentChainType = chainType
@@ -84,6 +86,7 @@ class KeyringScene: SKScene {
         self.hookOffsetY = hookOffsetY
         self.chainLength = chainLength
         self.previewScale = previewScale
+        self.hasDynamicIsland = hasDynamicIsland
 
         if let image = bodyImage {
             self.bodyImage = image.fixedOrientation()
