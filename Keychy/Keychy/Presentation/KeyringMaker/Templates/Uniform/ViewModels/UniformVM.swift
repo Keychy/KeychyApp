@@ -44,7 +44,8 @@ class UniformVM: KeyringViewModelProtocol {
     var numberOutlineColor: Color = .black     // 등번호 테두리 색상
     var nameInnerColor: Color = .white         // 이름 내부 색상
     var nameOutlineColor: Color = .black       // 이름 테두리 색상
-    var textCurvature: CGFloat = 0.0           // 글자 곡률 (0 = 직선)
+    var nameFontSize: CGFloat = 24              // 선수 이름 폰트 크기 (슬라이더)
+    var textCurvature: CGFloat = 0.16          // 글자 곡률 (0.16 = 거의 직선, 0.84 = 강한 곡선)
 
     // MARK: - Body Image
     var bodyImage: UIImage? = nil
@@ -97,10 +98,29 @@ class UniformVM: KeyringViewModelProtocol {
         numberOutlineColor = .black
         nameInnerColor = .white
         nameOutlineColor = .black
-        textCurvature = 0.0
+        nameFontSize = 24
+        textCurvature = 0.16
         bodyImage = nil
         availableFrames.removeAll()
         isComposingText = false
+    }
+
+    // MARK: - 마킹 입력 검증
+
+    /// 선수 이름 입력값 검증 (8자 제한)
+    func validatePlayerName(_ newValue: String) {
+        if newValue.count > 10 {
+            playerNameText = String(newValue.prefix(10))
+        }
+    }
+
+    /// 등번호 입력값 검증 (숫자만 + 2자리 제한)
+    func validateNumberText(_ newValue: String) {
+        let filtered = newValue.filter { $0.isNumber }
+        let limited = String(filtered.prefix(2))
+        if numberText != limited {
+            numberText = limited
+        }
     }
 
     func resetInfoData() {
