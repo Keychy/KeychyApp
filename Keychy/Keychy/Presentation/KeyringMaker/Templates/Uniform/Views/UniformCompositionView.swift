@@ -128,9 +128,9 @@ struct UniformCompositionView: View {
             let count = viewModel.playerNameText.count
             let base = viewModel.nameFontSize
             if count <= 4 { return base }
-            else if count <= 6 { return base * 0.8 }
-            else if count <= 8 { return base * 0.65 }
-            else { return base * 0.55 }
+            else if count <= 6 { return base * 0.85 }
+            else if count <= 8 { return base * 0.72 }
+            else { return base * 0.62 }
         }()
 
         VStack(spacing: 0) {
@@ -152,7 +152,7 @@ struct UniformCompositionView: View {
             let normalized = (viewModel.textCurvature - 0.16) / (0.84 - 0.16)
 
             // 중간 이상 곡률에서 이름을 위로 올려 등번호와 겹침 방지
-            let nameUpshift: CGFloat = max(normalized - 0.3, 0) / 0.7 * 10.0
+            let nameUpshift: CGFloat = max(normalized - 0.3, 0) / 0.7 * 14.0
             let adjustedNameOffsetY = nameOffsetY - nameUpshift
 
             if normalized < 0.01 {
@@ -174,7 +174,7 @@ struct UniformCompositionView: View {
                     innerColor: viewModel.nameInnerColor,
                     outlineColor: viewModel.nameOutlineColor
                 )
-                .frame(width: 280, height: 80)
+                .frame(width: 320, height: 90)
                 .offset(y: adjustedNameOffsetY)
             }
         }
