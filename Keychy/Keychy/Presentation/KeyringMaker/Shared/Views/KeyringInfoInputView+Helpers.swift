@@ -43,7 +43,7 @@ extension KeyringInfoInputView {
 // MARK: - KeyringScene Section
 extension KeyringInfoInputView {
     var keyringScene: some View {
-        KeyringSceneView(viewModel: viewModel)
+        KeyringSceneView(viewModel: viewModel, screen: .infoInput)
             .frame(maxWidth: .infinity)
             .scaleEffect(sceneScale)
             .offset(y: sceneYOffset)

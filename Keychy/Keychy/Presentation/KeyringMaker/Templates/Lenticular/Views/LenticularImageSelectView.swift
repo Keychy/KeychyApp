@@ -402,6 +402,7 @@ extension LenticularImageSelectView {
             }
             .disabled(!viewModel.canProceed)
             .typography(.suit17B)
+            .foregroundStyle(viewModel.canProceed ? .main500 : .gray300)
         }
     }
 }

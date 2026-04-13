@@ -15,9 +15,7 @@ struct AddKeyringButton: View {
         Button {
             action()
         } label: {
-            Image(.plus)
-                .resizable()
-                .frame(width: 21.48, height: 21.48)
+            Image(.bundlePlus)
         }
         .frame(width: 30, height: 30)
         .glassEffect(.clear.interactive(), in: .circle)

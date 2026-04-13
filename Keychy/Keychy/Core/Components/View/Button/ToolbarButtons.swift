@@ -44,7 +44,7 @@ struct NextToolbarButton: View {
             Text(title)
                 .typography(.suit17B)
                 .padding(4)
-                .foregroundStyle(isDisabled ? .gray300 : .black100)
+                .foregroundStyle(isDisabled ? .gray300 : .main500)
         }
         .frame(width: 62, height: 44)
         .glassEffect(.regular.interactive(), in: .capsule)

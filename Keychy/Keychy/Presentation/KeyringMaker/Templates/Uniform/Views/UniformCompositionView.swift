@@ -15,6 +15,8 @@ struct UniformCompositionView: View {
     @Bindable var viewModel: UniformVM
     let onSceneReady: () -> Void
 
+    @Environment(\.previewScaleFactor) private var previewScale
+    @Environment(\.previewTopPadding) private var topPadding
     @State private var isFrameLoaded: Bool = false
 
     var body: some View {
@@ -24,7 +26,7 @@ struct UniformCompositionView: View {
                     ZStack(alignment: .top) {
                         VStack {
                             Spacer()
-                                .frame(height: 135)
+                                .frame(height: 135 * previewScale)
 
                             compositionView
                                 .offset(x: 1)
@@ -34,13 +36,13 @@ struct UniformCompositionView: View {
                         Image(.frameChain)
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 90)
+                            .frame(width: 90 * previewScale)
                     }
 
                     Spacer()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(.top, 168)
+                .padding(.top, topPadding)
                 .opacity(isFrameLoaded ? 1 : 0)
 
                 if !isFrameLoaded {
@@ -66,10 +68,10 @@ struct UniformCompositionView: View {
                     // 1. 아크릴 (입체감/그림자) — ZStack 크기 기준
                     Image("\(uniformType)_arcylic")
                         .resizable()
-                        .frame(width: 302.03, height: 254.16)
+                        .frame(width: 302.03 * previewScale, height: 254.16 * previewScale)
 
                     // 2~5: 유니폼 레이어 (고정 크기로 아크릴 위에 정렬)
-                    let layerSize = CGSize(width: 280, height: 205.5)
+                    let layerSize = CGSize(width: 280 * previewScale, height: 205.5 * previewScale)
 
                     Group {
                         // 2. Color2 + base mask (베이스 영역)
@@ -106,8 +108,8 @@ struct UniformCompositionView: View {
                         uniformTextOverlay(frame: frame)
                     }
                     .frame(width: layerSize.width, height: layerSize.height)
-                    .offset(y: 14)
-                    .offset(x: -2)
+                    .offset(y: 14 * previewScale)
+                    .offset(x: -2 * previewScale)
                 }
                 .onDisappear {
                     isFrameLoaded = false
@@ -174,7 +176,7 @@ struct UniformCompositionView: View {
                     innerColor: viewModel.nameInnerColor,
                     outlineColor: viewModel.nameOutlineColor
                 )
-                .frame(width: 320, height: 90)
+                .frame(width: 320 * previewScale, height: 90 * previewScale)
                 .offset(y: adjustedNameOffsetY)
             }
         }

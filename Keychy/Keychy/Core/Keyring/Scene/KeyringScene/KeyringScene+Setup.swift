@@ -13,7 +13,18 @@ extension KeyringScene {
     // 키링 전체 조립
     func setupKeyring() {
         let centerX = size.width / 2
-        let topY = size.height * 0.75
+        // DI(다이나믹 아일랜드) 기기: 링을 더 아래에 배치하여 DI와 겹치지 않도록
+        let topY: CGFloat
+        if hasDynamicIsland {
+            topY = size.height * (screen == .customizing ? 0.8 : 0.75)
+        } else {
+            // SE 등 홈버튼 기기: 화면별 링 위치 보정
+            switch screen {
+            case .customizing: topY = size.height * 1.0
+            case .complete:    topY = size.height * 0.75
+            default:           topY = size.height * 0.9
+            }
+        }
         
         // 1. Ring 생성
         KeyringRingComponent.createNode(from: currentRingType) { [weak self] ring in
