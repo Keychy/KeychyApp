@@ -196,6 +196,12 @@ extension TemplatePreviewBody {
                     )
                         .scaledToFit()
                         .frame(width: 386, height: 386)
+                } else if template.previewURL.contains(".gif") {
+                    // GIF URL인 경우 애니메이션 재생 (렌티큘러 등)
+                    // Firebase Storage URL은 쿼리 파라미터가 붙어 hasSuffix 불가 → contains 사용
+                    SimpleAnimatedImage(url: template.previewURL, maxSize: CGSize(width: 400, height: 400))
+                        .scaledToFit()
+                        .frame(width: 386, height: 386)
                 } else {
                     ItemDetailImage(itemURL: template.previewURL)
                         .scaledToFit()
