@@ -115,7 +115,7 @@ enum KeyringScale {
         "DuZzonKu": -40,
         "CrossStitch": -30,
         "Lenticular": -30,
-        "Uniform": -60
+        "Uniform": -40
     ]
 
     // MARK: - 렌티큘러 3D 회전 상수
