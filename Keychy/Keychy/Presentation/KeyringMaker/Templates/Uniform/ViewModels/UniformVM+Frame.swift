@@ -91,46 +91,31 @@ extension UniformVM {
     // MARK: - 등번호 텍스트 렌더링
 
     private func drawNumberText(in targetRect: CGRect, frame: Frame) {
-        let numberFontSize = frame.numberFontSize ?? 60
+        let numberFontSize = frame.numberFontSize ?? 75
         let numberOffsetY = frame.numberOffsetY ?? -20
+        let numberFont = UIFont(name: FontFamily.bmdohyeon.fontName, size: numberFontSize)
+            ?? UIFont.systemFont(ofSize: numberFontSize, weight: .bold)
 
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .center
+        let textSize = measureText(numberText, font: numberFont, maxWidth: targetRect.width)
 
-        let strokeAttributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: numberFontSize, weight: .bold),
-            .foregroundColor: UIColor(numberOutlineColor),
-            .strokeColor: UIColor(numberOutlineColor),
-            .strokeWidth: -4.0,
-            .paragraphStyle: paragraphStyle
-        ]
-
-        let fillAttributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: numberFontSize, weight: .bold),
-            .foregroundColor: UIColor(numberInnerColor),
-            .paragraphStyle: paragraphStyle
-        ]
-
-        let attrString = NSAttributedString(string: numberText, attributes: strokeAttributes)
-        let textSize = attrString.boundingRect(
-            with: CGSize(width: targetRect.width, height: .greatestFiniteMagnitude),
-            options: [.usesLineFragmentOrigin],
-            context: nil
-        ).size
-
-        let x = (targetRect.width - textSize.width) / 2
-        let y = (targetRect.height - textSize.height) / 2 + numberOffsetY
+        let x = targetRect.origin.x + (targetRect.width - textSize.width) / 2
+        let y = targetRect.origin.y + (targetRect.height - textSize.height) / 2 + numberOffsetY
         let textRect = CGRect(x: x, y: y, width: textSize.width, height: textSize.height)
 
-        // 테두리 → 내부 색상 순서로 그리기
-        attrString.draw(in: textRect)
-        NSAttributedString(string: numberText, attributes: fillAttributes).draw(in: textRect)
+        drawOutlinedText(
+            numberText,
+            font: numberFont,
+            innerColor: UIColor(numberInnerColor),
+            outlineColor: UIColor(numberOutlineColor),
+            outlineWidth: 5.4,
+            in: textRect
+        )
     }
 
-    // MARK: - 이름 텍스트 렌더링
+    // MARK: - 이름 텍스트 렌더링 (곡률 적용)
 
     private func drawPlayerNameText(in targetRect: CGRect, frame: Frame) {
-        let baseFontSize = frame.nameFontSize ?? 24
+        let baseFontSize = nameFontSize
         let nameOffsetY = frame.nameOffsetY ?? 40
 
         // 이름 길이에 따라 폰트 크기 자동 축소
@@ -139,41 +124,196 @@ extension UniformVM {
         if charCount <= 4 {
             adjustedFontSize = baseFontSize
         } else if charCount <= 6 {
-            adjustedFontSize = baseFontSize * 0.85
+            adjustedFontSize = baseFontSize * 0.8
+        } else if charCount <= 8 {
+            adjustedFontSize = baseFontSize * 0.65
         } else {
-            adjustedFontSize = baseFontSize * 0.7
+            adjustedFontSize = baseFontSize * 0.55
         }
 
+        let nameFont = UIFont(name: FontFamily.esamanruMedium.fontName, size: adjustedFontSize)
+            ?? UIFont.systemFont(ofSize: adjustedFontSize, weight: .bold)
+
+        // 곡률 정규화: 0.16 → 0 (직선), 0.84 → 1 (최대 곡선)
+        let normalized = (textCurvature - 0.16) / (0.84 - 0.16)
+
+        // 중간 이상 곡률에서 이름을 위로 올려 등번호와 겹침 방지
+        let nameUpshift: CGFloat = max(normalized - 0.3, 0) / 0.7 * 10.0
+        let adjustedNameOffsetY = nameOffsetY - nameUpshift
+
+        if normalized < 0.01 {
+            // 최소 곡률: 직선 텍스트 (원래 자간 유지)
+            let textSize = measureText(playerNameText, font: nameFont, maxWidth: targetRect.width)
+            let x = targetRect.origin.x + (targetRect.width - textSize.width) / 2
+            let y = targetRect.origin.y + (targetRect.height - textSize.height) / 2 + adjustedNameOffsetY
+            let textRect = CGRect(x: x, y: y, width: textSize.width, height: textSize.height)
+
+            drawOutlinedText(
+                playerNameText,
+                font: nameFont,
+                innerColor: UIColor(nameInnerColor),
+                outlineColor: UIColor(nameOutlineColor),
+                outlineWidth: 3.86,
+                in: textRect
+            )
+        } else {
+            // 곡선 텍스트 (곡률에 비례한 자간)
+            let centerX = targetRect.origin.x + targetRect.width / 2
+            let centerY = targetRect.origin.y + targetRect.height / 2 + adjustedNameOffsetY
+
+            drawCurvedOutlinedText(
+                playerNameText,
+                font: nameFont,
+                innerColor: UIColor(nameInnerColor),
+                outlineColor: UIColor(nameOutlineColor),
+                outlineWidth: 3.86,
+                centerX: centerX,
+                centerY: centerY,
+                curvature: textCurvature
+            )
+        }
+    }
+
+    // MARK: - Helper: 호(Arc) 위에 아웃라인 텍스트 렌더링
+
+    /// 각 문자를 원호 위에 개별 배치 + 32방향 오프셋 아웃라인
+    /// curvature → radius 변환: radius = 80 / curvature (0.16=거의 직선, 0.84=강한 곡선)
+    private func drawCurvedOutlinedText(
+        _ text: String,
+        font: UIFont,
+        innerColor: UIColor,
+        outlineColor: UIColor,
+        outlineWidth: CGFloat,
+        centerX: CGFloat,
+        centerY: CGFloat,
+        curvature: CGFloat,
+        directions: Int = 32
+    ) {
+        guard let ctx = UIGraphicsGetCurrentContext() else { return }
+
+        let radius = 55.0 / max(curvature, 0.01)
+        // 호 중심을 텍스트 아래에 배치 → 가장자리가 아래로 휘는 곡선
+        let arcCenterY = centerY + radius
+
+        // 각 문자의 너비 측정
+        let chars = Array(text)
+        let attrs: [NSAttributedString.Key: Any] = [.font: font]
+        let charWidths = chars.map { char in
+            NSAttributedString(string: String(char), attributes: attrs).size().width
+        }
+        let totalWidth = charWidths.reduce(0, +)
+        // 총 각도 = 문자열 폭 / 반지름 (호의 길이 = 반지름 × 각도)
+        let totalAngle = totalWidth / radius
+
+        // 곡률 정규화 (0.16 → 0, 0.84 → 1) → 자간을 0에서 점진적으로 증가
+        let normalized = (curvature - 0.16) / (0.84 - 0.16)
+        let letterSpacing: CGFloat = 5.0 * normalized
+        let spacedTotalWidth = totalWidth + letterSpacing * CGFloat(chars.count - 1)
+        let totalAngleWithSpacing = spacedTotalWidth / radius
+
+        // 12시(−π/2) 기준 좌우 대칭으로 시작
+        var currentAngle = -CGFloat.pi / 2 - totalAngleWithSpacing / 2
+
+        let outlineAttrs: [NSAttributedString.Key: Any] = [
+            .font: font, .foregroundColor: outlineColor
+        ]
+        let fillAttrs: [NSAttributedString.Key: Any] = [
+            .font: font, .foregroundColor: innerColor
+        ]
+        let textHeight = font.ascender - font.descender
+
+        for i in 0..<chars.count {
+            let charStr = String(chars[i])
+            let charWidth = charWidths[i]
+            let charAngle = charWidth / radius
+            // 글자 간격 포함한 각도
+            let spacedCharAngle = (charWidth + letterSpacing) / radius
+            let midAngle = currentAngle + spacedCharAngle / 2
+
+            // 호 위의 좌표
+            let x = centerX + radius * cos(midAngle)
+            let y = arcCenterY + radius * sin(midAngle)
+
+            ctx.saveGState()
+            ctx.translateBy(x: x, y: y)
+            // 접선 방향으로 회전
+            ctx.rotate(by: midAngle + CGFloat.pi / 2)
+
+            // 문자 중심을 변환 원점에 맞추기 위한 드로잉 포인트
+            let drawPoint = CGPoint(x: -charWidth / 2, y: -textHeight / 2)
+
+            // 아웃라인 (32방향 오프셋)
+            let outlineStr = NSAttributedString(string: charStr, attributes: outlineAttrs)
+            for d in 0..<directions {
+                let a = CGFloat(d) * (2 * CGFloat.pi / CGFloat(directions))
+                let dx = cos(a) * outlineWidth
+                let dy = sin(a) * outlineWidth
+                outlineStr.draw(at: CGPoint(x: drawPoint.x + dx, y: drawPoint.y + dy))
+            }
+
+            // 내부 색상
+            NSAttributedString(string: charStr, attributes: fillAttrs)
+                .draw(at: drawPoint)
+
+            ctx.restoreGState()
+
+            currentAngle += spacedCharAngle
+        }
+    }
+
+    // MARK: - Helper: 텍스트 크기 측정
+
+    private func measureText(_ text: String, font: UIFont, maxWidth: CGFloat) -> CGSize {
+        let attributes: [NSAttributedString.Key: Any] = [.font: font]
+        return NSAttributedString(string: text, attributes: attributes)
+            .boundingRect(
+                with: CGSize(width: maxWidth, height: .greatestFiniteMagnitude),
+                options: [.usesLineFragmentOrigin],
+                context: nil
+            ).size
+    }
+
+    // MARK: - Helper: N방향 오프셋 아웃라인 텍스트 렌더링
+
+    /// SwiftUI OutlineText와 동일한 방식 — 32방향 오프셋 복사본으로 두꺼운 아웃라인 생성
+    /// NSAttributedString.strokeWidth는 폰트 크기의 %라서 얇게 나오므로, 이 방식이 프리뷰와 일치함
+    private func drawOutlinedText(
+        _ text: String,
+        font: UIFont,
+        innerColor: UIColor,
+        outlineColor: UIColor,
+        outlineWidth: CGFloat,
+        in textRect: CGRect,
+        directions: Int = 32
+    ) {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
 
-        let strokeAttributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: adjustedFontSize, weight: .bold),
-            .foregroundColor: UIColor(nameOutlineColor),
-            .strokeColor: UIColor(nameOutlineColor),
-            .strokeWidth: -3.0,
+        let outlineAttributes: [NSAttributedString.Key: Any] = [
+            .font: font,
+            .foregroundColor: outlineColor,
             .paragraphStyle: paragraphStyle
         ]
 
         let fillAttributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: adjustedFontSize, weight: .bold),
-            .foregroundColor: UIColor(nameInnerColor),
+            .font: font,
+            .foregroundColor: innerColor,
             .paragraphStyle: paragraphStyle
         ]
 
-        let attrString = NSAttributedString(string: playerNameText, attributes: strokeAttributes)
-        let textSize = attrString.boundingRect(
-            with: CGSize(width: targetRect.width, height: .greatestFiniteMagnitude),
-            options: [.usesLineFragmentOrigin],
-            context: nil
-        ).size
+        let outlineString = NSAttributedString(string: text, attributes: outlineAttributes)
+        let fillString = NSAttributedString(string: text, attributes: fillAttributes)
 
-        let x = (targetRect.width - textSize.width) / 2
-        let y = (targetRect.height - textSize.height) / 2 + nameOffsetY
-        let textRect = CGRect(x: x, y: y, width: textSize.width, height: textSize.height)
+        // 32방향 원형 오프셋으로 아웃라인 렌더링 (OutlineText와 동일 알고리즘)
+        for i in 0..<directions {
+            let angle = CGFloat(i) * (2 * CGFloat.pi / CGFloat(directions))
+            let dx = cos(angle) * outlineWidth
+            let dy = sin(angle) * outlineWidth
+            outlineString.draw(in: textRect.offsetBy(dx: dx, dy: dy))
+        }
 
-        attrString.draw(in: textRect)
-        NSAttributedString(string: playerNameText, attributes: fillAttributes).draw(in: textRect)
+        // 내부 색상을 위에 덮어씀
+        fillString.draw(in: textRect)
     }
 
     // MARK: - Helper: 색상 + mask 합성 이미지 생성
