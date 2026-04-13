@@ -53,6 +53,15 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                 // 모드별 씬 뷰 (ViewModel에서 제공) - 전체 화면 고정
                 currentSceneView
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .contentShape(Rectangle())
+                    .simultaneousGesture(
+                        TapGesture().onEnded {
+                            UIApplication.shared.sendAction(
+                                #selector(UIResponder.resignFirstResponder),
+                                to: nil, from: nil, for: nil
+                            )
+                        }
+                    )
                     .background(Color.gray50.ignoresSafeArea())
                     .offset(y: -60)
                     .opacity(isSceneReady ? 1.0 : 0.0)

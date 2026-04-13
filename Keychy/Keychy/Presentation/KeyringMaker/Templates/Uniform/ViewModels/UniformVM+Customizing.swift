@@ -53,8 +53,7 @@ extension UniformVM {
         case .frame:
             return AnyView(UniformFrameTabView(viewModel: self, cartItems: cartItems))
         case .marking:
-            // 마킹 탭 하단 UI (나중에 구현, 현재는 빈 뷰)
-            return AnyView(EmptyView())
+            return AnyView(UniformMarkingTabView(viewModel: self))
         default:
             return AnyView(EmptyView())
         }
@@ -65,7 +64,7 @@ extension UniformVM {
         case .frame:
             return 0.38
         case .marking:
-            return 0.35
+            return 0.45
         case .effect:
             return 0.35
         default:
