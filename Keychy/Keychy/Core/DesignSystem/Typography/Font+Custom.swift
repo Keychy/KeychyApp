@@ -52,6 +52,8 @@ enum FontFamily: String, CaseIterable, Identifiable {
         case .malangBold: return "HancomMalangMalang-Bold"
         case .malangRegular: return "HancomMalangMalang-Regular"
         case .gulimRegular: return "GulimChe"  // 실제 폰트명
+        case .esamanruMedium: return "esamanruOTFMedium"
+        case .bmdohyeon: return "BMDoHyeon-OTF"
         }
     }
     
@@ -92,7 +94,11 @@ enum FontFamily: String, CaseIterable, Identifiable {
     
     /// gulimche 폰트
     case gulimRegular = "gulimche-Regular"
-    
+
+    /// 유니폼 마킹 폰트
+    case esamanruMedium = "esamanruOTFMedium"
+    case bmdohyeon = "BMDoHyeon-OTF"
+
 
     /// 화면 표시용
     var displayName: String {
@@ -123,6 +129,8 @@ enum FontFamily: String, CaseIterable, Identifiable {
         case .malangBold: return "HancomMalangMalang Bold"
         case .malangRegular: return "HancomMalangMalang Regular"
         case .gulimRegular: return "굴림체"
+        case .esamanruMedium: return "에사만루"
+        case .bmdohyeon: return "배민 도현체"
         }
     }
 }
