@@ -207,7 +207,7 @@ extension UniformVM {
 
         // 곡률 정규화 (0.16 → 0, 0.84 → 1) → 자간을 0에서 점진적으로 증가
         let normalized = (curvature - 0.16) / (0.84 - 0.16)
-        let letterSpacing: CGFloat = 5.0 * normalized
+        let letterSpacing: CGFloat = 8.0 * normalized
         let spacedTotalWidth = totalWidth + letterSpacing * CGFloat(chars.count - 1)
         let totalAngleWithSpacing = spacedTotalWidth / radius
 
