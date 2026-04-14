@@ -105,7 +105,9 @@ struct UniformCompositionView: View {
                             .scaledToFit()
 
                         // 5. 텍스트 오버레이 (등번호 + 이름)
+                        // 폰트/offset/자간 등을 개별 스케일하는 대신 전체를 한 번에 축소
                         uniformTextOverlay(frame: frame)
+                            .scaleEffect(previewScale)
                     }
                     .frame(width: layerSize.width, height: layerSize.height)
                     .offset(y: 14 * previewScale)
@@ -137,9 +139,10 @@ struct UniformCompositionView: View {
 
         VStack(spacing: 0) {
             // 등번호 표시 (OutlineText + 커스텀 폰트)
-            if !viewModel.numberText.isEmpty {
+            if true {
+                let displayNumber = viewModel.numberText.isEmpty ? "00" : viewModel.numberText
                 OutlineText(
-                    text: viewModel.numberText,
+                    text: displayNumber,
                     outlineColor: viewModel.numberOutlineColor,
                     outlineWidth: 5.4
                 )
@@ -150,7 +153,8 @@ struct UniformCompositionView: View {
         .offset(y: numberOffsetY)
 
         // 이름 표시 (곡률에 따라 직선 or 곡선)
-        if !viewModel.playerNameText.isEmpty {
+        if true {
+            let displayName = viewModel.playerNameText.isEmpty ? "텍스트" : viewModel.playerNameText
             let normalized = (viewModel.textCurvature - 0.16) / (0.84 - 0.16)
 
             // 중간 이상 곡률에서 이름을 위로 올려 등번호와 겹침 방지
@@ -160,7 +164,7 @@ struct UniformCompositionView: View {
             if normalized < 0.01 {
                 // 최소 곡률: 직선 텍스트 (원래 자간)
                 OutlineText(
-                    text: viewModel.playerNameText,
+                    text: displayName,
                     outlineColor: viewModel.nameOutlineColor,
                     outlineWidth: 3.86
                 )
@@ -170,13 +174,13 @@ struct UniformCompositionView: View {
             } else {
                 // 곡선 텍스트 (Canvas 기반)
                 curvedNameCanvas(
-                    text: viewModel.playerNameText,
+                    text: displayName,
                     fontSize: nameSize,
                     curvature: viewModel.textCurvature,
                     innerColor: viewModel.nameInnerColor,
                     outlineColor: viewModel.nameOutlineColor
                 )
-                .frame(width: 320 * previewScale, height: 90 * previewScale)
+                .frame(width: 400, height: 150)
                 .offset(y: adjustedNameOffsetY)
             }
         }
@@ -213,7 +217,7 @@ struct UniformCompositionView: View {
             let totalAngle = totalWidth / radius
             // 곡률 정규화 (0.16 → 0, 0.84 → 1) → 자간 0에서 점진적 증가
             let normalized = (curvature - 0.16) / (0.84 - 0.16)
-            let letterSpacing: CGFloat = 5.0 * normalized
+            let letterSpacing: CGFloat = 8.0 * normalized
             let spacedTotalWidth = totalWidth + letterSpacing * CGFloat(chars.count - 1)
             let totalAngleWithSpacing = spacedTotalWidth / radius
 

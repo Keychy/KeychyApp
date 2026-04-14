@@ -163,7 +163,7 @@ struct SimpleAnimatedImage: View {
                     }
 
                 if isLoading {
-                    Color.gray50
+                    Color.clear
                         .overlay {
                             LoadingAlert(type: .short40, message: nil)
                         }
