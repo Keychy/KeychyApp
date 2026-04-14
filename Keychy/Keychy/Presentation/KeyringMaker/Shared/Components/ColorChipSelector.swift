@@ -35,7 +35,7 @@ struct ColorChipSelector: View {
         } label: {
             HStack(spacing: 5) {
                 Text(chip.label)
-                    .typography(.suit16M)
+                    .typography(.suit15M)
                     .foregroundStyle(.gray500)
 
                 // 현재 색상을 보여주는 원형 인디케이터
