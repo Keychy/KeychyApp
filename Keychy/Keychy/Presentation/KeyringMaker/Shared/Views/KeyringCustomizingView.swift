@@ -55,14 +55,14 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             let previewScale = pow(rawScale, 1.5)
 
             // SpriteKit 링 위치와 동기화된 프레임탭 패딩
-            // DI 기기: ring 0.8 → 카메라 중심(0.5)에서 0.3 위
+            // DI 기기: ring 0.87 → 카메라 중심(0.5)에서 0.37 위
             // SE 등: ring 1.0 → 카메라 중심(0.5)에서 0.5 위
             let hasDI: Bool = {
                 guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                       let window = scene.windows.first else { return true }
                 return window.safeAreaInsets.bottom > 0
             }()
-            let ringOffset: CGFloat = hasDI ? 0.3 : 0.5
+            let ringOffset: CGFloat = hasDI ? 0.37 : 0.55
             let topPadding = geometry.size.height * (0.5 - ringOffset * previewScale) - 45 * previewScale
 
             ZStack {

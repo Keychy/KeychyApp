@@ -45,7 +45,7 @@ class UniformVM: KeyringViewModelProtocol {
     var nameInnerColor: Color = .white         // 이름 내부 색상
     var nameOutlineColor: Color = .black       // 이름 테두리 색상
     var nameFontSize: CGFloat = 24              // 선수 이름 폰트 크기 (슬라이더)
-    var textCurvature: CGFloat = 0.16          // 글자 곡률 (0.16 = 거의 직선, 0.84 = 강한 곡선)
+    var textCurvature: CGFloat = 0.296         // 글자 곡률 (0.16 = 직선, 0.84 = 최대 곡선, 0.296 = 1/5 지점)
 
     // MARK: - Body Image
     var bodyImage: UIImage? = nil
@@ -99,7 +99,7 @@ class UniformVM: KeyringViewModelProtocol {
         nameInnerColor = .white
         nameOutlineColor = .black
         nameFontSize = 24
-        textCurvature = 0.16
+        textCurvature = 0.296
         bodyImage = nil
         availableFrames.removeAll()
         isComposingText = false

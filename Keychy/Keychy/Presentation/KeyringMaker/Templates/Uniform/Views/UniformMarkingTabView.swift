@@ -89,11 +89,18 @@ extension UniformMarkingTabView {
         } label: {
             Text(title)
                 .typography(.suit15M)
-                .foregroundStyle(isSelected ? .white100 : .gray500)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(isSelected ? .main500 : .gray50)
-                .clipShape(Capsule())
+                .foregroundStyle(.gray500)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 9)
+                .background(.gray50)
+                .clipShape(RoundedRectangle(cornerRadius: 15))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 15)
+                        .strokeBorder(
+                            isSelected ? .main500 : .clear,
+                            lineWidth: isSelected ? 2 : 0
+                        )
+                )
         }
         .buttonStyle(PlainButtonStyle())
     }
@@ -108,8 +115,9 @@ extension UniformMarkingTabView {
         if selectedSegment == 0 {
             TextField("선수 이름을 입력해주세요.", text: $viewModel.playerNameText)
                 .typography(.suit15M)
+                .foregroundStyle(.gray300)
                 .padding(.horizontal, 16)
-                .padding(.vertical, 12)
+                .padding(.vertical, 14)
                 .background(.gray50)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .padding(.horizontal, 20)
@@ -119,9 +127,10 @@ extension UniformMarkingTabView {
         } else {
             TextField("등번호를 입력해주세요.", text: $viewModel.numberText)
                 .typography(.suit15M)
+                .foregroundStyle(.gray300)
                 .keyboardType(.numberPad)
                 .padding(.horizontal, 16)
-                .padding(.vertical, 12)
+                .padding(.vertical, 14)
                 .background(.gray50)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .padding(.horizontal, 20)
@@ -140,28 +149,8 @@ extension UniformMarkingTabView {
         HStack(spacing: 15) {
             Image(.flatText)
 
-            VStack(spacing: 0) {
-                Slider(value: $viewModel.textCurvature, in: 0.16...0.84)
-                    .tint(.main500)
-                    .padding(.bottom, -3)
-
-                // 슬라이더 트랙에 맞춘 5칸 눈금
-                GeometryReader { geo in
-                    let thumbInset: CGFloat = 14
-                    let trackWidth = geo.size.width - thumbInset * 2
-
-                    ForEach(0..<5, id: \.self) { i in
-                        Circle()
-                            .fill(Color(hex: "3C3C43").opacity(0.18))
-                            .frame(width: 4, height: 4)
-                            .position(
-                                x: thumbInset + trackWidth * CGFloat(i) / 4.0,
-                                y: 2
-                            )
-                    }
-                }
-                .frame(height: 4)
-            }
+            Slider(value: $viewModel.textCurvature, in: 0.16...0.84)
+                .tint(.main500)
 
             Image(.bentText)
         }
@@ -184,7 +173,7 @@ extension UniformMarkingTabView {
             ScrollView(.horizontal, showsIndicators: false) {
                 ColorChipSelector(
                     chips: [
-                        .init(label: "선수이름", color: $viewModel.nameInnerColor),
+                        .init(label: "선수 이름", color: $viewModel.nameInnerColor),
                         .init(label: "테두리", color: $viewModel.nameOutlineColor),
                         .init(label: "등번호", color: $viewModel.numberInnerColor),
                         .init(label: "테두리", color: $viewModel.numberOutlineColor)
