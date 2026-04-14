@@ -62,7 +62,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                       let window = scene.windows.first else { return true }
                 return window.safeAreaInsets.bottom > 0
             }()
-            let ringOffset: CGFloat = hasDI ? 0.37 : 0.5
+            let ringOffset: CGFloat = hasDI ? 0.37 : 0.55
             let topPadding = geometry.size.height * (0.5 - ringOffset * previewScale) - 45 * previewScale
 
             ZStack {

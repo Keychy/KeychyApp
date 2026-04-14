@@ -20,7 +20,7 @@ extension KeyringScene {
         } else {
             // SE 등 홈버튼 기기: 화면별 링 위치 보정
             switch screen {
-            case .customizing: topY = size.height * 1.0
+            case .customizing: topY = size.height * 1.05
             case .complete:    topY = size.height * 0.75
             default:           topY = size.height * 0.9
             }
