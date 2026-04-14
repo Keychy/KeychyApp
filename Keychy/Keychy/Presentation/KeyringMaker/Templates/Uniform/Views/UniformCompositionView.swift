@@ -105,7 +105,9 @@ struct UniformCompositionView: View {
                             .scaledToFit()
 
                         // 5. 텍스트 오버레이 (등번호 + 이름)
+                        // 폰트/offset/자간 등을 개별 스케일하는 대신 전체를 한 번에 축소
                         uniformTextOverlay(frame: frame)
+                            .scaleEffect(previewScale)
                     }
                     .frame(width: layerSize.width, height: layerSize.height)
                     .offset(y: 14 * previewScale)
@@ -178,7 +180,7 @@ struct UniformCompositionView: View {
                     innerColor: viewModel.nameInnerColor,
                     outlineColor: viewModel.nameOutlineColor
                 )
-                .frame(width: 400 * previewScale, height: 150 * previewScale)
+                .frame(width: 400, height: 150)
                 .offset(y: adjustedNameOffsetY)
             }
         }
