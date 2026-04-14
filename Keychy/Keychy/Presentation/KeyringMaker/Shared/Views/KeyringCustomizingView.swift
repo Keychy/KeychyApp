@@ -49,12 +49,38 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
 
     var body: some View {
         GeometryReader { geometry in
+            // 기기 높이 기반 스케일 팩터 (iPhone 16 Pro 852pt 기준, 최대 1.0)
+            // pow(_, 1.5): 작은 기기에서 더 강한 축소 적용 (SE3: ~0.7, Pro: 1.0)
+            let rawScale = min(geometry.size.height / 852.0, 1.0)
+            let previewScale = pow(rawScale, 1.5)
+
+            // SpriteKit 링 위치와 동기화된 프레임탭 패딩
+            // DI 기기: ring 0.8 → 카메라 중심(0.5)에서 0.3 위
+            // SE 등: ring 1.0 → 카메라 중심(0.5)에서 0.5 위
+            let hasDI: Bool = {
+                guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                      let window = scene.windows.first else { return true }
+                return window.safeAreaInsets.bottom > 0
+            }()
+            let ringOffset: CGFloat = hasDI ? 0.3 : 0.5
+            let topPadding = geometry.size.height * (0.5 - ringOffset * previewScale) - 45 * previewScale
+
             ZStack {
                 // 모드별 씬 뷰 (ViewModel에서 제공) - 전체 화면 고정
                 currentSceneView
+                    .environment(\.previewScaleFactor, previewScale)
+                    .environment(\.previewTopPadding, topPadding)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .contentShape(Rectangle())
+                    .simultaneousGesture(
+                        TapGesture().onEnded {
+                            UIApplication.shared.sendAction(
+                                #selector(UIResponder.resignFirstResponder),
+                                to: nil, from: nil, for: nil
+                            )
+                        }
+                    )
                     .background(Color.gray50.ignoresSafeArea())
-                    .offset(y: -60)
                     .opacity(isSceneReady ? 1.0 : 0.0)
                     .blur(radius: showPurchaseProgress || showPurchaseSuccessAlert || showPurchaseFailAlert ? 15 : 0)
 
@@ -70,7 +96,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                     }
                     .cinematicAppear(delay: 0.3, duration: 1.0, style: .slideUp)
                     .padding(18)
-                    .padding(.bottom, geometry.size.height * currentBottomViewHeightRatio)
+                    .padding(.bottom, max(geometry.size.height * currentBottomViewHeightRatio, 852.0 * currentBottomViewHeightRatio * 0.9))
                 }
                 .blur(radius: showPurchaseProgress || showPurchaseSuccessAlert || showPurchaseFailAlert ? 15 : 0)
 
@@ -81,7 +107,7 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                     currentBottomView
                         .frame(
                             maxWidth: .infinity,
-                            maxHeight: geometry.size.height * currentBottomViewHeightRatio,
+                            maxHeight: max(geometry.size.height * currentBottomViewHeightRatio, 852.0 * currentBottomViewHeightRatio * 0.9),
                             alignment: .top)
                 }
                 .blur(radius: showPurchaseProgress || showPurchaseSuccessAlert || showPurchaseFailAlert ? 15 : 0)

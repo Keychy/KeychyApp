@@ -42,6 +42,7 @@ enum FusionHaptic {
 struct LenticularFusionView: View {
     @Bindable var router: NavigationRouter<WorkshopRoute>
     @Bindable var viewModel: LenticularVM
+    @Environment(\.previewScaleFactor) var previewScale
 
     // MARK: - 애니메이션 상태
     @State var phase: AnimationPhase = .ready
@@ -79,7 +80,7 @@ struct LenticularFusionView: View {
 
     var body: some View {
         GeometryReader { geo in
-            let cardWidth = geo.size.width * FusionLayout.cardWidthRatio
+            let cardWidth = 295 * previewScale
             let cardHeight = cardWidth * FusionLayout.cardAspectRatio
 
             ZStack {

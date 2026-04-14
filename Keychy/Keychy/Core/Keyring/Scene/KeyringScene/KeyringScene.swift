@@ -24,6 +24,8 @@ class KeyringScene: SKScene {
     var customSoundURL: URL? // 커스텀 녹음 파일 URL
     var hookOffsetY: CGFloat? // 바디 연결 지점 Y 오프셋 (nil이면 0.0 사용)
     var chainLength: Int = 5 // 체인 링크 개수 (기본값 5)
+    var previewScale: CGFloat = 1.0 // 기기별 프리뷰 스케일 (카메라 줌에 반영)
+    var hasDynamicIsland: Bool = true // DI 기기 여부 (링 위치 분기용)
     var cancellables = Set<AnyCancellable>()
     var currentSoundId: String = "none"
     var currentParticleId: String = "none"
@@ -70,7 +72,9 @@ class KeyringScene: SKScene {
         bodyImageURL: String? = nil,
         backgroundColor: UIColor = .gray50,
         hookOffsetY: CGFloat? = nil,
-        chainLength: Int = 5
+        chainLength: Int = 5,
+        previewScale: CGFloat = 1.0,
+        hasDynamicIsland: Bool = true
     ) {
         self.currentRingType = ringType
         self.currentChainType = chainType
@@ -81,6 +85,8 @@ class KeyringScene: SKScene {
         self.customBackgroundColor = backgroundColor
         self.hookOffsetY = hookOffsetY
         self.chainLength = chainLength
+        self.previewScale = previewScale
+        self.hasDynamicIsland = hasDynamicIsland
 
         if let image = bodyImage {
             self.bodyImage = image.fixedOrientation()
@@ -157,7 +163,7 @@ class KeyringScene: SKScene {
             .store(in: &cancellables)
 
         // 렌티큘러 등 자이로 템플릿: 초기 스타일(시머/테두리) 적용
-        // - 편집 중(LenticularVM): selectedShimmerColor.firestoreId 반환
+        // - 편집 중(LenticularVM): selectedShimmerEffect.firestoreId 반환
         // - 영상 생성 시(KeyringAdapter): 저장된 Keyring 모델의 ID 반환
         // 어느 경로든 `KeyringAppearanceColor.from(id:)`로 nil-safe 복원 가능
         if viewModel.isGyroscope {
@@ -244,11 +250,12 @@ class KeyringScene: SKScene {
     /// 카메라 설정 - zoomScale 적용
     private func setupCamera() {
         let cameraNode = SKCameraNode()
+        let zoom = KeyringScale.zoomScale(for: screen, template: templateId)
+
         cameraNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
 
-        // zoomScale 적용 (카메라 scale은 역수)
-        let zoom = KeyringScale.zoomScale(for: screen, template: templateId)
-        cameraNode.setScale(1.0 / zoom)
+        // zoomScale + previewScale 적용 (카메라 scale은 역수)
+        cameraNode.setScale(1.0 / (zoom * previewScale))
 
         addChild(cameraNode)
         self.camera = cameraNode

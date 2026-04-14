@@ -17,6 +17,7 @@ struct KeyringSceneView<VM: KeyringViewModelProtocol>: View {
     var applyWelcomeImpulse: Bool = false  // 씬 준비 완료 시 자동 파티클 효과
     var onSceneReady: (() -> Void)? = nil  // 씬 준비 완료 콜백
 
+    @Environment(\.previewScaleFactor) private var previewScale
     @State private var scene: KeyringScene? = nil
     @State private var showEffect: Bool = false
     @State private var currentEffect: String = ""
@@ -72,7 +73,13 @@ struct KeyringSceneView<VM: KeyringViewModelProtocol>: View {
             bodyImage: viewModel.bodyImage,
             backgroundColor: backgroundColor,
             hookOffsetY: viewModel.hookOffsetY != 0 ? viewModel.hookOffsetY : nil,
-            chainLength: viewModel.chainLength
+            chainLength: viewModel.chainLength,
+            previewScale: previewScale,
+            hasDynamicIsland: {
+                guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                      let window = scene.windows.first else { return true }
+                return window.safeAreaInsets.bottom > 0
+            }()
         )
         newScene.scaleMode = .resizeFill
 

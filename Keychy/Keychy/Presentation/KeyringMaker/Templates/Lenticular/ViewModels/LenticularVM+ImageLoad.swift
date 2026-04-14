@@ -110,10 +110,10 @@ extension LenticularVM {
     ///
     /// offset이 `sourceCardSize` 좌표계 기준이므로 `targetSize` 좌표계로 변환이 필요하다.
     /// `sourceCardSize`는 `applyScale`/`applyOffset` 호출 시 VM이 자동으로 기록한다.
-    /// - Precondition: 호출 전에 사용자가 최소 한 번 이상 카드를 편집했어야 한다 (sourceCardSize 기록).
+    /// 사용자가 카드를 한 번도 편집하지 않으면 `sourceCardSize`가 `.zero`로 남는데,
+    /// 이 경우 `cropImage`가 폴백 처리하여 기본 위치(중앙 정렬)로 그린다.
     func composeAtlas() {
         guard let a = imageA, let b = imageB else { return }
-        assert(sourceCardSize != .zero, "composeAtlas 호출 전 sourceCardSize가 기록되지 않음 — applyScale/applyOffset이 먼저 호출되어야 함")
         let targetSize = KeyringScale.maxSize(for: templateId)
 
         let croppedA = cropImage(a, scale: photoScaleA, offset: photoOffsetA, targetSize: targetSize)

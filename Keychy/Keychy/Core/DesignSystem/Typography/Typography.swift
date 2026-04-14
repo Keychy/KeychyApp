@@ -139,6 +139,10 @@ struct Typography {
     // MARK: - Gulim
     static let gulim20R = Typography(font: .custom(.gulimRegular, size: 20), lineSpacing: 0)
     static let gulim16R = Typography(font: .custom(.gulimRegular, size: 16), lineSpacing: 0)
+
+    // MARK: - Uniform (마킹용)
+    static let bmdohyeon75 = Typography(font: .custom(.bmdohyeon, size: 75), lineSpacing: 0)
+    static let esamanru24M = Typography(font: .custom(.esamanruMedium, size: 24), lineSpacing: 0)
 }
 
 // MARK: - View Extension

@@ -31,7 +31,7 @@ struct KeyringTemplate: Identifiable, Equatable, Hashable {
     /// 프리뷰 URL -----> 만들기 preview에 띄울 이미지
     let previewURL: String
 
-    /// 프리뷰 슬라이드 이미지 URL 배열 (최대 5장)
+    /// 프리뷰 슬라이드 이미지 URL 배열
     /// - Firestore에 [String] 배열로 저장
     /// - 비어있으면 기존 thumbnailURL/previewURL로 fallback
     let previewImages: [String]

@@ -84,6 +84,12 @@ enum WorkshopRoute: Hashable, BundleRoute {
     case lenticularInfoInput
     case lenticularComplete
 
+    // MARK: - 유니폼 키링 템플릿
+    case uniformPreview
+    case uniformCustomizing
+    case uniformInfoInput
+    case uniformComplete
+
     // MARK: - 선물 포장 완료
     case packageComplete(keyringDocumentId: String, postOfficeId: String, templateId: String, shareLink: String)
 
@@ -111,6 +117,8 @@ enum WorkshopRoute: Hashable, BundleRoute {
             return .crossStitchPreview
         case "Lenticular":
             return .lenticularPreview
+        case "Uniform":
+            return .uniformPreview
         default:
             return nil
         }

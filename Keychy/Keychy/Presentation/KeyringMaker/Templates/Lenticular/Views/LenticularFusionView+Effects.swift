@@ -47,7 +47,7 @@ extension LenticularFusionView {
                 ),
                 lineWidth: 3
             )
-            .frame(width: FusionLayout.ringPulseSize, height: FusionLayout.ringPulseSize)
+            .frame(width: FusionLayout.ringPulseSize * previewScale, height: FusionLayout.ringPulseSize * previewScale)
             .scaleEffect(ringScale)
             .opacity(ringOpacity)
             .allowsHitTesting(false)
@@ -194,7 +194,7 @@ extension LenticularFusionView {
                     }
                 }
                 .transition(.opacity)
-                .offset(y: (cardHeight / 2) + FusionLayout.hintBottomPadding)
+                .offset(y: (cardHeight / 2) + FusionLayout.hintBottomPadding * previewScale)
         }
     }
 }

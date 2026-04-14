@@ -80,4 +80,8 @@ extension Font {
     
     // MARK: - NotosansKR
     //static let notoSansKRBLK
+
+    // MARK: - Uniform (마킹용)
+    static let esamanru24M = Font.custom(.esamanruMedium, size: 24)
+    static let bmdohyeon75 = Font.custom(.bmdohyeon, size: 75)
 }

@@ -9,14 +9,24 @@ import SwiftUI
 
 // MARK: - 프리셋 셀
 extension StyleSelectorView {
+    /// 프리셋 셀 — 미보유 유료 시각 표시
+    /// - 무료 또는 보유 + 선택됨 → `.main500` 테두리 (기존)
+    /// - 미보유 유료 + 선택됨(카트 대기) → 그라데이션 테두리
+    /// - 미보유 유료 + 미선택 → 우상단에 작은 코인 아이콘 (가격 숫자는 카트에서 확인)
     @ViewBuilder
     func presetCell(
         preset: KeyringStylePreset,
         isSelected: Bool,
-        onSelect: @escaping (KeyringAppearanceColor) -> Void
+        isOwned: Bool,
+        onSelect: @escaping (KeyringStylePreset) -> Void
     ) -> some View {
+        // 시각 분기 (EffectSelectorView 패턴 차용)
+        let isPaid = !preset.isFree && !isOwned
+        let isPaidUnownedSelected = isPaid && isSelected   // 카트 대기 상태
+        let showCoinBadge = isPaid
+
         Button {
-            onSelect(.preset(preset))
+            onSelect(preset)
         } label: {
             VStack(spacing: 6) {
                 presetCircle(for: preset)
@@ -26,10 +36,30 @@ extension StyleSelectorView {
                         Circle().strokeBorder(Color.black20, lineWidth: 0.5)
                     )
                     .overlay(
-                        Circle()
-                            .strokeBorder(.main500, lineWidth: isSelected ? 2.5 : 0)
-                            .frame(width: 46, height: 46)
+                        // 선택 테두리: 카트 대기 = gradient, 그 외 = main500
+                        Group {
+                            if isPaidUnownedSelected {
+                                Circle()
+                                    .strokeBorder(.gradient(.primary), lineWidth: 2.5)
+                                    .frame(width: 46, height: 46)
+                            } else if isSelected {
+                                Circle()
+                                    .strokeBorder(.main500, lineWidth: 2.5)
+                                    .frame(width: 46, height: 46)
+                            }
+                        }
                     )
+                    .overlay(alignment: .topTrailing) {
+                        // 코인 아이콘 뱃지: 미보유 유료 + 미선택 시
+                        if showCoinBadge {
+                            Image(.myCoinMini)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 14, height: 14)
+                                .padding(2)
+                                .offset(x: 4, y: -4)
+                        }
+                    }
 
                 Text(preset.displayName)
                     .typography(.suit12M)

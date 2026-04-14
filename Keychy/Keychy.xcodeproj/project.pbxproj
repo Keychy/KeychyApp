@@ -411,6 +411,13 @@
 		4C7E96382F7D0E9300C8B109 /* KeyringStylePreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E96372F7D0E9300C8B109 /* KeyringStylePreset.swift */; };
 		4C7E963A2F7D0EAB00C8B109 /* StyleSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E96392F7D0EAB00C8B109 /* StyleSelectorView.swift */; };
 		4C7E963C2F7D267900C8B109 /* KeyringAppearanceColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E963B2F7D267900C8B109 /* KeyringAppearanceColor.swift */; };
+		4C7E963E2F878FDE00C8B109 /* LenticularVM+Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E963D2F878FDE00C8B109 /* LenticularVM+Style.swift */; };
+		4C7E964F2F89212100C8B109 /* ColorPaletteRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E964E2F89212100C8B109 /* ColorPaletteRow.swift */; };
+		4C7E96502F89212100C8B109 /* ColorChipSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E964D2F89212100C8B109 /* ColorChipSelector.swift */; };
+		4C7E96622F8BD98F00C8B109 /* BMDOHYEON_otf.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C7E96602F8BD98F00C8B109 /* BMDOHYEON_otf.otf */; };
+		4C7E96632F8BD98F00C8B109 /* esamanru OTF Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C7E96612F8BD98F00C8B109 /* esamanru OTF Medium.otf */; };
+		4C7E96682F8CFA3000C8B109 /* TemplatePreviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E96662F8CFA3000C8B109 /* TemplatePreviewViewModel.swift */; };
+		4C7E966A2F8D07EE00C8B109 /* PreviewScaleEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7E96692F8D07EE00C8B109 /* PreviewScaleEnvironment.swift */; };
 		4C8426602ED3585A0050B6FE /* gulimche-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */; };
 		4C8426642ED375840050B6FE /* ColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8426632ED375840050B6FE /* ColorPalette.swift */; };
 		4C84A1602EB134BD008FFE57 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A596832EAFEAA20003D712 /* ProfileSetupView.swift */; };
@@ -500,10 +507,20 @@
 		4F350E459E3B47DA93E2FFF4 /* BundleSheetToggleButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82FD6112F9442AAAD58DB97 /* BundleSheetToggleButtons.swift */; };
 		8LLA4688ZY3G5NGU9R4ET5A6 /* BundleViewModel+Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = U828QC8U2RENQFVCV7ANT8I1 /* BundleViewModel+Types.swift */; };
 		917971D262384EC5AF4D5965 /* BundlePurchaseCartItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E036016318043AC801A19DA /* BundlePurchaseCartItem.swift */; };
+		A73B3E7AC6294154A2605306 /* StylePresetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B1A7479E29D45FF9DA9CACA /* StylePresetManager.swift */; };
 		AA0000022F17000100000001 /* BundleSwitchPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000012F17000100000001 /* BundleSwitchPopup.swift */; };
 		AA0213F12F0E000000000001 /* TemplateImageSlideshow.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0213F02F0E000000000001 /* TemplateImageSlideshow.swift */; };
 		AA0219DE2EB1C041006EF269 /* BundleNameInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0219DD2EB1C041006EF269 /* BundleNameInputView.swift */; };
 		AA0A54B72EC053E4007B5413 /* CarabinerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0A54B62EC053E4007B5413 /* CarabinerType.swift */; };
+		AA20000000000000000001 /* UniformVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000000000000000001 /* UniformVM.swift */; };
+		AA20000000000000000002 /* UniformVM+Customizing.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000000000000000002 /* UniformVM+Customizing.swift */; };
+		AA20000000000000000003 /* UniformVM+Effect.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000000000000000003 /* UniformVM+Effect.swift */; };
+		AA20000000000000000004 /* UniformVM+Firebase.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000000000000000004 /* UniformVM+Firebase.swift */; };
+		AA20000000000000000005 /* UniformVM+Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000000000000000005 /* UniformVM+Frame.swift */; };
+		AA20000000000000000006 /* UniformPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000000000000000006 /* UniformPreview.swift */; };
+		AA20000000000000000007 /* UniformCompositionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000000000000000007 /* UniformCompositionView.swift */; };
+		AA20000000000000000008 /* UniformFrameTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000000000000000008 /* UniformFrameTabView.swift */; };
+		AA20000000000000000009 /* UniformMarkingTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000000000000000009 /* UniformMarkingTabView.swift */; };
 		AA2146AF2F15D0160048D40E /* BundleEditView+Purchase.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146AE2F15D0160048D40E /* BundleEditView+Purchase.swift */; };
 		AA2146B12F15D43C0048D40E /* BundleEditView+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146B02F15D43C0048D40E /* BundleEditView+Alert.swift */; };
 		AA2146B52F15D8490048D40E /* KeyringCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2146B42F15D8490048D40E /* KeyringCell.swift */; };
@@ -635,6 +652,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2B1A7479E29D45FF9DA9CACA /* StylePresetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StylePresetManager.swift; sourceTree = "<group>"; };
 		38173D072EB8AD3900E36F7E /* CollectionViewModel+Tags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewModel+Tags.swift"; sourceTree = "<group>"; };
 		38173D092EB8AD7900E36F7E /* CategoryTabBarWithLongPress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTabBarWithLongPress.swift; sourceTree = "<group>"; };
 		38173D0B2EB8AD8800E36F7E /* CategoryContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryContextMenu.swift; sourceTree = "<group>"; };
@@ -1027,6 +1045,13 @@
 		4C7E96372F7D0E9300C8B109 /* KeyringStylePreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringStylePreset.swift; sourceTree = "<group>"; };
 		4C7E96392F7D0EAB00C8B109 /* StyleSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyleSelectorView.swift; sourceTree = "<group>"; };
 		4C7E963B2F7D267900C8B109 /* KeyringAppearanceColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringAppearanceColor.swift; sourceTree = "<group>"; };
+		4C7E963D2F878FDE00C8B109 /* LenticularVM+Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LenticularVM+Style.swift"; sourceTree = "<group>"; };
+		4C7E964D2F89212100C8B109 /* ColorChipSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorChipSelector.swift; sourceTree = "<group>"; };
+		4C7E964E2F89212100C8B109 /* ColorPaletteRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPaletteRow.swift; sourceTree = "<group>"; };
+		4C7E96602F8BD98F00C8B109 /* BMDOHYEON_otf.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = BMDOHYEON_otf.otf; sourceTree = "<group>"; };
+		4C7E96612F8BD98F00C8B109 /* esamanru OTF Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "esamanru OTF Medium.otf"; sourceTree = "<group>"; };
+		4C7E96662F8CFA3000C8B109 /* TemplatePreviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplatePreviewViewModel.swift; sourceTree = "<group>"; };
+		4C7E96692F8D07EE00C8B109 /* PreviewScaleEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewScaleEnvironment.swift; sourceTree = "<group>"; };
 		4C84265F2ED3585A0050B6FE /* gulimche-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "gulimche-Regular.ttf"; sourceTree = "<group>"; };
 		4C8426632ED375840050B6FE /* ColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPalette.swift; sourceTree = "<group>"; };
 		4C86A6112F25C0B10023AA2D /* WorkshopBundleGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopBundleGridView.swift; sourceTree = "<group>"; };
@@ -1120,6 +1145,15 @@
 		AA0213F02F0E000000000001 /* TemplateImageSlideshow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateImageSlideshow.swift; sourceTree = "<group>"; };
 		AA0219DD2EB1C041006EF269 /* BundleNameInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleNameInputView.swift; sourceTree = "<group>"; };
 		AA0A54B62EC053E4007B5413 /* CarabinerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarabinerType.swift; sourceTree = "<group>"; };
+		AA10000000000000000001 /* UniformVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniformVM.swift; sourceTree = "<group>"; };
+		AA10000000000000000002 /* UniformVM+Customizing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UniformVM+Customizing.swift"; sourceTree = "<group>"; };
+		AA10000000000000000003 /* UniformVM+Effect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UniformVM+Effect.swift"; sourceTree = "<group>"; };
+		AA10000000000000000004 /* UniformVM+Firebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UniformVM+Firebase.swift"; sourceTree = "<group>"; };
+		AA10000000000000000005 /* UniformVM+Frame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UniformVM+Frame.swift"; sourceTree = "<group>"; };
+		AA10000000000000000006 /* UniformPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniformPreview.swift; sourceTree = "<group>"; };
+		AA10000000000000000007 /* UniformCompositionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniformCompositionView.swift; sourceTree = "<group>"; };
+		AA10000000000000000008 /* UniformFrameTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniformFrameTabView.swift; sourceTree = "<group>"; };
+		AA10000000000000000009 /* UniformMarkingTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniformMarkingTabView.swift; sourceTree = "<group>"; };
 		AA2146AE2F15D0160048D40E /* BundleEditView+Purchase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleEditView+Purchase.swift"; sourceTree = "<group>"; };
 		AA2146B02F15D43C0048D40E /* BundleEditView+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleEditView+Alert.swift"; sourceTree = "<group>"; };
 		AA2146B42F15D8490048D40E /* KeyringCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringCell.swift; sourceTree = "<group>"; };
@@ -1751,11 +1785,13 @@
 			isa = PBXGroup;
 			children = (
 				4C4733352F1FA388005D2376 /* Recording */,
-				4C4733F82F226143005D2376 /* TemplateActionButton.swift */,
 				4C4733362F1FA388005D2376 /* CameraPicker.swift */,
-				4C4733372F1FA388005D2376 /* CinematicAppearanceModifier.swift */,
 				4C4733382F1FA388005D2376 /* PreviewGuiding.swift */,
+				4C4733F82F226143005D2376 /* TemplateActionButton.swift */,
+				4C4733372F1FA388005D2376 /* CinematicAppearanceModifier.swift */,
 				4C4733392F1FA388005D2376 /* TemplatePreviewComponents.swift */,
+				4C7E964D2F89212100C8B109 /* ColorChipSelector.swift */,
+				4C7E964E2F89212100C8B109 /* ColorPaletteRow.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -1797,6 +1833,7 @@
 				4C47333A2F1FA388005D2376 /* Components */,
 				4C47333C2F1FA388005D2376 /* Models */,
 				4C47334B2F1FA388005D2376 /* Views */,
+				4C7E96672F8CFA3000C8B109 /* ViewModels */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -1979,6 +2016,7 @@
 				38818DAE2F3C42AF00B0A49C /* DuZzonKu */,
 				3851D48F2F5FD0D90013C052 /* CrossStitch */,
 				4C7E95E62F754A0400C8B109 /* Lenticular */,
+				AA30000000000000000001 /* Uniform */,
 			);
 			path = Templates;
 			sourceTree = "<group>";
@@ -2266,6 +2304,7 @@
 			isa = PBXGroup;
 			children = (
 				4C7E95E02F754A0400C8B109 /* LenticularVM.swift */,
+				4C7E963D2F878FDE00C8B109 /* LenticularVM+Style.swift */,
 				4C7E95E12F754A0400C8B109 /* LenticularVM+Effect.swift */,
 				4C7E95E22F754A0400C8B109 /* LenticularVM+Firebase.swift */,
 				4C7E96182F7A0F3300C8B109 /* LenticularVM+ImageLoad.swift */,
@@ -2305,6 +2344,23 @@
 				4C7E961D2F7A249900C8B109 /* TextureComposer.swift */,
 			);
 			path = Lenticular;
+			sourceTree = "<group>";
+		};
+		4C7E965F2F8BD98600C8B109 /* Uniform */ = {
+			isa = PBXGroup;
+			children = (
+				4C7E96602F8BD98F00C8B109 /* BMDOHYEON_otf.otf */,
+				4C7E96612F8BD98F00C8B109 /* esamanru OTF Medium.otf */,
+			);
+			path = Uniform;
+			sourceTree = "<group>";
+		};
+		4C7E96672F8CFA3000C8B109 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				4C7E96662F8CFA3000C8B109 /* TemplatePreviewViewModel.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		4C84265E2ED358520050B6FE /* Gulim */ = {
@@ -2659,6 +2715,7 @@
 		4CEC62182EAE08DA0099ECEE /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				4C7E96692F8D07EE00C8B109 /* PreviewScaleEnvironment.swift */,
 				4CC9E5102F67B7EA00491EE4 /* BuildEnvironment.swift */,
 				4CF2A9692F0B94EA00BA9FDA /* View+PullToRefresh.swift */,
 				4CA9C6A72EC9DB5300CA546B /* View+SafeAreaBottom.swift */,
@@ -2827,6 +2884,7 @@
 		4CEC62902EAE08F70099ECEE /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				4C7E965F2F8BD98600C8B109 /* Uniform */,
 				4C84265E2ED358520050B6FE /* Gulim */,
 				4C3688102EC08A1D00C64E75 /* HancomMalangMalang */,
 				4C3687FD2EC07C3800C64E75 /* NotoSansKR */,
@@ -2869,6 +2927,38 @@
 				AA0219DD2EB1C041006EF269 /* BundleNameInputView.swift */,
 			);
 			path = Create;
+			sourceTree = "<group>";
+		};
+		AA30000000000000000001 /* Uniform */ = {
+			isa = PBXGroup;
+			children = (
+				AA30000000000000000002 /* ViewModels */,
+				AA30000000000000000003 /* Views */,
+			);
+			path = Uniform;
+			sourceTree = "<group>";
+		};
+		AA30000000000000000002 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				AA10000000000000000001 /* UniformVM.swift */,
+				AA10000000000000000002 /* UniformVM+Customizing.swift */,
+				AA10000000000000000003 /* UniformVM+Effect.swift */,
+				AA10000000000000000004 /* UniformVM+Firebase.swift */,
+				AA10000000000000000005 /* UniformVM+Frame.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		AA30000000000000000003 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AA10000000000000000006 /* UniformPreview.swift */,
+				AA10000000000000000007 /* UniformCompositionView.swift */,
+				AA10000000000000000008 /* UniformFrameTabView.swift */,
+				AA10000000000000000009 /* UniformMarkingTabView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		AA8C9B932F10E67200A352D2 /* Bundle */ = {
@@ -2979,6 +3069,7 @@
 			children = (
 				4C25262E2F3C95DA003CC5AD /* LottieItemManager.swift */,
 				C68931CC2EB7B94B00C5F083 /* EffectManager.swift */,
+				2B1A7479E29D45FF9DA9CACA /* StylePresetManager.swift */,
 				AA9123AE2ED4BC490070A9F9 /* LocationManager.swift */,
 				38C3C27D2EC08794003C5DE1 /* PopupManager.swift */,
 			);
@@ -3248,6 +3339,8 @@
 				4C5D12792F5DB83800242703 /* chain1_frame24.png in Resources */,
 				4C5D127A2F5DB83800242703 /* chain1_frame26.png in Resources */,
 				4C5D127B2F5DB83800242703 /* chain3_frame19.png in Resources */,
+				4C7E96622F8BD98F00C8B109 /* BMDOHYEON_otf.otf in Resources */,
+				4C7E96632F8BD98F00C8B109 /* esamanru OTF Medium.otf in Resources */,
 				4C5D127C2F5DB83800242703 /* chain1_frame02.png in Resources */,
 				4C5D127D2F5DB83800242703 /* chain3_frame20.png in Resources */,
 				4C5D127E2F5DB83800242703 /* chain3_frame17.png in Resources */,
@@ -3340,6 +3433,7 @@
 				4CC8D00D2EF030E300317467 /* CollectionViewModel.swift in Sources */,
 				AA8C9B982F10E6D500A352D2 /* BundleViewModel.swift in Sources */,
 				38C3C2882EC1D761003C5DE1 /* CollectionKeyringDetailView+Menu.swift in Sources */,
+				4C7E963E2F878FDE00C8B109 /* LenticularVM+Style.swift in Sources */,
 				4CEC621C2EAE08DA0099ECEE /* BackgroundCell.swift in Sources */,
 				3828F5472EC4CCDC00F1B040 /* CollectionView+NormalMode.swift in Sources */,
 				4CEBB1612EFAD3F800CF53E2 /* MainTabView.swift in Sources */,
@@ -3361,6 +3455,7 @@
 				AA3909462EC9F29500D87EEC /* UIApplication+Extension.swift in Sources */,
 				4CC8D0252EF11CD200317467 /* HomeViewModel.swift in Sources */,
 				C68931CE2EB7B94B00C5F083 /* EffectManager.swift in Sources */,
+				A73B3E7AC6294154A2605306 /* StylePresetManager.swift in Sources */,
 				C6B56F202EBF72130049F969 /* ItemPurchaseManager.swift in Sources */,
 				4C5D0BD02F595F5200242703 /* AnimationFrameStorage.swift in Sources */,
 				38818DBC2F3C444300B0A49C /* DuZzonKuVM+Firebase.swift in Sources */,
@@ -3471,6 +3566,8 @@
 				4C4733BB2F1FA388005D2376 /* CameraPicker.swift in Sources */,
 				4C4733BC2F1FA388005D2376 /* PixelVM+ImageConversion.swift in Sources */,
 				4C4733BD2F1FA388005D2376 /* AcrylicPhotoGuiding.swift in Sources */,
+				4C7E964F2F89212100C8B109 /* ColorPaletteRow.swift in Sources */,
+				4C7E96502F89212100C8B109 /* ColorChipSelector.swift in Sources */,
 				4C4733BE2F1FA388005D2376 /* PolaroidVM+Effect.swift in Sources */,
 				38818DB42F3C43DC00B0A49C /* DuZzonKuPreview.swift in Sources */,
 				4C4733BF2F1FA388005D2376 /* PolaroidVM.swift in Sources */,
@@ -3495,6 +3592,15 @@
 				4C4733D22F1FA388005D2376 /* ClearSketchDrawingCanvasView.swift in Sources */,
 				4C4733D32F1FA388005D2376 /* FramePreviewView.swift in Sources */,
 				4C4733D42F1FA388005D2376 /* SpeechBubbleVM.swift in Sources */,
+				AA20000000000000000001 /* UniformVM.swift in Sources */,
+				AA20000000000000000002 /* UniformVM+Customizing.swift in Sources */,
+				AA20000000000000000003 /* UniformVM+Effect.swift in Sources */,
+				AA20000000000000000004 /* UniformVM+Firebase.swift in Sources */,
+				AA20000000000000000005 /* UniformVM+Frame.swift in Sources */,
+				AA20000000000000000006 /* UniformPreview.swift in Sources */,
+				AA20000000000000000007 /* UniformCompositionView.swift in Sources */,
+				AA20000000000000000008 /* UniformFrameTabView.swift in Sources */,
+				AA20000000000000000009 /* UniformMarkingTabView.swift in Sources */,
 				4C4733D52F1FA388005D2376 /* AcrylicPhotoVM+CropBoxDrag.swift in Sources */,
 				4C4733D62F1FA388005D2376 /* SpeechBubbleVM+Customizing.swift in Sources */,
 				4C4733D72F1FA388005D2376 /* AcrylicPhotoVM+Crop.swift in Sources */,
@@ -3516,6 +3622,7 @@
 				3822DDC22EBBC712003125BE /* KeyringEditView.swift in Sources */,
 				4CF2A9662F0B8C5800BA9FDA /* PullToRefreshIndicator.swift in Sources */,
 				4C4734002F22615D005D2376 /* WorkshopItemCard.swift in Sources */,
+				4C7E96682F8CFA3000C8B109 /* TemplatePreviewViewModel.swift in Sources */,
 				4C4734012F22615D005D2376 /* WorkshopFilterBar.swift in Sources */,
 				4C4734022F22615D005D2376 /* WorkshopFilterChip.swift in Sources */,
 				4C4734032F22615D005D2376 /* WorkshopItemActionButton.swift in Sources */,
@@ -3546,6 +3653,7 @@
 				4C25260C2F3B27B3003CC5AD /* KeyringSceneView.swift in Sources */,
 				3851D49D2F5FD56D0013C052 /* CrossStitchVM+Effect.swift in Sources */,
 				4C4733282F1FA2AB005D2376 /* WorkshopTemplatesView.swift in Sources */,
+				4C7E966A2F8D07EE00C8B109 /* PreviewScaleEnvironment.swift in Sources */,
 				4C47332D2F1FA2AB005D2376 /* WorkshopViewModel.swift in Sources */,
 				3896B96B2F3BA16200220134 /* WishHorse26FramePreviewView.swift in Sources */,
 				4C86A6142F25C0BA0023AA2D /* WorkshopKeyringGridView.swift in Sources */,
@@ -3875,7 +3983,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = BUKGH5MWAT;
 				ENABLE_PREVIEWS = YES;
@@ -3924,7 +4032,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = BUKGH5MWAT;
 				ENABLE_PREVIEWS = YES;
@@ -3973,7 +4081,7 @@
 				CODE_SIGN_ENTITLEMENTS = WidgetKeychy/WidgetKeychyExtension.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = BUKGH5MWAT;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -4016,7 +4124,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = BUKGH5MWAT;
 				GENERATE_INFOPLIST_FILE = YES;

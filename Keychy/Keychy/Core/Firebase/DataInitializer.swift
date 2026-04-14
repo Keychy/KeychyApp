@@ -204,6 +204,46 @@ func initializeSounds() async {
     await uploadItems(sounds, collection: "Sound")
 }
 
+// MARK: - ShimmerEffects (렌티큘러 시머)
+
+/// 렌티큘러 시머(광택) 프리셋 가격 Firestore 업로드
+///
+/// 경로: `Template/Lenticular/ShimmerEffects/{id}`
+///
+/// 필수 필드:
+/// - id: 프리셋 rawValue (예: "hologram", "liquid", "matrix")
+/// - price: 가격 (0 = 무료)
+///
+/// silver는 하드코딩 무료라 컬렉션에 넣지 않음.
+func initializeShimmerEffects() async {
+    let items: [[String: Any]] = [
+        ["id": "hologram", "price": 1000],
+        ["id": "liquid",   "price": 500],
+        ["id": "matrix",   "price": 500],
+    ]
+    await uploadItems(items, collection: "ShimmerEffects", parentPath: "Template/Lenticular")
+}
+
+// MARK: - BorderEffects (렌티큘러 테두리)
+
+/// 렌티큘러 테두리 프리셋 가격 Firestore 업로드
+///
+/// 경로: `Template/Lenticular/BorderEffects/{id}`
+///
+/// 필수 필드:
+/// - id: 프리셋 rawValue (예: "hologram", "pulse", "cosmos")
+/// - price: 가격 (0 = 무료)
+///
+/// silver는 하드코딩 무료라 컬렉션에 넣지 않음.
+func initializeBorderEffects() async {
+    let items: [[String: Any]] = [
+        ["id": "hologram", "price": 500],
+        ["id": "pulse",    "price": 500],
+        ["id": "cosmos",   "price": 500],
+    ]
+    await uploadItems(items, collection: "BorderEffects", parentPath: "Template/Lenticular")
+}
+
 // MARK: - Template
 
 /// 템플릿 Firestore 업로드
@@ -241,13 +281,34 @@ func initializeTemplates() async {
 /// 아이템 배열을 Firestore에 업로드
 /// - 문서가 없으면 createdAt 자동 추가
 /// - merge: true로 기존 필드 보존
-private func uploadItems(_ items: [[String: Any]], collection: String) async {
+///
+/// - Parameters:
+///   - items: 업로드할 아이템 배열 (각 dict에 "id" 키 필수)
+///   - collection: 대상 컬렉션 이름
+///   - parentPath: 서브컬렉션으로 넣을 때 부모 경로 (예: "Template/Lenticular").
+///                 nil이면 루트 컬렉션에 업로드.
+private func uploadItems(
+    _ items: [[String: Any]],
+    collection: String,
+    parentPath: String? = nil
+) async {
     guard !items.isEmpty else {
         print("[\(collection)] 업로드할 아이템이 없습니다.")
         return
     }
 
     let db = Firestore.firestore()
+
+    // parentPath가 있으면 서브컬렉션 참조, 없으면 루트 컬렉션 참조
+    let targetCollection: CollectionReference = {
+        guard let parentPath, !parentPath.isEmpty else {
+            return db.collection(collection)
+        }
+        return db.document(parentPath).collection(collection)
+    }()
+
+    // 로그 prefix (서브컬렉션이면 전체 경로 표시)
+    let logPrefix = parentPath.map { "\($0)/\(collection)" } ?? collection
 
     for item in items {
         guard let id = item["id"] as? String else { continue }
@@ -256,16 +317,16 @@ private func uploadItems(_ items: [[String: Any]], collection: String) async {
         data.removeValue(forKey: "id")
 
         do {
-            let doc = try await db.collection(collection).document(id).getDocument()
+            let doc = try await targetCollection.document(id).getDocument()
 
             if !doc.exists {
                 data["createdAt"] = Timestamp(date: Date())
             }
 
-            try await db.collection(collection).document(id).setData(data, merge: true)
-            print("[\(collection)] \(id) 업로드 완료")
+            try await targetCollection.document(id).setData(data, merge: true)
+            print("[\(logPrefix)] \(id) 업로드 완료")
         } catch {
-            print("[\(collection)] \(id) 오류: \(error)")
+            print("[\(logPrefix)] \(id) 오류: \(error)")
         }
     }
 }

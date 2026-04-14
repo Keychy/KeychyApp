@@ -1,8 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "frameChain2.pdf",
-      "idiom" : "universal"
+      "filename" : "frameChain2.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "3x"
     }
   ],
   "info" : {
