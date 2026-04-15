@@ -107,10 +107,12 @@ class UniformVM: KeyringViewModelProtocol {
 
     // MARK: - 마킹 입력 검증
 
-    /// 선수 이름 입력값 검증 (8자 제한)
+    /// 선수 이름 입력값 검증 (uniformType에 따라 글자 수 제한)
     func validatePlayerName(_ newValue: String) {
-        if newValue.count > 10 {
-            playerNameText = String(newValue.prefix(10))
+        // basket(농구)은 텍스트 영역이 좁아 6자, 나머지는 10자
+        let limit = selectedFrame?.uniformType == "basket" ? 6 : 10
+        if newValue.count > limit {
+            playerNameText = String(newValue.prefix(limit))
         }
     }
 
