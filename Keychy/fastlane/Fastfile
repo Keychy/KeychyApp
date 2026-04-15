@@ -44,8 +44,15 @@ platform :ios do
   # TestFlight 업로드
   desc "TestFlight에 빌드 업로드"
   lane :testflight do
+    build_num = Time.now.strftime("%y%m%d%H%M")
     increment_build_number(
-      build_number: ENV["GITHUB_RUN_NUMBER"] || Time.now.strftime("%Y%m%d%H%M")
+      build_number: build_num,
+      xcodeproj: "Keychy.xcodeproj"
+    )
+    increment_build_number(
+      build_number: build_num,
+      xcodeproj: "Keychy.xcodeproj",
+      target: "WidgetKeychyExtension"
     )
     build_app(
       scheme: "Keychy",
@@ -68,8 +75,15 @@ platform :ios do
   # App Store 업로드
   desc "App Store에 빌드 업로드"
   lane :appstore do
+    build_num = Time.now.strftime("%y%m%d%H%M")
     increment_build_number(
-      build_number: ENV["GITHUB_RUN_NUMBER"] || Time.now.strftime("%Y%m%d%H%M")
+      build_number: build_num,
+      xcodeproj: "Keychy.xcodeproj"
+    )
+    increment_build_number(
+      build_number: build_num,
+      xcodeproj: "Keychy.xcodeproj",
+      target: "WidgetKeychyExtension"
     )
     build_app(
       scheme: "Keychy",
