@@ -11,11 +11,6 @@ import FirebaseFirestore
 /// 빌드 환경 판별 유틸리티
 /// - Debug / TestFlight: isTestEnvironment == true → isActive 무시하고 전체 아이템 표시
 /// - App Store (프로덕션): isTestEnvironment == false → isActive == true 아이템만 표시
-///
-/// AppTransaction.environment 값:
-/// - .xcode → Simulator / 디바이스 Debug
-/// - .sandbox → TestFlight
-/// - .production → App Store
 enum BuildEnvironment {
     private(set) static var isTestEnvironment: Bool = {
         #if DEBUG
@@ -28,12 +23,21 @@ enum BuildEnvironment {
     /// 앱 시작 시 호출. Release 빌드에서 TestFlight 여부를 확인하여 캐싱.
     static func configure() async {
         #if !DEBUG
-        guard let result = try? await AppTransaction.shared,
-              case .verified(let transaction) = result else { return }
-        isTestEnvironment = transaction.environment != .production
-        #endif
+        do {
+            let result = try await AppTransaction.shared
 
-        print("[BuildEnvironment] isTestEnvironment: \(isTestEnvironment)")
+            switch result {
+            case .verified(let transaction):
+                isTestEnvironment = transaction.environment != .production
+
+            case .unverified(let transaction, _):
+                isTestEnvironment = transaction.environment != .production
+            }
+        } catch {
+            // AppTransaction 실패 시 receipt URL로 fallback (deprecated이지만 동작함)
+            isTestEnvironment = Bundle.main.appStoreReceiptURL?.lastPathComponent == "sandboxReceipt"
+        }
+        #endif
     }
 }
 
