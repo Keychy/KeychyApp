@@ -61,6 +61,12 @@ class MainTabViewModel {
     func handleAppear() {
         userManager.updateBadgeCount()
 
+        // 스티커 메타데이터 생성 (보관함 탭 진입 전에도 Extension이 사용 가능하도록)
+        let uid = userManager.userUID
+        if !uid.isEmpty {
+            collectionViewModel.fetchUserKeyrings(uid: uid) { _ in }
+        }
+
         Task { @MainActor in
             try? await Task.sleep(for: .seconds(Delay.deepLinkCheck))
             checkPendingDeepLink()

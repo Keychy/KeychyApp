@@ -127,6 +127,9 @@ extension CollectionViewModel {
             )
             KeyringImageCache.shared.migrateWidgetKeyringsIfNeeded(with: keyringDates)
 
+            // 스티커용 키링 메타데이터 저장 (Extension에서 온디맨드 생성용)
+            self.saveStickerKeyringsMetadata(allKeyrings)
+
             completion(true)
         }
     }
@@ -371,6 +374,41 @@ extension CollectionViewModel {
     
     // MARK: - 키링 데이터 로딩 (공통 함수)
     
+    // MARK: - 스티커용 메타데이터 저장
+
+    /// 전체 키링 → StickerKeyring으로 변환 후 App Group에 JSON 저장
+    /// iMessage Extension이 이 파일을 읽어서 키링 목록을 표시한다.
+    private func saveStickerKeyringsMetadata(_ keyrings: [Keyring]) {
+        let stickerKeyrings = keyrings.compactMap { keyring -> StickerKeyring? in
+            guard let docId = keyring.documentId else { return nil }
+            // 포장/출품 중인 키링은 스티커 대상에서 제외
+            guard !keyring.isPackaged, !keyring.isPublished else { return nil }
+            return StickerKeyring(
+                id: docId,
+                name: keyring.name,
+                bodyImageURL: keyring.bodyImage,
+                chainLength: keyring.chainLength,
+                selectedTemplate: keyring.selectedTemplate,
+                isGyroscope: keyring.isGyroscope,
+                createdAt: keyring.createdAt
+            )
+        }
+
+        guard let containerURL = FileManager.default
+            .containerURL(forSecurityApplicationGroupIdentifier: "group.keychy.app") else { return }
+
+        let fileURL = containerURL.appendingPathComponent("sticker_keyrings.json")
+
+        do {
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .iso8601
+            let data = try encoder.encode(stickerKeyrings)
+            try data.write(to: fileURL, options: .atomic)
+        } catch {
+            print("[Sticker] 메타데이터 저장 실패: \(error.localizedDescription)")
+        }
+    }
+
     func prefetchKeyringImage(keyring: Keyring) async {
         guard let keyringID = keyring.documentId,
               !KeyringImageCache.shared.exists(for: keyringID, type: .thumbnail) else {
