@@ -69,6 +69,7 @@ func initializeBackgrounds() async {
 //            "useCount": 0,
 //            "isActive": false
 //        ],
+
     ]
 
     await uploadItems(backgrounds, collection: "Background")
@@ -99,7 +100,7 @@ func initializeBackgrounds() async {
 /// ```
 func initializeCarabiners() async {
     let carabiners: [[String: Any]] = [
-        // 예시 — 정적 카라비너 (plain)
+        // 예시 — plain 카라비너
 //        [
 //            "id": "NewCarabiner",
 //            "carabinerName": "새 카라비너",
@@ -107,38 +108,16 @@ func initializeCarabiners() async {
 //            "carabinerType": "plain",
 //            "description": "새 카라비너 설명",
 //            "recommendedCombinations": "",
-//            "maxKeyringCount": 3,
+//            "maxKeyringCount": 1,
 //            "tags": ["카라비너"],
 //            "price": 0,
 //            "downloadCount": 0,
 //            "useCount": 0,
-//            "carabinerX": 0.0,
-//            "carabinerY": 0.0,
-//            "carabinerWidth": 100.0,
-//            "keyringXPosition": [0.5, 0.3, 0.7],
-//            "keyringYPosition": [0.3, 0.4, 0.4],
-//            "isActive": false
-//        ],
-
-        // 예시 — Lottie 카라비너 (hamburger)
-//        [
-//            "id": "NewLottieCarabiner",
-//            "carabinerName": "새 Lottie 카라비너",
-//            "carabinerImage": ["썸네일URL", "뒤면URL", "앞면URL"],
-//            "carabinerLottie": ["gs://keychy-f6011.firebasestorage.app/Carabiners/{아이템ID}/Carabiner0.json"],
-//            "carabinerType": "hamburger",
-//            "description": "새 Lottie 카라비너 설명",
-//            "recommendedCombinations": "",
-//            "maxKeyringCount": 3,
-//            "tags": ["카라비너"],
-//            "price": 0,
-//            "downloadCount": 0,
-//            "useCount": 0,
-//            "carabinerX": 0.0,
-//            "carabinerY": 0.0,
-//            "carabinerWidth": 100.0,
-//            "keyringXPosition": [0.5, 0.3, 0.7],
-//            "keyringYPosition": [0.3, 0.4, 0.4],
+//            "carabinerX": 0,
+//            "carabinerY": 0,
+//            "carabinerWidth": 0,
+//            "keyringXPosition": [0],
+//            "keyringYPosition": [0],
 //            "isActive": false
 //        ],
     ]

@@ -68,6 +68,17 @@ enum KeyringScale {
         "Baduki": 0.6,
         "Baekgu": 0.6,
         "Nureungi": 0.6,
+        
+        /// 야구 카라비너
+        "BaseBall_Ball": 0.85,
+        "BaseBall_Bat": 1.0,
+        "BaseBall_Cap_Pink": 0.55,
+        "BaseBall_Cap_Purple": 0.5,
+        "BaseBall_Helmet_Blue": 0.65,
+        "BaseBall_Helmet_Red": 0.65,
+        "BaseBall_Purple": 0.6,
+        "Baseball_Glove_Normal": 0.55,
+        "Baseball_Glove_White": 0.55,
     ]
     
     // MARK: - 템플릿별 뭉치 키링 스케일
