@@ -212,7 +212,7 @@ extension BundleCreateView {
                         .foregroundStyle(isCapturing || selectedKeyrings.isEmpty ? .gray300 : .main500)
                 }
                 .frame(width: 62, height: 44)
-                .glassEffect(.regular.interactive(), in: .capsule)
+                .glassEffect(.regular.interactive().tint(.white.opacity(0.3)), in: .capsule)
                 .disabled(isCapturing || selectedKeyrings.isEmpty)
             }
         }
