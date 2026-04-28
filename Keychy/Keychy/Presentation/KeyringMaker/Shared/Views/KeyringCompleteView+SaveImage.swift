@@ -24,11 +24,14 @@ extension KeyringCompleteView {
             chainType: .basic,
             bodyUIImage: bodyImage,
             templateId: viewModel.templateId,
+            isGyroscope: viewModel.isGyroscope,
             targetSize: CGSize(width: 350, height: 466),
             customBackgroundColor: .clear,
             zoomScale: 2.0,
             hookOffsetY: viewModel.hookOffsetY != 0 ? viewModel.hookOffsetY : nil,
-            chainLength: viewModel.chainLength
+            chainLength: viewModel.chainLength,
+            shimmerColorId: (viewModel as? LenticularVM)?.selectedShimmerEffect.firestoreId,
+            borderColorId: (viewModel as? LenticularVM)?.selectedBorderEffect.firestoreId
         )
         scene.scaleMode = .aspectFill
 

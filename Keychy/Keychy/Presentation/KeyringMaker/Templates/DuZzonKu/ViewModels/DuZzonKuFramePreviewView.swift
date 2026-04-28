@@ -20,6 +20,8 @@ struct DuZzonKuFramePreviewView: View {
     @State private var selectedPhotoItem: PhotosPickerItem? = nil
     @State private var showEditButton = false
     @State private var isFrameLoaded: Bool = false
+    @Environment(\.previewScaleFactor) private var previewScale
+    @Environment(\.previewTopPadding) private var topPadding
     
     // 여러 개의 체커보드 중 어떤 것을 편집 중인지
     @State private var editingRectIndex: Int? = nil
@@ -37,8 +39,8 @@ struct DuZzonKuFramePreviewView: View {
     @State private var currentRotations: [Int: Angle] = [:]
     @State private var currentOffsets: [Int: CGSize] = [:]
     
-    // 크기 설정
-    private let targetFrameHeight: CGFloat = 376
+    // 크기 설정 (previewScale 적용)
+    private var targetFrameHeight: CGFloat { 376 * previewScale }
 
     var body: some View {
         GeometryReader { geometry in
@@ -49,23 +51,23 @@ struct DuZzonKuFramePreviewView: View {
                         // 프레임 + 안장 + 갈기 합성 영역
                         VStack {
                             Spacer()
-                                .frame(height: 135)
+                                .frame(height: 135 * previewScale)
 
                             compositionView
+                                .offset(x: -0.5 * previewScale, y: -2 * previewScale)
                         }
 
                         // frameChain 이미지 (위에 겹침)
                         Image(.frameChain)
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 90)
-                            .offset(y: 4)
+                            .frame(width: 90 * previewScale)
                     }
 
                     Spacer()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(.top, 168)
+                .padding(.top, topPadding)
                 .opacity(isFrameLoaded ? 1 : 0)
 
                 // 로딩 중일 때
@@ -279,9 +281,6 @@ struct DuZzonKuFramePreviewView: View {
                     isFrameLoaded = false
                 }
                 .offset(x: 2)
-                .onAppear {
-                    print("checkerBoardRects:", frame.checkerBoardRects ?? [])
-                }
             }
         }
     }

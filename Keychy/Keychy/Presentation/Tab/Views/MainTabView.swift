@@ -52,9 +52,9 @@ extension MainTabView {
             collectionTab
         }
         .tint(.main500)
-        .tabBarMinimizeBehavior(.onScrollDown)
         .onAppear(perform: viewModel.handleAppear)
         .onChange(of: viewModel.deepLinkManager.pendingPostOfficeId, viewModel.handleDeepLinkChange)
+        .onChange(of: viewModel.deepLinkManager.pendingTabDestination, viewModel.handleTabDestinationChange)
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             // 앱이 포그라운드로 복귀할 때 배지 카운트 동기화
             viewModel.userManager.updateBadgeCount()
@@ -67,7 +67,7 @@ extension MainTabView {
             Color.white
                 .ignoresSafeArea()
 
-            SplashView()
+            SplashView(message: "유저 정보를 가져오고 있어요")
         }
         .transition(.opacity)
         .zIndex(999)

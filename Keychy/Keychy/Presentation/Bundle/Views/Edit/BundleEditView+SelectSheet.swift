@@ -50,27 +50,42 @@ extension BundleEditView {
     }
 
     private var itemSheetContent: some View {
-        ZStack(alignment: .top) {
-            SelectBackgroundSheet(
-                viewModel: bundleVM,
-                selectedBG: bundleVM.newSelectedBackground,
-                onBackgroundTap: { bg in
-                    bundleVM.newSelectedBackground = bg
-                }
-            )
-            .opacity(isBackgroundMode ? 1 : 0)
-            .allowsHitTesting(isBackgroundMode)
+        Group {
+            if isBackgroundMode {
+                SelectBackgroundSheet(
+                    viewModel: bundleVM,
+                    selectedBG: bundleVM.newSelectedBackground,
+                    onBackgroundTap: { bg in
+                        // 정적 배경 + 캐시 미스일 때만 로딩 표시
+                        if !bg.background.isLottie
+                            && !StorageManager.shared.isCached(path: bg.background.backgroundImage) {
+                            isBackgroundLoading = true
+                        }
+                        bundleVM.newSelectedBackground = bg
+                    }
+                )
+            } else {
+                SelectCarabinerSheet(
+                    viewModel: bundleVM,
+                    selectedCarabiner: bundleVM.newSelectedCarabiner,
+                    onCarabinerTap: { carabiner in
+                        let maxCount = carabiner.carabiner.maxKeyringCount
 
-            SelectCarabinerSheet(
-                viewModel: bundleVM,
-                selectedCarabiner: bundleVM.newSelectedCarabiner,
-                onCarabinerTap: { carabiner in
-                    selectCarabiner = carabiner
-                    showChangeCarabinerAlert = true
-                }
-            )
-            .opacity(isBackgroundMode ? 0 : 1)
-            .allowsHitTesting(!isBackgroundMode)
+                        // 슬롯 초과 키링만 제거 (나머지 유지)
+                        let overflowIndices = bundleVM.selectedKeyrings.keys.filter { $0 >= maxCount }
+                        for idx in overflowIndices {
+                            bundleVM.selectedKeyrings[idx] = nil
+                            bundleVM.keyringOrder.removeAll { $0 == idx }
+                        }
+
+                        // 정적 카라비너 + 캐시 미스일 때만 로딩 표시
+                        if !carabiner.carabiner.isLottie && !isCarabinerCached(carabiner) {
+                            isSceneReady = false
+                        }
+                        bundleVM.newSelectedCarabiner = carabiner
+                    }
+                )
+            }
         }
     }
     
@@ -105,6 +120,10 @@ extension BundleEditView {
                     }
                     bundleVM.selectedKeyrings[selectedPosition] = keyring
                     bundleVM.keyringOrder.append(selectedPosition)
+                    // 키링 바디 이미지 캐시 미스 시 로딩 표시
+                    if !StorageManager.shared.isCached(path: keyring.bodyImage) {
+                        isSceneReady = false
+                    }
                     showSelectKeyringSheet = false
                 }
                 updateKeyringDataList()

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Nuke
 
 /// Keychy 앱의 진입점
 /// - AppDelegate를 통해 Firebase, Push 알림 등의 초기 설정 수행
@@ -17,11 +18,31 @@ struct KeychyApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
     init() {
+        // Nuke DataCache 활성화 (HTTP 헤더 무시, 무조건 디스크 저장)
+        ImagePipeline.shared = ImagePipeline(configuration: .withDataCache)
+
+        // 기존 StorageManager 디스크 캐시 → Nuke DataCache 마이그레이션 (1회성)
+        let migrationKey = "didMigrateToNukeDataCache"
+        if !UserDefaults.standard.bool(forKey: migrationKey) {
+            let oldCacheDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+                .appendingPathComponent("StorageImageCache")
+            try? FileManager.default.removeItem(at: oldCacheDir)
+            UserDefaults.standard.set(true, forKey: migrationKey)
+        }
+
         // 네트워크 모니터링 시작
         NetworkManager.shared.startMonitoring()
 
         // 키링 캐시 스케일 버전 체크 (KeyringScale 적용으로 인한 재캡처)
         KeyringImageCache.shared.invalidateCacheIfScaleVersionChanged()
+
+        // 위젯 자동 등록 → 수동 등록 전환 마이그레이션
+        KeyringImageCache.shared.migrateToManualWidgetSelectionIfNeeded()
+
+        // 렌티큘러 스타일 프리셋 가격 로드 (Firestore → 메모리)
+        Task {
+            await StylePresetManager.shared.loadPrices()
+        }
     }
     
     // MARK: - Body

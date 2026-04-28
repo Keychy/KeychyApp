@@ -19,6 +19,9 @@ struct WorkshopTab: View {
     @State private var speechBubbleVM: SpeechBubbleVM?
     @State private var wishHorse26VM: WishHorse26VM?
     @State private var duZzonKuVM: DuZzonKuVM?
+    @State private var crossStitchVM: CrossStitchVM?
+    @State private var lenticularVM: LenticularVM?
+    @State private var uniformVM: UniformVM?
     @State private var workshopViewModel = WorkshopViewModel(userManager: UserManager.shared)
 
     var body: some View {
@@ -228,6 +231,78 @@ struct WorkshopTab: View {
                 navigationTitle: "키링이 완성되었어요!"
             )
 
+        // MARK: - CrossStitch
+        case .crossStitchPreview:
+            CrossStitchPreview(router: router, viewModel: getCrossStitchVM())
+        case .crossStitchDraw:
+            CrossStitchDrawView(router: router, viewModel: getCrossStitchVM())
+        case .crossStitchCustomizing:
+            KeyringCustomizingView(
+                router: router,
+                viewModel: getCrossStitchVM(),
+                nextRoute: .crossStitchInfoInput
+            )
+        case .crossStitchInfoInput:
+            KeyringInfoInputView(
+                router: router,
+                viewModel: getCrossStitchVM(),
+                nextRoute: .crossStitchComplete
+            )
+        case .crossStitchComplete:
+            KeyringCompleteView(
+                router: router,
+                viewModel: getCrossStitchVM(),
+                navigationTitle: "키링이 완성되었어요!"
+            )
+            
+        // MARK: - Lenticular
+        case .lenticularPreview:
+            LenticularPreview(router: router, viewModel: getLenticularVM())
+        case .lenticularImageSelect:
+            LenticularImageSelectView(router: router, viewModel: getLenticularVM())
+        case .lenticularFusion:
+            LenticularFusionView(router: router, viewModel: getLenticularVM())
+        case .lenticularCustomizing:
+            KeyringCustomizingView(
+                router: router,
+                viewModel: getLenticularVM(),
+                nextRoute: .lenticularInfoInput
+            )
+        case .lenticularInfoInput:
+            KeyringInfoInputView(
+                router: router,
+                viewModel: getLenticularVM(),
+                nextRoute: .lenticularComplete
+            )
+        case .lenticularComplete:
+            KeyringCompleteView(
+                router: router,
+                viewModel: getLenticularVM(),
+                navigationTitle: "키링이 완성되었어요!"
+            )
+
+        // MARK: - Uniform
+        case .uniformPreview:
+            UniformPreview(router: router, viewModel: getUniformVM())
+        case .uniformCustomizing:
+            KeyringCustomizingView(
+                router: router,
+                viewModel: getUniformVM(),
+                nextRoute: .uniformInfoInput
+            )
+        case .uniformInfoInput:
+            KeyringInfoInputView(
+                router: router,
+                viewModel: getUniformVM(),
+                nextRoute: .uniformComplete
+            )
+        case .uniformComplete:
+            KeyringCompleteView(
+                router: router,
+                viewModel: getUniformVM(),
+                navigationTitle: "키링이 완성되었어요!"
+            )
+
         // MARK: - 선물 포장 완료
         case .packageComplete(let keyringDocumentId, let postOfficeId, let templateId, let shareLink):
             KeyringPackageCompleteView(
@@ -319,6 +394,33 @@ struct WorkshopTab: View {
         }
         return viewModel
     }
+    
+    private func getCrossStitchVM() -> CrossStitchVM {
+        guard let viewModel = crossStitchVM else {
+            let newViewModel = CrossStitchVM()
+            crossStitchVM = newViewModel
+            return newViewModel
+        }
+        return viewModel
+    }
+
+    private func getLenticularVM() -> LenticularVM {
+        guard let viewModel = lenticularVM else {
+            let newViewModel = LenticularVM()
+            lenticularVM = newViewModel
+            return newViewModel
+        }
+        return viewModel
+    }
+
+    private func getUniformVM() -> UniformVM {
+        guard let viewModel = uniformVM else {
+            let newViewModel = UniformVM()
+            uniformVM = newViewModel
+            return newViewModel
+        }
+        return viewModel
+    }
 
     // MARK: - ViewModel by TemplateId
     private func getViewModelForTemplate(_ templateId: String) -> any KeyringViewModelProtocol {
@@ -335,6 +437,10 @@ struct WorkshopTab: View {
             return getSpeechBubbleVM()
         case "DuZzonKu":
             return getDuZzonKuVM()
+        case "Lenticular":
+            return getLenticularVM()
+        case "Uniform":
+            return getUniformVM()
         default:
             return getPolaroidVM()
         }
@@ -359,5 +465,9 @@ struct WorkshopTab: View {
 
     func resetSpeechBubbleVM() {
         speechBubbleVM = nil
+    }
+
+    func resetUniformVM() {
+        uniformVM = nil
     }
 }

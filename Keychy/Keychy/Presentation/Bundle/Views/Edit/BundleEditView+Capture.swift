@@ -54,7 +54,8 @@ extension BundleEditView {
                 bodyImageURL: item.bodyImageURL,
                 templateId: item.templateId ?? "",
                 hookOffsetY: item.hookOffsetY,
-                chainLength: item.chainLength
+                chainLength: item.chainLength,
+                isGyroscope: item.isGyroscope
             )
         }
 

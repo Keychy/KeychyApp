@@ -63,6 +63,9 @@ struct Typography {
     static let suit12M25 = Typography(font: .custom(.suitMedium, size: 12), lineSpacing: 10)
     static let suit12R25 = Typography(font: .custom(.suitRegular, size: 12), lineSpacing: 13)
     
+    /// 11
+    static let suit11M = Typography(font: .custom(.suitMedium, size: 11), lineSpacing: 0)
+    
     /// 10
     static let suit10R = Typography(font: .custom(.suitRegular, size: 10), lineSpacing: 0)
     static let suit10SB = Typography(font: .custom(.suitSemiBold, size: 10), lineSpacing: 0)
@@ -136,6 +139,10 @@ struct Typography {
     // MARK: - Gulim
     static let gulim20R = Typography(font: .custom(.gulimRegular, size: 20), lineSpacing: 0)
     static let gulim16R = Typography(font: .custom(.gulimRegular, size: 16), lineSpacing: 0)
+
+    // MARK: - Uniform (마킹용)
+    static let bmdohyeon75 = Typography(font: .custom(.bmdohyeon, size: 75), lineSpacing: 0)
+    static let esamanru24M = Typography(font: .custom(.esamanruMedium, size: 24), lineSpacing: 0)
 }
 
 // MARK: - View Extension

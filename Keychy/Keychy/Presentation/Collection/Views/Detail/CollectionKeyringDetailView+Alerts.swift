@@ -34,6 +34,26 @@ extension CollectionKeyringDetailView {
         if isGeneratingVideo {
             videoGeneratingAlert
         }
+
+        if isGeneratingAnimationFrames {
+            animationFrameGeneratingAlert
+        }
+
+        if showWidgetAddedToast {
+            widgetAddedToast
+        }
+
+        if showWidgetAddFailToast {
+            widgetAddFailToast
+        }
+
+        if showWidgetRemoveAlert {
+            widgetRemoveOverlay
+        }
+
+        if showWidgetRemovedToast {
+            widgetRemovedToast
+        }
     }
     
     // MARK: - Delete Alerts
@@ -346,6 +366,47 @@ extension CollectionKeyringDetailView {
             .zIndex(101)
     }
 
+    // MARK: - Widget Added Toast
+    private var widgetAddedToast: some View {
+        WidgetAddedToast(isPresented: $showWidgetAddedToast)
+            .zIndex(101)
+    }
+
+    // MARK: - Widget Add Fail Toast
+    private var widgetAddFailToast: some View {
+        WidgetAddFailToast(isPresented: $showWidgetAddFailToast)
+            .zIndex(101)
+    }
+
+    // MARK: - Widget Remove Overlay
+    private var widgetRemoveOverlay: some View {
+        ZStack {
+            Color.black20
+                .ignoresSafeArea()
+                .zIndex(99)
+
+            WidgetRemovePopup(
+                onCancel: {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        showWidgetRemoveAlert = false
+                    }
+                },
+                onConfirm: {
+                    handleWidgetRemoveConfirm()
+                }
+            )
+            .transition(.scale.combined(with: .opacity))
+            .zIndex(100)
+        }
+    }
+
+    // MARK: - Widget Removed Toast
+    private var widgetRemovedToast: some View {
+        WidgetRemovedToast(isPresented: $showWidgetRemovedToast)
+            .transition(.scale.combined(with: .opacity))
+            .zIndex(101)
+    }
+
     // MARK: - Video Generating Alert
     private var videoGeneratingAlert: some View {
         ZStack {
@@ -354,6 +415,18 @@ extension CollectionKeyringDetailView {
                 .zIndex(99)
 
             LoadingAlert(type: .longWithKeychy, message: "공유할 영상을 만들고 있어요!")
+                .zIndex(100)
+        }
+    }
+
+    // MARK: - Animation Frame Generating Alert
+    private var animationFrameGeneratingAlert: some View {
+        ZStack {
+            Color.black20
+                .ignoresSafeArea()
+                .zIndex(99)
+
+            LoadingAlert(type: .short40, message: nil)
                 .zIndex(100)
         }
     }

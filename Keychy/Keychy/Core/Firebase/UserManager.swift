@@ -96,6 +96,9 @@ class UserManager {
                 // 실시간 리스너 시작
                 self.startUserListener(uid: uid)
 
+                // keychyNews 토픽 구독 동기화 (앱 재설치/재로그인 대응)
+                NotificationManager.shared.syncKeychyNewsSubscription(marketingAgreed: user.marketingAgreed)
+
                 completion(true)
             } else {
                 // 신규 유저 또는 프로필 미완성
@@ -144,6 +147,10 @@ class UserManager {
         UserDefaults.standard.set(user.nickname, forKey: "userNickname")
         UserDefaults.standard.set(user.email, forKey: "userEmail")
         UserDefaults.standard.set(user.marketingAgreed, forKey: "userMarketingAgreed")
+        UserDefaults.standard.set(user.giftNotificationEnabled, forKey: "userGiftNotificationEnabled")
+        // 핵심 값 캐시 (stale 캐시로 인한 데이터 유실 방어)
+        UserDefaults.standard.set(user.maxKeyringCount, forKey: "userMaxKeyringCount")
+        UserDefaults.standard.set(user.coin, forKey: "userCoin")
     }
 
     private func loadFromCache() {
@@ -151,6 +158,8 @@ class UserManager {
         let nickname = UserDefaults.standard.string(forKey: "userNickname") ?? ""
         let email = UserDefaults.standard.string(forKey: "userEmail") ?? ""
         let marketingAgreed = UserDefaults.standard.bool(forKey: "userMarketingAgreed")
+        // UserDefaults.bool은 키가 없으면 false를 반환하므로, 키 존재 여부로 기본값 분기
+        let giftNotificationEnabled = UserDefaults.standard.object(forKey: "userGiftNotificationEnabled") as? Bool ?? true
 
         if !uid.isEmpty {
             // 캐시에서 임시 유저 생성 (전체 데이터는 Firestore에서 로드 필요)
@@ -160,6 +169,13 @@ class UserManager {
                 email: email
             )
             user.marketingAgreed = marketingAgreed
+            user.giftNotificationEnabled = giftNotificationEnabled
+            // 캐시된 핵심 값 복원 (stale 기본값으로 Firestore 덮어쓰기 방지)
+            user.maxKeyringCount = UserDefaults.standard.integer(forKey: "userMaxKeyringCount")
+            user.coin = UserDefaults.standard.integer(forKey: "userCoin")
+            // integer(forKey:)는 키가 없으면 0 반환 → 최초 설치 시 기본값 사용
+            if user.maxKeyringCount == 0 { user.maxKeyringCount = 100 }
+
             currentUser = user
             isLoaded = true
         }
@@ -167,10 +183,21 @@ class UserManager {
 
     // MARK: - 필드 마이그레이션
     private func migrateUserFieldsIfNeeded(user: KeychyUser) {
-        // merge: true로 누락된 필드만 추가 (기존 데이터는 유지)
-        let userData = user.toDictionary()
-        db.collection("User").document(user.id).setData(userData, merge: true) { error in
-            // 필드 마이그레이션 처리
+        // 신규 앱 버전에서 추가된 필드만 merge
+        // keyrings, coin, maxKeyringCount 등 동적 필드는 절대 포함하지 않음
+        // setData(merge: true)는 딕셔너리에 없는 필드는 건드리지 않으므로 안전
+        let migrationFields: [String: Any] = [
+            "recentTemplates": user.recentTemplates,
+            "giftNotificationEnabled": user.giftNotificationEnabled,
+            "copyVoucher": user.copyVoucher,
+            "termsAgreed": user.termsAgreed,
+            "marketingAgreed": user.marketingAgreed,
+        ]
+
+        db.collection("User").document(user.id).setData(migrationFields, merge: true) { error in
+            if let error = error {
+                print("[Migration] 필드 마이그레이션 실패: \(error.localizedDescription)")
+            }
         }
     }
 
@@ -198,6 +225,9 @@ class UserManager {
         UserDefaults.standard.removeObject(forKey: "userEmail")
         UserDefaults.standard.removeObject(forKey: "userUID")
         UserDefaults.standard.removeObject(forKey: "userMarketingAgreed")
+        UserDefaults.standard.removeObject(forKey: "userGiftNotificationEnabled")
+        UserDefaults.standard.removeObject(forKey: "userMaxKeyringCount")
+        UserDefaults.standard.removeObject(forKey: "userCoin")
 
         // 키링 캐시 전체 삭제
         KeyringImageCache.shared.clearAll()

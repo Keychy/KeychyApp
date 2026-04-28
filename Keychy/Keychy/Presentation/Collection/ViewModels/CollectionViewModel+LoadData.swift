@@ -388,11 +388,14 @@ extension CollectionViewModel {
                 chainType: chainType,
                 bodyImage: keyring.bodyImage,
                 templateId: keyring.selectedTemplate,
+                isGyroscope: keyring.isGyroscope,
                 targetSize: CGSize(width: 175, height: 233),
                 customBackgroundColor: .clear,
                 zoomScale: 2.0,
                 hookOffsetY: keyring.hookOffsetY,
                 chainLength: keyring.chainLength,
+                shimmerColorId: keyring.shimmerColorId,
+                borderColorId: keyring.borderColorId,
                 onLoadingComplete: {
                     loadingCompleted = true
                 }
@@ -443,15 +446,6 @@ extension CollectionViewModel {
                    !pngData.isEmpty,
                    UIImage(data: pngData) != nil {
                     KeyringImageCache.shared.save(pngData: pngData, for: keyringID, type: .thumbnail)
-                    
-                    if !keyring.isPackaged && !keyring.isPublished {
-                        KeyringImageCache.shared.syncKeyring(
-                            id: keyringID,
-                            name: keyring.name,
-                            imageData: pngData,
-                            createdAt: keyring.createdAt
-                        )
-                    }
                 }
 
                 continuation.resume()

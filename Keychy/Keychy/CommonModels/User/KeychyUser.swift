@@ -23,6 +23,9 @@ struct KeychyUser: Identifiable {
     var chains: [String]
     var soundEffects: [String]
     var particleEffects: [String]
+    var ownedShimmerEffects: [String]  // 구매한 렌티큘러 시머 효과 프리셋 ID 배열
+    var ownedBorderEffects: [String]   // 구매한 렌티큘러 테두리 효과 프리셋 ID 배열
+    var ownedUniformFrames: [String] = []  // 구매한 유니폼 프레임 ID
     var backgrounds: [String]
     var carabiners: [String]
     var tags: [String]
@@ -30,6 +33,7 @@ struct KeychyUser: Identifiable {
     var recentTemplates: [String] // 최근 사용 템플릿 ID (최대 5개, 최신순)
     var termsAgreed: Bool         // 필수 약관 동의 여부
     var marketingAgreed: Bool     // 마케팅 수신 동의 여부
+    var giftNotificationEnabled: Bool  // 선물 알림 수신 여부
 
     // MARK: - Firestore 변환
     func toDictionary() -> [String: Any] {
@@ -45,13 +49,17 @@ struct KeychyUser: Identifiable {
             "chains": chains,
             "soundEffects": soundEffects,
             "particleEffects": particleEffects,
+            "ownedShimmerEffects": ownedShimmerEffects,
+            "ownedBorderEffects": ownedBorderEffects,
+            "ownedUniformFrames": ownedUniformFrames,
             "backgrounds": backgrounds,
             "carabiners": carabiners,
             "tags": tags,
             "keyrings": keyrings,
             "recentTemplates": recentTemplates,
             "termsAgreed": termsAgreed,
-            "marketingAgreed": marketingAgreed
+            "marketingAgreed": marketingAgreed,
+            "giftNotificationEnabled": giftNotificationEnabled
         ]
     }
 
@@ -75,6 +83,9 @@ struct KeychyUser: Identifiable {
         self.chains = data["chains"] as? [String] ?? []
         self.soundEffects = data["soundEffects"] as? [String] ?? []
         self.particleEffects = data["particleEffects"] as? [String] ?? []
+        self.ownedShimmerEffects = data["ownedShimmerEffects"] as? [String] ?? []
+        self.ownedBorderEffects = data["ownedBorderEffects"] as? [String] ?? []
+        self.ownedUniformFrames = data["ownedUniformFrames"] as? [String] ?? []
         self.backgrounds = data["backgrounds"] as? [String] ?? []
         self.carabiners = data["carabiners"] as? [String] ?? []
         self.tags = data["tags"] as? [String] ?? []
@@ -82,6 +93,7 @@ struct KeychyUser: Identifiable {
         self.recentTemplates = data["recentTemplates"] as? [String] ?? []
         self.termsAgreed = data["termsAgreed"] as? Bool ?? false
         self.marketingAgreed = data["marketingAgreed"] as? Bool ?? false
+        self.giftNotificationEnabled = data["giftNotificationEnabled"] as? Bool ?? true
     }
 
     // 일반 초기화 (새 유저 생성용)
@@ -98,6 +110,9 @@ struct KeychyUser: Identifiable {
         self.chains = []
         self.soundEffects = []
         self.particleEffects = []
+        self.ownedShimmerEffects = []
+        self.ownedBorderEffects = []
+        self.ownedUniformFrames = []
         self.backgrounds = []
         self.carabiners = []
         self.tags = []
@@ -105,5 +120,6 @@ struct KeychyUser: Identifiable {
         self.recentTemplates = []
         self.termsAgreed = false
         self.marketingAgreed = false
+        self.giftNotificationEnabled = true
     }
 }

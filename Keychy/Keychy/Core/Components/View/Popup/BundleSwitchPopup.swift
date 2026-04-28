@@ -136,9 +136,8 @@ struct BundleSwitchButton: View {
                         .rotationEffect(.degrees(isExpanded ? 180 : 0))
                         .offset(y: 0.5)
                         .frame(width: 24, height: 24)
-                        .background(Color.white)
-                        .clipShape(Circle())
-                        .overlay(Circle().stroke(Color(#colorLiteral(red: 0.8861967921, green: 0.8861967921, blue: 0.8861967921, alpha: 1)), lineWidth: 1))
+                        .contentShape(Circle().scale(2.0))
+                        .glassEffect(.regular.interactive().tint(.white.opacity(0.8)), in: .circle)
                 }
             }
         }

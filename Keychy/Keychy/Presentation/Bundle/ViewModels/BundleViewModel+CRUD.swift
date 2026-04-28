@@ -24,6 +24,7 @@ extension BundleViewModel {
         selectedBackground: String,
         selectedCarabiner: String,
         keyrings: [String],
+        keyringOrder: [Int],
         maxKeyrings: Int,
         isMain: Bool,
         completion: @escaping (Bool, String?) -> Void
@@ -34,6 +35,7 @@ extension BundleViewModel {
             selectedBackground: selectedBackground,
             selectedCarabiner: selectedCarabiner,
             keyrings: keyrings,
+            keyringOrder: keyringOrder,
             maxKeyrings: maxKeyrings,
             isMain: isMain,
             createdAt: Date()
@@ -82,16 +84,27 @@ extension BundleViewModel {
     }
     
     /// 뭉치의 키링들을 MultiKeyringScene.KeyringData 배열로 변환
+    /// keyringOrder가 있으면 장착 순서대로, 없으면 슬롯 index 순서로 fallback
     func createKeyringDataList(bundle: KeyringBundle, carabiner: Carabiner) async -> [MultiKeyringScene.KeyringData] {
         var dataList: [MultiKeyringScene.KeyringData] = []
         
-        for (index, keyringId) in bundle.keyrings.enumerated() {
-            // 유효하지 않은 키링 ID 필터링
-            guard index < carabiner.maxKeyringCount,
-                  keyringId != "none",
-                  !keyringId.isEmpty else { continue }
-            
-            // Firebase에서 키링 정보 가져오기
+        // keyringOrder가 있으면 장착 순서 기반, 없으면 슬롯 index 순 fallback
+        let orderedIndices: [Int]
+        if !bundle.keyringOrder.isEmpty {
+            orderedIndices = bundle.keyringOrder
+        } else {
+            orderedIndices = bundle.keyrings.indices
+                .filter { bundle.keyrings[$0] != "none" && !bundle.keyrings[$0].isEmpty }
+                .sorted()
+        }
+        
+        for slotIndex in orderedIndices {
+            guard slotIndex < carabiner.maxKeyringCount,
+                  slotIndex < bundle.keyrings.count else { continue }
+
+            let keyringId = bundle.keyrings[slotIndex]
+            guard keyringId != "none", !keyringId.isEmpty else { continue }
+
             guard let keyringInfo = await fetchKeyringInfo(keyringId: keyringId) else { continue }
             
             // 커스텀 사운드 URL 처리 (HTTP/HTTPS로 시작하는 경우)
@@ -104,10 +117,10 @@ extension BundleViewModel {
             
             // KeyringData 생성
             let data = MultiKeyringScene.KeyringData(
-                index: index,
+                index: slotIndex,
                 position: CGPoint(
-                    x: carabiner.keyringXPosition[index],
-                    y: carabiner.keyringYPosition[index]
+                    x: carabiner.keyringXPosition[slotIndex],
+                    y: carabiner.keyringYPosition[slotIndex]
                 ),
                 bodyImageURL: keyringInfo.bodyImage,
                 templateId: keyringInfo.selectedTemplate,
@@ -115,11 +128,14 @@ extension BundleViewModel {
                 customSoundURL: customSoundURL,
                 particleId: keyringInfo.particleId,
                 hookOffsetY: keyringInfo.hookOffsetY,
-                chainLength: keyringInfo.chainLength
+                chainLength: keyringInfo.chainLength,
+                isGyroscope: keyringInfo.isGyroscope,
+                shimmerColorId: keyringInfo.shimmerColorId,
+                borderColorId: keyringInfo.borderColorId
             )
             dataList.append(data)
         }
-        
+
         return dataList
     }
     

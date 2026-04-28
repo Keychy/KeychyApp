@@ -17,6 +17,7 @@ class IntroViewModel: NSObject, ASAuthorizationControllerDelegate {
     // 로그인 관련
     var isLoggedIn = false
     var isLoading = false
+    var loadingMessage = "로그인 중"
     var errorMessage: String?
     var currentNonce: String?
 
@@ -111,6 +112,8 @@ class IntroViewModel: NSObject, ASAuthorizationControllerDelegate {
                     print("약관 동의 저장 실패: \(error.localizedDescription)")
                 } else {
                     print("약관 동의 저장 성공 - 마케팅: \(marketingAgreed)")
+                    // 마케팅 동의 시 keychyNews 토픽 구독
+                    NotificationManager.shared.syncKeychyNewsSubscription(marketingAgreed: marketingAgreed)
                 }
             }
     }

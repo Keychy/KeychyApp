@@ -67,10 +67,14 @@ extension BundleViewModel {
                 BackgroundViewData(background: bg, isOwned: ownedIds.contains(bg.id ?? ""))
             }
 
-            // Lottie 배경 JSON 다운로드 (뷰 렌더링 전 완료 보장)
+            // Lottie 배경 JSON 병렬 다운로드 (뷰 렌더링 전 완료 보장)
             let lottieBackgrounds = items.filter { $0.isLottie }
-            for bg in lottieBackgrounds {
-                await LottieItemManager.shared.downloadBackgroundLottie(bg)
+            await withTaskGroup(of: Void.self) { group in
+                for bg in lottieBackgrounds {
+                    group.addTask {
+                        await LottieItemManager.shared.downloadBackgroundLottie(bg)
+                    }
+                }
             }
 
             await MainActor.run {
@@ -94,10 +98,14 @@ extension BundleViewModel {
                 CarabinerViewData(carabiner: cb, isOwned: ownedIds.contains(cb.id ?? ""))
             }
 
-            // Lottie 카라비너 JSON 다운로드 (뷰 렌더링 전 완료 보장)
+            // Lottie 카라비너 JSON 병렬 다운로드 (뷰 렌더링 전 완료 보장)
             let lottieCarabiners = items.filter { $0.isLottie }
-            for cb in lottieCarabiners {
-                await LottieItemManager.shared.downloadCarabinerLottie(cb)
+            await withTaskGroup(of: Void.self) { group in
+                for cb in lottieCarabiners {
+                    group.addTask {
+                        await LottieItemManager.shared.downloadCarabinerLottie(cb)
+                    }
+                }
             }
 
             await MainActor.run {
@@ -125,6 +133,9 @@ extension BundleViewModel {
             let hookOffsetY = data["hookOffsetY"] as? CGFloat ?? 0.0
             let chainLength = data["chainLength"] as? Int ?? 5
             let selectedTemplate = data["selectedTemplate"] as? String
+            let isGyroscope = data["isGyroscope"] as? Bool ?? false
+            let shimmerColorId = data["shimmerColorId"] as? String
+            let borderColorId = data["borderColorId"] as? String
 
             return KeyringInfo(
                 id: keyringId,
@@ -133,7 +144,10 @@ extension BundleViewModel {
                 soundId: soundId,
                 particleId: particleId,
                 hookOffsetY: hookOffsetY,
-                chainLength: chainLength
+                chainLength: chainLength,
+                isGyroscope: isGyroscope,
+                shimmerColorId: shimmerColorId,
+                borderColorId: borderColorId
             )
         } catch {
             return nil

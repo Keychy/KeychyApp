@@ -38,6 +38,8 @@ extension IntroViewModel {
             // keyrings 배열 생성 (첫 번째 슬롯에 웰컴키링, 나머지는 "none")
             var keyrings = Array(repeating: "none", count: maxKeyrings)
             keyrings[1] = welcomeKeyringId
+            
+            let keyringOrder: [Int] = [1]
 
             // CollectionViewModel 사용해서 번들 생성
             let bundleVM = BundleViewModel()
@@ -47,6 +49,7 @@ extension IntroViewModel {
                 selectedBackground: "PurpleKeychy",
                 selectedCarabiner: "WelcomeKeychy",
                 keyrings: keyrings,
+                keyringOrder: keyringOrder,
                 maxKeyrings: maxKeyrings,
                 isMain: true
             ) { [bundleVM] success, bundleId in

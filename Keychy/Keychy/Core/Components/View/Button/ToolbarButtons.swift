@@ -19,7 +19,7 @@ struct BackToolbarButton: View {
             Image(.backIcon)
         }
         .frame(width: 44, height: 44)
-        .glassEffect(.regular.interactive(), in: .circle)
+        .glassEffect(.regular.interactive().tint(.white.opacity(0.8)), in: .circle)
     }
 }
 
@@ -44,10 +44,10 @@ struct NextToolbarButton: View {
             Text(title)
                 .typography(.suit17B)
                 .padding(4)
-                .foregroundStyle(isDisabled ? .gray300 : .black100)
+                .foregroundStyle(isDisabled ? .gray300 : .main500)
         }
         .frame(width: 62, height: 44)
-        .glassEffect(.regular.interactive(), in: .capsule)
+        .glassEffect(.regular.interactive().tint(.white.opacity(0.8)), in: .capsule)
         .disabled(isDisabled)
     }
 }
@@ -61,7 +61,7 @@ struct CloseToolbarButton: View {
             Image(.dismissGray600)
         }
         .frame(width: 44, height: 44)
-        .glassEffect(.regular.interactive(), in: .circle)
+        .glassEffect(.regular.interactive().tint(.white.opacity(0.8)), in: .circle)
     }
 }
 
@@ -85,7 +85,7 @@ struct PlusToolbarButton: View {
             Image(.bundleCreatePlusIcon)
         }
         .frame(width: 44, height: 44)
-        .glassEffect(.regular.interactive(), in: .circle)
+        .glassEffect(.regular.interactive().tint(.white.opacity(0.8)), in: .circle)
     }
 }
 
@@ -98,7 +98,7 @@ struct MenuToolbarButton: View {
             Image(.menuIcon)
         }
         .frame(width: 44, height: 44)
-        .glassEffect(.regular.interactive(), in: .circle)
+        .glassEffect(.regular.interactive().tint(.white.opacity(0.3)), in: .circle)
         .overlay(
             GeometryReader { geometry in
                 Color.clear
@@ -147,7 +147,7 @@ struct TextToolbarButton: View {
                 .foregroundStyle(isDisabled ? .gray300 : .main500)
         }
         .frame(width: 62, height: 44)
-        .glassEffect(.regular.interactive(), in: .capsule)
+        .glassEffect(.regular.interactive().tint(.white.opacity(0.8)), in: .capsule)
         .disabled(isDisabled)
     }
 }

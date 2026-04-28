@@ -19,11 +19,14 @@ extension CollectionKeyringDetailView {
             chainType: ChainType.fromID(keyring.selectedChain),
             bodyImage: keyring.bodyImage,
             templateId: keyring.selectedTemplate,
+            isGyroscope: keyring.isGyroscope,
             targetSize: CGSize(width: 350, height: 466),
             customBackgroundColor: UIColor.clear,
             zoomScale: 2.0,
             hookOffsetY: keyring.hookOffsetY,
-            chainLength: keyring.chainLength
+            chainLength: keyring.chainLength,
+            shimmerColorId: keyring.shimmerColorId,
+            borderColorId: keyring.borderColorId
         )
         scene.scaleMode = .aspectFill
 

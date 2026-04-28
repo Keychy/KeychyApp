@@ -50,6 +50,9 @@ class RootViewModel {
     /// 앱 업데이트 체크 후 사용자 인증 상태를 확인하고 적절한 화면으로 라우팅
     func checkAuthAndNavigate() {
         Task {
+            // 0. 빌드 환경 판별 (production 확인 시에만 isTestEnvironment → false)
+            await BuildEnvironment.configure()
+
             // 1. 앱 업데이트 체크
             await updateManager.checkForUpdate()
 

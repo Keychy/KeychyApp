@@ -13,23 +13,15 @@ struct ItemDetailImage: View {
 
     /// 파이어 스토어에서 가져올 item이미지
     let itemURL: String
-
-    @State private var isLoading = true
+    var contentMode: ContentMode = .fit
 
     var body: some View {
-        ZStack {
-            // GIF 애니메이션을 지원하는 이미지 뷰
-            NukeAnimatedImageView(url: URL(string: itemURL), isLoading: $isLoading, maxSize: CGSize(width: 1200, height: 1200))
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-            // 로딩 중앙 배치
-            if isLoading {
+        LazyImage(url: URL(string: itemURL)) { state in
+            if let image = state.image {
+                image.resizable()
+                    .aspectRatio(contentMode: contentMode)
+            } else if state.isLoading {
                 LoadingAlert(type: .short40, message: nil)
-                    .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            isLoading = false
-                        }
-                    }
             }
         }
     }
@@ -171,7 +163,7 @@ struct SimpleAnimatedImage: View {
                     }
 
                 if isLoading {
-                    Color.gray50
+                    Color.clear
                         .overlay {
                             LoadingAlert(type: .short40, message: nil)
                         }

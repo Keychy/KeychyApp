@@ -42,9 +42,15 @@ struct BundleCreateView<Route: BundleRoute>: View {
     @State var isCapturing: Bool = false
     @State var sceneRefreshId = UUID()
     @State var isSceneReady: Bool = false
+    @State var isNavigatingDeeper = true // router push를 하는지 여부
 
     // 구매 시트
     @State var showPurchaseSheet = false
+
+    // 배경 로딩 상태 (정적 배경 캐시 미스 시)
+    @State var isBackgroundLoading = false
+    // 최초 씬 로딩 완료 여부 (아이템 변경 로딩과 분리)
+    @State var hasInitiallyLoaded = false
 
     // 구매 Alert 애니메이션
     @State var showPurchaseSuccessAlert = false
@@ -84,11 +90,15 @@ struct BundleCreateView<Route: BundleRoute>: View {
                         carabinerWidth: cb.carabiner.carabinerWidth,
                         currentCarabinerType: cb.carabiner.type,
                         cleanupOnDisappear: true,
+                        onBackgroundLoaded: {
+                            isBackgroundLoading = false
+                        },
                         onAllKeyringsReady: {
                             // onSetupComplete에서 호출됨
                             // (카라비너 Lottie 프리렌더링 + 키링 로드 + 물리 활성화 후)
                             withAnimation(.easeOut(duration: 0.3)) {
                                 isSceneReady = true
+                                hasInitiallyLoaded = true
                             }
                         }
                     )
@@ -110,11 +120,18 @@ struct BundleCreateView<Route: BundleRoute>: View {
                     .blur(radius: showPurchaseSuccessAlert || isCapturing ? 10 : 0)
             }
 
-            // Lottie 씬 로딩 중 (시트 포함 전체 차단)
-            if !isSceneReady {
+            // 최초 진입 로딩
+            if !hasInitiallyLoaded {
                 Color.black20
                     .ignoresSafeArea()
                 LoadingAlert(type: .longWithKeychy, message: "아이템을 불러오고 있어요")
+            }
+
+            // 아이템 변경 시 캐시 미스 로딩 (최초 로딩 이후에만)
+            if hasInitiallyLoaded && (!isSceneReady || isBackgroundLoading) {
+                Color.black20
+                    .ignoresSafeArea()
+                LoadingAlert(type: .short40, message: nil)
             }
 
             // 캡처 중 로딩
@@ -142,7 +159,10 @@ struct BundleCreateView<Route: BundleRoute>: View {
             bundleVM.resetSheetFilterState()
         }
         .onDisappear {
-            bundleVM.resetEditState()
+            if !isNavigatingDeeper {
+                bundleVM.resetEditState()
+            }
+            isNavigatingDeeper = false
         }
         .sheet(isPresented: $showPurchaseSheet) {
             purchaseSheetView
@@ -169,6 +189,7 @@ extension BundleCreateView {
     var customNavigationBar: some View {
         CustomNavigationBar {
             BackToolbarButton {
+                bundleVM.resetCreateState()
                 bundleVM.restoreMainBundle()
                 TabBarManager.show()
                 router.pop()
@@ -191,7 +212,7 @@ extension BundleCreateView {
                         .foregroundStyle(isCapturing || selectedKeyrings.isEmpty ? .gray300 : .main500)
                 }
                 .frame(width: 62, height: 44)
-                .glassEffect(.regular.interactive(), in: .capsule)
+                .glassEffect(.regular.interactive().tint(.white.opacity(0.3)), in: .capsule)
                 .disabled(isCapturing || selectedKeyrings.isEmpty)
             }
         }

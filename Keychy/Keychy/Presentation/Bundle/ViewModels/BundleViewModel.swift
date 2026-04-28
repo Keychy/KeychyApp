@@ -20,6 +20,7 @@
 //   +Views     - UI 컴포넌트
 
 import SwiftUI
+import Nuke
 import FirebaseFirestore
 import FirebaseStorage
 
@@ -56,6 +57,7 @@ class BundleViewModel {
     // MARK: - 뭉치 생성 시 선택된 키링
 
     var selectedKeyringsForBundle: [Int: Keyring] = [:]
+    var keyringOrderForBundle: [Int] = []
 
     // MARK: - 뭉치 캡쳐 이미지
 
@@ -85,6 +87,10 @@ class BundleViewModel {
     var isLoading = false
     var isPurchasing = false
 
+    // MARK: - 이미지 프리페처 (ARC 해제 방지용)
+    /// 로컬 변수로 생성하면 함수 종료 시 해제되어 프리페치 취소됨
+    @ObservationIgnored var imagePrefetcher: ImagePrefetcher?
+
     // MARK: - 정렬 상태
     
     var selectedSort: String = "최신순" // 기본값
@@ -104,6 +110,16 @@ class BundleViewModel {
         showSheetSortSheet = false
     }
 
+    /// 생성 화면 상태 초기화 (완성 화면에서 나갈 때 호출)
+    func resetCreateState() {
+        selectedKeyringsForBundle = [:]
+        keyringOrderForBundle = []
+        bundleCapturedImage = nil
+        bundleWidgetImage = nil
+        newSelectedBackground = nil
+        newSelectedCarabiner = nil
+    }
+    
     /// 편집 화면 상태 초기화 (편집 화면 나갈 때 호출)
     func resetEditState() {
         newSelectedBackground = nil

@@ -1,0 +1,167 @@
+//
+//  AppIntent.swift
+//  WidgetKeychy
+//
+//  위젯 표시 유형/항목 선택 Intent
+//
+
+import WidgetKit
+import AppIntents
+import SwiftUI
+
+// MARK: - 표시 유형 (키링 / 뭉치)
+
+enum DisplayType: String, AppEnum {
+    case keyring = "keyring"
+    case bundle = "bundle"
+
+    static var typeDisplayRepresentation: TypeDisplayRepresentation = "표시 유형"
+
+    static var caseDisplayRepresentations: [DisplayType: DisplayRepresentation] = [
+        .keyring: "키링",
+        .bundle: "뭉치"
+    ]
+}
+
+// MARK: - Keyring Entity
+
+struct KeyringEntity: AppEntity {
+    let id: String
+    let name: String
+    let isGyroscope: Bool
+
+    static var typeDisplayRepresentation: TypeDisplayRepresentation = "키링"
+
+    var displayRepresentation: DisplayRepresentation {
+        DisplayRepresentation(title: "\(name)")
+    }
+
+    static var defaultQuery = KeyringEntityQuery()
+}
+
+struct KeyringEntityQuery: EntityQuery {
+    func entities(for identifiers: [String]) async throws -> [KeyringEntity] {
+        let keyrings = KeyringImageCache.shared.loadWidgetKeyrings()
+        return identifiers.compactMap { id in
+            keyrings.first(where: { $0.id == id })
+                .map { KeyringEntity(id: $0.id, name: $0.name, isGyroscope: $0.isGyroscope) }
+        }
+    }
+
+    func suggestedEntities() async throws -> [KeyringEntity] {
+        KeyringImageCache.shared.loadWidgetKeyrings()
+            .sorted { $0.createdAt > $1.createdAt }
+            .map { KeyringEntity(id: $0.id, name: $0.name, isGyroscope: $0.isGyroscope) }
+    }
+
+    func defaultResult() async -> KeyringEntity? { nil }
+}
+
+// MARK: - Bundle Entity
+
+struct BundleEntity: AppEntity {
+    let id: String
+    let name: String
+
+    static var typeDisplayRepresentation: TypeDisplayRepresentation = "뭉치"
+
+    var displayRepresentation: DisplayRepresentation {
+        DisplayRepresentation(title: "\(name)")
+    }
+
+    static var defaultQuery = BundleEntityQuery()
+}
+
+struct BundleEntityQuery: EntityQuery {
+    func entities(for identifiers: [String]) async throws -> [BundleEntity] {
+        let bundles = BundleImageCache.shared.loadWidgetBundleModels()
+        return identifiers.compactMap { id in
+            bundles.first(where: { $0.id == id })
+                .map { BundleEntity(id: $0.id, name: $0.name) }
+        }
+    }
+
+    func suggestedEntities() async throws -> [BundleEntity] {
+        BundleImageCache.shared.loadWidgetBundleModels()
+            .sorted { $0.createdAt > $1.createdAt }
+            .map { BundleEntity(id: $0.id, name: $0.name) }
+    }
+
+    func defaultResult() async -> BundleEntity? { nil }
+}
+
+// MARK: - 애니메이션 토글 Intent
+
+/// 위젯 터치 시 애니메이션을 시작/정지하는 인터랙티브 Intent
+///
+/// 동작:
+/// - 정지 중 → 탭 → 시작 시각 기록 → 30초간 애니메이션
+/// - 재생 중 → 탭 → 시작 시각 삭제 → 즉시 정지
+/// - 30초 경과 → 타임라인 정지 엔트리에 의해 자동 정지
+struct ToggleAnimationIntent: AppIntent {
+    static var title: LocalizedStringResource = "키링 애니메이션 토글"
+    /// 위젯 내에서 실행 — 앱을 열지 않음
+    static var openAppWhenRun: Bool = false
+
+    @Parameter(title: "Keyring ID")
+    var keyringId: String
+
+    static let animationDuration: TimeInterval = 30
+
+    /// 애니메이션 상태 저장 키 (같은 키링이면 크기 무관하게 동기화)
+    static func animationKey(keyringId: String) -> String {
+        "animStart_\(keyringId)"
+    }
+
+    init() {}
+
+    init(keyringId: String) {
+        self.keyringId = keyringId
+    }
+
+    func perform() async throws -> some IntentResult {
+        guard let defaults = UserDefaults(suiteName: "group.keychy.app") else {
+            return .result()
+        }
+        let key = Self.animationKey(keyringId: keyringId)
+
+        if let startTime = defaults.object(forKey: key) as? Date,
+           Date().timeIntervalSince(startTime) < Self.animationDuration {
+            // 재생 중 → 정지
+            defaults.removeObject(forKey: key)
+        } else {
+            // 정지 중 → 시작
+            defaults.set(Date(), forKey: key)
+        }
+
+        return .result()
+    }
+}
+
+// MARK: - Selection Intent
+
+struct KeyringSelectionIntent: WidgetConfigurationIntent {
+    static var title: LocalizedStringResource { "위젯 설정" }
+    static var description: IntentDescription { "위젯에 표시할 유형과 항목을 선택하세요" }
+
+    @Parameter(title: "표시 유형", default: .keyring)
+    var displayType: DisplayType
+
+    @Parameter(title: "키링 선택")
+    var selectedKeyring: KeyringEntity?
+
+    @Parameter(title: "뭉치 선택")
+    var selectedBundle: BundleEntity?
+
+    static var parameterSummary: some ParameterSummary {
+        When(\KeyringSelectionIntent.$displayType, .equalTo, .keyring) {
+            Summary("표시 유형: \(\.$displayType)") {
+                \.$selectedKeyring
+            }
+        } otherwise: {
+            Summary("표시 유형: \(\.$displayType)") {
+                \.$selectedBundle
+            }
+        }
+    }
+}

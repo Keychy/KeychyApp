@@ -13,8 +13,20 @@ struct PixelDrawView: View {
     
     /// 팔레트 표시 여부 (그리기 모드일 때만 표시)
     @State private var showPalette: Bool = true
-    
     @State private var showResetAlert = false
+    @State private var swipeDisabled = false
+
+    /// 화면 사라지기 전 그리드 렌더링 막기용 파라미터
+    @State private var isResetting = false
+    
+    /// 줌/패닝 상태
+    @State private var scale: CGFloat = 1.0
+    @State private var lastScale: CGFloat = 1.0
+    @State private var offset: CGSize = .zero
+    @State private var lastOffset: CGSize = .zero
+    
+    /// "다음" 버튼 다중 탭 방지
+    @State private var isProcessingNext = false
 
     /// GlassEffect 애니메이션을 위한 네임스페이스
     @Namespace private var unionNamespace
@@ -30,17 +42,17 @@ struct PixelDrawView: View {
                     .ignoresSafeArea()
                 
                 // MARK: - 픽셀 그리드 (화면 중앙 배치)
-                VStack {
-                    Spacer()
-                    pixelGrid
-                        .padding(.horizontal, 18)
-                        .padding(.bottom, 50)
-                    Spacer()
+                if !isResetting {
+                    VStack {
+                        Spacer()
+                        pixelGrid
+                            .padding(.bottom, 50)
+                        Spacer()
+                    }
                 }
 
                 // MARK: - 버튼 + 색상 팔레트 (화면 하단에 고정)
                 VStack(spacing: 15) {
-                    
                     
                     Spacer()
                     
@@ -69,17 +81,35 @@ struct PixelDrawView: View {
                 
                 // MARK: - 커스텀 네비게이션
                 customNavigationBar
+
+                // MARK: - 로딩 오버레이
+                if isProcessingNext {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                    LoadingAlert(type: .short40, message: nil)
+                }
             }
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden(true)
         .interactiveDismissDisabled(true)
+        .swipeBackGesture(enabled: !swipeDisabled)
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                swipeDisabled = true
+            }
+        }
         .alert("작업을 취소하시겠습니까?", isPresented: $showResetAlert) {
             Button("취소", role: .cancel) { }
             Button("확인", role: .destructive) {
-                viewModel.resetAll()
-                TabBarManager.show()
-                router.reset()
+                // 1. 그리드 렌더링 막기
+                isResetting = true
+                // 2. 초기화 + 화면 이동
+                DispatchQueue.main.async {
+                    viewModel.resetAll()
+                    TabBarManager.show()
+                    router.reset()
+                }
             }
         } message: {
             Text("지금까지 작업한 내용이 모두 초기화됩니다.")
@@ -91,47 +121,83 @@ struct PixelDrawView: View {
 extension PixelDrawView {
     private var pixelGrid: some View {
         GeometryReader { geometry in
-            // 화면 가로 기준으로 그리드 크기 계산 (좌우 18 여백 제외)
-            let gridSize = geometry.size.width - 36
-            let cellSize = gridSize / 15
+            let totalSize = geometry.size.width - 36
+            let count = viewModel.pixelGrid.count
+            let cellSize = count > 0 ? totalSize / CGFloat(count) : totalSize
 
-            VStack(spacing: 0) {
-                ForEach(0..<15, id: \.self) { row in
-                    HStack(spacing: 0) {
-                        ForEach(0..<15, id: \.self) { col in
-                            PixelCell(
-                                color: viewModel.pixelGrid[row][col],
-                                size: cellSize,
-                                onTap: {
-                                    viewModel.paintPixel(row: row, col: col)
-                                }
-                            )
+            ZStack {
+                // 그리드 렌더링
+                VStack(spacing: 0) {
+                    ForEach(0..<count, id: \.self) { row in
+                        HStack(spacing: 0) {
+                            ForEach(0..<viewModel.pixelGrid[row].count, id: \.self) { col in
+                                PixelCell(
+                                    color: viewModel.pixelGrid[row][col],
+                                    size: cellSize,
+                                    onTap: { viewModel.paintPixel(row: row, col: col) }
+                                )
+                            }
                         }
                     }
                 }
-            }
-            .frame(width: gridSize, height: gridSize)
-            .background(Color.gray50)
-            .border(.gray100, width: 1)
-            .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
-            .gesture(
-                DragGesture(minimumDistance: 0)
-                    .onChanged { value in
-                        let location = value.location
-                        let gridOriginX = (geometry.size.width - gridSize) / 2
-                        let gridOriginY = (geometry.size.height - gridSize) / 2
+                .frame(width: totalSize, height: totalSize)
+                .background(Color.gray50)
+                .border(.gray100, width: 1)
+                .scaleEffect(scale)
+                .offset(offset)
+                .allowsHitTesting(false) // 터치는 아래 UIKit 뷰가 처리
 
-                        let relativeX = location.x - gridOriginX
-                        let relativeY = location.y - gridOriginY
+                // UIKit 제스처 오버레이
+                PixelGestureView(
+                    onDraw: { point in
+                        // 터치 좌표 → 그리드 셀 좌표 역변환
+                        let gridOriginX = (geometry.size.width - totalSize) / 2
+                        let gridOriginY = (geometry.size.height - totalSize) / 2
 
-                        let col = Int(relativeX / cellSize)
-                        let row = Int(relativeY / cellSize)
+                        let adjustedX = (point.x - gridOriginX - offset.width - totalSize / 2) / scale + totalSize / 2
+                        let adjustedY = (point.y - gridOriginY - offset.height - totalSize / 2) / scale + totalSize / 2
 
+                        let col = Int(adjustedX / cellSize)
+                        let row = Int(adjustedY / cellSize)
                         viewModel.paintPixel(row: row, col: col)
+                    },
+                    onPan: { translation in
+                        guard scale > 1.0 else { return }
+                        let newOffset = CGSize(
+                            width: lastOffset.width + translation.width,
+                            height: lastOffset.height + translation.height
+                        )
+                        offset = clampedOffset(newOffset, scale: scale, totalSize: totalSize)
+                    },
+                    onPanEnd: {
+                        lastOffset = offset
+                    },
+                    onPinch: { delta in
+                        let newScale = min(max(scale * delta, 1.0), 4.0)
+                        scale = newScale
+                        offset = clampedOffset(offset, scale: scale, totalSize: totalSize)
+                    },
+                    onPinchEnd: {
+                        lastScale = scale
                     }
-            )
+                )
+                .frame(width: geometry.size.width, height: geometry.size.height)
+            }
+            .frame(width: geometry.size.width, height: geometry.size.height)
         }
         .aspectRatio(1, contentMode: .fit)
+    }
+
+    private func clampedOffset(
+        _ proposedOffset: CGSize,
+        scale: CGFloat,
+        totalSize: CGFloat
+    ) -> CGSize {
+        let maxOffset = max(0, (totalSize * scale - totalSize) / 2)
+        return CGSize(
+            width: min(max(proposedOffset.width, -maxOffset), maxOffset),
+            height: min(max(proposedOffset.height, -maxOffset), maxOffset)
+        )
     }
 }
 
@@ -314,11 +380,15 @@ extension PixelDrawView {
             Text("그림을 그려주세요")
         } trailing: {
             NextToolbarButton {
+                guard !isProcessingNext else { return }
+                isProcessingNext = true
                 Task {
                     await viewModel.updateBodyImage()
                     router.push(.pixelCustomizing)
+                    isProcessingNext = false
                 }
             }
+            .disabled(isProcessingNext)
             .frame(width: 44, height: 44)
             .offset(x: -4)
         }

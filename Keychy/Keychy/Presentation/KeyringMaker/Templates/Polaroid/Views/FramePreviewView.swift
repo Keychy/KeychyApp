@@ -20,6 +20,8 @@ struct FramePreviewView: View {
     @State private var selectedPhotoItem: PhotosPickerItem? = nil
     @State private var showEditButton = false
     @State private var isFrameLoaded: Bool = false
+    @Environment(\.previewScaleFactor) private var previewScale
+    @Environment(\.previewTopPadding) private var topPadding
 
     // 시트에서 선택한 액션을 저장
     @State private var pendingAction: PhotoAction? = nil
@@ -43,7 +45,7 @@ struct FramePreviewView: View {
                         // 프레임 + 사진 영역
                         VStack {
                             Spacer()
-                                .frame(height: 134)
+                                .frame(height: 134 * previewScale)
 
                             compositionView
                         }
@@ -52,13 +54,13 @@ struct FramePreviewView: View {
                         Image(.frameChain)
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 90)
+                            .frame(width: 90 * previewScale)
                     }
 
                     Spacer()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(.top, 168)
+                .padding(.top, topPadding)
                 .opacity(isFrameLoaded ? 1 : 0)
 
                 // 로딩 중일 때
@@ -215,12 +217,12 @@ struct FramePreviewView: View {
     /// VM+Frame의 합성 로직과 정확히 동일한 배치
     @ViewBuilder
     private var compositionView: some View {
-        // VM+Frame과 동일한 상수 값
-        let targetFrameHeight: CGFloat = 324
-        let photoWidth: CGFloat = 214
-        let photoHeight: CGFloat = 267
-        let photoBottomPadding: CGFloat = 20
-        let photoOffsetX: CGFloat = 3
+        // VM+Frame과 동일한 상수 값 (scaleFactor 적용)
+        let targetFrameHeight: CGFloat = 324 * previewScale
+        let photoWidth: CGFloat = 214 * previewScale
+        let photoHeight: CGFloat = 267 * previewScale
+        let photoBottomPadding: CGFloat = 20 * previewScale
+        let photoOffsetX: CGFloat = 3 * previewScale
 
         ZStack(alignment: .topLeading) {
             if let frame = viewModel.selectedFrame {
@@ -298,7 +300,7 @@ struct FramePreviewView: View {
                                                     .fill(.white100)
                                                     .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
                                             )
-                                            .offset(y: -20)
+                                            .offset(y: -20 * previewScale)
                                     }
                                     .buttonStyle(.plain)
                                     .transition(.scale.combined(with: .opacity))
@@ -318,7 +320,7 @@ struct FramePreviewView: View {
                                                     .fill(.white100)
                                                     .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
                                             )
-                                            .offset(y: -20)
+                                            .offset(y: -20 * previewScale)
                                     }
                                     .buttonStyle(.plain)
                                     .transition(.scale.combined(with: .opacity))

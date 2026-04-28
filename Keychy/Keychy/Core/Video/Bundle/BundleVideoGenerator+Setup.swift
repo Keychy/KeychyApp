@@ -46,7 +46,8 @@ extension BundleVideoGenerator {
                 customSoundURL: data.customSoundURL,
                 particleId: data.particleId,
                 hookOffsetY: data.hookOffsetY,
-                chainLength: data.chainLength
+                chainLength: data.chainLength,
+                isGyroscope: data.isGyroscope
             )
         }
 
@@ -98,6 +99,19 @@ extension BundleVideoGenerator {
             scene.addChild(backgroundNode)
         }
 
+        if let watermarkImage = UIImage(named: "shareWaterMark") {
+            let watermarkNode = SKSpriteNode(texture: SKTexture(image: watermarkImage))
+            
+            let nodeWidth: CGFloat = 100
+            let nodeHeight: CGFloat = 26
+            watermarkNode.size = CGSize(width: nodeWidth, height: nodeHeight)
+            
+            let bottomMargin = (16 + nodeHeight / 2)
+            watermarkNode.position = CGPoint(x: sceneWidth / 2, y: bottomMargin)
+            watermarkNode.zPosition = 999
+            scene.addChild(watermarkNode)
+        }
+        
         scene.onSetupComplete = {
             setupComplete()
         }

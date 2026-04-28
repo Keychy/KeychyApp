@@ -114,13 +114,7 @@ class WorkshopDataManager {
         do {
             let collectionRef = Firestore.firestore().collection(collection)
 
-            // isActive 필터 적용 (모든 컬렉션)
-            #if DEBUG
-            let snapshot = try await collectionRef.getDocuments()
-            #else
-            let snapshot = try await collectionRef.whereField("isActive", isEqualTo: true).getDocuments()
-            #endif
-
+            let snapshot = try await collectionRef.activeItems()
 
             let items = try snapshot.documents.compactMap { document in
                 try document.data(as: T.self)

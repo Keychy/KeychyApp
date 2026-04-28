@@ -18,51 +18,41 @@ struct TemplatePreviewBody: View {
     var router: NavigationRouter<WorkshopRoute>? = nil
 
     @Environment(UserManager.self) private var userManager
-
-    // 구매 관련 상태
-    @State private var showPurchaseSheet = false
-    @State private var purchasePopupScale: CGFloat = 0.3
-    @State private var showPurchasingLoading = false
-    @State private var showPurchaseSuccessAlert = false
-    @State private var showPurchaseFailAlert = false
-    @State private var purchaseFailScale: CGFloat = 0.3
-    
-    // 보관함 용량 관련
-    @State private var showInvenFullAlert: Bool = false
-
-    /// 템플릿 보유 여부 확인
-    private var isOwned: Bool {
-        guard let user = userManager.currentUser,
-              let templateId = template?.id else { return false }
-        return user.templates.contains(templateId)
-    }
+    @State private var viewModel = TemplatePreviewViewModel()
 
     var body: some View {
+        @Bindable var viewModel = viewModel
         ZStack {
-            VStack(alignment: .leading, spacing: 0) {
-                Spacer()
-                
-                // 프리뷰 이미지
-                templatePreview
-                
-                Spacer()
-                
+            if template == nil {
+                // fetch 중 — 로딩 인디케이터만 표시
+                LoadingAlert(type: .short40, message: nil)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
                 VStack(alignment: .leading, spacing: 0) {
-                    // 템플릿 정보
-                    infoSection
-                        .padding(.bottom, 40)
-                        .frame(minHeight: 120, alignment: .top)
-                    
-                    // 액션 버튼
-                    actionButton
-                        .adaptiveBottomPadding()
-                        .padding(.bottom, getBottomPadding(40) == 0 ? 40 : 0)
+                    Spacer()
+
+                    // 프리뷰 이미지
+                    templatePreview
+
+                    Spacer()
+
+                    VStack(alignment: .leading, spacing: 0) {
+                        // 템플릿 정보
+                        infoSection
+                            .padding(.bottom, 40)
+                            .frame(minHeight: 120, alignment: .top)
+
+                        // 액션 버튼
+                        actionButton
+                            .adaptiveBottomPadding()
+                            .padding(.bottom, getBottomPadding(40) == 0 ? 40 : 0)
+                    }
+                    .padding(.horizontal, 34)
+
                 }
-                .padding(.horizontal, 34)
-                
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            
+
             CustomNavigationBar {
                 BackToolbarButton {
                     TabBarManager.show()
@@ -77,8 +67,8 @@ struct TemplatePreviewBody: View {
         .ignoresSafeArea()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .navigationBarBackButtonHidden(true)
-        .blur(radius: (showPurchasingLoading || showPurchaseSuccessAlert) ? 10 : 0)
-        .animation(.easeInOut(duration: 0.3), value: (showPurchasingLoading || showPurchaseSuccessAlert))
+        .blur(radius: (viewModel.showPurchasingLoading || viewModel.showPurchaseSuccessAlert) ? 10 : 0)
+        .animation(.easeInOut(duration: 0.3), value: (viewModel.showPurchasingLoading || viewModel.showPurchaseSuccessAlert))
         .withToast(position: .button)
         .onAppear {
             TabBarManager.hide()
@@ -89,16 +79,11 @@ struct TemplatePreviewBody: View {
         .overlay {
             ZStack(alignment: .center) {
                 // 구매 확인 팝업
-                if showPurchaseSheet {
+                if viewModel.showPurchaseSheet {
                     Color.black20
                         .ignoresSafeArea()
                         .onTapGesture {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                purchasePopupScale = 0.3
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                showPurchaseSheet = false
-                            }
+                            Task { await viewModel.dismissPurchasePopup() }
                         }
 
                     if let template {
@@ -106,10 +91,13 @@ struct TemplatePreviewBody: View {
                             title: template.name,
                             myCoin: userManager.currentUser?.coin ?? 0,
                             price: template.workshopPrice,
-                            scale: purchasePopupScale,
+                            scale: viewModel.purchasePopupScale,
                             onConfirm: {
                                 Task {
-                                    await handlePurchase()
+                                    await viewModel.handlePurchase(
+                                        template: template,
+                                        userManager: userManager
+                                    )
                                 }
                             }
                         )
@@ -119,45 +107,37 @@ struct TemplatePreviewBody: View {
                 }
 
                 // 구매 중 로딩
-                if showPurchasingLoading {
+                if viewModel.showPurchasingLoading {
                     LoadingAlert(type: .short40, message: nil)
                 }
 
                 // 구매 성공 알림
-                if showPurchaseSuccessAlert {
+                if viewModel.showPurchaseSuccessAlert {
                     KeychyAlert(
                         type: .checkmark,
                         message: "구매 완료!",
-                        isPresented: $showPurchaseSuccessAlert
+                        isPresented: $viewModel.showPurchaseSuccessAlert
                     )
                 }
 
                 // TODO: - 구버전 Alert 사용중, Popup으로 전환 필요
                 // 구매 실패 알림 (코인 부족)
-                if showPurchaseFailAlert {
+                if viewModel.showPurchaseFailAlert {
                     Color.black.opacity(0.4)
                         .ignoresSafeArea()
                         .onTapGesture {}
 
                     BangmarkAlert(
-                        checkmarkScale: purchaseFailScale,
+                        checkmarkScale: viewModel.purchaseFailScale,
                         text: "코인이 부족해요",
                         cancelText: "취소",
                         confirmText: "충전하기",
                         onCancel: {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                purchaseFailScale = 0.3
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                showPurchaseFailAlert = false
-                            }
+                            Task { await viewModel.dismissPurchaseFailAlert() }
                         },
                         onConfirm: {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                purchaseFailScale = 0.3
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                showPurchaseFailAlert = false
+                            Task {
+                                await viewModel.dismissPurchaseFailAlert()
                                 router?.push(.coinCharge)
                             }
                         }
@@ -165,9 +145,9 @@ struct TemplatePreviewBody: View {
                     .padding(.horizontal, 40)
                     .padding(.bottom, 30)
                 }
-                
-                if showInvenFullAlert {
-                    InvenLackPopup(isPresented: $showInvenFullAlert)
+
+                if viewModel.showInvenFullAlert {
+                    InvenLackPopup(isPresented: $viewModel.showInvenFullAlert)
                 }
             }
             .frame(maxHeight: .infinity)
@@ -177,6 +157,12 @@ struct TemplatePreviewBody: View {
 
 // MARK: - TemplatePreviewBody Extensions
 extension TemplatePreviewBody {
+    /// 화면 높이에 비례하는 프리뷰 이미지 크기
+    /// SE3(667pt) → ~333, iPhone 16 Pro(852pt) → 386 (cap)
+    private var previewImageSize: CGFloat {
+        min(386, UIScreen.main.bounds.height * 0.5)
+    }
+
     /// 템플릿 프리뷰 이미지
     private var templatePreview: some View {
         VStack {
@@ -184,21 +170,23 @@ extension TemplatePreviewBody {
 
             if let template {
                 if template.previewImages.count > 1 {
-                    // 슬라이드 이미지
                     TemplateImageSlideshow(
                         imageURLs: template.previewImages,
                         localFirstImageName: "preview_\(template.id ?? "")"
                     )
                         .scaledToFit()
-                        .frame(width: 386, height: 386)
+                        .frame(width: previewImageSize, height: previewImageSize)
+                } else if template.previewURL.contains(".gif") {
+                    // GIF URL인 경우 애니메이션 재생 (렌티큘러 등)
+                    // Firebase Storage URL은 쿼리 파라미터가 붙어 hasSuffix 불가 → contains 사용
+                    SimpleAnimatedImage(url: template.previewURL, maxSize: CGSize(width: 400, height: 400))
+                        .scaledToFit()
+                        .frame(width: previewImageSize, height: previewImageSize)
                 } else {
-                    // fallback: 기존 단일 프리뷰 이미지
                     ItemDetailImage(itemURL: template.previewURL)
                         .scaledToFit()
-                        .frame(width: 386, height: 386)
+                        .frame(width: previewImageSize, height: previewImageSize)
                 }
-            } else {
-                LoadingAlert(type: .short40, message: nil)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: 500)
@@ -209,8 +197,6 @@ extension TemplatePreviewBody {
         Group {
             if let template {
                 ItemDetailInfoSection(item: template)
-            } else {
-                Text("템플릿 정보 없음")
             }
         }
     }
@@ -221,102 +207,14 @@ extension TemplatePreviewBody {
             if let template {
                 TemplateActionButton(
                     template: template,
-                    isOwned: isOwned,
-                    onMake: checkInventoryAndMake,
+                    isOwned: viewModel.isOwned(template: template, user: userManager.currentUser),
+                    onMake: {
+                        viewModel.checkInventoryAndMake(userManager: userManager, onMake: onMake)
+                    },
                     onPurchase: onPurchase ?? {
-                        // 네트워크 체크
-                        guard NetworkManager.shared.isConnected else {
-                            ToastManager.shared.show()
-                            return
-                        }
-
-                        showPurchaseSheet = true
-                        withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
-                            purchasePopupScale = 1.0
-                        }
+                        viewModel.showPurchasePopup()
                     }
                 )
-            } else {
-                LoadingAlert(type: .short40, message: nil)
-            }
-        }
-    }
-
-    /// 구매 처리
-    private func handlePurchase() async {
-        guard let template = template else { return }
-
-        // 팝업 닫기 애니메이션
-        await MainActor.run {
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                purchasePopupScale = 0.3
-            }
-        }
-
-        try? await Task.sleep(nanoseconds: 200_000_000)
-
-        await MainActor.run {
-            showPurchaseSheet = false
-        }
-
-        try? await Task.sleep(nanoseconds: 100_000_000)
-
-        // 로딩 시작
-        await MainActor.run {
-            showPurchasingLoading = true
-        }
-
-        // ItemPurchaseManager를 통해 구매 처리
-        let result = await ItemPurchaseManager.shared.purchaseWorkshopItem(template, userManager: userManager)
-
-        // 로딩 종료
-        await MainActor.run {
-            showPurchasingLoading = false
-        }
-
-        try? await Task.sleep(nanoseconds: 100_000_000)
-
-        switch result {
-        case .success:
-            // 성공 시 성공 알림 표시
-            showPurchaseSuccessAlert = true
-
-        case .insufficientCoins:
-            // 코인 부족 시 실패 알림 표시
-            showPurchaseFailAlert = true
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
-                purchaseFailScale = 1.0
-            }
-
-        case .failed(let message):
-            // 기타 실패 시 에러 출력
-            print("구매 실패: \(message)")
-        }
-    }
-    
-    /// 보관함 용량 체크 후 만들기 실행
-    private func checkInventoryAndMake() {
-        // 네트워크 체크
-        guard NetworkManager.shared.isConnected else {
-            ToastManager.shared.show()
-            return
-        }
-
-        guard let userId = userManager.currentUser?.id else { return }
-
-        // CollectionViewModel의 용량 체크 메서드 사용
-        let collectionVM = CollectionViewModel()
-        collectionVM.checkInventoryCapacity(userId: userId) { hasSpace in
-            DispatchQueue.main.async {
-                if hasSpace {
-                    // 보관함에 여유 있음 -> onMake 실행
-                    self.onMake()
-                } else {
-                    // 보관함 가득 참 -> 알럿 표시
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        self.showInvenFullAlert = true
-                    }
-                }
             }
         }
     }

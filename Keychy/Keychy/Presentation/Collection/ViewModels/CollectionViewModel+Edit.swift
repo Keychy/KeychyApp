@@ -57,7 +57,8 @@ extension CollectionViewModel {
                                 id: documentId,
                                 name: name,
                                 imagePath: existing.imagePath,
-                                createdAt: existing.createdAt
+                                createdAt: existing.createdAt,
+                                isGyroscope: existing.isGyroscope
                             )
                             KeyringImageCache.shared.saveWidgetKeyrings(widgetKeyrings)
 
@@ -174,6 +175,7 @@ extension CollectionViewModel {
 
                             // 7. App Group 위젯용 캐시에서도 제거
                             KeyringImageCache.shared.removeKeyring(id: documentId)
+                            AnimationFrameStorage.deleteFrames(keyringID: documentId)
 
                             // 8. 변경된 Bundle들의 캡처 캐시 삭제
                             for bundleId in affectedBundleIds {
@@ -226,7 +228,10 @@ extension CollectionViewModel {
                     originalId: baseOriginalId,
                     chainLength: keyring.chainLength,
                     isNew: true,
-                    hookOffsetY: keyring.hookOffsetY
+                    hookOffsetY: keyring.hookOffsetY,
+                    isGyroscope: keyring.isGyroscope,
+                    shimmerColorId: keyring.shimmerColorId,
+                    borderColorId: keyring.borderColorId
                 )
 
                 // Firestore에 저장

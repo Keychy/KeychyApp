@@ -124,9 +124,6 @@ struct CollectionCellView: View {
             return
         }
         
-        // 위젯 메타데이터 동기화
-        syncWidgetMetadata(keyringID: keyringID)
-        
         // 1. 캐시 확인
         if let imageData = KeyringImageCache.shared.load(for: keyringID, type: .thumbnail),
            !imageData.isEmpty,
@@ -170,10 +167,13 @@ struct CollectionCellView: View {
             chainType: chainType,
             bodyImage: keyring.bodyImage,
             templateId: keyring.selectedTemplate,
+            isGyroscope: keyring.isGyroscope,
             targetSize: CGSize(width: 175, height: 233),
             zoomScale: 2.0,
             hookOffsetY: keyring.hookOffsetY,
             chainLength: keyring.chainLength,
+            shimmerColorId: keyring.shimmerColorId,
+            borderColorId: keyring.borderColorId,
             onLoadingComplete: {
                 DispatchQueue.main.async {
                     withAnimation {
@@ -250,30 +250,7 @@ struct CollectionCellView: View {
         }
     }
 
-    // MARK: - 위젯 메타데이터 동기화
-    private func syncWidgetMetadata(keyringID: String) {
-        var widgetKeyrings = KeyringImageCache.shared.loadWidgetKeyrings()
-        let isInMetadata = widgetKeyrings.contains(where: { $0.id == keyringID })
-        let shouldBeInWidget = !keyring.isPackaged && !keyring.isPublished
-
-        if shouldBeInWidget && !isInMetadata {
-            // 위젯에 있어야 하는데 없음 → 추가
-            if let imageData = KeyringImageCache.shared.load(for: keyringID, type: .thumbnail) {
-                KeyringImageCache.shared.syncKeyring(
-                    id: keyringID,
-                    name: keyring.name,
-                    imageData: imageData,
-                    createdAt: keyring.createdAt
-                )
-            }
-        } else if !shouldBeInWidget && isInMetadata {
-            // 위젯에 없어야 하는데 있음 → 제거
-            widgetKeyrings.removeAll { $0.id == keyringID }
-            KeyringImageCache.shared.saveWidgetKeyrings(widgetKeyrings)
-        }
-    }
-
-    // MARK: - 백그라운드 캡처 + 캐싱 (위젯용)
+    // MARK: - 백그라운드 캡처 + 캐싱
 
     /// 백그라운드에서 Scene 캡처 후 캐시 저장 (UI 업데이트 없음)
     private func captureAndCache(keyringID: String, retryCount: Int = 0) async {
@@ -293,11 +270,14 @@ struct CollectionCellView: View {
                 chainType: chainType,
                 bodyImage: keyring.bodyImage,
                 templateId: keyring.selectedTemplate,
+                isGyroscope: keyring.isGyroscope,
                 targetSize: CGSize(width: 175, height: 233),
                 customBackgroundColor: .clear,
                 zoomScale: 2.0,
                 hookOffsetY: keyring.hookOffsetY,
                 chainLength: keyring.chainLength,
+                shimmerColorId: keyring.shimmerColorId,
+                borderColorId: keyring.borderColorId,
                 onLoadingComplete: {
                     loadingCompleted = true
                 }
@@ -379,19 +359,8 @@ struct CollectionCellView: View {
                         return
                     }
                     
-                    // FileManager 캐시에 저장 (위젯에서 접근 가능)
+                    // FileManager 캐시에 저장
                     KeyringImageCache.shared.save(pngData: pngData, for: keyringID, type: .thumbnail)
-
-                    if !keyring.isPackaged && !keyring.isPublished {
-                        KeyringImageCache.shared.syncKeyring(
-                            id: keyringID,
-                            name: keyring.name,
-                            imageData: pngData,
-                            createdAt: keyring.createdAt
-                        )
-                    } else {
-                        print("[CollectionCell] 캡처 성공 (위젯 제외): \(keyringID)")
-                    }
                 } else {
                     print("[CollectionCell] 캡처 실패 - 유효하지 않은 데이터: \(keyringID)")
                     

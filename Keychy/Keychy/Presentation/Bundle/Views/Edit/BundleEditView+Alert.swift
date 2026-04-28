@@ -12,57 +12,6 @@ extension BundleEditView {
     // MARK: - Alert Contents
     var alertContent: some View {
         Group {
-            if showChangeCarabinerAlert {
-                Color.black20
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            showChangeCarabinerAlert = false
-                        }
-                    }
-                VStack {
-                    Spacer()
-                    CarabinerPopup(
-                        title: "카라비너를 변경하시겠어요?",
-                        message: "새 카라비너로 변경하면\n현재 뭉치에 걸린 키링들이 모두 해제돼요.",
-                        onCancel: {
-                            selectCarabiner = nil
-                            showChangeCarabinerAlert = false
-                        },
-                        onConfirm: {
-                            Task { @MainActor in
-                                // 편집 중 로컬 상태만 변경 (Firestore에 쓰지 않음)
-                                
-                                // 1) UI 오버레이/선택 상태 초기화
-                                selectedPosition = 0
-                                
-                                // 2) 키링 데이터와 선택 목록을 즉시 비우기
-                                keyringDataList = []
-                                bundleVM.selectedKeyrings.removeAll()
-                                bundleVM.keyringOrder.removeAll()
-                                
-                                // 3) 새 카라비너 적용 (Lottie면 로딩 표시)
-                                if selectCarabiner?.carabiner.isLottie == true {
-                                    isSceneReady = false
-                                }
-                                bundleVM.newSelectedCarabiner = selectCarabiner
-                                
-                                // 4) 빈 상태를 씬/리스트에 반영
-                                updateKeyringDataList()
-                                
-                                // 5) 씬 강제 리프레시로 남은 잔상 제거
-                                sceneRefreshId = UUID()
-                                
-                                // 6) 알럿 닫기
-                                showChangeCarabinerAlert = false
-                            }
-                        }
-                    )
-                    .padding(.horizontal, 51)
-                    Spacer()
-                }
-            }
-            
             // 구매 성공 Alert
             if showPurchaseSuccessAlert {
                 Color.black20
@@ -108,15 +57,31 @@ extension BundleEditView {
         }
     }
     
+    // MARK: - 카라비너 캐시 확인
+    /// 카라비너의 front/back 이미지가 모두 캐시되어 있는지 확인
+    func isCarabinerCached(_ cb: CarabinerViewData) -> Bool {
+        [cb.carabiner.backImageURL, cb.carabiner.frontImageURL]
+            .compactMap { $0 }
+            .allSatisfy { StorageManager.shared.isCached(path: $0) }
+    }
+
     // MARK: - 로딩 오버레이
     var loadingOverlay: some View {
         Group {
-            // 첫 진입 : 씬 준비 + 사용자 보유 키링 로딩이 모두 끝나야 사라짐
-            if (!isSceneReady || isKeyringSheetLoading) && !isNavigatingAway {
+            // 최초 진입 로딩
+            if !hasInitiallyLoaded && !isNavigatingAway {
                 Color.black20
                     .ignoresSafeArea()
                     .zIndex(100)
                 LoadingAlert(type: .longWithKeychy, message: "키링 뭉치를 불러오고 있어요")
+                    .zIndex(101)
+            }
+            // 아이템 변경 시 캐시 미스 로딩 (최초 로딩 이후에만)
+            if hasInitiallyLoaded && (!isSceneReady || isBackgroundLoading) && !isNavigatingAway {
+                Color.black20
+                    .ignoresSafeArea()
+                    .zIndex(100)
+                LoadingAlert(type: .short40, message: nil)
                     .zIndex(101)
             }
             if isCapturing {

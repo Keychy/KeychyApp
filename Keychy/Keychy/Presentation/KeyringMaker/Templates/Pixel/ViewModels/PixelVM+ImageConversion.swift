@@ -49,7 +49,7 @@ extension PixelVM {
     /// 픽셀 이미지와 프레임 이미지를 합성
     func composeWithFrame(pixelImage: UIImage, frameImage: UIImage) -> UIImage {
         // 캔버스 크기를 키워서 프레임 이동 시 잘리지 않도록
-        let targetSize: CGFloat = 200
+        let targetSize: CGFloat = 277
         let frameOffsetX: CGFloat = 2.0 // 프레임을 오른쪽으로 2 이동
         let canvasWidth: CGFloat = targetSize + frameOffsetX // 오른쪽만 여유
         let finalSize = CGSize(width: canvasWidth, height: targetSize)
@@ -82,7 +82,10 @@ extension PixelVM {
     /// @param scale: 이미지 크기 배율 (기본 32배 = 480x480)
     func convertGridToImage(scale: CGFloat = 32) -> UIImage? {
         let pixelSize: CGFloat = 1.0
-        let imageSize = CGSize(width: 15 * pixelSize * scale, height: 15 * pixelSize * scale)
+        let imageSize = CGSize(
+            width: CGFloat(gridSize) * pixelSize * scale,
+            height: CGFloat(gridSize) * pixelSize * scale
+        )
 
         let renderer = UIGraphicsImageRenderer(size: imageSize)
 
@@ -92,11 +95,9 @@ extension PixelVM {
             context.fill(CGRect(origin: .zero, size: imageSize))
 
             // 각 픽셀 그리기
-            for row in 0..<15 {
-                for col in 0..<15 {
+            for row in 0..<gridSize {
+                for col in 0..<gridSize {
                     let color = pixelGrid[row][col]
-
-                    // .clear는 건너뛰기
                     if color == .clear { continue }
 
                     let rect = CGRect(
