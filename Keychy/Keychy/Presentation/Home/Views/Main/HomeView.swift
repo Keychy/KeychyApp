@@ -170,7 +170,7 @@ extension HomeView {
                         }
                         .frame(width: 44, height: 44)
                         .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
-                        .buttonStyle(.glass)
+                        .buttonStyle(.glassProminent)
 
                         Button {
                             router.push(.myPageView)
@@ -183,8 +183,9 @@ extension HomeView {
                         }
                         .frame(width: 44, height: 44)
                         .glassEffectUnion(id: "mapOptions", namespace: unionNamespace)
-                        .buttonStyle(.glass)
+                        .buttonStyle(.glassProminent)
                     }
+                    .tint(.white.opacity(0.8))
                 }
             }
         }

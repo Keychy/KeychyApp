@@ -479,7 +479,7 @@ extension BundleDetailView {
                         Image(.star)
                     }
                     .frame(width: 48, height: 48)
-                    .glassEffect(in: .circle)
+                    .glassEffect(.regular.interactive().tint(.white.opacity(0.8)), in: .circle)
                 }
             }
         }
@@ -500,7 +500,7 @@ extension BundleDetailView {
         }
         .disabled(uiState.isGeneratingVideo || uiState.isCapturing)
         .frame(width: 48, height: 48)
-        .glassEffect(in: .circle)
+        .glassEffect(.regular.interactive().tint(.white.opacity(0.8)), in: .circle)
         .opacity((uiState.isGeneratingVideo || uiState.isCapturing) ? 0.5 : 1)
     }
     
@@ -516,7 +516,7 @@ extension BundleDetailView {
         }
         .disabled(uiState.isGeneratingVideo || uiState.isCapturing)
         .frame(width: 48, height: 48)
-        .glassEffect(in: .circle)
+        .glassEffect(.regular.interactive().tint(.white.opacity(0.8)), in: .circle)
         .opacity((uiState.isGeneratingVideo || uiState.isCapturing) ? 0.5 : 1)
     }
 
@@ -531,7 +531,7 @@ extension BundleDetailView {
         }
         .disabled(uiState.isCapturing || uiState.isGeneratingVideo)
         .frame(width: 44, height: 44)
-        .glassEffect(in: .circle)
+        .glassEffect(.regular.interactive().tint(.white.opacity(0.8)), in: .circle)
         .opacity((uiState.isCapturing || uiState.isGeneratingVideo) ? 0.5 : 1)
     }
 }
