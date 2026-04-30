@@ -28,6 +28,8 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
     @State private var bottomViewOpacity: Double = 0  // 하단 영역 opacity
     @State private var bottomViewOffset: CGFloat = 30  // 하단 영역 offset
     @State private var currentBottomViewHeightRatio: CGFloat = 0.35  // 현재 하단 뷰 높이 비율
+    @State private var keyboardHeight: CGFloat = 0  // 키보드 표시 여부 판단용
+    @State private var keyboardHideTask: Task<Void, Never>?  // 키보드 hide 디바운스용
 
     // 구매 시트
     @State var showPurchaseSheet = false
@@ -169,6 +171,28 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             .animation(.easeOut(duration: 0.3), value: isLoadingResources)
             .animation(.easeOut(duration: 0.3), value: isSceneReady)
             .animation(.easeOut(duration: 0.3), value: showPurchaseFailAlert)
+            // 키보드 표시 시 시트 높이 동적 조정
+            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
+                // 텍스트필드 전환 시 pending된 hide 취소 (숫자패드↔텍스트 키보드 전환 떨림 방지)
+                keyboardHideTask?.cancel()
+                let baseRatio = viewModel.bottomViewHeightRatio(for: selectedMode)
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    currentBottomViewHeightRatio = baseRatio + 0.2
+                }
+                keyboardHeight = 1
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+                // 50ms 디바운스: 텍스트필드 간 포커스 이동 시 willHide→willShow 연속 발생 대응
+                keyboardHideTask?.cancel()
+                keyboardHideTask = Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: 50_000_000)
+                    guard !Task.isCancelled else { return }
+                    keyboardHeight = 0
+                    withAnimation(.easeInOut(duration: 0.25)) {
+                        currentBottomViewHeightRatio = viewModel.bottomViewHeightRatio(for: selectedMode)
+                    }
+                }
+            }
 
             // MARK: - 커스텀 네비게이션 바
             customNavigationBar
@@ -223,6 +247,13 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
             purchaseSheet
         }
         .onChange(of: selectedMode) { oldMode, newMode in
+            // 모드 전환 시 키보드 닫기 (키보드가 떠있으면 willHide에서 비율 복원되므로 여기선 직접 처리)
+            UIApplication.shared.sendAction(
+                #selector(UIResponder.resignFirstResponder),
+                to: nil, from: nil, for: nil
+            )
+            keyboardHeight = 0
+
             // 첫 진입 이후 모드 전환 시 애니메이션 비활성화
             isInitialBottomViewAppear = false
 
