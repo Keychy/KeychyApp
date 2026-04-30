@@ -73,6 +73,8 @@ struct KeyringCustomizingView<VM: KeyringViewModelProtocol>: View {
                     .environment(\.previewScaleFactor, previewScale)
                     .environment(\.previewTopPadding, topPadding)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .scaleEffect(keyboardHeight > 0 ? 0.6 : 1.0, anchor: .top)
+                    .animation(.easeInOut(duration: 0.25), value: keyboardHeight)
                     .contentShape(Rectangle())
                     .simultaneousGesture(
                         TapGesture().onEnded {
