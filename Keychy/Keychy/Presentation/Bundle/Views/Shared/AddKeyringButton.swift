@@ -18,6 +18,6 @@ struct AddKeyringButton: View {
             Image(.bundlePlus)
         }
         .frame(width: 30, height: 30)
-        .glassEffect(.clear.interactive(), in: .circle)
+        .glassEffect(.regular.interactive().tint(.white.opacity(0.6)), in: .circle)
     }
 }
