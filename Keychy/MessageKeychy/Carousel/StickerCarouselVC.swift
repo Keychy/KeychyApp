@@ -15,7 +15,6 @@ import Messages
 /// - **BIG**: 가로 캐러셀 `UICollectionView` + `MSStickerView` (드래그 전송, 300px, 제한 없음)
 protocol StickerCarouselDelegate: AnyObject {
     func carouselDidTapAdd()
-    func carouselDidRemoveSticker(id: String)
 }
 
 class StickerCarouselVC: UIViewController {
@@ -38,10 +37,6 @@ class StickerCarouselVC: UIViewController {
     private let bigCellID = "BigStickerCell"
     private let hintLabel = UILabel()
     private let emptyLabel = UILabel()
-
-    var currentCenterStickerID: String? {
-        browserVC?.stickers.first?.id
-    }
 
     // MARK: - Lifecycle
 

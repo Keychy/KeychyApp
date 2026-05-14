@@ -64,23 +64,4 @@ enum APNGEncoder {
         guard CGImageDestinationFinalize(destination) else { return nil }
         return data as Data
     }
-
-    /// UIImage 배열을 APNG 파일로 저장
-    static func encode(
-        frames: [UIImage],
-        delayTime: Double = 0.1,
-        loopCount: Int = 0,
-        to url: URL
-    ) -> Bool {
-        guard let data = encode(frames: frames, delayTime: delayTime, loopCount: loopCount) else {
-            return false
-        }
-        do {
-            try data.write(to: url, options: .atomic)
-            return true
-        } catch {
-            print("[APNGEncoder] 파일 저장 실패: \(error.localizedDescription)")
-            return false
-        }
-    }
 }

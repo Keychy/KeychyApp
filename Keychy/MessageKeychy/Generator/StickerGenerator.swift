@@ -143,13 +143,6 @@ enum StickerGenerator {
         }
     }
 
-    // MARK: - 존재 여부
-
-    static func exists(for keyringID: String, size: StickerSize = .small) -> Bool {
-        guard let url = stickerURL(for: keyringID, size: size) else { return false }
-        return FileManager.default.fileExists(atPath: url.path)
-    }
-
     // MARK: - 삭제
 
     /// 특정 키링의 BIG/SMALL 스티커 모두 삭제
@@ -157,13 +150,6 @@ enum StickerGenerator {
         for size in [StickerSize.small, .big] {
             guard let url = stickerURL(for: keyringID, size: size) else { continue }
             try? FileManager.default.removeItem(at: url)
-        }
-    }
-
-    static func deleteAllStickers() {
-        for size in [StickerSize.small, .big] {
-            guard let dir = stickerDirectory(for: size) else { continue }
-            try? FileManager.default.removeItem(at: dir)
         }
     }
 

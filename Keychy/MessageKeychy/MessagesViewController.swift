@@ -69,10 +69,6 @@ extension MessagesViewController: StickerCarouselDelegate {
     func carouselDidTapAdd() {
         presentPickerSheet()
     }
-
-    func carouselDidRemoveSticker(id: String) {
-        // 캐러셀이 알아서 갱신하므로 추가 작업 불필요
-    }
 }
 
 // MARK: - KeyringPickerDelegate
