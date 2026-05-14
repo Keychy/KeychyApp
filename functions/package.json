@@ -3,7 +3,9 @@
     "overrides": {
         "lodash": "^4.17.21",
         "fast-xml-parser": "^5.3.4",
-        "protobufjs": ">=7.5.5"
+        "fast-xml-builder": "^1.1.7",
+        "protobufjs": ">=8.0.2",
+        "@protobufjs/utf8": ">=1.1.1"
     },
     "scripts": {
         "build": "tsc",
