@@ -22,3 +22,8 @@ struct StickerKeyring: Codable {
     let isGyroscope: Bool
     let createdAt: Date
 }
+
+/// 메인 앱과 iMessage Extension이 공유하는 App Group 식별자
+enum StickerAppGroup {
+    static let id = "group.keychy.app"
+}

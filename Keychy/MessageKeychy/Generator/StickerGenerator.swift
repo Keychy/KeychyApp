@@ -50,13 +50,12 @@ enum StickerGenerator {
     private static let frameStride = 5
     private static let frameDelay: Double = 0.1
     private static let maxFileSizeBytes = 450 * 1024  // SMALL 전용: 500KB 미만 안전 마진
-    private static let appGroupID = "group.keychy.app"
 
     // MARK: - 경로
 
     private static func stickerDirectory(for size: StickerSize) -> URL? {
         FileManager.default
-            .containerURL(forSecurityApplicationGroupIdentifier: appGroupID)?
+            .containerURL(forSecurityApplicationGroupIdentifier: StickerAppGroup.id)?
             .appendingPathComponent(size.directoryName, isDirectory: true)
     }
 

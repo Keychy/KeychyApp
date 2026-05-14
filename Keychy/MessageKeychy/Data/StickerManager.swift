@@ -13,12 +13,10 @@ import Messages
 /// 이 매니저는 MSSticker 객체 생성만 담당한다.
 enum StickerManager {
 
-    private static let appGroupID = "group.keychy.app"
-
     /// size에 따라 StickerAPNG/ 또는 StickerAPNG_Big/ 디렉토리 반환
     private static func stickerDirectory(for size: StickerSize) -> URL? {
         FileManager.default
-            .containerURL(forSecurityApplicationGroupIdentifier: appGroupID)?
+            .containerURL(forSecurityApplicationGroupIdentifier: StickerAppGroup.id)?
             .appendingPathComponent(size.directoryName, isDirectory: true)
     }
 

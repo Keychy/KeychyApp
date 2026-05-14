@@ -14,13 +14,12 @@ import Foundation
 /// - `KeyringThumbnails/`: 메인 앱이 캐싱한 썸네일 PNG (읽기 전용)
 enum StickerDataManager {
 
-    private static let appGroupID = "group.keychy.app"
     private static let allKeyringsFileName = "sticker_keyrings.json"
     private static let selectedIDsFileName = "selected_stickers.json"
     private static let thumbnailDirName = "KeyringThumbnails"
 
     private static var containerURL: URL? {
-        FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID)
+        FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: StickerAppGroup.id)
     }
 
     // MARK: - 전체 키링 메타데이터
