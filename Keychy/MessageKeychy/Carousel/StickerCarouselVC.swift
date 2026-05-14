@@ -65,25 +65,13 @@ class StickerCarouselVC: UIViewController {
         StickerDataManager.cleanOversizedStickers()
 
         let selectedIDs = StickerDataManager.loadSelectedIDs()
-        print("[DEBUG] 선택된 ID 수: \(selectedIDs.count), IDs: \(selectedIDs)")
 
         // SMALL 로드
-        let loadedSmall = StickerManager.loadStickers(for: selectedIDs, size: .small)
-        print("[DEBUG] SMALL 로드된 스티커 수: \(loadedSmall.count)")
-
-        for item in loadedSmall {
-            let url = item.sticker.imageFileURL
-            let fileSize = (try? FileManager.default.attributesOfItem(atPath: url.path)[.size] as? Int64) ?? 0
-            print("[DEBUG] SMALL 스티커: \(item.id), 파일크기: \(fileSize / 1024)KB")
-        }
-
-        browserVC.stickers = loadedSmall
+        browserVC.stickers = StickerManager.loadStickers(for: selectedIDs, size: .small)
         browserVC.stickerBrowserView.reloadData()
 
         // BIG 로드
-        let loadedBig = StickerManager.loadStickers(for: selectedIDs, size: .big)
-        print("[DEBUG] BIG 로드된 스티커 수: \(loadedBig.count)")
-        bigStickers = loadedBig
+        bigStickers = StickerManager.loadStickers(for: selectedIDs, size: .big)
         bigCollectionView.reloadData()
         updateEmptyState()
     }
@@ -323,15 +311,13 @@ class StickerBrowserChildVC: MSStickerBrowserViewController {
     }
 
     override func numberOfStickers(in stickerBrowserView: MSStickerBrowserView) -> Int {
-        print("[DEBUG] numberOfStickers 호출됨: \(stickers.count)개")
-        return stickers.count
+        stickers.count
     }
 
     override func stickerBrowserView(
         _ stickerBrowserView: MSStickerBrowserView,
         stickerAt index: Int
     ) -> MSSticker {
-        print("[DEBUG] stickerAt(\(index)) 호출됨: \(stickers[index].id)")
-        return stickers[index].sticker
+        stickers[index].sticker
     }
 }

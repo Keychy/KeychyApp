@@ -29,29 +29,13 @@ enum StickerManager {
     ///   - size: 로드할 스티커 크기 (.small: 탭 전송용, .big: 드래그 전송용)
     /// - Returns: (id, MSSticker) 튜플 배열. APNG 파일이 없는 ID는 스킵.
     static func loadStickers(for ids: [String], size: StickerSize = .small) -> [(id: String, sticker: MSSticker)] {
-        guard let dir = stickerDirectory(for: size) else {
-            print("[StickerManager] ❌ App Group 컨테이너 접근 실패")
-            return []
-        }
-        print("[StickerManager] 📂 [\(size)] 스티커 디렉토리: \(dir.path)")
+        guard let dir = stickerDirectory(for: size) else { return [] }
 
         return ids.compactMap { id in
             let url = dir.appendingPathComponent("\(id).png")
-            guard FileManager.default.fileExists(atPath: url.path) else {
-                print("[StickerManager] ❌ 파일 없음: \(url.path)")
-                return nil
-            }
-            do {
-                let sticker = try MSSticker(
-                    contentsOfFileURL: url,
-                    localizedDescription: id
-                )
-                print("[StickerManager] ✅ [\(size)] MSSticker 생성 성공: \(id)")
-                return (id, sticker)
-            } catch {
-                print("[StickerManager] ❌ MSSticker 생성 실패 (\(id)): \(error)")
-                return nil
-            }
+            guard FileManager.default.fileExists(atPath: url.path) else { return nil }
+            return (try? MSSticker(contentsOfFileURL: url, localizedDescription: id))
+                .map { (id, $0) }
         }
     }
 

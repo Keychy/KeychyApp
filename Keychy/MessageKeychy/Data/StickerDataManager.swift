@@ -91,12 +91,10 @@ enum StickerDataManager {
                 validIDs.append(id)
             } else {
                 try? FileManager.default.removeItem(at: url)
-                print("[StickerDataManager] ⚠️ 오버사이즈 스티커 삭제: \(id)")
             }
         }
 
         if validIDs.count != selectedIDs.count {
-            print("[StickerDataManager] 정리 결과: \(selectedIDs.count)개 → \(validIDs.count)개")
             saveSelectedIDs(validIDs)
         }
     }

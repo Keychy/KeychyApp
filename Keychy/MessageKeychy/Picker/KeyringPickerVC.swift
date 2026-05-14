@@ -123,10 +123,6 @@ extension KeyringPickerVC: UICollectionViewDelegateFlowLayout {
                     return
                 }
 
-                if results.big == nil {
-                    print("[KeyringPicker] ⚠️ BIG 생성 실패, SMALL만 사용: \(keyring.id)")
-                }
-
                 // 선택 목록에 추가
                 StickerDataManager.addSticker(id: keyring.id)
                 selectedIDs.insert(keyring.id)

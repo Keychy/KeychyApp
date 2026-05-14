@@ -75,7 +75,6 @@ enum StickerGenerator {
 
         // 1. bodyImage 다운로드
         guard let bodyImage = await downloadBodyImage(urlString: keyring.bodyImageURL) else {
-            print("[StickerGen] bodyImage 다운로드 실패: \(keyringID)")
             return nil
         }
 
@@ -86,7 +85,6 @@ enum StickerGenerator {
             template: keyring.selectedTemplate,
             isGyroscope: keyring.isGyroscope
         ) else {
-            print("[StickerGen] 프레임 합성 실패: \(keyringID)")
             return nil
         }
 
@@ -94,18 +92,14 @@ enum StickerGenerator {
         let selectedFrames = stride(from: 0, to: rawFrames.count, by: frameStride)
             .prefix(frameCount)
             .map { rawFrames[$0] }
-        print("[StickerGen] 프레임 추출: \(rawFrames.count)장 → \(selectedFrames.count)장")
 
         // 4. 지정 크기로 다운샘플
         let pixelSize = size.pixelSize
-        print("[StickerGen] [\(size)] \(pixelSize)px, \(selectedFrames.count)프레임 생성 시작")
-
         let processedImages = selectedFrames.compactMap { data -> UIImage? in
             downsample(pngData: data, to: pixelSize)
         }
 
         guard processedImages.count == selectedFrames.count else {
-            print("[StickerGen] 프레임 처리 실패: \(processedImages.count)/\(selectedFrames.count)")
             return nil
         }
 
@@ -115,16 +109,11 @@ enum StickerGenerator {
             delayTime: frameDelay,
             loopCount: 0
         ) else {
-            print("[StickerGen] APNG 인코딩 실패")
             return nil
         }
 
-        let sizeKB = apngData.count / 1024
-        print("[StickerGen] 인코딩 결과: \(sizeKB)KB")
-
         // 6. SMALL만 크기 검증 (BIG은 용량 제한 없음)
         if size == .small && apngData.count > maxFileSizeBytes {
-            print("[StickerGen] ❌ SMALL \(sizeKB)KB > 450KB 초과")
             return nil
         }
 
@@ -135,10 +124,8 @@ enum StickerGenerator {
 
         do {
             try apngData.write(to: fileURL, options: .atomic)
-            print("[StickerGen] ✅ [\(size)] 생성 완료: \(keyringID) (\(sizeKB)KB, \(pixelSize)px, \(selectedFrames.count)f)")
             return fileURL
         } catch {
-            print("[StickerGen] 파일 저장 실패: \(error.localizedDescription)")
             return nil
         }
     }
@@ -157,13 +144,8 @@ enum StickerGenerator {
 
     private static func downloadBodyImage(urlString: String) async -> UIImage? {
         guard let url = URL(string: urlString) else { return nil }
-        do {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            return UIImage(data: data)
-        } catch {
-            print("[StickerGen] 이미지 다운로드 에러: \(error.localizedDescription)")
-            return nil
-        }
+        guard let (data, _) = try? await URLSession.shared.data(from: url) else { return nil }
+        return UIImage(data: data)
     }
 
     private static func downsample(pngData: Data, to size: Int) -> UIImage? {
