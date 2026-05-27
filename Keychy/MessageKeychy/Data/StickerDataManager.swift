@@ -89,7 +89,8 @@ enum StickerDataManager {
                size <= maxBytes {
                 validIDs.append(id)
             } else {
-                try? FileManager.default.removeItem(at: url)
+                // SMALL/BIG 둘 다 정리 — 이전엔 url(SMALL)만 지워서 BIG 고아 발생
+                StickerGenerator.deleteSticker(for: id)
             }
         }
 
