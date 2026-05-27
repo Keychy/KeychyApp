@@ -290,6 +290,16 @@ private class KeyringPickerCell: UICollectionViewCell {
     private let checkmarkView = UIImageView()
     private let loadingIndicator = UIActivityIndicatorView(style: .medium)
 
+    /// 현재 셀에 표시 중인 키링 ID — 비동기 로드 완료 시 셀 재사용 여부 검증용
+    private var currentKeyringID: String?
+
+    /// 클래스 단위 메모리 캐시 — 메모리 압박 시 자동 evict, 200개 캡
+    private static let thumbnailCache: NSCache<NSString, UIImage> = {
+        let cache = NSCache<NSString, UIImage>()
+        cache.countLimit = 200
+        return cache
+    }()
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -305,23 +315,40 @@ private class KeyringPickerCell: UICollectionViewCell {
         nameLabel.text = nil
         checkmarkView.isHidden = true
         loadingIndicator.stopAnimating()
+        currentKeyringID = nil
     }
 
     func configure(keyring: StickerKeyring, isSelected: Bool) {
         nameLabel.text = keyring.name
         checkmarkView.isHidden = !isSelected
         contentView.alpha = isSelected ? 0.5 : 1.0
+        currentKeyringID = keyring.id
 
-        // 썸네일 로드
-        if let url = StickerDataManager.thumbnailURL(for: keyring.id),
-           let data = try? Data(contentsOf: url),
-           let image = UIImage(data: data) {
-            thumbnailView.image = image
-        } else {
-            // 썸네일 없으면 SF Symbol 플레이스홀더
-            let config = UIImage.SymbolConfiguration(pointSize: 32, weight: .light)
-            thumbnailView.image = UIImage(systemName: "photo", withConfiguration: config)
-            thumbnailView.tintColor = .systemGray3
+        // 캐시 히트 → 즉시 표시
+        if let cached = Self.thumbnailCache.object(forKey: keyring.id as NSString) {
+            thumbnailView.image = cached
+            return
+        }
+
+        // 로드 전 플레이스홀더
+        let config = UIImage.SymbolConfiguration(pointSize: 32, weight: .light)
+        thumbnailView.image = UIImage(systemName: "photo", withConfiguration: config)
+        thumbnailView.tintColor = .systemGray3
+
+        // 백그라운드 디스크 I/O — 메인 스레드 hitch 방지
+        let targetID = keyring.id
+        Task.detached(priority: .userInitiated) {
+            guard let url = StickerDataManager.thumbnailURL(for: targetID),
+                  let data = try? Data(contentsOf: url),
+                  let image = UIImage(data: data) else { return }
+
+            Self.thumbnailCache.setObject(image, forKey: targetID as NSString)
+
+            await MainActor.run { [weak self] in
+                // 비동기 로드 도중 셀이 재사용되어 다른 키링을 표시 중이면 무시
+                guard let self = self, self.currentKeyringID == targetID else { return }
+                self.thumbnailView.image = image
+            }
         }
     }
 
