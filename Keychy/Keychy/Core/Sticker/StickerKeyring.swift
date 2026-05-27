@@ -23,7 +23,9 @@ struct StickerKeyring: Codable {
     let createdAt: Date
 }
 
-/// 메인 앱과 iMessage Extension이 공유하는 App Group 식별자
-enum StickerAppGroup {
+/// 메인 앱·위젯·iMessage Extension 등 모든 타겟이 공유하는 App Group 식별자
+///
+/// 스티커 전용이 아니라 전체 공유 컨테이너 식별자이므로 중립적인 이름을 사용한다.
+enum AppGroup {
     static let id = "group.keychy.app"
 }

@@ -55,7 +55,7 @@ enum StickerGenerator {
 
     private static func stickerDirectory(for size: StickerSize) -> URL? {
         FileManager.default
-            .containerURL(forSecurityApplicationGroupIdentifier: StickerAppGroup.id)?
+            .containerURL(forSecurityApplicationGroupIdentifier: AppGroup.id)?
             .appendingPathComponent(size.directoryName, isDirectory: true)
     }
 

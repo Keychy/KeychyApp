@@ -397,7 +397,7 @@ extension CollectionViewModel {
         }
 
         guard let containerURL = FileManager.default
-            .containerURL(forSecurityApplicationGroupIdentifier: StickerAppGroup.id) else { return }
+            .containerURL(forSecurityApplicationGroupIdentifier: AppGroup.id) else { return }
 
         let fileURL = containerURL.appendingPathComponent("sticker_keyrings.json")
 

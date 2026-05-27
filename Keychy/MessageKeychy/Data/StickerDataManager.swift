@@ -19,7 +19,7 @@ enum StickerDataManager {
     private static let thumbnailDirName = "KeyringThumbnails"
 
     private static var containerURL: URL? {
-        FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: StickerAppGroup.id)
+        FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: AppGroup.id)
     }
 
     // MARK: - 전체 키링 메타데이터
