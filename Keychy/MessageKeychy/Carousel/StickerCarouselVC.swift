@@ -173,7 +173,8 @@ class StickerCarouselVC: UIViewController {
             bigCollectionView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 8),
             bigCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             bigCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            bigCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -28),
+            // 힌트 라벨(view.bottom-14, 약 18pt 높이) 위로 충분한 여백 확보
+            bigCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
         ])
     }
 
