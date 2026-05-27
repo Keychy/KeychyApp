@@ -98,11 +98,16 @@ class StickerCarouselVC: UIViewController {
         }
     }
 
-    /// 세그먼트 선택에 따라 SMALL/BIG 뷰 토글
+    /// 세그먼트 선택에 따라 SMALL/BIG 뷰 토글 및 힌트 카피 갱신
     private func updateVisibleView() {
         let isBig = segmentedControl.selectedSegmentIndex == 0
         browserVC.view.isHidden = isBig
         bigCollectionView.isHidden = !isBig
+        // BIG은 500KB 초과로 탭 전송 불가 → 꾹 눌러 드래그만 가능
+        // SMALL은 탭/peel 둘 다 지원
+        hintLabel.text = isBig
+            ? "꾹 눌러서 말풍선에 붙여보세요!"
+            : "탭하거나 꾹 눌러서 보내세요"
         updateEmptyState()
     }
 
@@ -184,7 +189,7 @@ class StickerCarouselVC: UIViewController {
     // MARK: - 안내 라벨
 
     private func setupHintLabel() {
-        hintLabel.text = "꾹 눌러서 말풍선에 붙여보세요!"
+        // text는 updateVisibleView()에서 모드별로 설정됨
         hintLabel.font = .systemFont(ofSize: 13, weight: .semibold)
         hintLabel.textColor = .secondaryLabel
         hintLabel.textAlignment = .center
