@@ -245,11 +245,19 @@ extension CollectionViewModel {
             self?.addKeyringToUser(uid: uid, keyringId: keyringId) { success in
                 if success {
                     print("키링 생성 및 User에 추가 완료: \(name)")
-                    
+
                     // 로컬 배열에도 추가
                     let mutableKeyring = newKeyring
                     self?.keyring.append(mutableKeyring)
-                    
+
+                    // iMessage Extension이 신규 키링도 보이도록 메타데이터 즉시 갱신
+                    // (handleAppear는 세션당 1회만 fetch하므로 여기서 트리거 필요)
+                    if let allKeyrings = self?.keyring {
+                        DispatchQueue.global(qos: .utility).async { [weak self] in
+                            self?.saveStickerKeyringsMetadata(allKeyrings)
+                        }
+                    }
+
                     completion(true, keyringId)
                 } else {
                     completion(false, nil)
