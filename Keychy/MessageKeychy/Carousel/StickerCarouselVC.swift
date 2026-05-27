@@ -106,7 +106,7 @@ class StickerCarouselVC: UIViewController {
         view.addSubview(segmentedControl)
         NSLayoutConstraint.activate([
             segmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 4),
-            segmentedControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12),
+            segmentedControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15),
         ])
     }
 
@@ -275,7 +275,7 @@ class StickerCarouselVC: UIViewController {
         view.addSubview(addButton)
         NSLayoutConstraint.activate([
             addButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 4),
-            addButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12),
+            addButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -15),
             addButton.widthAnchor.constraint(equalToConstant: 36),
             addButton.heightAnchor.constraint(equalToConstant: 36),
         ])
@@ -316,7 +316,7 @@ class StickerCarouselVC: UIViewController {
 
         editButtonTrailingConstraint.isActive = false
         editButtonTrailingConstraint = isEditMode
-            ? editButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12)
+            ? editButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -15)
             : editButton.trailingAnchor.constraint(equalTo: addButton.leadingAnchor, constant: -12)
         editButtonTrailingConstraint.isActive = true
         UIView.animate(withDuration: 0.2) { [weak self] in
