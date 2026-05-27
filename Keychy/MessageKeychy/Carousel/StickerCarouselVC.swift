@@ -472,17 +472,20 @@ private class BigStickerCell: UICollectionViewCell {
         if isEditing {
             startWiggle()
         } else {
-            layer.removeAnimation(forKey: "wiggle")
+            stickerView?.layer.removeAnimation(forKey: "wiggle")
         }
     }
 
     /// iOS 홈화면 스타일의 미세한 흔들림 — 편집 가능 상태 시각화
+    /// 셀(self.layer)이 아니라 stickerView.layer에만 적용해야
+    /// 우상단 X 버튼은 가만히 있고 키링만 흔들림
     private func startWiggle() {
+        guard let stickerLayer = stickerView?.layer else { return }
         let animation = CAKeyframeAnimation(keyPath: "transform.rotation.z")
         animation.values = [-0.02, 0.02, -0.02]
         animation.duration = 0.25
         animation.repeatCount = .infinity
-        layer.add(animation, forKey: "wiggle")
+        stickerLayer.add(animation, forKey: "wiggle")
     }
 
     /// configure 시점에 contentView.bounds가 .zero일 수 있으므로
