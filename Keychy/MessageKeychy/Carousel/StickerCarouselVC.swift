@@ -412,10 +412,14 @@ private class BigStickerCell: UICollectionViewCell {
 
     private var stickerView: MSStickerView?
     private let deleteButton = UIButton(type: .custom)
-    /// 스티커를 화면 가장자리에서 띄우기 위한 내부 여백
-    /// 값이 클수록 MSStickerView frame이 작아지고
-    /// 카루셀 표시 크기 + 드롭 영역도 작아짐
-    private let stickerInset: CGFloat = 32
+
+    /// 스티커를 화면 가장자리에서 띄우기 위한 내부 여백 (셀 폭의 18%, 최대 36pt)
+    /// - Compact 200pt 셀: 36pt inset → MSStickerView 128pt
+    /// - Expanded 3열 ~112pt 셀: ~20pt inset → MSStickerView ~72pt
+    /// 작은 셀에 36 일괄 적용하면 키링이 너무 작아져 비례 계산 + 캡 사용
+    private var stickerInset: CGFloat {
+        min(36, contentView.bounds.width * 0.18)
+    }
 
     /// peel(꾹 눌러 드래그) 가능 영역을 상단 N%로 제한
     ///
