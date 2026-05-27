@@ -32,6 +32,9 @@ class KeyringPickerVC: UIViewController {
     private let loadingIndicator = UIActivityIndicatorView(style: .large)
     private let loadingLabel = UILabel()
 
+    // 검색 결과 0건 안내
+    private let emptyResultLabel = UILabel()
+
     /// 검색어 적용 후 실제 표시할 키링 배열
     private var displayedKeyrings: [StickerKeyring] {
         guard !searchQuery.isEmpty else { return keyrings }
@@ -46,6 +49,7 @@ class KeyringPickerVC: UIViewController {
         view.backgroundColor = .systemBackground
         setupSearchBar()
         setupCollectionView()
+        setupEmptyResultLabel()
         setupLoadingOverlay()
         loadData()
     }
@@ -107,6 +111,28 @@ class KeyringPickerVC: UIViewController {
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
+    }
+
+    // MARK: - 검색 결과 0건 안내
+
+    private func setupEmptyResultLabel() {
+        emptyResultLabel.text = "검색 결과가 없어요"
+        emptyResultLabel.font = .systemFont(ofSize: 14, weight: .medium)
+        emptyResultLabel.textColor = .tertiaryLabel
+        emptyResultLabel.textAlignment = .center
+        emptyResultLabel.isHidden = true
+        emptyResultLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        view.addSubview(emptyResultLabel)
+        NSLayoutConstraint.activate([
+            emptyResultLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyResultLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+        ])
+    }
+
+    /// 검색어가 있고 결과가 0건일 때만 안내 라벨 표시
+    private func updateEmptyResultVisibility() {
+        emptyResultLabel.isHidden = !(searchQuery.isEmpty == false && displayedKeyrings.isEmpty)
     }
 
     // MARK: - 로딩 오버레이
@@ -177,6 +203,7 @@ extension KeyringPickerVC: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         searchQuery = searchText
         collectionView.reloadData()
+        updateEmptyResultVisibility()
     }
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
