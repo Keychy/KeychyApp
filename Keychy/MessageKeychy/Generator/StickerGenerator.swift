@@ -11,7 +11,7 @@ import UIKit
 ///
 /// MSSticker는 **탭 전송 시 500KB 제한**이 있지만,
 /// **꾹 눌러 드래그(peel) 전송은 제한 없음**.
-/// - `big`: 500px, 12프레임, 용량 제한 없음 (드래그 전송 전용)
+/// - `big`: 350px, 12프레임, 용량 제한 없음 (드래그 전송 전용)
 /// - `small`: 200px, 12프레임, 450KB 이하 (탭 전송용)
 enum StickerSize {
     case big
@@ -19,7 +19,9 @@ enum StickerSize {
 
     var pixelSize: Int {
         switch self {
-        case .big: return 500
+        // BIG은 500→350으로 축소: 드롭 영역이 좁아져 화면 끝/메시지 옆에서도
+        // iMessage가 reject하지 않고 잘 붙음 (Apple drop validation 우회)
+        case .big: return 350
         case .small: return 200
         }
     }
@@ -42,7 +44,8 @@ enum StickerSize {
 /// 초과 시 MSSticker 객체는 생성되지만 탭 전송이 실패한다.
 ///
 /// ### BIG (드래그 전송): 용량 제한 없음
-/// 꾹 눌러 드래그(peel) 전송은 용량 제한이 없으므로 500px 고화질로 생성한다.
+/// 꾹 눌러 드래그(peel) 전송은 용량 제한이 없지만,
+/// 드롭 영역이 너무 크면 iMessage가 화면 밖 침범으로 reject하므로 350px로 둠.
 enum StickerGenerator {
 
     /// 58장 중 12장을 균등 간격으로 추출 (stride = 5)
