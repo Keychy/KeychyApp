@@ -47,9 +47,17 @@ class KeyringPickerVC: UIViewController {
     // MARK: - 데이터
 
     private func loadData() {
-        keyrings = StickerDataManager.loadAllKeyrings()
-            .sorted { $0.createdAt > $1.createdAt }
+        // 선택 ID를 먼저 로드해야 정렬에서 참조 가능
         selectedIDs = Set(StickerDataManager.loadSelectedIDs())
+        keyrings = StickerDataManager.loadAllKeyrings()
+            .sorted { lhs, rhs in
+                let lhsSelected = selectedIDs.contains(lhs.id)
+                let rhsSelected = selectedIDs.contains(rhs.id)
+                // 1순위: 미선택이 위로
+                if lhsSelected != rhsSelected { return !lhsSelected }
+                // 2순위: 같은 그룹 내에선 최신순
+                return lhs.createdAt > rhs.createdAt
+            }
         collectionView.reloadData()
     }
 
