@@ -11,7 +11,7 @@ import UIKit
 ///
 /// MSSticker는 **탭 전송 시 500KB 제한**이 있지만,
 /// **꾹 눌러 드래그(peel) 전송은 제한 없음**.
-/// - `big`: 400px, 12프레임, 용량 제한 없음 (드래그 전송 전용)
+/// - `big`: 500px, 12프레임, 용량 제한 없음 (드래그 전송 전용)
 /// - `small`: 200px, 12프레임, 450KB 이하 (탭 전송용)
 enum StickerSize {
     case big
@@ -22,7 +22,7 @@ enum StickerSize {
         // pixelSize는 래스터 해상도만 결정 (드롭 영역과 무관)
         // 표시 크기는 BigStickerCell.stickerInset이 조절하고
         // pixelSize는 그 안에서 얼마나 선명하게 보일지를 결정
-        case .big: return 400
+        case .big: return 500
         case .small: return 200
         }
     }
