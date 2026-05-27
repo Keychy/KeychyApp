@@ -66,7 +66,21 @@ class MessagesViewController: MSMessagesAppViewController {
             sheet.detents = [.large()]
             sheet.prefersGrabberVisible = true
         }
+        // 사용자가 swipe로 시트 dismiss할 때 카루셀 reload 보장
+        // (백그라운드에서 추가 완료된 스티커를 즉시 반영)
+        vc.presentationController?.delegate = self
         present(vc, animated: true)
+    }
+}
+
+// MARK: - UIAdaptivePresentationControllerDelegate
+
+extension MessagesViewController: UIAdaptivePresentationControllerDelegate {
+
+    /// 시트가 사용자 swipe로 dismiss됐을 때만 호출됨 (programmatic dismiss는 미호출)
+    /// → pickerDidSelectKeyring 경로의 reload와 중복되지 않음
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        carouselVC?.reloadData()
     }
 }
 

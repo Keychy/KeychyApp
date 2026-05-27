@@ -250,26 +250,31 @@ extension KeyringPickerVC: UICollectionViewDelegateFlowLayout {
 
         // Task.detached: caller(MainActor) 액터 상속 안 함 → 진짜 백그라운드 실행 보장
         // 일반 Task { }는 MainActor를 상속해 동기 CPU 작업이 메인 스레드를 점유할 수 있음
-        Task.detached(priority: .userInitiated) { [weak self] in
+        Task.detached(priority: .userInitiated) {
             let results = await StickerGenerator.generateStickers(for: keyring, sizes: [.small, .big])
+            let isSuccess = results[.small] != nil
 
+            // 메타데이터 저장은 self(VC) 생존 여부와 분리 — 시트가 swipe로 닫혀도
+            // 백그라운드 합성 결과가 selected_stickers.json에 반영되어 손실 없음
+            // (다음 카루셀 진입 시 새 스티커가 자동으로 나타남)
+            if isSuccess {
+                StickerDataManager.addSticker(id: keyring.id)
+            }
+
+            // UI 업데이트는 self가 살아 있을 때만 — 없으면 어차피 사용자가 시트를 떠남
             await MainActor.run { [weak self] in
                 guard let self = self else { return }
                 self.hideLoadingOverlay()
 
-                // SMALL이 필수 — 실패 시 전체 실패 처리 (탭 전송 불가)
-                guard results[.small] != nil else {
+                guard isSuccess else {
                     if let cell = self.collectionView.cellForItem(at: indexPath) as? KeyringPickerCell {
                         cell.shake()
                     }
                     return
                 }
 
-                // 선택 목록에 추가
-                StickerDataManager.addSticker(id: keyring.id)
                 self.selectedIDs.insert(keyring.id)
                 self.collectionView.reloadItems(at: [indexPath])
-
                 self.delegate?.pickerDidSelectKeyring()
             }
         }
