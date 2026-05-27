@@ -77,8 +77,10 @@ enum KeyringScale {
         "BaseBall_Helmet_Blue": 0.65,
         "BaseBall_Helmet_Red": 0.65,
         "BaseBall_Purple": 0.6,
-        "Baseball_Glove_Normal": 0.55,
-        "Baseball_Glove_White": 0.55,
+        
+        /// 1.1.5 업데이트
+        "GreenObjet": 0.45,
+        "PinkObjet": 0.45,
     ]
     
     // MARK: - 템플릿별 뭉치 키링 스케일

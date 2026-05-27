@@ -1,0 +1,105 @@
+//
+//  MessagesViewController.swift
+//  MessageKeychy
+//
+//  Created by 길지훈 on 2026-04-22.
+//
+
+import UIKit
+import Messages
+
+/// iMessage Extension 루트 뷰컨트롤러
+///
+/// Compact / Expanded 모두 `StickerCarouselVC` 하나로 표시한다.
+/// 높이가 바뀔 뿐 VC 교체 없이 Auto Layout이 자동 대응한다.
+/// - **[+] 탭**: `KeyringPickerVC`를 sheet로 표시 → 키링 선택 → APNG 생성
+class MessagesViewController: MSMessagesAppViewController {
+
+    private var carouselVC: StickerCarouselVC?
+
+    // MARK: - Lifecycle
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .systemBackground
+    }
+
+    override func willBecomeActive(with conversation: MSConversation) {
+        presentCarousel()
+    }
+
+    /// Compact ↔ Expanded 전환 시 캐러셀의 BIG 레이아웃을 그리드/캐러셀로 교체
+    override func willTransition(to presentationStyle: MSMessagesAppPresentationStyle) {
+        super.willTransition(to: presentationStyle)
+        carouselVC?.applyPresentation(presentationStyle)
+    }
+
+    // MARK: - 캐러셀 (Compact / Expanded 공용)
+
+    private func presentCarousel() {
+        guard carouselVC == nil else {
+            carouselVC?.reloadData()
+            return
+        }
+
+        let vc = StickerCarouselVC()
+        vc.delegate = self
+        addChild(vc)
+        vc.view.frame = view.bounds
+        vc.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        view.addSubview(vc.view)
+        vc.didMove(toParent: self)
+        carouselVC = vc
+        // 첫 진입 시점의 프레젠테이션 스타일을 즉시 반영
+        vc.applyPresentation(presentationStyle)
+        vc.reloadData()
+    }
+
+    // MARK: - 키링 픽커 시트
+
+    /// KeyringPickerVC를 풀스크린 시트로 표시
+    private func presentPickerSheet() {
+        let vc = KeyringPickerVC()
+        vc.delegate = self
+        vc.modalPresentationStyle = .pageSheet
+        if let sheet = vc.sheetPresentationController {
+            sheet.detents = [.large()]
+            sheet.prefersGrabberVisible = true
+        }
+        // 사용자가 swipe로 시트 dismiss할 때 카루셀 reload 보장
+        // (백그라운드에서 추가 완료된 스티커를 즉시 반영)
+        vc.presentationController?.delegate = self
+        present(vc, animated: true)
+    }
+}
+
+// MARK: - UIAdaptivePresentationControllerDelegate
+
+extension MessagesViewController: UIAdaptivePresentationControllerDelegate {
+
+    /// 시트가 사용자 swipe로 dismiss됐을 때만 호출됨 (programmatic dismiss는 미호출)
+    /// → pickerDidSelectKeyring 경로의 reload와 중복되지 않음
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        carouselVC?.reloadData()
+    }
+}
+
+// MARK: - StickerCarouselDelegate
+
+extension MessagesViewController: StickerCarouselDelegate {
+
+    func carouselDidTapAdd() {
+        presentPickerSheet()
+    }
+}
+
+// MARK: - KeyringPickerDelegate
+
+extension MessagesViewController: KeyringPickerDelegate {
+
+    func pickerDidSelectKeyring() {
+        dismiss(animated: true) { [weak self] in
+            self?.carouselVC?.reloadData()
+        }
+    }
+}

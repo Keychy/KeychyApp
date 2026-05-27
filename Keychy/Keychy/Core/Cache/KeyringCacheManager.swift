@@ -222,7 +222,7 @@ class KeyringCacheManager {
                     }
                     
                     KeyringImageCache.shared.save(pngData: pngData, for: keyringID, type: .thumbnail)
-                    
+
                     await self.clearFailureRecord(keyringID: keyringID)
                     print("[Cache] 성공: \(keyring.name)")
                 } else {
