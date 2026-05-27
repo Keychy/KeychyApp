@@ -34,6 +34,8 @@ class StickerCarouselVC: UIViewController {
     private let segmentedControl = UISegmentedControl(items: ["BIG", "SMALL"])
     private let addButton = UIButton(type: .custom)
     private let editButton = UIButton(type: .system)
+    /// editButton의 trailing 제약 — 편집 모드 진입 시 [+] 위치(우측 끝)로 이동시키기 위해 토글
+    private var editButtonTrailingConstraint: NSLayoutConstraint!
 
     /// 편집 모드 (Expanded + BIG 일 때만 진입 가능)
     /// true일 때 각 셀에 X 뱃지가 노출되고 peel 제스처는 비활성화됨
@@ -286,6 +288,7 @@ class StickerCarouselVC: UIViewController {
     // MARK: - 편집 버튼
 
     /// "편집" / "완료" 토글 버튼 — Expanded + BIG 일 때만 노출
+    /// 편집 모드 진입 시 [+] 버튼이 숨겨지므로 trailing 제약을 우측 끝으로 옮긴다
     private func setupEditButton() {
         editButton.setTitleColor(.systemBlue, for: .normal)
         editButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .semibold)
@@ -294,9 +297,10 @@ class StickerCarouselVC: UIViewController {
         editButton.translatesAutoresizingMaskIntoConstraints = false
 
         view.addSubview(editButton)
+        editButtonTrailingConstraint = editButton.trailingAnchor.constraint(equalTo: addButton.leadingAnchor, constant: -12)
         NSLayoutConstraint.activate([
             editButton.centerYAnchor.constraint(equalTo: addButton.centerYAnchor),
-            editButton.trailingAnchor.constraint(equalTo: addButton.leadingAnchor, constant: -12),
+            editButtonTrailingConstraint,
         ])
     }
 
@@ -305,9 +309,20 @@ class StickerCarouselVC: UIViewController {
     }
 
     /// 편집 모드 진입/종료 시 셀과 상단 버튼 상태 동기화
+    /// editButton의 trailing 제약을 [+] 위치 ↔ [+] 왼쪽으로 토글
     private func applyEditMode() {
         editButton.setTitle(isEditMode ? "완료" : "편집", for: .normal)
         addButton.isHidden = isEditMode  // 편집 중엔 추가 불가
+
+        editButtonTrailingConstraint.isActive = false
+        editButtonTrailingConstraint = isEditMode
+            ? editButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12)
+            : editButton.trailingAnchor.constraint(equalTo: addButton.leadingAnchor, constant: -12)
+        editButtonTrailingConstraint.isActive = true
+        UIView.animate(withDuration: 0.2) { [weak self] in
+            self?.view.layoutIfNeeded()
+        }
+
         for cell in bigCollectionView.visibleCells {
             (cell as? BigStickerCell)?.isEditing = isEditMode
         }
