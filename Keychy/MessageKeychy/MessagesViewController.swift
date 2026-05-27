@@ -28,6 +28,12 @@ class MessagesViewController: MSMessagesAppViewController {
         presentCarousel()
     }
 
+    /// Compact ↔ Expanded 전환 시 캐러셀의 BIG 레이아웃을 그리드/캐러셀로 교체
+    override func willTransition(to presentationStyle: MSMessagesAppPresentationStyle) {
+        super.willTransition(to: presentationStyle)
+        carouselVC?.applyPresentation(presentationStyle)
+    }
+
     // MARK: - 캐러셀 (Compact / Expanded 공용)
 
     private func presentCarousel() {
@@ -44,6 +50,8 @@ class MessagesViewController: MSMessagesAppViewController {
         view.addSubview(vc.view)
         vc.didMove(toParent: self)
         carouselVC = vc
+        // 첫 진입 시점의 프레젠테이션 스타일을 즉시 반영
+        vc.applyPresentation(presentationStyle)
         vc.reloadData()
     }
 

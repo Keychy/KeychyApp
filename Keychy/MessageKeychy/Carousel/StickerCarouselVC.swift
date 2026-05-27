@@ -17,6 +17,14 @@ protocol StickerCarouselDelegate: AnyObject {
     func carouselDidTapAdd()
 }
 
+/// BIG 모드의 레이아웃 스타일
+/// - `carousel`: 가로 겹침 캐러셀 (Compact 프레젠테이션)
+/// - `grid`: 2열 세로 그리드 (Expanded 프레젠테이션)
+enum BigLayoutStyle {
+    case carousel
+    case grid
+}
+
 class StickerCarouselVC: UIViewController {
 
     weak var delegate: StickerCarouselDelegate?
@@ -30,11 +38,12 @@ class StickerCarouselVC: UIViewController {
 
     private var browserVC: StickerBrowserChildVC!
 
-    // MARK: - BIG 모드 (가로 캐러셀)
+    // MARK: - BIG 모드 (가로 캐러셀 / 2열 그리드)
 
     private var bigCollectionView: UICollectionView!
     private var bigStickers: [(id: String, sticker: MSSticker)] = []
     private let bigCellID = "BigStickerCell"
+    private var bigLayoutStyle: BigLayoutStyle = .carousel
     private let hintLabel = UILabel()
     private let emptyLabel = UILabel()
 
@@ -133,16 +142,10 @@ class StickerCarouselVC: UIViewController {
     // MARK: - BIG 캐러셀 Setup
 
     private func setupBigCarousel() {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        layout.minimumInteritemSpacing = 0
-        // 음수 간격으로 카드 겹침 효과
-        layout.minimumLineSpacing = -40
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-
-        bigCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        bigCollectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCarouselLayout())
         bigCollectionView.backgroundColor = .clear
         bigCollectionView.showsHorizontalScrollIndicator = false
+        bigCollectionView.showsVerticalScrollIndicator = false
         bigCollectionView.decelerationRate = .fast
         // peel 제스처: 터치를 즉시 전달하되, 스와이프 감지 시 취소 허용
         bigCollectionView.delaysContentTouches = false
@@ -160,6 +163,40 @@ class StickerCarouselVC: UIViewController {
             bigCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             bigCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -28),
         ])
+    }
+
+    // MARK: - 레이아웃 팩토리
+
+    /// Compact용: 가로 겹침 캐러셀
+    private func makeCarouselLayout() -> UICollectionViewFlowLayout {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumInteritemSpacing = 0
+        layout.minimumLineSpacing = -40  // 음수 간격으로 카드 겹침 효과
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        return layout
+    }
+
+    /// Expanded용: 2열 세로 그리드
+    private func makeGridLayout() -> UICollectionViewFlowLayout {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumInteritemSpacing = 12
+        layout.minimumLineSpacing = 12
+        layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+        return layout
+    }
+
+    // MARK: - 프레젠테이션 스타일 전환
+
+    /// MessagesViewController가 Compact ↔ Expanded 전환 시 호출
+    func applyPresentation(_ style: MSMessagesAppPresentationStyle) {
+        let newStyle: BigLayoutStyle = (style == .expanded) ? .grid : .carousel
+        guard newStyle != bigLayoutStyle else { return }
+        bigLayoutStyle = newStyle
+
+        let layout = (newStyle == .grid) ? makeGridLayout() : makeCarouselLayout()
+        bigCollectionView.setCollectionViewLayout(layout, animated: true)
     }
 
     // MARK: - 빈 상태 안내
@@ -251,8 +288,17 @@ extension StickerCarouselVC: UICollectionViewDataSource, UICollectionViewDelegat
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let side = min(collectionView.bounds.height, 200)
-        return CGSize(width: side, height: side)
+        switch bigLayoutStyle {
+        case .carousel:
+            // 가로 캐러셀: 뷰 높이 기준 정사각형 (최대 200pt)
+            let side = min(collectionView.bounds.height, 200)
+            return CGSize(width: side, height: side)
+        case .grid:
+            // 2열 그리드: (전체 폭 - 좌우 sectionInset - 셀 간격) / 2
+            let totalSpacing: CGFloat = 16 * 2 + 12
+            let side = floor((collectionView.bounds.width - totalSpacing) / 2)
+            return CGSize(width: side, height: side)
+        }
     }
 }
 
