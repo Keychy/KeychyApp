@@ -48,6 +48,9 @@ class MainTabViewModel {
     // Splash
     var showSplash = true
 
+    // 스티커 메타데이터 동기화는 세션당 1회만 (Extension 초기 셋업용)
+    private var hasFetchedKeyringsForStickerSync = false
+
     // ViewModels
     let collectionViewModel = CollectionViewModel()
     let bundleViewModel = BundleViewModel()
@@ -61,9 +64,11 @@ class MainTabViewModel {
     func handleAppear() {
         userManager.updateBadgeCount()
 
-        // 스티커 메타데이터 생성 (보관함 탭 진입 전에도 Extension이 사용 가능하도록)
+        // 스티커 메타데이터는 콜드 스타트 1회만 동기화
+        // (포그라운드 복귀/시트 dismiss 등으로 handleAppear가 반복 호출되어도 재 fetch 안 함)
         let uid = userManager.userUID
-        if !uid.isEmpty {
+        if !uid.isEmpty && !hasFetchedKeyringsForStickerSync {
+            hasFetchedKeyringsForStickerSync = true
             collectionViewModel.fetchUserKeyrings(uid: uid) { _ in }
         }
 
