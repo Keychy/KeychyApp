@@ -38,6 +38,15 @@ platform :ios do
         targets: ["WidgetKeychyExtension"],
         build_configurations: ["Release"]
       )
+      update_code_signing_settings(
+        use_automatic_signing: false,
+        path: "Keychy.xcodeproj",
+        team_id: "BUKGH5MWAT",
+        profile_name: "MessageKeychy Distribution",
+        code_sign_identity: "Apple Distribution",
+        targets: ["MessageKeychy"],
+        build_configurations: ["Release"]
+      )
     end
   end
 
@@ -57,7 +66,8 @@ platform :ios do
         signingCertificate: "Apple Distribution",
         provisioningProfiles: {
           "com.KeychyOfficial.app" => "KeychyApp Distribution",
-          "com.KeychyOfficial.app.WidgetKeychy" => "KeychyApp Widget Distribution"
+          "com.KeychyOfficial.app.WidgetKeychy" => "KeychyApp Widget Distribution",
+          "com.KeychyOfficial.app.MessageKeychy" => "MessageKeychy Distribution"
         }
       }
     )
@@ -82,7 +92,8 @@ platform :ios do
         signingCertificate: "Apple Distribution",
         provisioningProfiles: {
           "com.KeychyOfficial.app" => "KeychyApp Distribution",
-          "com.KeychyOfficial.app.WidgetKeychy" => "KeychyApp Widget Distribution"
+          "com.KeychyOfficial.app.WidgetKeychy" => "KeychyApp Widget Distribution",
+          "com.KeychyOfficial.app.MessageKeychy" => "MessageKeychy Distribution"
         }
       }
     )
