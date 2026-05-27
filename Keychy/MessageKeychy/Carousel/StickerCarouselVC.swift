@@ -33,6 +33,13 @@ class StickerCarouselVC: UIViewController {
 
     private let segmentedControl = UISegmentedControl(items: ["BIG", "SMALL"])
     private let addButton = UIButton(type: .custom)
+    private let editButton = UIButton(type: .system)
+
+    /// 편집 모드 (Expanded + BIG 일 때만 진입 가능)
+    /// true일 때 각 셀에 X 뱃지가 노출되고 peel 제스처는 비활성화됨
+    private var isEditMode: Bool = false {
+        didSet { applyEditMode() }
+    }
 
     // MARK: - SMALL 모드 (기존 브라우저)
 
@@ -58,7 +65,9 @@ class StickerCarouselVC: UIViewController {
         setupHintLabel()
         setupEmptyLabel()
         setupAddButton()
+        setupEditButton()
         updateVisibleView()
+        updateEditButtonVisibility()
     }
 
     override func viewDidLayoutSubviews() {
@@ -101,6 +110,7 @@ class StickerCarouselVC: UIViewController {
 
     @objc private func segmentChanged() {
         updateVisibleView()
+        updateEditButtonVisibility()
         // BIG 탭 전환 시 셀 레이아웃 강제 갱신 — 숨겨진 상태에서 로드된 셀의 프레임 보정
         if segmentedControl.selectedSegmentIndex == 0 {
             bigCollectionView.collectionViewLayout.invalidateLayout()
@@ -197,6 +207,7 @@ class StickerCarouselVC: UIViewController {
 
         let layout = (newStyle == .grid) ? makeGridLayout() : makeCarouselLayout()
         bigCollectionView.setCollectionViewLayout(layout, animated: true)
+        updateEditButtonVisibility()
     }
 
     // MARK: - 빈 상태 안내
@@ -271,6 +282,69 @@ class StickerCarouselVC: UIViewController {
     @objc private func addTapped() {
         delegate?.carouselDidTapAdd()
     }
+
+    // MARK: - 편집 버튼
+
+    /// "편집" / "완료" 토글 버튼 — Expanded + BIG 일 때만 노출
+    private func setupEditButton() {
+        editButton.setTitleColor(.systemBlue, for: .normal)
+        editButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .semibold)
+        editButton.setTitle("편집", for: .normal)
+        editButton.addTarget(self, action: #selector(editTapped), for: .touchUpInside)
+        editButton.translatesAutoresizingMaskIntoConstraints = false
+
+        view.addSubview(editButton)
+        NSLayoutConstraint.activate([
+            editButton.centerYAnchor.constraint(equalTo: addButton.centerYAnchor),
+            editButton.trailingAnchor.constraint(equalTo: addButton.leadingAnchor, constant: -12),
+        ])
+    }
+
+    @objc private func editTapped() {
+        isEditMode.toggle()
+    }
+
+    /// 편집 모드 진입/종료 시 셀과 상단 버튼 상태 동기화
+    private func applyEditMode() {
+        editButton.setTitle(isEditMode ? "완료" : "편집", for: .normal)
+        addButton.isHidden = isEditMode  // 편집 중엔 추가 불가
+        for cell in bigCollectionView.visibleCells {
+            (cell as? BigStickerCell)?.isEditing = isEditMode
+        }
+    }
+
+    /// Expanded + BIG 일 때만 편집 버튼 노출
+    /// 그 외 상황에서 편집 중이었다면 자동 종료
+    private func updateEditButtonVisibility() {
+        let isBig = segmentedControl.selectedSegmentIndex == 0
+        let isExpanded = (bigLayoutStyle == .grid)
+        let shouldShow = isBig && isExpanded
+        editButton.isHidden = !shouldShow
+        if !shouldShow && isEditMode {
+            isEditMode = false
+        }
+    }
+
+    // MARK: - 삭제 확인
+
+    /// X 뱃지 탭 시 확인 alert → 삭제 → reload
+    private func confirmDelete(id: String) {
+        let alert = UIAlertController(
+            title: "스티커 제거",
+            message: "이 스티커를 카루셀에서 제거할까요?",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        alert.addAction(UIAlertAction(title: "제거", style: .destructive) { [weak self] _ in
+            StickerDataManager.removeSticker(id: id)
+            self?.reloadData()
+            // 모두 제거됐으면 편집 모드 자동 종료
+            if self?.bigStickers.isEmpty == true {
+                self?.isEditMode = false
+            }
+        })
+        present(alert, animated: true)
+    }
 }
 
 // MARK: - BIG 캐러셀 DataSource / Delegate
@@ -283,7 +357,12 @@ extension StickerCarouselVC: UICollectionViewDataSource, UICollectionViewDelegat
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: bigCellID, for: indexPath) as! BigStickerCell
-        cell.configure(with: bigStickers[indexPath.item].sticker)
+        let item = bigStickers[indexPath.item]
+        cell.configure(with: item.sticker)
+        cell.isEditing = isEditMode
+        cell.onDelete = { [weak self] in
+            self?.confirmDelete(id: item.id)
+        }
         return cell
     }
 
@@ -312,6 +391,7 @@ extension StickerCarouselVC: UICollectionViewDataSource, UICollectionViewDelegat
 private class BigStickerCell: UICollectionViewCell {
 
     private var stickerView: MSStickerView?
+    private let deleteButton = UIButton(type: .custom)
     /// 스티커를 화면 가장자리에서 띄우기 위한 내부 여백
     private let stickerInset: CGFloat = 16
 
@@ -324,14 +404,69 @@ private class BigStickerCell: UICollectionViewCell {
     /// 컬렉션뷰의 스크롤 제스처로 통과된다.
     private static let peelableTopRatio: CGFloat = 0.30
 
+    /// 편집 모드 — true일 때 X 뱃지 노출 + peel 제스처 차단
+    var isEditing: Bool = false {
+        didSet { applyEditState() }
+    }
+
+    /// X 뱃지 탭 콜백
+    var onDelete: (() -> Void)?
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.backgroundColor = .clear
         backgroundColor = .clear
+        setupDeleteButton()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    private func setupDeleteButton() {
+        let config = UIImage.SymbolConfiguration(pointSize: 22, weight: .bold)
+        deleteButton.setImage(UIImage(systemName: "xmark.circle.fill", withConfiguration: config), for: .normal)
+        deleteButton.tintColor = .systemRed
+        // 키링 위에서 가독성 확보 위해 흰 배경 원
+        deleteButton.backgroundColor = .white
+        deleteButton.layer.cornerRadius = 14
+        deleteButton.layer.shadowColor = UIColor.black.cgColor
+        deleteButton.layer.shadowOpacity = 0.2
+        deleteButton.layer.shadowOffset = CGSize(width: 0, height: 1)
+        deleteButton.layer.shadowRadius = 2
+        deleteButton.isHidden = true
+        deleteButton.addTarget(self, action: #selector(deleteTapped), for: .touchUpInside)
+        deleteButton.translatesAutoresizingMaskIntoConstraints = false
+
+        contentView.addSubview(deleteButton)
+        NSLayoutConstraint.activate([
+            deleteButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
+            deleteButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -4),
+            deleteButton.widthAnchor.constraint(equalToConstant: 28),
+            deleteButton.heightAnchor.constraint(equalToConstant: 28),
+        ])
+    }
+
+    @objc private func deleteTapped() {
+        onDelete?()
+    }
+
+    private func applyEditState() {
+        deleteButton.isHidden = !isEditing
+        if isEditing {
+            startWiggle()
+        } else {
+            layer.removeAnimation(forKey: "wiggle")
+        }
+    }
+
+    /// iOS 홈화면 스타일의 미세한 흔들림 — 편집 가능 상태 시각화
+    private func startWiggle() {
+        let animation = CAKeyframeAnimation(keyPath: "transform.rotation.z")
+        animation.values = [-0.02, 0.02, -0.02]
+        animation.duration = 0.25
+        animation.repeatCount = .infinity
+        layer.add(animation, forKey: "wiggle")
     }
 
     /// configure 시점에 contentView.bounds가 .zero일 수 있으므로
@@ -342,9 +477,12 @@ private class BigStickerCell: UICollectionViewCell {
         stickerView?.frame = contentView.bounds.insetBy(dx: stickerInset, dy: stickerInset)
     }
 
-    /// 상단 30% 영역만 터치 처리 → 그 외 영역은 nil 반환하여
-    /// 컬렉션뷰의 스크롤 제스처로 패스
+    /// - 편집 모드: deleteButton만 인터랙티브, 나머지 영역은 nil → 스크롤로 패스
+    /// - 일반 모드: 상단 30%만 peel 가능
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        if isEditing {
+            return deleteButton.frame.contains(point) ? deleteButton : nil
+        }
         guard let sv = stickerView else {
             return super.hitTest(point, with: event)
         }
@@ -362,12 +500,16 @@ private class BigStickerCell: UICollectionViewCell {
         stickerView?.stopAnimating()
         stickerView?.removeFromSuperview()
         stickerView = nil
+        isEditing = false
+        onDelete = nil
     }
 
     func configure(with sticker: MSSticker) {
         let sv = MSStickerView(frame: contentView.bounds.insetBy(dx: stickerInset, dy: stickerInset), sticker: sticker)
         sv.startAnimating()
         contentView.addSubview(sv)
+        // deleteButton이 항상 sticker 위에 오도록
+        contentView.bringSubviewToFront(deleteButton)
         stickerView = sv
     }
 }
