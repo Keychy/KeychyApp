@@ -27,6 +27,11 @@ class KeyringPickerVC: UIViewController {
     private var collectionView: UICollectionView!
     private let cellID = "KeyringPickerCell"
 
+    // 로딩 오버레이 (스티커 생성 중 표시)
+    private let loadingOverlay = UIView()
+    private let loadingIndicator = UIActivityIndicatorView(style: .large)
+    private let loadingLabel = UILabel()
+
     /// 검색어 적용 후 실제 표시할 키링 배열
     private var displayedKeyrings: [StickerKeyring] {
         guard !searchQuery.isEmpty else { return keyrings }
@@ -41,6 +46,7 @@ class KeyringPickerVC: UIViewController {
         view.backgroundColor = .systemBackground
         setupSearchBar()
         setupCollectionView()
+        setupLoadingOverlay()
         loadData()
     }
 
@@ -102,6 +108,61 @@ class KeyringPickerVC: UIViewController {
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
+
+    // MARK: - 로딩 오버레이
+
+    /// 시트 영역 전체를 덮는 시스템 블러 + 중앙 스피너 + 라벨
+    /// 터치 차단 효과로 생성 중 중복 탭 방지
+    private func setupLoadingOverlay() {
+        loadingOverlay.isHidden = true
+        loadingOverlay.translatesAutoresizingMaskIntoConstraints = false
+
+        // 시스템 블러 — iOS HIG 권장 (Light/Dark 자동 대응)
+        let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemThinMaterial))
+        blurView.translatesAutoresizingMaskIntoConstraints = false
+        loadingOverlay.addSubview(blurView)
+
+        loadingIndicator.color = .label
+        loadingIndicator.translatesAutoresizingMaskIntoConstraints = false
+        loadingOverlay.addSubview(loadingIndicator)
+
+        loadingLabel.text = "스티커 생성 중..."
+        loadingLabel.font = .systemFont(ofSize: 14, weight: .medium)
+        loadingLabel.textColor = .label
+        loadingLabel.textAlignment = .center
+        loadingLabel.translatesAutoresizingMaskIntoConstraints = false
+        loadingOverlay.addSubview(loadingLabel)
+
+        view.addSubview(loadingOverlay)
+        NSLayoutConstraint.activate([
+            loadingOverlay.topAnchor.constraint(equalTo: view.topAnchor),
+            loadingOverlay.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            loadingOverlay.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            loadingOverlay.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+
+            blurView.topAnchor.constraint(equalTo: loadingOverlay.topAnchor),
+            blurView.leadingAnchor.constraint(equalTo: loadingOverlay.leadingAnchor),
+            blurView.trailingAnchor.constraint(equalTo: loadingOverlay.trailingAnchor),
+            blurView.bottomAnchor.constraint(equalTo: loadingOverlay.bottomAnchor),
+
+            loadingIndicator.centerXAnchor.constraint(equalTo: loadingOverlay.centerXAnchor),
+            loadingIndicator.centerYAnchor.constraint(equalTo: loadingOverlay.centerYAnchor, constant: -12),
+
+            loadingLabel.topAnchor.constraint(equalTo: loadingIndicator.bottomAnchor, constant: 12),
+            loadingLabel.centerXAnchor.constraint(equalTo: loadingOverlay.centerXAnchor),
+        ])
+    }
+
+    private func showLoadingOverlay() {
+        loadingOverlay.isHidden = false
+        loadingIndicator.startAnimating()
+        view.bringSubviewToFront(loadingOverlay)
+    }
+
+    private func hideLoadingOverlay() {
+        loadingOverlay.isHidden = true
+        loadingIndicator.stopAnimating()
+    }
 }
 
 // MARK: - UISearchBarDelegate
@@ -151,29 +212,32 @@ extension KeyringPickerVC: UICollectionViewDelegateFlowLayout {
         // 이미 선택된 키링이면 무시
         guard !selectedIDs.contains(keyring.id) else { return }
 
-        // 로딩 표시
-        guard let cell = collectionView.cellForItem(at: indexPath) as? KeyringPickerCell else { return }
-        cell.showLoading()
+        // 시트 전체 로딩 오버레이 — 생성 중 중복 탭 차단
+        showLoadingOverlay()
 
-        Task {
-            // 다운로드/프레임 합성 1회 공유 + SMALL/BIG 인코딩만 각각
+        // Task.detached: caller(MainActor) 액터 상속 안 함 → 진짜 백그라운드 실행 보장
+        // 일반 Task { }는 MainActor를 상속해 동기 CPU 작업이 메인 스레드를 점유할 수 있음
+        Task.detached(priority: .userInitiated) { [weak self] in
             let results = await StickerGenerator.generateStickers(for: keyring, sizes: [.small, .big])
 
-            await MainActor.run {
-                cell.hideLoading()
+            await MainActor.run { [weak self] in
+                guard let self = self else { return }
+                self.hideLoadingOverlay()
 
                 // SMALL이 필수 — 실패 시 전체 실패 처리 (탭 전송 불가)
                 guard results[.small] != nil else {
-                    cell.shake()
+                    if let cell = self.collectionView.cellForItem(at: indexPath) as? KeyringPickerCell {
+                        cell.shake()
+                    }
                     return
                 }
 
                 // 선택 목록에 추가
                 StickerDataManager.addSticker(id: keyring.id)
-                selectedIDs.insert(keyring.id)
-                collectionView.reloadItems(at: [indexPath])
+                self.selectedIDs.insert(keyring.id)
+                self.collectionView.reloadItems(at: [indexPath])
 
-                delegate?.pickerDidSelectKeyring(id: keyring.id)
+                self.delegate?.pickerDidSelectKeyring(id: keyring.id)
             }
         }
     }
