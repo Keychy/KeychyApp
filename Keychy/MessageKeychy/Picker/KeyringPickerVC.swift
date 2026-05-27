@@ -13,7 +13,7 @@ import UIKit
 /// 완료되면 delegate를 통해 Compact 모드로 복귀시킨다.
 protocol KeyringPickerDelegate: AnyObject {
     /// 키링 선택 + APNG 생성 완료 → Compact 복귀
-    func pickerDidSelectKeyring(id: String)
+    func pickerDidSelectKeyring()
 }
 
 class KeyringPickerVC: UIViewController {
@@ -243,7 +243,7 @@ extension KeyringPickerVC: UICollectionViewDelegateFlowLayout {
                 self.selectedIDs.insert(keyring.id)
                 self.collectionView.reloadItems(at: [indexPath])
 
-                self.delegate?.pickerDidSelectKeyring(id: keyring.id)
+                self.delegate?.pickerDidSelectKeyring()
             }
         }
     }

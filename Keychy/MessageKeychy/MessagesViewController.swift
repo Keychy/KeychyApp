@@ -83,7 +83,7 @@ extension MessagesViewController: StickerCarouselDelegate {
 
 extension MessagesViewController: KeyringPickerDelegate {
 
-    func pickerDidSelectKeyring(id: String) {
+    func pickerDidSelectKeyring() {
         dismiss(animated: true) { [weak self] in
             self?.carouselVC?.reloadData()
         }
