@@ -315,6 +315,15 @@ private class BigStickerCell: UICollectionViewCell {
     /// 스티커를 화면 가장자리에서 띄우기 위한 내부 여백
     private let stickerInset: CGFloat = 16
 
+    /// peel(꾹 눌러 드래그) 가능 영역을 상단 N%로 제한
+    ///
+    /// MSStickerView는 peel 시작 시점의 터치 좌표를 anchor로 사용해
+    /// 메시지에 스티커가 그 위치 기준으로 박힌다.
+    /// 키링은 캐러비너(상단)에서 매달리는 구조라 상단만 잡혀야 자연스럽게
+    /// 매달린 형태로 메시지에 들어간다. 하단 터치는 무시되어
+    /// 컬렉션뷰의 스크롤 제스처로 통과된다.
+    private static let peelableTopRatio: CGFloat = 0.30
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.backgroundColor = .clear
@@ -331,6 +340,21 @@ private class BigStickerCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         stickerView?.frame = contentView.bounds.insetBy(dx: stickerInset, dy: stickerInset)
+    }
+
+    /// 상단 30% 영역만 터치 처리 → 그 외 영역은 nil 반환하여
+    /// 컬렉션뷰의 스크롤 제스처로 패스
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        guard let sv = stickerView else {
+            return super.hitTest(point, with: event)
+        }
+        let peelable = CGRect(
+            x: sv.frame.minX,
+            y: sv.frame.minY,
+            width: sv.frame.width,
+            height: sv.frame.height * Self.peelableTopRatio
+        )
+        return peelable.contains(point) ? super.hitTest(point, with: event) : nil
     }
 
     override func prepareForReuse() {
