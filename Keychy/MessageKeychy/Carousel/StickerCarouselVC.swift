@@ -180,12 +180,16 @@ class StickerCarouselVC: UIViewController {
 
     // MARK: - 레이아웃 팩토리
 
+    /// 카드끼리 겹치게 보이는 카루셀 효과의 음수 간격
+    /// 셀 폭 대비 약 20% 정도 겹치도록 튜닝됨
+    private static let carouselCardOverlap: CGFloat = -40
+
     /// Compact용: 가로 겹침 캐러셀
     private func makeCarouselLayout() -> UICollectionViewFlowLayout {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 0
-        layout.minimumLineSpacing = -40  // 음수 간격으로 카드 겹침 효과
+        layout.minimumLineSpacing = Self.carouselCardOverlap
         layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         return layout
     }
