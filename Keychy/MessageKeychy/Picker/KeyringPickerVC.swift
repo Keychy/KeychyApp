@@ -111,45 +111,51 @@ class KeyringPickerVC: UIViewController {
 
     // MARK: - 로딩 오버레이
 
-    /// 시트 영역 전체를 덮는 시스템 블러 + 중앙 스피너 + 라벨
+    /// iOS 시스템 alert 톤 — 살짝 어두운 backdrop + 중앙 카드
     /// 터치 차단 효과로 생성 중 중복 탭 방지
     private func setupLoadingOverlay() {
         loadingOverlay.isHidden = true
+        loadingOverlay.backgroundColor = UIColor.black.withAlphaComponent(0.35)
         loadingOverlay.translatesAutoresizingMaskIntoConstraints = false
 
-        // 시스템 블러 — iOS HIG 권장 (Light/Dark 자동 대응)
-        let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemThinMaterial))
-        blurView.translatesAutoresizingMaskIntoConstraints = false
-        loadingOverlay.addSubview(blurView)
+        // 중앙 카드 (시스템 블러 + 둥근 모서리)
+        let card = UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterial))
+        card.layer.cornerRadius = 14
+        card.clipsToBounds = true
+        card.translatesAutoresizingMaskIntoConstraints = false
+        loadingOverlay.addSubview(card)
 
         loadingIndicator.color = .label
         loadingIndicator.translatesAutoresizingMaskIntoConstraints = false
-        loadingOverlay.addSubview(loadingIndicator)
+        card.contentView.addSubview(loadingIndicator)
 
         loadingLabel.text = "스티커 생성 중..."
         loadingLabel.font = .systemFont(ofSize: 14, weight: .medium)
         loadingLabel.textColor = .label
         loadingLabel.textAlignment = .center
         loadingLabel.translatesAutoresizingMaskIntoConstraints = false
-        loadingOverlay.addSubview(loadingLabel)
+        card.contentView.addSubview(loadingLabel)
 
         view.addSubview(loadingOverlay)
         NSLayoutConstraint.activate([
+            // backdrop은 시트 전체
             loadingOverlay.topAnchor.constraint(equalTo: view.topAnchor),
             loadingOverlay.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             loadingOverlay.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             loadingOverlay.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
-            blurView.topAnchor.constraint(equalTo: loadingOverlay.topAnchor),
-            blurView.leadingAnchor.constraint(equalTo: loadingOverlay.leadingAnchor),
-            blurView.trailingAnchor.constraint(equalTo: loadingOverlay.trailingAnchor),
-            blurView.bottomAnchor.constraint(equalTo: loadingOverlay.bottomAnchor),
+            // 카드는 중앙 고정 크기 (alert 스타일)
+            card.centerXAnchor.constraint(equalTo: loadingOverlay.centerXAnchor),
+            card.centerYAnchor.constraint(equalTo: loadingOverlay.centerYAnchor),
+            card.widthAnchor.constraint(equalToConstant: 160),
+            card.heightAnchor.constraint(equalToConstant: 110),
 
-            loadingIndicator.centerXAnchor.constraint(equalTo: loadingOverlay.centerXAnchor),
-            loadingIndicator.centerYAnchor.constraint(equalTo: loadingOverlay.centerYAnchor, constant: -12),
+            loadingIndicator.centerXAnchor.constraint(equalTo: card.contentView.centerXAnchor),
+            loadingIndicator.topAnchor.constraint(equalTo: card.contentView.topAnchor, constant: 22),
 
             loadingLabel.topAnchor.constraint(equalTo: loadingIndicator.bottomAnchor, constant: 12),
-            loadingLabel.centerXAnchor.constraint(equalTo: loadingOverlay.centerXAnchor),
+            loadingLabel.leadingAnchor.constraint(equalTo: card.contentView.leadingAnchor, constant: 8),
+            loadingLabel.trailingAnchor.constraint(equalTo: card.contentView.trailingAnchor, constant: -8),
         ])
     }
 
