@@ -331,7 +331,7 @@ class StickerCarouselVC: UIViewController {
     private func confirmDelete(id: String) {
         let alert = UIAlertController(
             title: "스티커 제거",
-            message: "이 스티커를 카루셀에서 제거할까요?",
+            message: "이 스티커를 목록에서 제거할까요?",
             preferredStyle: .alert
         )
         alert.addAction(UIAlertAction(title: "취소", style: .cancel))
