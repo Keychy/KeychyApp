@@ -194,7 +194,7 @@ class StickerCarouselVC: UIViewController {
         return layout
     }
 
-    /// Expanded용: 3열 세로 그리드
+    /// Expanded용: 2열 세로 그리드
     private func makeGridLayout() -> UICollectionViewFlowLayout {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -393,9 +393,9 @@ extension StickerCarouselVC: UICollectionViewDataSource, UICollectionViewDelegat
             let side = min(collectionView.bounds.height, 200)
             return CGSize(width: side, height: side)
         case .grid:
-            // 3열 그리드: (전체 폭 - 좌우 sectionInset - 셀 간격 2개) / 3
-            let totalSpacing: CGFloat = 16 * 2 + 12 * 2
-            let side = floor((collectionView.bounds.width - totalSpacing) / 3)
+            // 2열 그리드: (전체 폭 - 좌우 sectionInset - 셀 간격) / 2
+            let totalSpacing: CGFloat = 16 * 2 + 12
+            let side = floor((collectionView.bounds.width - totalSpacing) / 2)
             return CGSize(width: side, height: side)
         }
     }
