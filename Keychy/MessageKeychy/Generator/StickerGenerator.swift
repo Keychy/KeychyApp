@@ -65,68 +65,46 @@ enum StickerGenerator {
 
     // MARK: - 생성
 
-    /// StickerKeyring → APNG 스티커 생성 및 App Group 저장
+    /// 여러 사이즈의 스티커를 한 번에 생성
     ///
-    /// - `small`: 200px, 450KB 이하 강제 (탭 전송용)
-    /// - `big`: 300px, 용량 제한 없음 (드래그 전송용)
-    static func generateSticker(for keyring: StickerKeyring, size: StickerSize) async -> URL? {
-        let keyringID = keyring.id
-
-        // 1. bodyImage 다운로드
+    /// 다운로드 + 프레임 합성(SpriteKit, 58장)은 사이즈와 무관하므로 1회만 수행한다.
+    /// 사이즈별로 다른 건 다운샘플 해상도와 APNG 인코딩/검증/저장뿐.
+    ///
+    /// - Returns: 성공한 사이즈의 파일 URL 딕셔너리. 다운로드/프레임 합성 실패 시 빈 딕셔너리.
+    static func generateStickers(for keyring: StickerKeyring, sizes: [StickerSize]) async -> [StickerSize: URL] {
+        // 1. bodyImage 다운로드 (1회 공유)
         guard let bodyImage = await downloadBodyImage(urlString: keyring.bodyImageURL) else {
-            return nil
+            return [:]
         }
 
-        // 2. 프레임 합성 (58장)
+        // 2. 프레임 합성 58장 (1회 공유) — 가장 무거운 작업
         guard let rawFrames = KeyringFrameCompositor.generateFrames(
             from: bodyImage,
             chainLength: keyring.chainLength,
             template: keyring.selectedTemplate,
             isGyroscope: keyring.isGyroscope
         ) else {
-            return nil
+            return [:]
         }
 
-        // 3. 58장 → 12장 균등 추출
+        // 3. 12장 균등 추출 (1회 공유)
         let selectedFrames = stride(from: 0, to: rawFrames.count, by: frameStride)
             .prefix(frameCount)
             .map { rawFrames[$0] }
 
-        // 4. 지정 크기로 다운샘플
-        let pixelSize = size.pixelSize
-        let processedImages = selectedFrames.compactMap { data -> UIImage? in
-            downsample(pngData: data, to: pixelSize)
+        // 4. 사이즈별 인코딩/저장 (개별)
+        var results: [StickerSize: URL] = [:]
+        for size in sizes {
+            if let url = encodeAndSave(frames: selectedFrames, keyringID: keyring.id, size: size) {
+                results[size] = url
+            }
         }
+        return results
+    }
 
-        guard processedImages.count == selectedFrames.count else {
-            return nil
-        }
-
-        // 5. APNG 인코딩
-        guard let apngData = APNGEncoder.encode(
-            frames: processedImages,
-            delayTime: frameDelay,
-            loopCount: 0
-        ) else {
-            return nil
-        }
-
-        // 6. SMALL만 크기 검증 (BIG은 용량 제한 없음)
-        if size == .small && apngData.count > maxFileSizeBytes {
-            return nil
-        }
-
-        // 7. 파일 저장
-        guard let dir = stickerDirectory(for: size) else { return nil }
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        let fileURL = dir.appendingPathComponent("\(keyringID).png")
-
-        do {
-            try apngData.write(to: fileURL, options: .atomic)
-            return fileURL
-        } catch {
-            return nil
-        }
+    /// 단일 사이즈 생성 (내부적으로 batch API 사용)
+    static func generateSticker(for keyring: StickerKeyring, size: StickerSize) async -> URL? {
+        await generateStickers(for: keyring, sizes: [size])[size]
     }
 
     // MARK: - 삭제
@@ -140,6 +118,28 @@ enum StickerGenerator {
     }
 
     // MARK: - Private
+
+    /// 12프레임 PNG Data → 다운샘플 → APNG → 파일 저장
+    private static func encodeAndSave(frames: [Data], keyringID: String, size: StickerSize) -> URL? {
+        let pixelSize = size.pixelSize
+        let processedImages = frames.compactMap { downsample(pngData: $0, to: pixelSize) }
+        guard processedImages.count == frames.count else { return nil }
+
+        guard let apngData = APNGEncoder.encode(
+            frames: processedImages,
+            delayTime: frameDelay,
+            loopCount: 0
+        ) else { return nil }
+
+        // SMALL만 크기 검증 (BIG은 용량 제한 없음)
+        if size == .small && apngData.count > maxFileSizeBytes { return nil }
+
+        guard let dir = stickerDirectory(for: size) else { return nil }
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        let fileURL = dir.appendingPathComponent("\(keyringID).png")
+
+        return (try? apngData.write(to: fileURL, options: .atomic)) != nil ? fileURL : nil
+    }
 
     private static func downloadBodyImage(urlString: String) async -> UIImage? {
         guard let url = URL(string: urlString) else { return nil }

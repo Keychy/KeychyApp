@@ -108,17 +108,14 @@ extension KeyringPickerVC: UICollectionViewDelegateFlowLayout {
         cell.showLoading()
 
         Task {
-            // BIG + SMALL 동시 생성 (async let으로 병렬 실행)
-            async let smallURL = StickerGenerator.generateSticker(for: keyring, size: .small)
-            async let bigURL = StickerGenerator.generateSticker(for: keyring, size: .big)
-
-            let results = await (small: smallURL, big: bigURL)
+            // 다운로드/프레임 합성 1회 공유 + SMALL/BIG 인코딩만 각각
+            let results = await StickerGenerator.generateStickers(for: keyring, sizes: [.small, .big])
 
             await MainActor.run {
                 cell.hideLoading()
 
-                // SMALL이 필수 — 실패 시 전체 실패 처리
-                guard results.small != nil else {
+                // SMALL이 필수 — 실패 시 전체 실패 처리 (탭 전송 불가)
+                guard results[.small] != nil else {
                     cell.shake()
                     return
                 }
