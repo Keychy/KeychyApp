@@ -112,10 +112,10 @@ class StickerCarouselVC: UIViewController {
         let isBig = segmentedControl.selectedSegmentIndex == 0
         browserVC.view.isHidden = isBig
         bigCollectionView.isHidden = !isBig
-        // BIG은 500KB 초과로 탭 전송 불가 → 꾹 눌러 드래그만 가능
+        // BIG은 peel만 가능하고 상단 30% 고리 영역만 잡히도록 제한 → 카피로 명시
         // SMALL은 탭/peel 둘 다 지원
         hintLabel.text = isBig
-            ? "꾹 눌러서 말풍선에 붙여보세요!"
+            ? "고리를 꾹 눌러서 말풍선에 붙여보세요!"
             : "탭하거나 꾹 눌러서 보내세요"
         updateEmptyState()
     }
