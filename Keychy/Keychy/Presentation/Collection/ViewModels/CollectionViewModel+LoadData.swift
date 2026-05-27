@@ -127,8 +127,10 @@ extension CollectionViewModel {
             )
             KeyringImageCache.shared.migrateWidgetKeyringsIfNeeded(with: keyringDates)
 
-            // 스티커용 키링 메타데이터 저장 (Extension에서 온디맨드 생성용)
-            self.saveStickerKeyringsMetadata(allKeyrings)
+            // 스티커용 메타데이터 저장은 JSON 인코딩 + 디스크 쓰기 (수십 ms) → 백그라운드로
+            DispatchQueue.global(qos: .utility).async { [weak self] in
+                self?.saveStickerKeyringsMetadata(allKeyrings)
+            }
 
             completion(true)
         }
