@@ -27,7 +27,8 @@ import UniformTypeIdentifiers
 nonisolated enum KeyringFrameCompositor {
 
     static let frameSize = 1350
-    static let baseFrameCount = AnimationFrameStorage.baseFrameCount
+    static let baseFrameCount = 30
+    static let totalFrameCount = baseFrameCount * 2 - 2  // 왕복 58장
 
     /// 앱 포인트 → 1350px 프레임 픽셀 변환 스케일
     /// 프레임의 링·체인이 이 스케일 기준으로 디자인되어 있음
@@ -155,7 +156,7 @@ nonisolated enum KeyringFrameCompositor {
 
         // 1) 편도 프레임 합성 (0→29)
         var frames = [Data]()
-        frames.reserveCapacity(AnimationFrameStorage.totalFrameCount)
+        frames.reserveCapacity(totalFrameCount)
 
         for i in 0..<baseFrameCount {
             guard let keyringFrame = loadKeyringFrame(index: i, chainLength: chainLength) else {

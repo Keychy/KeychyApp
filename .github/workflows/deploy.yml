@@ -76,6 +76,7 @@ jobs:
         env:
           PROVISIONING_PROFILE_APP: ${{ secrets.PROVISIONING_PROFILE_APP }}
           PROVISIONING_PROFILE_WIDGET: ${{ secrets.PROVISIONING_PROFILE_WIDGET }}
+          PROVISIONING_PROFILE_MESSAGE: ${{ secrets.PROVISIONING_PROFILE_MESSAGE }}
         run: |
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
 
@@ -84,6 +85,9 @@ jobs:
 
           echo -n "$PROVISIONING_PROFILE_WIDGET" | base64 --decode \
             -o ~/Library/MobileDevice/Provisioning\ Profiles/KeychyApp_Widget_Distribution.mobileprovision
+
+          echo -n "$PROVISIONING_PROFILE_MESSAGE" | base64 --decode \
+            -o ~/Library/MobileDevice/Provisioning\ Profiles/MessageKeychy_Distribution.mobileprovision
 
       # 6. gitignore된 설정 파일 복원
       - name: Restore GoogleService-Info.plist

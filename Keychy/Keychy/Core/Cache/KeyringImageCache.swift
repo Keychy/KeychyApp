@@ -153,7 +153,7 @@ class KeyringImageCache {
         
         // 2. 메타데이터 파일 삭제
         clearMetadata()
-        
+
         // 3. 위젯 타임라인 새로고침
         reloadWidgets()
     }
@@ -373,12 +373,12 @@ class KeyringImageCache {
         // 1. 이미지 삭제 (썸네일 + 위젯)
         delete(for: id, type: .thumbnail)
         delete(for: id, type: .widget)
-        
+
         // 2. 메타데이터에서 제거
         var keyrings = loadWidgetKeyrings()
         keyrings.removeAll { $0.id == id }
         saveWidgetKeyrings(keyrings)
-        
+
         // 3. 위젯 타임라인 새로고침
         reloadWidgets()
     }
