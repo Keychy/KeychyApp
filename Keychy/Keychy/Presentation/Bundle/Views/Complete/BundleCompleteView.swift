@@ -60,6 +60,8 @@ struct BundleCompleteView<Route: BundleRoute>: View {
         }
         .ignoresSafeArea()
         .navigationBarBackButtonHidden()
+        // 완성뷰에선 스와이프 백 제스처도 차단 (뒤로가기 자체 불가)
+        .swipeBackGesture(enabled: false)
         .toolbar {
             closeToolbarItem
             titleToolbarItem
