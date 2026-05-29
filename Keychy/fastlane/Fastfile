@@ -18,7 +18,11 @@ platform :ios do
     build_num = Time.now.strftime("%y%m%d%H%M")
     targets_to_sync = %w[Keychy WidgetKeychyExtension MessageKeychy]
 
-    project = Xcodeproj::Project.open("Keychy.xcodeproj")
+    # private_lane 안에선 CWD 가 fastlane/ 라서 "Keychy.xcodeproj" 로는 못 찾음
+    # Fastfile 기준 절대 경로로 해석 (.. = fastlane 의 부모 = Keychy 폴더)
+    project_path = File.expand_path("../Keychy.xcodeproj", __dir__)
+
+    project = Xcodeproj::Project.open(project_path)
     project.targets.each do |target|
       next unless targets_to_sync.include?(target.name)
       target.build_configurations.each do |config|
