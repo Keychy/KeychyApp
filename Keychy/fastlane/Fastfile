@@ -1,6 +1,36 @@
 default_platform(:ios)
 
+# Xcode 프로젝트 직접 수정용 (fastlane 내장 의존성)
+require 'xcodeproj'
+
 platform :ios do
+
+  # 모든 타겟(Keychy / WidgetKeychyExtension / MessageKeychy)의
+  # CURRENT_PROJECT_VERSION 을 동일한 빌드 번호로 동기화
+  #
+  # 기존 increment_build_number 는 agvtool 기반인데, agvtool 은
+  # VERSIONING_SYSTEM = "Apple Generic" 설정된 타겟만 업데이트함.
+  # 우리 프로젝트는 그 설정이 없어 메인 앱만 업데이트되고
+  # Widget/MessageKeychy 는 누락 → 빌드 번호 mismatch → 위젯 동기화 버그
+  #
+  # xcodeproj gem 으로 pbxproj 직접 수정해 3 타겟 모두 명시적으로 동일하게 설정
+  private_lane :sync_build_number do
+    build_num = Time.now.strftime("%y%m%d%H%M")
+    targets_to_sync = %w[Keychy WidgetKeychyExtension MessageKeychy]
+
+    project = Xcodeproj::Project.open("Keychy.xcodeproj")
+    project.targets.each do |target|
+      next unless targets_to_sync.include?(target.name)
+      target.build_configurations.each do |config|
+        config.build_settings["CURRENT_PROJECT_VERSION"] = build_num
+      end
+    end
+    project.save
+
+    UI.success("Build number #{build_num} synced across: #{targets_to_sync.join(', ')}")
+    lane_context[SharedValues::BUILD_NUMBER] = build_num
+  end
+
 
   # App Store Connect API Key 설정 (로컬/CI 양쪽 지원)
   before_all do
@@ -53,10 +83,7 @@ platform :ios do
   # TestFlight 업로드
   desc "TestFlight에 빌드 업로드"
   lane :testflight do
-    increment_build_number(
-      build_number: Time.now.strftime("%y%m%d%H%M"),
-      xcodeproj: "Keychy.xcodeproj"
-    )
+    sync_build_number
     build_app(
       scheme: "Keychy",
       export_method: "app-store",
@@ -79,10 +106,7 @@ platform :ios do
   # App Store 업로드
   desc "App Store에 빌드 업로드"
   lane :appstore do
-    increment_build_number(
-      build_number: Time.now.strftime("%y%m%d%H%M"),
-      xcodeproj: "Keychy.xcodeproj"
-    )
+    sync_build_number
     build_app(
       scheme: "Keychy",
       export_method: "app-store",
